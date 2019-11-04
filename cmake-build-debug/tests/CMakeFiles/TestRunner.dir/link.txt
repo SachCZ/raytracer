@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/TestRunner.dir/testRunner.cpp.o CMakeFiles/TestRunner.dir/geometry/rayTest.cpp.o  -o TestRunner ../lib/libgtestd.a ../lib/libgtestd.a ../lib/libgmockd.a ../libRayTracer.a ../lib/libgtestd.a -lpthread ../src/geometry/libgeometry.a 
