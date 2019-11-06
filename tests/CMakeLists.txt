@@ -9,5 +9,5 @@ endif ()
 unset(MESSAGE_QUIET)
 message(STATUS "Building gtest finished")
 
-add_executable(TestRunner testRunner.cpp geometry/rayTest.cpp)
+add_executable(TestRunner testRunner.cpp geometry/rayTest.cpp geometry/pointTest.cpp geometry/vectorTest.cpp geometry/edgeTest.cpp geometry/triangleTest.cpp)
 target_link_libraries(TestRunner gtest gtest gmock RayTracer)
