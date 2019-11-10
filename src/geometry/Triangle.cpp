@@ -1,7 +1,8 @@
 #include <stdexcept>
 #include "geometry/Triangle.h"
 
-raytracer::geometry::Triangle::Triangle(std::vector<raytracer::geometry::Point> points) : points(std::move(points)) {
+raytracer::geometry::Triangle::Triangle(std::vector<raytracer::geometry::Point> points) :
+    points(std::move(points)){
     if (this->points.size() != 3) throw std::logic_error("Triangle must be constructed from 3 points!");
 
     recalculateEdges();

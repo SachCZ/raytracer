@@ -11,7 +11,7 @@ namespace raytracer {
         class Mesh;
         class Triangle {
         public:
-            explicit Triangle(std::vector<Point> points);
+            explicit Triangle(std::vector<raytracer::geometry::Point> points);
             Triangle(): points{3}{}
 
             std::vector<Edge> edges;

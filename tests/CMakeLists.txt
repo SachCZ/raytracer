@@ -9,5 +9,6 @@ endif ()
 unset(MESSAGE_QUIET)
 message(STATUS "Building gtest finished")
 
-add_executable(TestRunner testRunner.cpp geometry/rayTest.cpp geometry/pointTest.cpp geometry/vectorTest.cpp geometry/edgeTest.cpp geometry/triangleTest.cpp)
+add_executable(TestRunner testRunner.cpp geometry/rayTest.cpp geometry/pointTest.cpp geometry/vectorTest.cpp geometry/edgeTest.cpp geometry/triangleTest.cpp utility/adjacencyListTest.cpp geometry/meshTest.cpp utility/jsonFormatterTest.cpp)
 target_link_libraries(TestRunner gtest gtest gmock RayTracer)
+configure_file(./geometry/mesh.stl ${CMAKE_CURRENT_BINARY_DIR}/geometry/mesh.stl COPYONLY)

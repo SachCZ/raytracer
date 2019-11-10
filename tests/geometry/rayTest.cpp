@@ -1,12 +1,17 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <geometry.h>
+#include <geometry/Ray.h>
+#include <geometry/Point.h>
+#include <geometry/Vector.h>
+#include <geometry/Triangle.h>
+#include "geometry/Mesh.h"
 
 using namespace testing;
 using Ray = raytracer::geometry::Ray;
 using Point = raytracer::geometry::Point;
 using Vector = raytracer::geometry::Vector;
 using Triangle = raytracer::geometry::Triangle;
+using Mesh = raytracer::geometry::Mesh;
 
 class initialized_ray : public Test {
 public:
@@ -33,6 +38,13 @@ TEST_F(initialized_ray, has_last_point) {
     ASSERT_THAT(point.y, DoubleEq(4));
 }
 
+TEST_F(initialized_ray, can_deal_with_parallel_intersection){
+    Triangle triangle({Point(5, 8), Point(4, 6), Point(0, 0)});
+    auto point = ray.getClosestIntersection({triangle}).point;
+    EXPECT_THAT(point.x, DoubleEq(4));
+    EXPECT_THAT(point.y, DoubleEq(6));
+}
+
 class two_triangles : public Test {
 public:
     Triangle firstTriangle{{{2, 0}, {0, 2}, {1.5, 1}}};
@@ -56,4 +68,16 @@ TEST_F(two_triangles, are_intersected_by_ray_for_sure){
 
     EXPECT_THAT(intersection.point.x, DoubleEq(1));
     ASSERT_THAT(intersection.point.y, DoubleEq(-0.5));
+}
+
+class ray_on_mesh : public Test {
+public:
+    Mesh mesh{"./geometry/mesh.stl"};
+    Ray ray {Point(0, -5), Vector(0, 1)};
+
+};
+
+TEST_F(ray_on_mesh, has_correct_triangle_count) {
+    ray.traceThrough(mesh, [](auto intersection){return Vector(0, 1);});
+    ASSERT_THAT(ray.getIntersections(), SizeIs(43));
 }
