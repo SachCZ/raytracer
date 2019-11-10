@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <utility/AdjacencyList.h>
+#include <raytracer/utility/AdjacencyList.h>
 
 using namespace testing;
 

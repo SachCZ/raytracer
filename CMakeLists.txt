@@ -12,5 +12,6 @@ add_subdirectory(src/utility)
 add_subdirectory(examples)
 add_subdirectory(tests)
 
-add_library(RayTracer src/RayTracer.cpp src/RayTracer.h)
-target_link_libraries(RayTracer geometry utility)
+add_library(raytracer src/raytracer.cpp)
+target_link_libraries(raytracer PRIVATE geometry)
+target_include_directories(raytracer PUBLIC ./include)

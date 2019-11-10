@@ -1,4 +1,4 @@
-#include "geometry/Mesh.h"
+#include "Mesh.h"
 
 raytracer::geometry::Mesh::Mesh(const std::string &filename, double tolerance)
         : Mesh(parseSTL(filename), tolerance)

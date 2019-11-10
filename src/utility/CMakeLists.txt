@@ -1,3 +1,3 @@
-add_library(utility AdjacencyList.cpp include/utility/AdjacencyList.h JsonFormatter.cpp include/utility/JsonFormatter.h)
-target_include_directories(geometry PUBLIC ./include)
-target_compile_options(geometry PRIVATE -Werror -Wall -Wextra)
+add_library(utility AdjacencyList.cpp JsonFormatter.cpp)
+target_include_directories(utility PUBLIC ../../include/raytracer/utility)
+target_compile_options(utility PRIVATE -Werror -Wall -Wextra)

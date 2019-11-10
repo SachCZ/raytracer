@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <utility/JsonFormatter.h>
+#include "JsonFormatter.h"
 #include <vector>
 #include <map>
 

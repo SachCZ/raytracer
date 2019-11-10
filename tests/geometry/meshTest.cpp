@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <geometry/Mesh.h>
-#include <utility/AdjacencyList.h>
-#include <geometry/Point.h>
-#include <geometry/Vector.h>
+#include <raytracer/geometry/Mesh.h>
+#include <raytracer/utility/AdjacencyList.h>
+#include <raytracer/geometry/Point.h>
+#include <raytracer/geometry/Vector.h>
 
 using namespace testing;
 using AdjacencyList = raytracer::utility::AdjacencyList;

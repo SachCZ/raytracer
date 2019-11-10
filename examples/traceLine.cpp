@@ -1,5 +1,7 @@
-#include "geometry/Ray.h"
-#include "geometry/Mesh.h"
+#include "raytracer/geometry/Mesh.h"
+#include "raytracer/geometry/Ray.h"
+#include "raytracer/geometry/Point.h"
+#include "raytracer/geometry/Vector.h"
 
 using Mesh = raytracer::geometry::Mesh;
 using Ray = raytracer::geometry::Ray;

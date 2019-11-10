@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <geometry/Vector.h>
+#include <raytracer/geometry/Vector.h>
 
 using namespace testing;
 using Vector = raytracer::geometry::Vector;

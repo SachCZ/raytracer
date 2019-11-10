@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <vector>
-#include <geometry/Point.h>
-#include <geometry/Triangle.h>
+#include <raytracer/geometry/Point.h>
+#include <raytracer/geometry/Triangle.h>
 
 using namespace testing;
 

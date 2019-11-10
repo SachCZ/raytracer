@@ -1,4 +1,4 @@
-#include "geometry/Ray.h"
+#include "Ray.h"
 
 raytracer::geometry::Ray::Ray(raytracer::geometry::Point startPoint, raytracer::geometry::Vector direction)
         : startPoint(startPoint), lastDirection(direction) {

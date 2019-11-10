@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <geometry/Vector.h>
-#include <geometry/Point.h>
+#include <raytracer/geometry/Point.h>
+#include <raytracer/geometry/Vector.h>
 
 using namespace testing;
 using Point = raytracer::geometry::Point;

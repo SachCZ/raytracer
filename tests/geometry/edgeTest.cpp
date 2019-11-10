@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <geometry/Point.h>
-#include <geometry/Edge.h>
+#include "raytracer/geometry/Point.h"
+#include "raytracer/geometry/Edge.h"
+
 
 using namespace testing;
 

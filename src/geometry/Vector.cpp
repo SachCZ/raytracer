@@ -1,4 +1,4 @@
-#include "geometry/Vector.h"
+#include "Vector.h"
 
 raytracer::geometry::Vector::Vector(double x, double y) : x(x), y(y) {}
 

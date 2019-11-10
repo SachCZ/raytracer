@@ -3,8 +3,8 @@
 
 #include "Triangle.h"
 #include <algorithm>
-#include <utility/AdjacencyList.h>
-#include <utility/JsonFormatter.h>
+#include "raytracer/utility/AdjacencyList.h"
+#include "raytracer/utility/JsonFormatter.h"
 #include <cmath>
 #include <fstream>
 #include <sstream>

@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <geometry/Ray.h>
-#include <geometry/Point.h>
-#include <geometry/Vector.h>
-#include <geometry/Triangle.h>
-#include "geometry/Mesh.h"
+#include "raytracer/geometry/Ray.h"
+#include "raytracer/geometry/Point.h"
+#include "raytracer/geometry/Vector.h"
+#include "raytracer/geometry/Triangle.h"
+#include "raytracer/geometry/Mesh.h"
 
 using namespace testing;
 using Ray = raytracer::geometry::Ray;

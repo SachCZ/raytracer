@@ -1,4 +1,4 @@
-#include "geometry/Point.h"
+#include "Point.h"
 
 raytracer::geometry::Point::Point(double x, double y) : x(x), y(y) {}
 

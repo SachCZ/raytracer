@@ -1,5 +1,5 @@
 #include <stdexcept>
-#include "geometry/Triangle.h"
+#include "Triangle.h"
 
 raytracer::geometry::Triangle::Triangle(std::vector<raytracer::geometry::Point> points) :
     points(std::move(points)){

@@ -10,7 +10,7 @@
 #include <numeric>
 #include <limits>
 #include <stdexcept>
-#include <utility/JsonFormatter.h>
+#include "raytracer/utility/JsonFormatter.h"
 #include <fstream>
 #include <map>
 
