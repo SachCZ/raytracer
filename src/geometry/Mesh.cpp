@@ -91,7 +91,7 @@ std::vector<raytracer::geometry::Triangle> raytracer::geometry::Mesh::parseSTL(c
     std::vector<Triangle> _triangles;
     std::ifstream file(filename);
 
-    if (!file.is_open()) std::logic_error("Failed to open mesh file!");
+    if (!file.is_open()) throw std::logic_error("Failed to open mesh file!");
 
     std::string line;
     std::vector<Point> points;
