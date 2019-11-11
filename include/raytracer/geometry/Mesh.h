@@ -20,7 +20,7 @@ namespace raytracer {
 
             std::vector<Triangle> getBoundary() const;
             std::vector<Triangle> getAdjacent(const Triangle& triangle) const;
-            bool isOnBoundary(const Triangle& triangle) const;
+            bool isBoundary(const Edge &edge) const;
             size_t getFacesCount();
             void saveToJson(const std::string& filename) const;
 
@@ -29,6 +29,7 @@ namespace raytracer {
         private:
             std::vector<Triangle> triangles;
             utility::AdjacencyList adjacencyList;
+            std::unordered_set<size_t> boundaryEges;
             double tolerance;
 
             void annotateTriangles();
@@ -42,6 +43,17 @@ namespace raytracer {
             std::vector<Point> getAllPoints() const;
 
             std::vector<std::unordered_set<size_t>> getTrianglesAsIndexes() const;
+
+            bool isOnBoundary(const Triangle &triangle) const;
+
+            void annotateEdges();
+
+            std::vector<Edge> getAllEdges() const;
+
+            template <typename Element>
+            bool contains(const std::vector<Element>& array, const Element &element) const;
+
+            void generateBoundaryEdgesList();
         };
     }
 }

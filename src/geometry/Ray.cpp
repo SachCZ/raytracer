@@ -41,7 +41,9 @@ raytracer::geometry::Ray::getTriangleIntersections(const raytracer::geometry::Tr
 raytracer::geometry::Intersection
 raytracer::geometry::Ray::getClosestIntersection(const raytracer::geometry::Point &point,
                                                  const std::vector<raytracer::geometry::Intersection> &_intersections) const {
-    if (_intersections.empty()) throw std::logic_error("There must be points to choose from!");
+    if (_intersections.empty())
+        throw std::logic_error("There must be points to choose from!");
+
     auto closestIntersection = _intersections[0];
     double distance = std::numeric_limits<double>::infinity();
     std::for_each(_intersections.begin(), _intersections.end(), [&](const Intersection &_intersection) {

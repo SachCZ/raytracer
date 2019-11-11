@@ -73,11 +73,23 @@ TEST_F(two_triangles, are_intersected_by_ray_for_sure){
 class ray_on_mesh : public Test {
 public:
     Mesh mesh{"./geometry/mesh.stl"};
-    Ray ray {Point(0, -5), Vector(0, 1)};
+    Ray ray {Point(-5, 0.0), Vector(1, 0)};
 
 };
 
-TEST_F(ray_on_mesh, has_correct_triangle_count) {
-    ray.traceThrough(mesh, [](auto intersection){return Vector(0, 1);});
+TEST_F(ray_on_mesh, deal_with_borders_properly){
+    ray.traceThrough(mesh, [](auto intersection){return Vector(1, -1);});
+
+    auto& startPoint = ray.getIntersections().front().point;
+    auto& endPoint = ray.getIntersections().back().point;
+
+    EXPECT_THAT(startPoint.x, DoubleEq(-1));
+    EXPECT_THAT(startPoint.y, DoubleNear(0, 1e-15));
+    EXPECT_THAT(endPoint.x, DoubleNear(0, 1e-15));
+    EXPECT_THAT(endPoint.y, DoubleEq(-1));
+}
+
+TEST_F(ray_on_mesh, has_correct_intersections_count) {
+    ray.traceThrough(mesh, [](auto intersection){return Vector(1, 0);});
     ASSERT_THAT(ray.getIntersections(), SizeIs(43));
 }

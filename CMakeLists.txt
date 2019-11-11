@@ -9,7 +9,6 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_subdirectory(src/geometry)
 add_subdirectory(src/utility)
-add_subdirectory(examples)
 add_subdirectory(tests)
 
 add_library(raytracer src/raytracer.cpp)

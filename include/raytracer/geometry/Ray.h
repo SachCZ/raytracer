@@ -38,6 +38,7 @@ namespace raytracer {
             Intersection findNext(const Intersection& previous, const Mesh &mesh, Function getDirection){
                 this->lastDirection = getDirection(previous);
                 auto adjacent = mesh.getAdjacent(previous.triangle);
+                adjacent.emplace_back(previous.triangle);
                 return getClosestIntersection(adjacent);
             }
 
@@ -50,11 +51,7 @@ namespace raytracer {
                     do {
                         previous = findNext(previous, mesh, getDirection);
                         intersections.emplace_back(previous);
-                    } while (intersections.size() < 4 || !mesh.isOnBoundary(previous.triangle));
-                    //Try at least three points before concluding that the ray hit the boundary again
-
-                    previous = getClosestIntersection({previous.triangle});
-                    this->intersections.emplace_back(previous);
+                    } while (!mesh.isBoundary(previous.edge));
 
                 } catch (const std::logic_error&){
                     throw std::logic_error("The ray missed the target!");

@@ -7,8 +7,10 @@ raytracer::geometry::Mesh::Mesh(const std::string &filename, double tolerance)
 raytracer::geometry::Mesh::Mesh(std::vector<raytracer::geometry::Triangle> triangles, double tolerance) :
         triangles(std::move(triangles)), tolerance(tolerance)
 {
-    annotateTriangles();
-    generateAdjacencyList();
+    this->annotateTriangles();
+    this->annotateEdges();
+    this->generateAdjacencyList();
+    this->generateBoundaryEdgesList();
 }
 
 std::vector<raytracer::geometry::Triangle> raytracer::geometry::Mesh::getBoundary() const {
@@ -17,6 +19,10 @@ std::vector<raytracer::geometry::Triangle> raytracer::geometry::Mesh::getBoundar
     std::copy_if(this->triangles.begin(), this->triangles.end(), std::back_inserter(result),
                  [this](Triangle triangle){return this->isOnBoundary(triangle);});
     return result;
+}
+
+bool raytracer::geometry::Mesh::isOnBoundary(const Triangle &triangle) const {
+    return adjacencyList.getAdjacent(triangle.id).size() < 3;
 }
 
 std::vector<raytracer::geometry::Triangle>
@@ -30,8 +36,8 @@ raytracer::geometry::Mesh::getAdjacent(const raytracer::geometry::Triangle &tria
     return result;
 }
 
-bool raytracer::geometry::Mesh::isOnBoundary(const raytracer::geometry::Triangle &triangle) const {
-    return adjacencyList.getAdjacent(triangle.id).size() < 3;
+bool raytracer::geometry::Mesh::isBoundary(const Edge &edge) const {
+    return this->boundaryEges.count(edge.id) > 0;
 }
 
 const raytracer::geometry::Triangle &raytracer::geometry::Mesh::operator[](const int index) const {
@@ -108,17 +114,12 @@ bool raytracer::geometry::Mesh::str_contains(const std::string &text, const std:
     return text.find(toFind) != std::string::npos;
 }
 
+
 std::vector<raytracer::geometry::Point> raytracer::geometry::Mesh::getAllPoints() const {
     std::vector<Point> points;
     for (auto& triangle : this->triangles){
         for (auto& trianglePoint : triangle.getPoints()){
-            bool contains = false;
-            for (auto& point : points){
-                if (trianglePoint.isEqual(point, this->tolerance)){
-                    contains = true;
-                }
-            }
-            if (!contains) points.emplace_back(trianglePoint);
+            if (!this->contains(points, trianglePoint)) points.emplace_back(trianglePoint);
         }
     }
     return points;
@@ -163,3 +164,59 @@ void raytracer::geometry::Mesh::saveToJson(const std::string &filename) const {
     std::ofstream file(filename + ".json");
     file << formatter::getObjectRepresentation(jsonObject);
 }
+
+void raytracer::geometry::Mesh::annotateEdges() {
+    auto edges = this->getAllEdges();
+    for (auto& triangle : this->triangles){
+        for (auto& triangleEdge : triangle.edges){
+            for (size_t i = 0; i < edges.size(); ++i){
+                const auto& referenceEdge = edges[i];
+                if (referenceEdge.isEqual(triangleEdge, this->tolerance)){
+                    triangleEdge.id = i;
+                }
+            }
+        }
+    }
+}
+
+std::vector<raytracer::geometry::Edge> raytracer::geometry::Mesh::getAllEdges() const {
+    std::vector<Edge> edges;
+    for (auto& triangle : triangles){
+        for (auto& edge : triangle.edges){
+            if (!this->contains(edges, edge)) edges.emplace_back(edge);
+        }
+    }
+    return edges;
+}
+
+template <typename Element>
+bool raytracer::geometry::Mesh::contains(const std::vector<Element>& array, const Element &element) const {
+    bool contains = false;
+    for (const auto& referenceElement : array){
+        if (referenceElement.isEqual(element, this->tolerance)){
+            return true;
+        }
+    }
+    return contains;
+}
+
+void raytracer::geometry::Mesh::generateBoundaryEdgesList() {
+    auto allEdges = this->getAllEdges();
+    std::unordered_set<size_t> indexes;
+    indexes.reserve(allEdges.size());
+    std::for_each(allEdges.begin(), allEdges.end(), [&](const Edge& edge){indexes.insert(edge.id);});
+    std::unordered_set<size_t> visitedIndexes;
+
+    for (auto& triangle : this->triangles){
+        for (auto& edge : triangle.edges){
+            if (visitedIndexes.count(edge.id) > 0){
+                indexes.erase(edge.id);
+            } else {
+                visitedIndexes.emplace(edge.id);
+            }
+        }
+    }
+    this->boundaryEges = indexes;
+}
+
+

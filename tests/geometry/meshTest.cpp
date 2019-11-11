@@ -29,8 +29,12 @@ public:
 
 TEST_F(initialized_mesh, has_proper_boundary) {
     auto boundary = mesh.getBoundary();
-
     ASSERT_THAT(boundary, SizeIs(6));
+}
+
+TEST_F(initialized_mesh, could_be_checked_for_boundary_edge){
+    auto& edge = mesh.getBoundary().front().edges.front();
+    ASSERT_THAT(mesh.isBoundary(edge), Eq(true));
 }
 
 TEST_F(initialized_mesh, entries_are_adjacent) {
