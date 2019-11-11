@@ -50,7 +50,7 @@ namespace raytracer {
                     do {
                         previous = findNext(previous, mesh, getDirection);
                         intersections.emplace_back(previous);
-                    } while (intersections.size() < 2 || !mesh.isOnBoundary(previous.triangle));
+                    } while (intersections.size() < 4 || !mesh.isOnBoundary(previous.triangle));
                     //Try at least three points before concluding that the ray hit the boundary again
 
                     previous = getClosestIntersection({previous.triangle});
