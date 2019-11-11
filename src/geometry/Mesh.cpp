@@ -90,6 +90,9 @@ raytracer::geometry::Point raytracer::geometry::Mesh::pointFromString(const std:
 std::vector<raytracer::geometry::Triangle> raytracer::geometry::Mesh::parseSTL(const std::string &filename) const {
     std::vector<Triangle> _triangles;
     std::ifstream file(filename);
+
+    if (!file.is_open()) std::logic_error("Failed to open mesh file!");
+
     std::string line;
     std::vector<Point> points;
     bool inside_loop = false;
