@@ -20,7 +20,6 @@ namespace raytracer {
 
             std::vector<Triangle> getBoundary() const;
             std::vector<Triangle> getAdjacent(const Triangle& triangle) const;
-            bool isBoundary(const Edge &edge) const;
             size_t getFacesCount();
             void saveToJson(const std::string& filename) const;
 

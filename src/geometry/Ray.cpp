@@ -8,14 +8,14 @@ raytracer::geometry::Point raytracer::geometry::Ray::getLastPoint() const {
     return intersections.empty() ? startPoint : intersections.back().point;
 }
 
-raytracer::geometry::Intersection
+std::vector<raytracer::geometry::Intersection>
 raytracer::geometry::Ray::getClosestIntersection(const std::vector<raytracer::geometry::Triangle> &triangles) const {
     std::vector<Intersection> _intersections;
     std::for_each(triangles.begin(), triangles.end(), [&](const Triangle &triangle) {
         auto points = this->getTriangleIntersections(triangle);
         _intersections.insert(_intersections.end(), points.begin(), points.end());
     });
-    return getClosestIntersection(this->getLastPoint(), _intersections);
+    return getClosestPoint(this->getLastPoint(), _intersections);
 }
 
 std::vector<raytracer::geometry::Intersection>
@@ -38,12 +38,10 @@ raytracer::geometry::Ray::getTriangleIntersections(const raytracer::geometry::Tr
     return _intersections;
 }
 
-raytracer::geometry::Intersection
-raytracer::geometry::Ray::getClosestIntersection(const raytracer::geometry::Point &point,
-                                                 const std::vector<raytracer::geometry::Intersection> &_intersections) const {
-    if (_intersections.empty())
-        throw std::logic_error("There must be points to choose from!");
-
+std::vector<raytracer::geometry::Intersection>
+raytracer::geometry::Ray::getClosestPoint(const raytracer::geometry::Point &point,
+                                          const std::vector<raytracer::geometry::Intersection> &_intersections) const {
+    if (_intersections.empty()) return {};
     auto closestIntersection = _intersections[0];
     double distance = std::numeric_limits<double>::infinity();
     std::for_each(_intersections.begin(), _intersections.end(), [&](const Intersection &_intersection) {
@@ -53,7 +51,7 @@ raytracer::geometry::Ray::getClosestIntersection(const raytracer::geometry::Poin
             closestIntersection = _intersection;
         }
     });
-    return closestIntersection;
+    return {closestIntersection};
 }
 
 raytracer::geometry::Vector raytracer::geometry::Ray::getNormal(const raytracer::geometry::Vector &vector) const {

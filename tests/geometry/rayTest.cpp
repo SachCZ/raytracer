@@ -40,7 +40,7 @@ TEST_F(initialized_ray, has_last_point) {
 
 TEST_F(initialized_ray, can_deal_with_parallel_intersection){
     Triangle triangle({Point(5, 8), Point(4, 6), Point(0, 0)});
-    auto point = ray.getClosestIntersection({triangle}).point;
+    auto point = ray.getClosestIntersection({triangle})[0].point;
     EXPECT_THAT(point.x, DoubleEq(4));
     EXPECT_THAT(point.y, DoubleEq(6));
 }
@@ -55,7 +55,7 @@ public:
 TEST_F(two_triangles, are_intersected_by_ray){
     Ray ray{Point(1, 0), Vector(1, 1)};
 
-    auto intersection = ray.getClosestIntersection(triangles);
+    auto intersection = ray.getClosestIntersection(triangles)[0];
 
     EXPECT_THAT(intersection.point.x, DoubleEq(1.5));
     ASSERT_THAT(intersection.point.y, DoubleEq(0.5));
@@ -64,7 +64,7 @@ TEST_F(two_triangles, are_intersected_by_ray){
 TEST_F(two_triangles, are_intersected_by_ray_for_sure){
     Ray ray{Point(1, 0), Vector(0, -1)};
 
-    auto intersection = ray.getClosestIntersection(triangles);
+    auto intersection = ray.getClosestIntersection(triangles)[0];
 
     EXPECT_THAT(intersection.point.x, DoubleEq(1));
     ASSERT_THAT(intersection.point.y, DoubleEq(-0.5));

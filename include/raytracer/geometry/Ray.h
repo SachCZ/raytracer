@@ -31,11 +31,11 @@ namespace raytracer {
 
             Point getLastPoint() const;
 
-            Intersection getClosestIntersection(const std::vector<Triangle> &triangles) const;
+            std::vector<Intersection> getClosestIntersection(const std::vector<Triangle> &triangles) const;
 
             template <typename Function>
 
-            Intersection findNext(const Intersection& previous, const Mesh &mesh, Function getDirection){
+            std::vector<Intersection> findNext(const Intersection& previous, const Mesh &mesh, Function getDirection){
                 this->lastDirection = getDirection(previous);
                 auto adjacent = mesh.getAdjacent(previous.triangle);
                 adjacent.emplace_back(previous.triangle);
@@ -44,17 +44,15 @@ namespace raytracer {
 
             template <typename Function>
             void traceThrough(const Mesh &mesh, Function getDirection) {
-                try {
-                    auto previous = getClosestIntersection(mesh.getBoundary());
-                    this->intersections.emplace_back(previous);
+                auto previous = getClosestIntersection(mesh.getBoundary());
 
-                    do {
-                        previous = findNext(previous, mesh, getDirection);
-                        intersections.emplace_back(previous);
-                    } while (!mesh.isBoundary(previous.edge));
+                while(!previous.empty()) {
+                    intersections.emplace_back(previous[0]);
+                    previous = this->findNext(previous[0], mesh, getDirection);
+                }
 
-                } catch (const std::logic_error&){
-                    throw std::logic_error("The ray missed the target!");
+                if (this->intersections.empty()){
+                    throw std::logic_error("No intersections found! Did you miss the boundary?");
                 }
             }
 
@@ -69,7 +67,8 @@ namespace raytracer {
         private:
             std::vector<Intersection> intersections;
 
-            Intersection getClosestIntersection(const Point &point, const std::vector<Intersection> &_intersections) const;
+            std::vector<Intersection> getClosestPoint(const Point &point,
+                                                      const std::vector<Intersection> &_intersections) const;
 
             Vector getNormal(const Vector &vector) const;
 

@@ -10,11 +10,6 @@ raytracer::geometry::Mesh::Mesh(std::vector<raytracer::geometry::Triangle> trian
         triangles(std::move(triangles))
 {
     this->annotateTriangles();
-
-    this->edges = this->getAllEdges();
-    this->annotateEdges();
-    this->boundaryEdges = this->getBoundaryEdgesIndexes();
-
     this->generateAdjacencyList();
 }
 
@@ -39,10 +34,6 @@ raytracer::geometry::Mesh::getAdjacent(const raytracer::geometry::Triangle &tria
         result.emplace_back(this->triangles[i]);
     }
     return result;
-}
-
-bool raytracer::geometry::Mesh::isBoundary(const Edge &edge) const {
-    return std::find(this->boundaryEdges.begin(), this->boundaryEdges.end(), edge.id) != this->boundaryEdges.end();
 }
 
 const raytracer::geometry::Triangle &raytracer::geometry::Mesh::operator[](const int index) const {
@@ -170,54 +161,3 @@ void raytracer::geometry::Mesh::saveToJson(const std::string &filename) const {
     std::ofstream file(filename + ".json");
     file << formatter::getObjectRepresentation(jsonObject);
 }
-
-void raytracer::geometry::Mesh::annotateEdges() {
-    std::vector<Edge> uniqueEdges;
-    std::for_each(this->edges.begin(), this->edges.end(), [&uniqueEdges](const Edge* edge) {
-        if (std::find(uniqueEdges.begin(), uniqueEdges.end(), *edge) == uniqueEdges.end()){
-            uniqueEdges.emplace_back(*edge);
-        }
-    });
-    std::for_each(uniqueEdges.begin(), uniqueEdges.end(), [n=0](Edge& edge) mutable {edge.id=n++;});
-    std::for_each(this->edges.begin(), this->edges.end(), [uniqueEdges](Edge* edge) mutable {
-        auto it = std::find(uniqueEdges.begin(), uniqueEdges.end(), *edge);
-        edge->id = it->id;
-    });
-}
-
-template <typename Function>
-void raytracer::geometry::Mesh::iterateTriangleEdges(Function function){
-    for (auto& triangle : this->triangles){
-        for (auto& edge : triangle.edges){
-            function(edge);
-        }
-    }
-}
-
-std::vector<raytracer::geometry::Edge*> raytracer::geometry::Mesh::getAllEdges() {
-    std::vector<Edge*> result;
-    this->iterateTriangleEdges([&result](Edge& edge){
-        result.emplace_back(&edge);
-    });
-    return result;
-}
-
-std::vector<size_t> raytracer::geometry::Mesh::getBoundaryEdgesIndexes() {
-    std::vector<size_t> indexes(this->edges.size());
-    std::transform(this->edges.begin(), this->edges.end(), indexes.begin(), [](const Edge* edge){return edge->id;});
-    return this->findUniques(indexes);
-}
-
-template <typename Type>
-std::vector<Type> raytracer::geometry::Mesh::findUniques(std::vector<Type> array) {
-    std::vector<Type> result;
-    std::sort(array.begin(), array.end());
-    for (size_t i = 1; i < array.size() - 1; ++i){
-        if (array[i-1] != array[i] && array[i] != array[i+1]){
-            result.emplace_back(array[i]);
-        }
-    }
-    return result;
-}
-
-
