@@ -30,6 +30,6 @@ TEST_F(initialized_edge, has_proper_end_point) {
 
 TEST_F(initialized_edge, is_equal_to_other_edge_if_points_are_equal){
     Edge otherEdge(endPoint, startPoint);
-    ASSERT_THAT(edge.isEqual(otherEdge, std::numeric_limits<double>::epsilon()), Eq(true));
+    ASSERT_THAT(edge == otherEdge, Eq(true));
 }
 

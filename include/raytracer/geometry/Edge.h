@@ -10,9 +10,9 @@ namespace raytracer {
             Edge(Point startPoint, Point endPoint);
             Edge() = default;
 
-            bool isEqual(const Edge& anotherEdge, double tolerance) const {
-                return this->pointsEqual(anotherEdge.startPoint, anotherEdge.endPoint, tolerance) ||
-                this->pointsEqual(anotherEdge.endPoint, anotherEdge.startPoint, tolerance);
+            bool operator ==(const Edge& anotherEdge) const {
+                return this->pointsEqual(anotherEdge.startPoint, anotherEdge.endPoint) ||
+                this->pointsEqual(anotherEdge.endPoint, anotherEdge.startPoint);
             }
 
             Point startPoint;
@@ -21,9 +21,8 @@ namespace raytracer {
         private:
             size_t id;
 
-            bool pointsEqual(const Point& _startPoint, const Point& _endPoint, double tolerance) const {
-                return _startPoint.isEqual(this->startPoint, tolerance) &&
-                _endPoint.isEqual(this->endPoint, tolerance);
+            bool pointsEqual(const Point& _startPoint, const Point& _endPoint) const {
+                return _startPoint == this->startPoint && _endPoint == this->endPoint;
             }
 
             friend class Mesh;

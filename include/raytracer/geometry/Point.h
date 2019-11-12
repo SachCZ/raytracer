@@ -3,6 +3,7 @@
 
 #include "Vector.h"
 #include <cmath>
+#include "Constants.h"
 
 namespace raytracer {
     namespace geometry {
@@ -15,9 +16,9 @@ namespace raytracer {
             double x;
             double y;
 
-            bool isEqual(const Point& anotherPoint, double tolerance) const {
-                return std::abs(this->x - anotherPoint.x) < tolerance &&
-                       std::abs(this->y - anotherPoint.y) < tolerance;
+            bool operator==(const Point& anotherPoint) const {
+                return std::abs(this->x - anotherPoint.x) < constants::epsilon &&
+                       std::abs(this->y - anotherPoint.y) < constants::epsilon;
             }
 
             friend const Vector operator - (Point A, Point B);

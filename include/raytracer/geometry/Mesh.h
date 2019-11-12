@@ -8,15 +8,15 @@
 #include <cmath>
 #include <fstream>
 #include <sstream>
-#include <unordered_set>
 #include <vector>
+#include <set>
 
 namespace raytracer {
     namespace geometry {
         class Mesh {
         public:
-            explicit Mesh(const std::string& filename, double tolerance=std::numeric_limits<double>::epsilon());
-            explicit Mesh(std::vector<Triangle>  triangles, double tolerance=std::numeric_limits<double>::epsilon());
+            explicit Mesh(const std::string& filename);
+            explicit Mesh(std::vector<Triangle>  triangles);
 
             std::vector<Triangle> getBoundary() const;
             std::vector<Triangle> getAdjacent(const Triangle& triangle) const;
@@ -28,9 +28,9 @@ namespace raytracer {
 
         private:
             std::vector<Triangle> triangles;
+            std::vector<Edge*> edges;
             utility::AdjacencyList adjacencyList;
-            std::unordered_set<size_t> boundaryEges;
-            double tolerance;
+            std::vector<size_t> boundaryEdges;
 
             void annotateTriangles();
             void generateAdjacencyList();
@@ -42,18 +42,21 @@ namespace raytracer {
 
             std::vector<Point> getAllPoints() const;
 
-            std::vector<std::unordered_set<size_t>> getTrianglesAsIndexes() const;
+            std::vector<std::set<size_t>> getTrianglesAsIndexes() const;
 
             bool isOnBoundary(const Triangle &triangle) const;
 
             void annotateEdges();
 
-            std::vector<Edge> getAllEdges() const;
+            std::vector<Edge*> getAllEdges();
 
-            template <typename Element>
-            bool contains(const std::vector<Element>& array, const Element &element) const;
+            std::vector<size_t> getBoundaryEdgesIndexes();
 
-            void generateBoundaryEdgesList();
+            template<typename Function>
+            void iterateTriangleEdges(Function function);
+
+            template<typename Type>
+            std::vector<Type> findUniques(std::vector<Type> array);
         };
     }
 }
