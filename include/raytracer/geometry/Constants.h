@@ -5,8 +5,15 @@
 
 namespace raytracer {
     namespace geometry {
+
+        /**
+         * Namespace encapsulating geometry constants
+         */
         namespace constants {
-            constexpr double epsilon = std::numeric_limits<double>::epsilon();
+            /**
+             * Tolerance up to which two doubles are considered equal
+             */
+            constexpr auto epsilon = std::numeric_limits<double>::epsilon();
         }
     }
 }

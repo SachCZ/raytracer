@@ -1,14 +1,17 @@
+#include <algorithm>
+#include <fstream>
+#include <sstream>
+
 #include "Mesh.h"
-#include <set>
-#include <vector>
+#include "raytracer/utility/JsonFormatter.h"
+
+raytracer::impl::MeshSerializer raytracer::geometry::Mesh::serializer;
 
 raytracer::geometry::Mesh::Mesh(const std::string &filename)
-        : Mesh(parseSTL(filename))
-{}
+        : Mesh(serializer.parseSTL(filename)) {}
 
 raytracer::geometry::Mesh::Mesh(std::vector<raytracer::geometry::Triangle> triangles) :
-        triangles(std::move(triangles))
-{
+        triangles(std::move(triangles)) {
     this->annotateTriangles();
     this->generateAdjacencyList();
 }
@@ -17,7 +20,7 @@ std::vector<raytracer::geometry::Triangle> raytracer::geometry::Mesh::getBoundar
     std::vector<Triangle> result;
 
     std::copy_if(this->triangles.begin(), this->triangles.end(), std::back_inserter(result),
-                 [this](Triangle triangle){return this->isOnBoundary(triangle);});
+                 [this](Triangle triangle) { return this->isOnBoundary(triangle); });
     return result;
 }
 
@@ -46,15 +49,15 @@ size_t raytracer::geometry::Mesh::getFacesCount() {
 
 void raytracer::geometry::Mesh::annotateTriangles() {
     int i = 0;
-    for (auto& triangle : this->triangles){
+    for (auto &triangle : this->triangles) {
         triangle.id = i++;
     }
 }
 
 void raytracer::geometry::Mesh::generateAdjacencyList() {
-    for (auto& referenceTriangle : triangles){
-        for (auto& triangle : triangles){
-            if (isAdjacent(triangle, referenceTriangle)){
+    for (auto &referenceTriangle : triangles) {
+        for (auto &triangle : triangles) {
+            if (isAdjacent(triangle, referenceTriangle)) {
                 adjacencyList.addEdge(referenceTriangle.id, triangle.id);
             }
         }
@@ -65,60 +68,19 @@ bool raytracer::geometry::Mesh::isAdjacent(const raytracer::geometry::Triangle &
                                            const raytracer::geometry::Triangle &triangleB) const {
     if (triangleA.id == triangleB.id) return false;
     int matches = 0;
-    for (auto& referencePoint : triangleA.points){
-        for (auto& point : triangleB.points){
+    for (auto &referencePoint : triangleA.points) {
+        for (auto &point : triangleB.points) {
             if (referencePoint == point) ++matches;
         }
     }
     return matches == 2;
 }
 
-raytracer::geometry::Point raytracer::geometry::Mesh::pointFromString(const std::string &pointRepresentation) const {
-    double x, y;
-    std::string _;
-    std::stringstream stream(pointRepresentation);
-    stream >> _;
-    stream >> x;
-    stream >> y;
-    return {x, y};
-}
-
-std::vector<raytracer::geometry::Triangle> raytracer::geometry::Mesh::parseSTL(const std::string &filename) const {
-    std::vector<Triangle> _triangles;
-    std::ifstream file(filename);
-
-    if (!file.is_open()) throw std::logic_error("Failed to open mesh file!");
-
-    std::string line;
-    std::vector<Point> points;
-    bool inside_loop = false;
-    points.reserve(3);
-    while(std::getline(file, line)){
-        if (str_contains(line, "loop")){
-            inside_loop = true;
-        }
-        if (inside_loop && str_contains(line, "vertex")) {
-            points.emplace_back(pointFromString(line));
-        }
-        if (str_contains(line, "endloop")) {
-            _triangles.emplace_back(Triangle(points));
-            points.clear();
-            inside_loop = false;
-        }
-    }
-    return _triangles;
-}
-
-bool raytracer::geometry::Mesh::str_contains(const std::string &text, const std::string &toFind) const {
-    return text.find(toFind) != std::string::npos;
-}
-
-
 std::vector<raytracer::geometry::Point> raytracer::geometry::Mesh::getAllPoints() const {
     std::vector<Point> points;
-    for (auto& triangle : this->triangles){
-        for (auto& point : triangle.getPoints()){
-            if (std::find(points.begin(), points.end(), point) == points.end()){
+    for (auto &triangle : this->triangles) {
+        for (auto &point : triangle.getPoints()) {
+            if (std::find(points.begin(), points.end(), point) == points.end()) {
                 points.emplace_back(point);
             }
         }
@@ -129,9 +91,9 @@ std::vector<raytracer::geometry::Point> raytracer::geometry::Mesh::getAllPoints(
 std::vector<std::set<size_t>> raytracer::geometry::Mesh::getTrianglesAsIndexes() const {
     std::vector<Point> points = this->getAllPoints();
     std::vector<std::set<size_t>> trianglesAsIndexes;
-    for (auto& triangle : this->triangles){
+    for (auto &triangle : this->triangles) {
         std::set<size_t> indexes;
-        for (auto& point : triangle.getPoints()){
+        for (auto &point : triangle.getPoints()) {
             auto it = std::find(points.begin(), points.end(), point);
             indexes.emplace(std::distance(points.begin(), it));
         }
@@ -141,23 +103,71 @@ std::vector<std::set<size_t>> raytracer::geometry::Mesh::getTrianglesAsIndexes()
 }
 
 void raytracer::geometry::Mesh::saveToJson(const std::string &filename) const {
+    serializer.saveToJson(*this, filename);
+}
+
+std::vector<raytracer::geometry::Triangle>
+raytracer::impl::MeshSerializer::parseSTL(const std::string &filename) const {
+    std::vector<geometry::Triangle> _triangles;
+    std::ifstream file(filename);
+
+    if (!file.is_open()) throw std::logic_error("Failed to open mesh file!");
+
+    std::string line;
+    std::vector<geometry::Point> points;
+    bool inside_loop = false;
+    points.reserve(3);
+    while (std::getline(file, line)) {
+        if (str_contains(line, "loop")) {
+            inside_loop = true;
+        }
+        if (inside_loop && str_contains(line, "vertex")) {
+            points.emplace_back(pointFromString(line));
+        }
+        if (str_contains(line, "endloop")) {
+            _triangles.emplace_back(geometry::Triangle(points));
+            points.clear();
+            inside_loop = false;
+        }
+    }
+    return _triangles;
+}
+
+void raytracer::impl::MeshSerializer::saveToJson(const geometry::Mesh &mesh, const std::string &filename) const {
     using formatter = utility::JsonFormatter;
 
-    auto points = getAllPoints();
-    auto trianglesAsIndexes = getTrianglesAsIndexes();
+    auto points = mesh.getAllPoints();
+    auto trianglesAsIndexes = mesh.getTrianglesAsIndexes();
 
-    auto pointsJson = formatter::getSequenceRepresentation(points, [](const Point& point){
+    auto pointsJson = formatter::getSequenceRepresentation(points, [](const geometry::Point &point) {
         std::vector<double> coordinates = {point.x, point.y};
-        return formatter::getSequenceRepresentation(coordinates, [](double x){return x;});
+        return formatter::getSequenceRepresentation(coordinates, [](double x) { return x; });
     });
 
-    auto trianglesJson = formatter::getSequenceRepresentation(trianglesAsIndexes,
-                                                              [](const std::set<size_t>& indexes){
-                                                                  return formatter::getSequenceRepresentation(indexes, [](int i){return i;});
-                                                              });
+    auto trianglesJson = formatter::getSequenceRepresentation(
+            trianglesAsIndexes,
+            [](const std::set<size_t> &indexes) {
+                return formatter::getSequenceRepresentation(indexes, [](int i) { return i; });
+            });
 
-    std::map<std::string, std::string> jsonObject = {{"points", pointsJson}, {"triangles", trianglesJson}};
+    std::map<std::string, std::string> jsonObject = {{"points",    pointsJson},
+                                                     {"triangles", trianglesJson}};
 
     std::ofstream file(filename + ".json");
     file << formatter::getObjectRepresentation(jsonObject);
+}
+
+bool raytracer::impl::MeshSerializer::str_contains(const std::string &text, const std::string &toFind) const {
+    return text.find(toFind) != std::string::npos;
+}
+
+raytracer::geometry::Point
+raytracer::impl::MeshSerializer::pointFromString(const std::string &pointRepresentation) const {
+    double x, y;
+    std::string _;
+    std::stringstream stream(pointRepresentation);
+    stream >> _;
+    stream >> x;
+    stream >> y;
+    return {x, y};
 }

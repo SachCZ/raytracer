@@ -32,12 +32,6 @@ TEST_F(initialized_ray, has_one_specific_point) {
     ASSERT_THAT(point.y, DoubleEq(4));
 }
 
-TEST_F(initialized_ray, has_last_point) {
-    auto point = ray.getLastPoint();
-    EXPECT_THAT(point.x, DoubleEq(3));
-    ASSERT_THAT(point.y, DoubleEq(4));
-}
-
 TEST_F(initialized_ray, can_deal_with_parallel_intersection){
     Triangle triangle({Point(5, 8), Point(4, 6), Point(0, 0)});
     auto point = ray.getClosestIntersection({triangle})[0].point;

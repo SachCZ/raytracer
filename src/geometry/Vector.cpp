@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "Vector.h"
 
 raytracer::geometry::Vector::Vector(double x, double y) : x(x), y(y) {}
@@ -23,4 +25,8 @@ raytracer::geometry::operator-(raytracer::geometry::Vector a, raytracer::geometr
 
 double raytracer::geometry::operator*(raytracer::geometry::Vector a, raytracer::geometry::Vector b) {
     return a.x * b.x + a.y * b.y;
+}
+
+double raytracer::geometry::Vector::getNorm() const {
+    return std::sqrt(x*x + y*y);
 }

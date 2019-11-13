@@ -1,4 +1,8 @@
+#include <algorithm>
+#include <fstream>
+
 #include "Ray.h"
+#include "raytracer/utility/JsonFormatter.h"
 
 raytracer::geometry::Ray::Ray(raytracer::geometry::Point startPoint, raytracer::geometry::Vector direction)
         : startPoint(startPoint), lastDirection(direction) {
