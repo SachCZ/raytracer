@@ -106,6 +106,10 @@ void raytracer::geometry::Mesh::saveToJson(const std::string &filename) const {
     serializer.saveToJson(*this, filename);
 }
 
+const std::vector<raytracer::geometry::Triangle> raytracer::geometry::Mesh::getTriangles() {
+    return this->triangles;
+}
+
 std::vector<raytracer::geometry::Triangle>
 raytracer::impl::MeshSerializer::parseSTL(const std::string &filename) const {
     std::vector<geometry::Triangle> _triangles;

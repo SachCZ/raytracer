@@ -1,8 +1,6 @@
 #ifndef RAYTRACER_POINT_H
 #define RAYTRACER_POINT_H
 
-#include <cmath>
-
 #include "Vector.h"
 
 namespace raytracer {

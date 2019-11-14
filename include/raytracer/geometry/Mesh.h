@@ -99,6 +99,12 @@ namespace raytracer {
              */
             const Triangle &operator[](int index) const;
 
+            /**
+             * Get the list of all triangles (as a const reference)
+             * @return list of triangles
+             */
+            const std::vector<Triangle> getTriangles();
+
         private:
             std::vector<Triangle> triangles;
             utility::AdjacencyList adjacencyList;

@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "Point.h"
 #include "Constants.h"
 

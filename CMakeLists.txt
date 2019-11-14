@@ -13,7 +13,8 @@ add_subdirectory(src/utility)
 option(BUILD_TESTS "Build unit tests" OFF)
 
 if(BUILD_TESTS)
-    add_subdirectory(tests)
+    add_subdirectory(tests/unit)
+    add_subdirectory(tests/profile)
 endif(BUILD_TESTS)
 
 add_library(raytracer src/raytracer.cpp)
