@@ -88,14 +88,14 @@ std::vector<raytracer::geometry::Point> raytracer::geometry::Mesh::getAllPoints(
     return points;
 }
 
-std::vector<std::set<size_t>> raytracer::geometry::Mesh::getQuadsAsIndexes() const {
+std::vector<std::vector<size_t>> raytracer::geometry::Mesh::getQuadsAsIndexes() const {
     std::vector<Point> points = this->getAllPoints();
-    std::vector<std::set<size_t>> quadsAsIndexes;
+    std::vector<std::vector<size_t>> quadsAsIndexes;
     for (auto &quad : this->quads) { //TODO separate this
-        std::set<size_t> indexes;
+        std::vector<size_t> indexes;
         for (auto &point : quad.getPoints()) {
             auto it = std::find(points.begin(), points.end(), point);
-            indexes.emplace(std::distance(points.begin(), it));
+            indexes.emplace_back(std::distance(points.begin(), it));
         }
         quadsAsIndexes.emplace_back(indexes);
     }
@@ -151,7 +151,7 @@ void raytracer::impl::MeshSerializer::saveToJson(const geometry::Mesh &mesh, con
 
     auto quadsJson = formatter::getSequenceRepresentation(
             quadsAsIndexes,
-            [](const std::set<size_t> &indexes) {
+            [](const std::vector<size_t> &indexes) {
                 return formatter::getSequenceRepresentation(indexes, [](int i) { return i; });
             });
 

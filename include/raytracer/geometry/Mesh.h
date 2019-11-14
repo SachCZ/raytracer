@@ -125,7 +125,7 @@ namespace raytracer {
 
             std::vector<Point> getAllPoints() const;
 
-            std::vector<std::set<size_t>> getQuadsAsIndexes() const;
+            std::vector<std::vector<size_t>> getQuadsAsIndexes() const;
 
             bool isOnBoundary(const Quadrilateral &triangle) const;
 
