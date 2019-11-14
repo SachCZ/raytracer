@@ -3,7 +3,7 @@
 
 #include "Point.h"
 #include "Edge.h"
-#include "Triangle.h"
+#include "Quadrilateral.h"
 #include "Mesh.h"
 
 namespace raytracer {
@@ -14,7 +14,7 @@ namespace raytracer {
         struct Intersection {
             Point point{};
             Edge edge{};
-            Triangle triangle{};
+            Quadrilateral triangle{};
         };
 
         /**
@@ -48,7 +48,7 @@ namespace raytracer {
              * @return single intersection
              */
             std::vector<Intersection>
-            getClosestIntersection(const std::vector<Triangle> &triangles) const; //TODO make this private
+            getClosestIntersection(const std::vector<Quadrilateral> &triangles) const; //TODO make this private
 
             /**
              * Given a mesh find all the intersections based on getDirection.
@@ -110,7 +110,7 @@ namespace raytracer {
 
             Point getIntersectionPoint(const Edge &edge) const;
 
-            std::vector<Intersection> getTriangleIntersections(const Triangle &triangle) const;
+            std::vector<Intersection> getTriangleIntersections(const Quadrilateral &triangle) const;
 
         };
     }
