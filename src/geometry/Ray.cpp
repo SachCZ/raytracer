@@ -13,18 +13,18 @@ raytracer::geometry::Point raytracer::geometry::Ray::getLastPoint() const {
 }
 
 std::vector<raytracer::geometry::Intersection>
-raytracer::geometry::Ray::getClosestIntersection(const std::vector<raytracer::geometry::Quadrilateral> &triangles) const {
+raytracer::geometry::Ray::getClosestIntersection(const std::vector<raytracer::geometry::Quadrilateral> &quads) const {
     std::vector<Intersection> _intersections;
-    std::for_each(triangles.begin(), triangles.end(), [&](const Quadrilateral &triangle) {
-        auto points = this->getTriangleIntersections(triangle);
+    std::for_each(quads.begin(), quads.end(), [&](const Quadrilateral &quad) {
+        auto points = this->getTriangleIntersections(quad);
         _intersections.insert(_intersections.end(), points.begin(), points.end());
     });
     return getClosestPoint(this->getLastPoint(), _intersections);
 }
 
 std::vector<raytracer::geometry::Intersection>
-raytracer::geometry::Ray::getTriangleIntersections(const raytracer::geometry::Quadrilateral &triangle) const {
-    const auto &edges = triangle.edges;
+raytracer::geometry::Ray::getTriangleIntersections(const raytracer::geometry::Quadrilateral &quad) const {
+    const auto &edges = quad.edges;
     std::vector<Intersection> _intersections;
     std::for_each(
             edges.begin(),
@@ -34,7 +34,7 @@ raytracer::geometry::Ray::getTriangleIntersections(const raytracer::geometry::Qu
                     Intersection intersection{
                             this->getIntersectionPoint(edge),
                             edge,
-                            triangle
+                            quad
                     };
                     _intersections.emplace_back(intersection);
                 }

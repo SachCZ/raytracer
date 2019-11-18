@@ -53,22 +53,22 @@ namespace raytracer {
 
             /**
              * Returns quadrilaterals on boundary.
-             * Quadrilaterals is classified as being on boundary if it has two or less adjacent triangles.
-             * @return list of triangles on boundary
+             * Quadrilaterals is classified as being on boundary if it has three or less adjacent quadrilaterals.
+             * @return list of quads on boundary
              */
             std::vector<Quadrilateral> getBoundary() const;
 
             /**
              * Returns the adjacent quadrilaterals.
              * This will work only given a quadrilateral from the mesh (obtained for example by another getAdjacent call).
-             * @param quadrilateral whose adjacent triangles to get
-             * @return list of adjacent triangles
+             * @param quadrilateral whose adjacent quads to get
+             * @return list of adjacent quads
              */
             std::vector<Quadrilateral> getAdjacent(const Quadrilateral &quadrilateral) const;
 
             /**
-             * Returns the triangle count.
-             * @return number of triangles
+             * Returns the quad count.
+             * @return number of quads
              */
             size_t getFacesCount();
 
@@ -87,7 +87,7 @@ namespace raytracer {
              * Subscript operator.
              * Use it to access the i-th quadrilateral of the mesh
              * @param index index to access
-             * @return a triangle
+             * @return a quad
              */
             const Quadrilateral &operator[](int index) const;
 
@@ -116,7 +116,7 @@ namespace raytracer {
 
             std::vector<std::vector<size_t>> getQuadsAsIndexes() const;
 
-            bool isOnBoundary(const Quadrilateral &triangle) const;
+            bool isOnBoundary(const Quadrilateral &quad) const;
 
             friend class impl::MeshSerializer;
 

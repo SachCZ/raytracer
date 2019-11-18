@@ -5,10 +5,10 @@ using Mesh = raytracer::geometry::Mesh;
 int main(int argc, char* argv[])
 {
     Mesh mesh("./mesh.stl");
-    auto triangles = mesh.getQuads();
+    auto points = mesh.getQuads();
 
     for (size_t i = 0; i < 1000; ++i){
-        Mesh newMesh(triangles);
+        Mesh newMesh(points);
     }
 
 }

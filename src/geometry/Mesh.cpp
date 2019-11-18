@@ -35,8 +35,8 @@ std::vector<raytracer::geometry::Quadrilateral> raytracer::geometry::Mesh::getBo
     return result;
 }
 
-bool raytracer::geometry::Mesh::isOnBoundary(const Quadrilateral &triangle) const {
-    return adjacencyList.getAdjacent(triangle.id).size() < 4;
+bool raytracer::geometry::Mesh::isOnBoundary(const Quadrilateral &quad) const {
+    return adjacencyList.getAdjacent(quad.id).size() < 4;
 }
 
 std::vector<raytracer::geometry::Quadrilateral>

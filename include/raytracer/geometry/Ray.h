@@ -41,14 +41,14 @@ namespace raytracer {
             Vector lastDirection; //TODO make this private
 
             /**
-             * Find the closest intersection with given triangles.
-             * This method finds all the intersections with given triangles and returns the one closest to the
+             * Find the closest intersection with given quads.
+             * This method finds all the intersections with given quads and returns the one closest to the
              * last point of the ray
-             * @param triangles
+             * @param quads
              * @return single intersection
              */
             std::vector<Intersection>
-            getClosestIntersection(const std::vector<Quadrilateral> &triangles) const; //TODO make this private
+            getClosestIntersection(const std::vector<Quadrilateral> &quads) const; //TODO make this private
 
             /**
              * Given a mesh find all the intersections based on getDirection.
@@ -110,7 +110,7 @@ namespace raytracer {
 
             Point getIntersectionPoint(const Edge &edge) const;
 
-            std::vector<Intersection> getTriangleIntersections(const Quadrilateral &triangle) const;
+            std::vector<Intersection> getTriangleIntersections(const Quadrilateral &quad) const;
 
         };
     }

@@ -69,6 +69,6 @@ public:
     Mesh mesh{"./geometry/mesh.vtk"};
 };
 
-TEST_F(mesh_from_file, has_correct_triangle_count) {
+TEST_F(mesh_from_file, has_correct_quad_count) {
     ASSERT_THAT(mesh.getFacesCount(), Eq(255));
 }
