@@ -112,7 +112,7 @@ namespace raytracer {
 
             bool isAdjacent(const Quadrilateral &quadA, const Quadrilateral &quadB) const;
 
-            std::vector<Point> getAllPoints() const;
+            std::vector<Point> getPoints() const;
 
             std::vector<std::vector<size_t>> getQuadsAsIndexes() const;
 

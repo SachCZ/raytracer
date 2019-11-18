@@ -87,11 +87,11 @@ bool raytracer::geometry::Mesh::isAdjacent(const raytracer::geometry::Quadrilate
     return matches == 2;
 }
 
-std::vector<raytracer::geometry::Point> raytracer::geometry::Mesh::getAllPoints() const {
+std::vector<raytracer::geometry::Point> raytracer::geometry::Mesh::getPoints() const {
     std::vector<Point> result;
-    std::transform(this->points.begin(), this->points.end(), result.begin(), [](const auto& point){
-        return Point(*point);
-    });
+    for (const auto& point : this->points){
+        result.emplace_back(*point);
+    }
     return result;
 }
 
@@ -156,7 +156,7 @@ raytracer::impl::MeshSerializer::parseVTK(const std::string &filename) const {
 void raytracer::impl::MeshSerializer::saveToJson(const geometry::Mesh &mesh, const std::string &filename) const {
     using formatter = utility::JsonFormatter;
 
-    auto points = mesh.getAllPoints();
+    auto points = mesh.getPoints();
     auto quadsAsIndexes = mesh.getQuadsAsIndexes();
 
     auto pointsJson = formatter::getSequenceRepresentation(points, [](const geometry::Point &point) {
