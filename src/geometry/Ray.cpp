@@ -65,15 +65,15 @@ raytracer::geometry::Vector raytracer::geometry::Ray::getNormal(const raytracer:
 double raytracer::geometry::Ray::getParamK(const raytracer::geometry::Edge &edge) const {
     auto normal = getNormal(this->lastDirection);
     const auto &P = this->getLastPoint();
-    const auto &A = edge.startPoint;
-    const auto &B = edge.endPoint;
+    const auto &A = *edge.startPoint;
+    const auto &B = *edge.endPoint;
 
     return (normal * (P - A)) / (normal * (B - A));
 }
 
 double raytracer::geometry::Ray::getParamT(const raytracer::geometry::Edge &edge) const {
-    const auto &A = edge.startPoint;
-    const auto &B = edge.endPoint;
+    const auto &A = *edge.startPoint;
+    const auto &B = *edge.endPoint;
     auto normal = getNormal(B - A);
     const auto &d = this->lastDirection;
     const auto &P = this->getLastPoint();
@@ -88,8 +88,8 @@ bool raytracer::geometry::Ray::isIntersecting(const raytracer::geometry::Edge &e
 }
 
 raytracer::geometry::Point raytracer::geometry::Ray::getIntersectionPoint(const raytracer::geometry::Edge &edge) const {
-    const auto &A = edge.startPoint;
-    const auto &B = edge.endPoint;
+    const auto &A = *edge.startPoint;
+    const auto &B = *edge.endPoint;
 
     auto k = this->getParamK(edge);
     return A + (k * (B - A));

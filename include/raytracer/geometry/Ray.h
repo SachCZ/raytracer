@@ -14,7 +14,7 @@ namespace raytracer {
         struct Intersection {
             Point point{};
             Edge edge{};
-            Quadrilateral triangle{};
+            Quadrilateral quadrilateral{};
         };
 
         /**
@@ -122,8 +122,8 @@ std::vector<raytracer::geometry::Intersection> raytracer::geometry::Ray::findNex
         const raytracer::geometry::Intersection &previous,
         const Mesh &mesh, Function getDirection) {
     this->lastDirection = getDirection(previous);
-    auto adjacent = mesh.getAdjacent(previous.triangle);
-    adjacent.emplace_back(previous.triangle);
+    auto adjacent = mesh.getAdjacent(previous.quadrilateral);
+    adjacent.emplace_back(previous.quadrilateral);
     return getClosestIntersection(adjacent);
 }
 

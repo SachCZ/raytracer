@@ -21,7 +21,7 @@ namespace raytracer {
              * Order matters and it is assumed counterclockwise from left bottom corner.
              * @param points list of three points
              */
-            explicit Quadrilateral(std::vector<raytracer::geometry::Point> points);
+            explicit Quadrilateral(std::vector<const raytracer::geometry::Point*> points);
 
             /**
              * Default constructor.
@@ -38,9 +38,8 @@ namespace raytracer {
              * Get the quadrilateral points.
              * @return list of points
              */
-            const std::vector<Point>& getPoints() const;
         private:
-            std::vector<Point> points;
+            std::vector<const Point*> points;
             int id{0};
 
             void recalculateEdges();

@@ -33,7 +33,8 @@ TEST_F(initialized_ray, has_one_specific_point) {
 }
 
 TEST_F(initialized_ray, can_deal_with_parallel_intersection){
-    Quad quad({Point(4, 4), Point(8, 4), Point(8, 8), Point(4, 8)});
+    std::vector<Point> points = {Point(4, 4), Point(8, 4), Point(8, 8), Point(4, 8)};
+    Quad quad({&points[0], &points[1], &points[2], &points[3]});
     auto point = ray.getClosestIntersection({quad})[0].point;
     EXPECT_THAT(point.x, DoubleEq(4));
     EXPECT_THAT(point.y, DoubleEq(6));
@@ -41,9 +42,28 @@ TEST_F(initialized_ray, can_deal_with_parallel_intersection){
 
 class two_quads : public Test {
 public:
-    Quad firstTriangle{{{0, 0}, {1, 0}, {1, 1}, {0, 1}}};
-    Quad secondTriangle{{{1, 0}, {2, 0}, {2, 1}, {1, 1}}};
-    std::vector<Quad> quads = {firstTriangle, secondTriangle};
+    void SetUp() override {
+        points.emplace_back(std::make_unique<Point>(0, 0));
+        points.emplace_back(std::make_unique<Point>(1, 0));
+        points.emplace_back(std::make_unique<Point>(1, 1));
+        points.emplace_back(std::make_unique<Point>(0, 1));
+        points.emplace_back(std::make_unique<Point>(2, 0));
+        points.emplace_back(std::make_unique<Point>(2, 1));
+
+        std::vector<const Point*> firstTemp{{points[0].get(), points[1].get(), points[2].get(), points[3].get()}};
+        std::vector<const Point*> secondTemp{{points[1].get(), points[4].get(), points[5].get(), points[2].get()}};
+
+        firstQuad = std::make_unique<Quad>(firstTemp);
+        secondQuad = std::make_unique<Quad>(secondTemp);
+
+        quads.emplace_back(*firstQuad);
+        quads.emplace_back(*secondQuad);
+    }
+
+    std::vector<std::unique_ptr<Point>> points;
+    std::unique_ptr<Quad> firstQuad;
+    std::unique_ptr<Quad> secondQuad;
+    std::vector<Quad> quads;
 };
 
 TEST_F(two_quads, are_intersected_by_ray){

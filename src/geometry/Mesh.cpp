@@ -1,6 +1,9 @@
+#include <utility>
+
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <memory>
 
 #include "Mesh.h"
 #include "raytracer/utility/JsonFormatter.h"
@@ -10,8 +13,16 @@ raytracer::impl::MeshSerializer raytracer::geometry::Mesh::serializer;
 raytracer::geometry::Mesh::Mesh(const std::string &filename)
         : Mesh(serializer.parseVTK(filename)) {}
 
-raytracer::geometry::Mesh::Mesh(std::vector<raytracer::geometry::Quadrilateral> quadrilaterals) :
-        quads(std::move(quadrilaterals)) {
+raytracer::geometry::Mesh::Mesh(
+        const std::vector<raytracer::geometry::Point>& referencePoints,
+        std::vector<std::vector<size_t>>  quadsIndexes): quadIndexes(std::move(quadsIndexes))
+{
+
+    for (const auto& point : referencePoints){
+        this->points.emplace_back(std::make_unique<Point>(point));
+    }
+
+    this->quads = this->generateQuads();
     this->annotateQuads();
     this->generateAdjacencyList();
 }
@@ -49,14 +60,14 @@ size_t raytracer::geometry::Mesh::getFacesCount() {
 
 void raytracer::geometry::Mesh::annotateQuads() {
     int i = 0;
-    for (auto &quad : this->quads) {
+    for (auto& quad : this->quads) {
         quad.id = i++;
     }
 }
 
 void raytracer::geometry::Mesh::generateAdjacencyList() {
-    for (auto &referenceQuad : quads) {
-        for (auto &quad : quads) {
+    for (auto &referenceQuad : this->quads) {
+        for (auto &quad : this->quads) {
             if (isAdjacent(quad, referenceQuad)) {
                 adjacencyList.addEdge(referenceQuad.id, quad.id);
             }
@@ -77,29 +88,15 @@ bool raytracer::geometry::Mesh::isAdjacent(const raytracer::geometry::Quadrilate
 }
 
 std::vector<raytracer::geometry::Point> raytracer::geometry::Mesh::getAllPoints() const {
-    std::vector<Point> points;
-    for (auto &quad : this->quads) {
-        for (auto &point : quad.getPoints()) {
-            if (std::find(points.begin(), points.end(), point) == points.end()) {
-                points.emplace_back(point);
-            }
-        }
-    }
-    return points;
+    std::vector<Point> result;
+    std::transform(this->points.begin(), this->points.end(), result.begin(), [](const auto& point){
+        return Point(*point);
+    });
+    return result;
 }
 
 std::vector<std::vector<size_t>> raytracer::geometry::Mesh::getQuadsAsIndexes() const {
-    std::vector<Point> points = this->getAllPoints();
-    std::vector<std::vector<size_t>> quadsAsIndexes;
-    for (auto &quad : this->quads) { //TODO separate this
-        std::vector<size_t> indexes;
-        for (auto &point : quad.getPoints()) {
-            auto it = std::find(points.begin(), points.end(), point);
-            indexes.emplace_back(std::distance(points.begin(), it));
-        }
-        quadsAsIndexes.emplace_back(indexes);
-    }
-    return quadsAsIndexes;
+    return this->quadIndexes;
 }
 
 void raytracer::geometry::Mesh::saveToJson(const std::string &filename) const {
@@ -110,7 +107,25 @@ const std::vector<raytracer::geometry::Quadrilateral> raytracer::geometry::Mesh:
     return this->quads;
 }
 
-std::vector<raytracer::geometry::Quadrilateral>
+std::vector<raytracer::geometry::Quadrilateral> raytracer::geometry::Mesh::generateQuads() {
+    std::vector<Quadrilateral> result;
+    result.reserve(quadIndexes.size());
+    for (const auto& indexes : quadIndexes){
+        result.emplace_back(quadFromIndexes(indexes));
+    }
+    return result;
+}
+
+raytracer::geometry::Quadrilateral raytracer::geometry::Mesh::quadFromIndexes(const std::vector<size_t> &indexes) {
+    std::vector<const Point*> _points;
+    _points.reserve(indexes.size());
+    for (const auto& index : indexes){
+        _points.emplace_back(this->points[index].get());
+    }
+    return Quadrilateral(_points);
+}
+
+raytracer::geometry::Mesh
 raytracer::impl::MeshSerializer::parseVTK(const std::string &filename) const {
     std::vector<geometry::Quadrilateral> quads;
     std::ifstream file(filename);
@@ -119,6 +134,7 @@ raytracer::impl::MeshSerializer::parseVTK(const std::string &filename) const {
 
     std::string line;
     std::vector<geometry::Point> points;
+    std::vector<std::vector<size_t>> quadsIndexes;
 
     bool looping_points = false;
     bool looping_quads = false;
@@ -131,11 +147,10 @@ raytracer::impl::MeshSerializer::parseVTK(const std::string &filename) const {
         } else if (looping_points) {
             points.emplace_back(pointFromString(line));
         } else if (looping_quads) {
-            auto indexes = quadIndexesFromString(line);
-            quads.emplace_back(quadFromIndexes(indexes, points));
+            quadsIndexes.emplace_back(quadIndexesFromString(line));
         }
     }
-    return quads;
+    return geometry::Mesh(points, quadsIndexes);
 }
 
 void raytracer::impl::MeshSerializer::saveToJson(const geometry::Mesh &mesh, const std::string &filename) const {
@@ -187,15 +202,4 @@ raytracer::impl::MeshSerializer::quadIndexesFromString(const std::string &quadIn
     stream >> k;
     stream >> l;
     return {i, j, k, l};
-}
-
-raytracer::geometry::Quadrilateral raytracer::impl::MeshSerializer::quadFromIndexes(
-        const std::vector<size_t> &indexes,
-        const std::vector<raytracer::geometry::Point> &points) const {
-
-    std::vector<geometry::Point> quadPoints(4);
-    std::transform(indexes.begin(), indexes.end(), quadPoints.begin(), [&points](size_t index) {
-        return points[index];
-    });
-    return geometry::Quadrilateral(quadPoints);
 }

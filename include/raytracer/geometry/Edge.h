@@ -17,7 +17,7 @@ namespace raytracer {
              * @param startPoint
              * @param endPoint
              */
-            Edge(Point startPoint, Point endPoint);
+            Edge(const Point *startPoint, const Point *endPoint);
 
             /**
              * Default constructor.
@@ -36,11 +36,11 @@ namespace raytracer {
             /**
              * Edge start point
              */
-            Point startPoint{};
+            const Point* startPoint{};
             /**
              * Edge end point
              */
-            Point endPoint{};
+            const Point* endPoint{};
 
         private:
             size_t id{};

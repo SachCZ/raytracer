@@ -1,7 +1,11 @@
 #include "AdjacencyList.h"
 
 std::set<int> raytracer::utility::AdjacencyList::getAdjacent(int index) const {
-    return this->list.at(index);
+    try {
+        return this->list.at(index);
+    } catch (const std::out_of_range& error){
+        throw std::logic_error("Trying to get adjacent elements of nonexistent member!");
+    }
 }
 
 void raytracer::utility::AdjacencyList::addEdge(int i, int j) {

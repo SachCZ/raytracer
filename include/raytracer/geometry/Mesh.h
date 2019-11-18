@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <memory>
 
 #include "Quadrilateral.h"
 #include "raytracer/utility/AdjacencyList.h"
@@ -17,23 +18,7 @@ namespace raytracer {
      * Ignore this as a API user!
      */
     namespace impl {
-        class MeshSerializer {
-        public:
-            std::vector<geometry::Quadrilateral> parseVTK(const std::string &filename) const;
-
-            void saveToJson(const geometry::Mesh &mesh, const std::string &filename) const;
-
-        private:
-            bool strContains(const std::string &text, const std::string &toFind) const;
-
-            geometry::Point pointFromString(const std::string &pointRepresentation) const;
-
-            std::vector<size_t> quadIndexesFromString(const std::string& basicString) const;
-
-            geometry::Quadrilateral quadFromIndexes(
-                const std::vector<size_t>& indexes,
-                const std::vector<geometry::Point>& points) const;
-        };
+        class MeshSerializer;
     }
 
     /**
@@ -59,12 +44,12 @@ namespace raytracer {
             explicit Mesh(const std::string &filename);
 
             /**
-             * Constructs a 2D mesh given a list of quadrilaterals
+             * Constructs a 2D mesh given a list of points and quadrilaterals as indexes in the list of points
              * If some of the quadrilaterals share edges (meaning the real
              * point values of edges no C++ objects) they will be evaluated as adjacent.
              * @param quadrilaterals list of quadrilaterals
              */
-            explicit Mesh(std::vector<Quadrilateral> quadrilaterals);
+            explicit Mesh(const std::vector<Point>& points, std::vector<std::vector<size_t>>  quadIndexes);
 
             /**
              * Returns quadrilaterals on boundary.
@@ -113,11 +98,15 @@ namespace raytracer {
             const std::vector<Quadrilateral> getQuads();
 
         private:
+            std::vector<std::unique_ptr<Point>> points;
+            std::vector<std::vector<size_t>> quadIndexes;
             std::vector<Quadrilateral> quads;
             utility::AdjacencyList adjacencyList;
             static impl::MeshSerializer serializer;
 
-            void annotateQuads();
+            std::vector<Quadrilateral> generateQuads();
+
+            Quadrilateral quadFromIndexes(const std::vector<size_t>& indexes);
 
             void generateAdjacencyList();
 
@@ -130,6 +119,24 @@ namespace raytracer {
             bool isOnBoundary(const Quadrilateral &triangle) const;
 
             friend class impl::MeshSerializer;
+
+            void annotateQuads();
+        };
+    }
+
+    namespace impl {
+        class MeshSerializer {
+        public:
+            geometry::Mesh parseVTK(const std::string &filename) const;
+
+            void saveToJson(const geometry::Mesh &mesh, const std::string &filename) const;
+
+        private:
+            bool strContains(const std::string &text, const std::string &toFind) const;
+
+            geometry::Point pointFromString(const std::string &pointRepresentation) const;
+
+            std::vector<size_t> quadIndexesFromString(const std::string& basicString) const;
         };
     }
 }

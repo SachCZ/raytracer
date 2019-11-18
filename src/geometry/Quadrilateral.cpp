@@ -1,15 +1,11 @@
 #include <stdexcept>
 #include "Quadrilateral.h"
 
-raytracer::geometry::Quadrilateral::Quadrilateral(std::vector<raytracer::geometry::Point> points) :
+raytracer::geometry::Quadrilateral::Quadrilateral(std::vector<const raytracer::geometry::Point*> points) :
     points(std::move(points)){
     if (this->points.size() != 4) throw std::logic_error("Quadrilateral must be constructed from 3 points!");
 
     recalculateEdges();
-}
-
-const std::vector<raytracer::geometry::Point> &raytracer::geometry::Quadrilateral::getPoints() const {
-    return this->points;
 }
 
 void raytracer::geometry::Quadrilateral::recalculateEdges() {

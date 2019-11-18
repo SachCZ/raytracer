@@ -14,20 +14,41 @@ using Vector = raytracer::geometry::Vector;
 
 class initialized_mesh : public Test {
 public:
-    std::vector<Quad > quads{
-        Quad({{0, 0}, {1, 0}, {1, 1}, {0, 1}}),
-        Quad({{1, 0}, {2, 0}, {2, 1}, {1, 1}}),
-        Quad({{2, 0}, {3, 0}, {3, 1}, {2, 1}}),
 
-        Quad({{0, 1}, {1, 1}, {1, 2}, {0, 2}}),
-        Quad({{1, 1}, {2, 1}, {2, 2}, {1, 2}}),
-        Quad({{2, 1}, {3, 1}, {3, 2}, {2, 2}}),
-
-        Quad({{0, 2}, {1, 2}, {1, 3}, {0, 3}}),
-        Quad({{1, 2}, {2, 2}, {2, 3}, {1, 3}}),
-        Quad({{2, 2}, {3, 2}, {3, 3}, {2, 3}})
+    std::vector<Point> points{
+        Point(0, 0), //0
+        Point(0, 1), //1
+        Point(0, 2), //2
+        Point(0, 3), //3
+        Point(1, 0), //4
+        Point(1, 1), //5
+        Point(1, 2), //6
+        Point(1, 3), //7
+        Point(2, 0), //8
+        Point(2, 1), //9
+        Point(2, 2), //10
+        Point(2, 3), //11
+        Point(3, 0), //12
+        Point(3, 1), //13
+        Point(3, 2), //14
+        Point(3, 3), //15
     };
-    Mesh mesh{quads};
+
+
+    std::vector<std::vector<size_t>> quadIndexes{
+        {0, 4, 5, 1},
+        {4, 8, 9, 5},
+        {8, 12, 13, 9},
+
+        {1, 5, 6, 2},
+        {5, 9, 10, 6},
+        {9, 13, 14, 10},
+
+        {2, 6, 7, 3},
+        {6, 10, 11, 7},
+        {10, 14, 15, 11},
+    };
+    Mesh mesh{points, quadIndexes};
 };
 
 TEST_F(initialized_mesh, has_proper_boundary) {
