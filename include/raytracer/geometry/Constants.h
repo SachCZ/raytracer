@@ -1,5 +1,5 @@
-#ifndef RAYTRACER_CONSTANTS_H
-#define RAYTRACER_CONSTANTS_H
+#ifndef RAYTRACER_CONSTANTS_GEOMETRY_H
+#define RAYTRACER_CONSTANTS_GEOMETRY_H
 
 #include <limits>
 
@@ -18,4 +18,4 @@ namespace raytracer {
     }
 }
 
-#endif //RAYTRACER_CONSTANTS_H
+#endif //RAYTRACER_CONSTANTS_GEOMETRY_H

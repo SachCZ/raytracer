@@ -18,7 +18,7 @@ public:
         laserRay.startPoint = Point(-2, 0);
         laserRay.direction = Vector(1, 0);
         laserRay.energy = Energy{2.5};
-        laserRay.wavelength = Length{1e-9};
+        laserRay.wavelength = Length{1315e-7};
     }
 
     LaserRay laserRay;
@@ -28,5 +28,10 @@ TEST_F(laser_ray, is_properly_initialized) {
     EXPECT_THAT(laserRay.startPoint.x, DoubleEq(-2));
     EXPECT_THAT(laserRay.direction.x, DoubleEq(1));
     EXPECT_THAT(laserRay.energy.asDouble, DoubleEq(2.5));
-    EXPECT_THAT(laserRay.wavelength.asDouble, DoubleEq(1e-9));
+    EXPECT_THAT(laserRay.wavelength.asDouble, DoubleEq(1315e-7));
+}
+
+TEST_F(laser_ray, critical_density_calculation_works){
+    auto result = laserRay.getCriticalDensity();
+    EXPECT_THAT(result.asDouble, DoubleNear(6.447e20, 1e17));
 }

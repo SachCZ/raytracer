@@ -5,6 +5,7 @@ namespace raytracer {
     namespace physics {
         struct Energy {double asDouble;};
         struct Length {double asDouble;};
+        struct Density {double asDouble;};
     }
 }
 
