@@ -16,7 +16,7 @@ namespace raytracer {
             Energy energy{};
             Length wavelength{};
 
-            Density getCriticalDensity();
+            Density getCriticalDensity() const;
         };
     }
 }

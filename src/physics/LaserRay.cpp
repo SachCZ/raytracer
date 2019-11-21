@@ -1,6 +1,6 @@
 #include "raytracer/physics/LaserRay.h"
 
-raytracer::physics::Density raytracer::physics::LaserRay::getCriticalDensity() {
+raytracer::physics::Density raytracer::physics::LaserRay::getCriticalDensity() const {
     auto m_e = constants::electron_mass;
     auto c = constants::speed_of_light;
     auto e = constants::electron_charge;
