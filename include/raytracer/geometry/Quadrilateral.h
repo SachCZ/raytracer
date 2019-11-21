@@ -45,6 +45,7 @@ namespace raytracer {
             void recalculateEdges();
 
             friend class Mesh;
+            friend class MeshFunction;
         };
     }
 }

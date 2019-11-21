@@ -16,6 +16,11 @@ namespace raytracer {
             Vector(double x, double y);
 
             /**
+             * Default constructor initializes a (0, 0) vector.
+             */
+            Vector() = default;
+
+            /**
              * x coordinate
              */
             double x;

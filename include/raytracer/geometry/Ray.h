@@ -18,6 +18,15 @@ namespace raytracer {
         };
 
         /**
+         * Simple data structure representing the current state of the ray
+         * (info regarding place where it last intersected)
+         */
+        struct RayState {
+            Vector currentDirection{};
+            Intersection lastIntersection;
+        };
+
+        /**
          * Class representing a ray traveling through a mesh. It is first given by point and direction and
          * after raytracing by list of intersectios
          */
@@ -61,8 +70,8 @@ namespace raytracer {
              * @param mesh
              * @param getDirection function returning a Vector - direction
              */
-            template<typename Function>
-            void traceThrough(const Mesh &mesh, Function getDirection);
+            template<typename DirectionFunction, typename StopCondition>
+            void traceThrough(const Mesh &mesh, DirectionFunction getDirection, StopCondition stopCondition);
 
             /**
              * Get list of all the intersections
@@ -94,8 +103,7 @@ namespace raytracer {
 
             Point getLastPoint() const;
 
-            template<typename Function>
-            std::vector<Intersection> findNext(const Intersection &previous, const Mesh &mesh, Function getDirection);
+            std::vector<Intersection> findNext(const Quadrilateral& quad, const Mesh &mesh);
 
             std::vector<Intersection> getClosestPoint(const Point &point,
                                                       const std::vector<Intersection> &_intersections) const;
@@ -110,30 +118,29 @@ namespace raytracer {
 
             Point getIntersectionPoint(const Edge &edge) const;
 
-            std::vector<Intersection> getTriangleIntersections(const Quadrilateral &quad) const;
+            std::vector<Intersection> getQuadIntersections(const Quadrilateral &quad) const;
 
         };
     }
 }
 
 //Template definitions
-template<typename Function>
-std::vector<raytracer::geometry::Intersection> raytracer::geometry::Ray::findNext(
-        const raytracer::geometry::Intersection &previous,
-        const Mesh &mesh, Function getDirection) {
-    this->lastDirection = getDirection(previous);
-    auto adjacent = mesh.getAdjacent(previous.quadrilateral);
-    adjacent.emplace_back(previous.quadrilateral);
-    return getClosestIntersection(adjacent);
-}
-
-template<typename Function>
-void raytracer::geometry::Ray::traceThrough(const raytracer::geometry::Mesh &mesh, Function getDirection) {
+template<typename DirectionFunction, typename StopCondition>
+void raytracer::geometry::Ray::traceThrough(
+        const raytracer::geometry::Mesh &mesh,
+        DirectionFunction getDirection,
+        StopCondition stopCondition) {
     auto previous = getClosestIntersection(mesh.getBoundary());
+    RayState rayState;
+    rayState.currentDirection = this->lastDirection;
+    rayState.lastIntersection = previous[0];
 
-    while (!previous.empty()) {
+    while (!previous.empty() && !stopCondition(rayState)) {
         intersections.emplace_back(previous[0]);
-        previous = this->findNext(previous[0], mesh, getDirection);
+        rayState.currentDirection = this->lastDirection;
+        rayState.lastIntersection = previous[0];
+        this->lastDirection = getDirection(rayState);
+        previous = this->findNext(previous[0].quadrilateral, mesh);
     }
 
     if (this->intersections.empty()) {

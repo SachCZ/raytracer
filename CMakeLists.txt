@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_subdirectory(src/geometry)
 add_subdirectory(src/utility)
+add_subdirectory(src/physics)
 
 option(BUILD_TESTS "Build unit tests" OFF)
 
@@ -18,5 +19,5 @@ if(BUILD_TESTS)
 endif(BUILD_TESTS)
 
 add_library(raytracer src/raytracer.cpp)
-target_link_libraries(raytracer PRIVATE geometry)
+target_link_libraries(raytracer PRIVATE geometry physics)
 target_include_directories(raytracer PUBLIC ./include)

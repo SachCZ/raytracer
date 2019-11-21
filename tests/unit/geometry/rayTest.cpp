@@ -12,6 +12,7 @@ using Point = raytracer::geometry::Point;
 using Vector = raytracer::geometry::Vector;
 using Quad = raytracer::geometry::Quadrilateral;
 using Mesh = raytracer::geometry::Mesh;
+using RayState = raytracer::geometry::RayState;
 
 class initialized_ray : public Test {
 public:
@@ -92,7 +93,10 @@ public:
 };
 
 TEST_F(ray_on_mesh, deal_with_borders_properly){
-    ray.traceThrough(mesh, [](auto intersection){return Vector(1, -1);});
+    ray.traceThrough(
+            mesh,
+            [](const RayState& rayState){return Vector(1, -1);},
+            [](const RayState& rayState){return false;});
 
     auto& startPoint = ray.getIntersections().front().point;
     auto& endPoint = ray.getIntersections().back().point;
@@ -104,6 +108,9 @@ TEST_F(ray_on_mesh, deal_with_borders_properly){
 }
 
 TEST_F(ray_on_mesh, has_correct_intersections_count) {
-    ray.traceThrough(mesh, [](auto intersection){return Vector(1, 0);});
+    ray.traceThrough(
+            mesh,
+            [](const RayState& rayState){return Vector(1, 0);},
+            [](const RayState& rayState){return false;});
     ASSERT_THAT(ray.getIntersections(), SizeIs(16));
 }

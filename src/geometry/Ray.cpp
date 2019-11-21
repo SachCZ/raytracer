@@ -16,14 +16,14 @@ std::vector<raytracer::geometry::Intersection>
 raytracer::geometry::Ray::getClosestIntersection(const std::vector<raytracer::geometry::Quadrilateral> &quads) const {
     std::vector<Intersection> _intersections;
     std::for_each(quads.begin(), quads.end(), [&](const Quadrilateral &quad) {
-        auto points = this->getTriangleIntersections(quad);
+        auto points = this->getQuadIntersections(quad);
         _intersections.insert(_intersections.end(), points.begin(), points.end());
     });
     return getClosestPoint(this->getLastPoint(), _intersections);
 }
 
 std::vector<raytracer::geometry::Intersection>
-raytracer::geometry::Ray::getTriangleIntersections(const raytracer::geometry::Quadrilateral &quad) const {
+raytracer::geometry::Ray::getQuadIntersections(const raytracer::geometry::Quadrilateral &quad) const {
     const auto &edges = quad.edges;
     std::vector<Intersection> _intersections;
     std::for_each(
@@ -85,6 +85,14 @@ bool raytracer::geometry::Ray::isIntersecting(const raytracer::geometry::Edge &e
     auto k = this->getParamK(edge);
     auto t = this->getParamT(edge);
     return k > -std::numeric_limits<double>::epsilon() && k < 1 + std::numeric_limits<double>::epsilon() && t > std::numeric_limits<double>::epsilon();
+}
+
+std::vector<raytracer::geometry::Intersection> raytracer::geometry::Ray::findNext(
+        const raytracer::geometry::Quadrilateral &quad,
+        const Mesh &mesh) {
+    auto adjacent = mesh.getAdjacent(quad);
+    adjacent.emplace_back(quad);
+    return getClosestIntersection(adjacent);
 }
 
 raytracer::geometry::Point raytracer::geometry::Ray::getIntersectionPoint(const raytracer::geometry::Edge &edge) const {
