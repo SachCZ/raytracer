@@ -14,5 +14,5 @@ unset(MESSAGE_QUIET)
 message(STATUS "Building jsoncpp finished")
 
 add_library(utility AdjacencyList.cpp JsonFormatter.cpp ../../include/raytracer/utility/JsonFormatter.h ../../include/raytracer/utility/FreeFunctions.h)
-target_include_directories(utility PUBLIC ../../include/raytracer/utility ../../external/jsoncpp/include)
+target_include_directories(utility PUBLIC ../../include/raytracer/utility ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jsoncpp/include)
 target_compile_options(utility PRIVATE -Werror -Wall -Wextra)
