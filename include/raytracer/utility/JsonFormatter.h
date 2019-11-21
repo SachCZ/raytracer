@@ -4,9 +4,12 @@
 #include <string>
 #include <map>
 #include <sstream>
+#include "json/json.h"
 
 namespace raytracer {
     namespace utility {
+
+        typedef Json::Value JsonValue;
 
         class JsonFormatter {
         public:
@@ -24,6 +27,8 @@ namespace raytracer {
                     separator = ", ";
                 }
                 stream << "]";
+
+                Json::Value value;
 
                 return stream.str();
             }

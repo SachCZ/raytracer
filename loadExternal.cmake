@@ -17,4 +17,8 @@ if(NOT EXISTS "${PROJECT_SOURCE_DIR}/external/gtest/CMakeLists.txt")
     message(FATAL_ERROR "googletest was not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()
 
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/external/jsoncpp/CMakeLists.txt")
+    message(FATAL_ERROR "jsoncpp was not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
+endif()
+
 message(STATUS "Submodule update finished")

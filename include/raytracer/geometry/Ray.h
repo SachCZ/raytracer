@@ -2,6 +2,7 @@
 #define RAYTRACER_RAY_H
 
 #include <string>
+#include <raytracer/utility/JsonFormatter.h>
 
 #include "Point.h"
 #include "Edge.h"
@@ -97,7 +98,7 @@ namespace raytracer {
              * where [..] is a sequence of points eg. [[2, 3], [1, -1]]
              * @param filename withnout suffix (.json will be appended)
              */
-            std::string getJsonRepresentation() const;
+            utility::JsonValue getJsonValue() const;
 
 
         private:
