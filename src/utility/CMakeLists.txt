@@ -7,7 +7,7 @@ if (NOT TARGET jsoncpp_lib)
     set(JSONCPP_WITH_PKGCONFIG_SUPPORT OFF)
     set(JSONCPP_WITH_CMAKE_PACKAGE OFF)
     set(BUILD_SHARED_LIBS OFF)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/external/jsoncpp ${CMAKE_BINARY_DIR}/external/jsoncpp EXCLUDE_FROM_ALL)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../external/jsoncpp ${CMAKE_CURRENT_BINARY_DIR}../../external/jsoncpp EXCLUDE_FROM_ALL)
 endif ()
 
 unset(MESSAGE_QUIET)
