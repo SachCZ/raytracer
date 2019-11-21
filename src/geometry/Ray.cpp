@@ -114,8 +114,8 @@ void raytracer::geometry::Ray::saveToTxt(const std::string &filename) const {
     }
 }
 
-raytracer::utility::JsonValue raytracer::geometry::Ray::getJsonValue() const {
-    using JsonValue = utility::JsonValue;
+raytracer::utility::json::Value raytracer::geometry::Ray::getJsonValue() const {
+    using JsonValue = utility::json::Value;
 
     JsonValue points;
 

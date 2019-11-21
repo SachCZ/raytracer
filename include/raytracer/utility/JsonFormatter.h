@@ -9,7 +9,7 @@
 namespace raytracer {
     namespace utility {
 
-        typedef Json::Value JsonValue;
+        namespace json = Json;
 
         class JsonFormatter {
         public:

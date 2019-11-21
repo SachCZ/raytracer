@@ -98,7 +98,7 @@ namespace raytracer {
              * where [..] is a sequence of points eg. [[2, 3], [1, -1]]
              * @param filename withnout suffix (.json will be appended)
              */
-            utility::JsonValue getJsonValue() const;
+            utility::json::Value getJsonValue() const;
 
 
         private:
