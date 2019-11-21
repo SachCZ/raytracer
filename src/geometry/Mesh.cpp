@@ -25,13 +25,14 @@ raytracer::geometry::Mesh::Mesh(
     this->quads = this->generateQuads();
     this->annotateQuads();
     this->generateAdjacencyList();
+    this->boundary = this->getBoundary();
 }
 
 std::vector<raytracer::geometry::Quadrilateral> raytracer::geometry::Mesh::getBoundary() const {
     std::vector<Quadrilateral> result;
 
     std::copy_if(this->quads.begin(), this->quads.end(), std::back_inserter(result),
-                 [this](Quadrilateral quad) { return this->isOnBoundary(quad); });
+                 [this](const Quadrilateral& quad) { return this->isOnBoundary(quad); });
     return result;
 }
 
@@ -103,7 +104,7 @@ void raytracer::geometry::Mesh::saveToJson(const std::string &filename) const {
     serializer.saveToJson(*this, filename);
 }
 
-const std::vector<raytracer::geometry::Quadrilateral> raytracer::geometry::Mesh::getQuads() {
+const std::vector<raytracer::geometry::Quadrilateral>& raytracer::geometry::Mesh::getQuads() const {
     return this->quads;
 }
 

@@ -52,7 +52,7 @@ public:
 };
 
 TEST_F(initialized_mesh, has_proper_boundary) {
-    auto boundary = mesh.getBoundary();
+    auto boundary = mesh.boundary;
     ASSERT_THAT(boundary, SizeIs(8));
 }
 

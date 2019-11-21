@@ -52,13 +52,6 @@ namespace raytracer {
             explicit Mesh(const std::vector<Point>& points, std::vector<std::vector<size_t>>  quadIndexes);
 
             /**
-             * Returns quadrilaterals on boundary.
-             * Quadrilaterals is classified as being on boundary if it has three or less adjacent quadrilaterals.
-             * @return list of quads on boundary
-             */
-            std::vector<Quadrilateral> getBoundary() const;
-
-            /**
              * Returns the adjacent quadrilaterals.
              * This will work only given a quadrilateral from the mesh (obtained for example by another getAdjacent call).
              * @param quadrilateral whose adjacent quads to get
@@ -95,7 +88,9 @@ namespace raytracer {
              * Get the list of all quadrilaterals (as a const reference)
              * @return list of quadrilaterals
              */
-            const std::vector<Quadrilateral> getQuads();
+            const std::vector<Quadrilateral>& getQuads() const;
+
+            std::vector<raytracer::geometry::Quadrilateral> boundary;
 
         private:
             std::vector<std::unique_ptr<Point>> points;
@@ -103,6 +98,8 @@ namespace raytracer {
             std::vector<Quadrilateral> quads;
             utility::AdjacencyList adjacencyList;
             static impl::MeshSerializer serializer;
+
+            std::vector<Quadrilateral> getBoundary() const;
 
             std::vector<Quadrilateral> generateQuads();
 

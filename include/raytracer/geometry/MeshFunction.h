@@ -3,12 +3,18 @@
 
 #include <map>
 
+#include "Mesh.h"
 #include "Quadrilateral.h"
 
 namespace raytracer {
     namespace geometry {
         class MeshFunction {
         public:
+            explicit MeshFunction(const Mesh& mesh) {
+                const auto& quads = mesh.getQuads();
+                this->values.resize(quads.size());
+            }
+
             template <typename Function>
             void setAll(const std::vector<Quadrilateral>& quadrilaterals, Function function){
                 for (const auto& quad : quadrilaterals){
@@ -16,7 +22,7 @@ namespace raytracer {
                 }
             }
 
-            std::map<int, double> getValues(){
+            const std::vector<double>& getValues() const {
                 return this->values;
             }
 
@@ -25,7 +31,7 @@ namespace raytracer {
             }
 
         private:
-            std::map<int, double> values;
+            std::vector<double> values;
         };
     }
 }

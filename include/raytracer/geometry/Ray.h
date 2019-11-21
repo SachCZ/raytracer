@@ -133,7 +133,7 @@ void raytracer::geometry::Ray::traceThrough(
         const raytracer::geometry::Mesh &mesh,
         DirectionFunction getDirection,
         StopCondition stopCondition) {
-    auto previous = getClosestIntersection(mesh.getBoundary());
+    auto previous = getClosestIntersection(mesh.boundary);
     RayState rayState;
     rayState.currentDirection = this->lastDirection;
     rayState.lastIntersection = previous[0];
