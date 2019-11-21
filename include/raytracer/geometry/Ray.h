@@ -95,7 +95,7 @@ namespace raytracer {
              * where [..] is a sequence of points eg. [[2, 3], [1, -1]]
              * @param filename withnout suffix (.json will be appended)
              */
-            void saveToJson(const std::string &filename, const std::string &objectName) const;
+            void getJsonRepresentation() const;
 
 
         private:
