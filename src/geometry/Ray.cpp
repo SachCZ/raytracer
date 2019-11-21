@@ -114,7 +114,7 @@ void raytracer::geometry::Ray::saveToTxt(const std::string &filename) const {
     }
 }
 
-void raytracer::geometry::Ray::getJsonRepresentation() const {
+std::string raytracer::geometry::Ray::getJsonRepresentation() const {
     using formatter = utility::JsonFormatter;
 
     return formatter::getSequenceRepresentation(

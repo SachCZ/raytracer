@@ -1,6 +1,8 @@
 #ifndef RAYTRACER_RAY_H
 #define RAYTRACER_RAY_H
 
+#include <string>
+
 #include "Point.h"
 #include "Edge.h"
 #include "Quadrilateral.h"
@@ -95,7 +97,7 @@ namespace raytracer {
              * where [..] is a sequence of points eg. [[2, 3], [1, -1]]
              * @param filename withnout suffix (.json will be appended)
              */
-            void getJsonRepresentation() const;
+            std::string getJsonRepresentation() const;
 
 
         private:
