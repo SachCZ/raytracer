@@ -114,7 +114,7 @@ void raytracer::geometry::Ray::saveToTxt(const std::string &filename) const {
     }
 }
 
-void raytracer::geometry::Ray::saveToJson(const std::string &filename) const {
+void raytracer::geometry::Ray::saveToJson(const std::string &filename, const std::string &objectName) const {
     using formatter = utility::JsonFormatter;
 
     auto pointsJson = formatter::getSequenceRepresentation(
@@ -123,8 +123,8 @@ void raytracer::geometry::Ray::saveToJson(const std::string &filename) const {
                 return formatter::getSequenceRepresentation(coordinates, [](double x){return x;});
             });
 
-    std::map<std::string, std::string> jsonObject = {{"intersections", pointsJson}};
+    std::map<std::string, std::string> jsonObject = {{objectName, pointsJson}};
 
-    std::ofstream file(filename + ".json");
+    std::ofstream file(filename + ".json", std::ofstream::app);
     file << formatter::getObjectRepresentation(jsonObject);
 }
