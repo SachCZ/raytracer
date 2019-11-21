@@ -19,5 +19,5 @@ if(BUILD_TESTS)
 endif(BUILD_TESTS)
 
 add_library(raytracer src/raytracer.cpp)
-target_link_libraries(raytracer PRIVATE geometry physics jsoncpp_lib)
+target_link_libraries(raytracer PRIVATE geometry utility physics jsoncpp_lib)
 target_include_directories(raytracer PUBLIC ./include)
