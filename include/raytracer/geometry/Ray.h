@@ -2,7 +2,7 @@
 #define RAYTRACER_RAY_H
 
 #include <string>
-#include <raytracer/utility/JsonFormatter.h>
+#include "raytracer/utility/JsonFormatter.h"
 
 #include "Point.h"
 #include "Edge.h"

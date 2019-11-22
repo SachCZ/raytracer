@@ -3,6 +3,7 @@
 
 #include <map>
 
+#include "raytracer/utility/JsonFormatter.h"
 #include "Mesh.h"
 #include "Quadrilateral.h"
 
@@ -10,7 +11,7 @@ namespace raytracer {
     namespace geometry {
         class MeshFunction {
         public:
-            explicit MeshFunction(const Mesh& mesh) {
+            explicit MeshFunction(const Mesh& mesh): mesh(mesh) {
                 const auto& quads = mesh.getQuads();
                 this->values.resize(quads.size());
             }
@@ -30,8 +31,26 @@ namespace raytracer {
                 return this->values[quad.id];
             }
 
+            utility::json::Value getJsonValue() const {
+                using JsonValue = utility::json::Value;
+
+                JsonValue points;
+
+                for (const auto& quad : this->mesh.getQuads()) {
+                    auto center = quad.getAveragePoint();
+                    JsonValue point;
+                    point.append(JsonValue(center.x));
+                    point.append(JsonValue(center.y));
+                    point.append(this->values[quad.id]);
+
+                    points.append(point);
+                }
+                return points;
+            }
+
         private:
             std::vector<double> values;
+            const Mesh& mesh;
         };
     }
 }
