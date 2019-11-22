@@ -47,5 +47,10 @@ TEST_F(initialized_quad, has_three_specific_edges) {
     EXPECT_THAT(edges[2].endPoint->y, DoubleEq(1));
 }
 
+TEST_F(initialized_quad, has_correct_average_point) {
+    auto point = quad->getAveragePoint();
+    EXPECT_THAT(point.x, DoubleEq(0.5));
+    EXPECT_THAT(point.y, DoubleEq(0.5));
+}
 
 
