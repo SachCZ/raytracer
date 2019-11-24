@@ -13,7 +13,7 @@ namespace raytracer {
 
             double operator()(double x){
                 auto w = this->FWHM;
-                auto a = this->maximum;
+                auto a = this->maximum *  (2 * std::sqrt(std::log(2))) / (w * std::sqrt(M_PI));
                 auto b = this->center;
                 return a * std::exp(-4 * std::log(2) * std::pow(x - b, 2) / std::pow(w, 2));
             }
