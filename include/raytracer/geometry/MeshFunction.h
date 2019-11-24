@@ -2,6 +2,7 @@
 #define RAYTRACER_MESH_FUNCTION_H
 
 #include <map>
+#include <functional>
 
 #include "raytracer/utility/JsonFormatter.h"
 #include "Mesh.h"
