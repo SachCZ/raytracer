@@ -15,6 +15,11 @@ namespace raytracer {
                 *x = val;
             return xs;
         }
+
+        template <typename T, typename Function>
+        T integrateTrapz(Function function, T x, T dx){
+            return dx * (function(x) + function(x + dx)) / 2.0;
+        }
     }
 }
 
