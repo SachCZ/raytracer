@@ -96,7 +96,7 @@ TEST_F(ray_on_mesh, deal_with_borders_properly){
     ray.traceThrough(
             mesh,
             [](const RayState& rayState){return Vector(1, -1);},
-            [](const RayState& rayState){return false;});
+            [](const Quad & quad){return false;});
 
     auto& startPoint = ray.getIntersections().front().point;
     auto& endPoint = ray.getIntersections().back().point;
@@ -111,6 +111,6 @@ TEST_F(ray_on_mesh, has_correct_intersections_count) {
     ray.traceThrough(
             mesh,
             [](const RayState& rayState){return Vector(1, 0);},
-            [](const RayState& rayState){return false;});
+            [](const Quad& quad){return false;});
     ASSERT_THAT(ray.getIntersections(), SizeIs(16));
 }

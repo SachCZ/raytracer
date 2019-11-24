@@ -37,3 +37,11 @@ TEST_F(mesh_function, can_be_subscripted_by_quad){
     const auto value = function[quadrilateral];
     ASSERT_THAT(value, DoubleEq(0.4));
 }
+
+TEST_F(mesh_function, returns_proper_comparator_on_ge_call){
+    function.setAll({quadrilateral}, [](const Quadrilateral& quad){
+        return 1.9;
+    });
+    auto comparator = function.greaterOrEqual(1.5, [](const Quadrilateral& quad) {});
+    ASSERT_THAT(comparator(quadrilateral), Eq(true));
+}

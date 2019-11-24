@@ -138,7 +138,7 @@ void raytracer::geometry::Ray::traceThrough(
     rayState.currentDirection = this->lastDirection;
     rayState.lastIntersection = previous[0];
 
-    while (!previous.empty() && !stopCondition(rayState)) {
+    while (!previous.empty() && !stopCondition(rayState.lastIntersection.quadrilateral)) {
         intersections.emplace_back(previous[0]);
         rayState.currentDirection = this->lastDirection;
         rayState.lastIntersection = previous[0];

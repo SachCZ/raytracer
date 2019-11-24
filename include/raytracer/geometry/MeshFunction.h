@@ -8,6 +8,10 @@
 #include "Quadrilateral.h"
 
 namespace raytracer {
+    namespace impl {
+        class MeshFunctionGe;
+    }
+
     namespace geometry {
         class MeshFunction {
         public:
@@ -15,6 +19,10 @@ namespace raytracer {
                 const auto& quads = mesh.getQuads();
                 this->values.resize(quads.size());
             }
+
+            impl::MeshFunctionGe greaterOrEqual(
+                    double threshold,
+                    const std::function<void(geometry::Quadrilateral)>& callback);
 
             template <typename Function>
             void setAll(const std::vector<Quadrilateral>& quadrilaterals, Function function){
@@ -29,6 +37,10 @@ namespace raytracer {
 
             double& operator[] (const Quadrilateral& quad){
                 return this->values[quad.id];
+            }
+
+            const double& operator[] (const Quadrilateral& quad) const {
+                return this->values.at(quad.id);
             }
 
             utility::json::Value getJsonValue() const {
@@ -51,6 +63,32 @@ namespace raytracer {
         private:
             std::vector<double> values;
             const Mesh& mesh;
+        };
+    }
+
+    namespace impl {
+        class MeshFunctionGe {
+        public:
+            MeshFunctionGe(
+                    const geometry::MeshFunction &meshFunction,
+                    double threshold,
+                    std::function<void(geometry::Quadrilateral)> callback):
+                    meshFunction(meshFunction), threshold(threshold), callback(std::move(callback)) {}
+
+            bool operator()(const geometry::Quadrilateral &quad) {
+                auto value = meshFunction[quad];
+                if (value >= threshold) {
+                    callback(quad);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+        private:
+            const geometry::MeshFunction &meshFunction;
+            double threshold;
+            std::function<void(geometry::Quadrilateral)> callback;
         };
     }
 }
