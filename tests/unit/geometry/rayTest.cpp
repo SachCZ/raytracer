@@ -33,14 +33,6 @@ TEST_F(initialized_ray, has_one_specific_point) {
     ASSERT_THAT(point.y, DoubleEq(4));
 }
 
-TEST_F(initialized_ray, can_deal_with_parallel_intersection){
-    std::vector<Point> points = {Point(4, 4), Point(8, 4), Point(8, 8), Point(4, 8)};
-    Quad quad({&points[0], &points[1], &points[2], &points[3]});
-    auto point = ray.getClosestIntersection({quad})[0].point;
-    EXPECT_THAT(point.x, DoubleEq(4));
-    EXPECT_THAT(point.y, DoubleEq(6));
-}
-
 class two_quads : public Test {
 public:
     void SetUp() override {
@@ -67,6 +59,7 @@ public:
     std::vector<Quad> quads;
 };
 
+/**
 TEST_F(two_quads, are_intersected_by_ray){
     Ray ray{Point(-1, 0.5), Vector(1, 0)};
 
@@ -114,3 +107,4 @@ TEST_F(ray_on_mesh, has_correct_intersections_count) {
             [](const Quad& quad){return false;});
     ASSERT_THAT(ray.getIntersections(), SizeIs(16));
 }
+ **/

@@ -1,9 +1,8 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.1)
 project(RayTracer)
 
 #setup external libs-----------------------------
-include(loadExternal.cmake)
-include(utils.cmake)
+include(cmake/loadExternal.cmake)
 
 set(CMAKE_CXX_STANDARD 14)
 

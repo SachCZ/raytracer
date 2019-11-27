@@ -26,6 +26,11 @@ namespace raytracer {
      */
     namespace geometry {
 
+        struct AdjacentElement {
+            Vector connection{};
+            Quadrilateral element;
+        };
+
         /**
          * Class representing a mesh of quadrilaterals.
          * Mesh class represents a mesh and provides ways to query the mesh for info. It also
@@ -58,6 +63,9 @@ namespace raytracer {
              * @return list of adjacent quads
              */
             std::vector<Quadrilateral> getAdjacent(const Quadrilateral &quadrilateral) const;
+            std::vector<AdjacentElement> getAdjacent(const Edge &) const {
+                return {};
+            }
 
             /**
              * Returns the quad count.

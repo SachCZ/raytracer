@@ -20,6 +20,17 @@ namespace raytracer {
             Quadrilateral quadrilateral{};
         };
 
+        struct IntersVec {
+            Point point{};
+            Edge edge{};
+            Vector direction{};
+        };
+
+        struct HalfLine {
+            Point point{};
+            Vector direction{};
+        };
+
         /**
          * Simple data structure representing the current state of the ray
          * (info regarding place where it last intersected)
@@ -52,36 +63,42 @@ namespace raytracer {
              */
             Vector lastDirection; //TODO make this private
 
-            /**
-             * Find the closest intersection with given quads.
-             * This method finds all the intersections with given quads and returns the one closest to the
-             * last point of the ray
-             * @param quads
-             * @return single intersection
-             */
-            std::vector<Intersection>
-            getClosestIntersection(const std::vector<Quadrilateral> &quads) const; //TODO make this private
 
-            /**
-             * Given a mesh find all the intersections based on getDirection.
-             * Trace the ray through a mesh. Every time an intersection is encountered a new direction is chosen
-             * based on the return value of getDirection function.
-             *
-             * getDirection is expected to be a function
-             * taking Intersection lastIntersection as param and returning a vector
-             * @tparam Function type
-             * @param mesh
-             * @param getDirection function returning a Vector - direction
-             */
-            template<typename DirectionFunction, typename StopCondition>
-            void traceThrough(const Mesh &mesh, DirectionFunction getDirection, StopCondition stopCondition);
+            const Quadrilateral* chooseNextElement(const Mesh& mesh, const IntersVec& prevIntersVec){
+                auto adjacentElements = mesh.getAdjacent(prevIntersVec.edge);
+                for (const auto& adjacentElement : adjacentElements){
+                    if (prevIntersVec.direction * adjacentElement.connection >= 0){
+                        return &adjacentElement.element;
+                    }
+                }
+                return nullptr;
+            }
+
+            using IntersVecPtr = std::unique_ptr<IntersVec>;
+
+            template<typename IntersFunc>
+            IntersVecPtr nextIntersVec(const Mesh& mesh, const IntersVec& prevIntersVec, IntersFunc findInters){
+                auto nextElement = chooseNextElement(mesh, prevIntersVec);
+                if (!nextElement) return nullptr;
+                return findInters(prevIntersVec, nextElement);
+            }
+
+            template<typename IntersFunc, typename StopCondition>
+            void _traceThrough(const Mesh &mesh, IntersFunc findInters, StopCondition stopCondition){
+                IntersVecPtr intersVec;
+
+                while (intersVec && !stopCondition(*intersVec)){
+                    this->intersVecs.emplace_back(*intersVec);
+                    intersVec.reset(nextIntersVec(mesh, *intersVec, findInters));
+                }
+            }
 
             /**
              * Get list of all the intersections
              * This wont have any value unless traceThrough was called.
              * @return list of intersections
              */
-            const std::vector<Intersection> &getIntersections() const;
+            const std::vector<IntersVec> & getIntersections() const;
 
             /**
              * Saves the Ray to txt file.
@@ -102,52 +119,18 @@ namespace raytracer {
 
 
         private:
-            std::vector<Intersection> intersections;
-
-            Point getLastPoint() const;
-
-            std::vector<Intersection> findNext(const Quadrilateral& quad, const Mesh &mesh);
-
-            std::vector<Intersection> getClosestPoint(const Point &point,
-                                                      const std::vector<Intersection> &_intersections) const;
+            std::vector<IntersVec> intersVecs;
 
             Vector getNormal(const Vector &vector) const;
 
-            double getParamK(const Edge &edge) const;
+            double getParamK(const Edge &edge, const HalfLine& halfLine) const;
 
-            double getParamT(const Edge &edge) const;
+            double getParamT(const Edge &edge, const HalfLine& halfLine) const;
 
-            bool isIntersecting(const Edge &edge) const;
+            bool isIntersecting(const Edge &edge, const HalfLine& halfLine) const;
 
-            Point getIntersectionPoint(const Edge &edge) const;
-
-            std::vector<Intersection> getQuadIntersections(const Quadrilateral &quad) const;
-
+            Point getIntersectionPoint(const Edge &edge, const HalfLine& halfLine) const;
         };
-    }
-}
-
-//Template definitions
-template<typename DirectionFunction, typename StopCondition>
-void raytracer::geometry::Ray::traceThrough(
-        const raytracer::geometry::Mesh &mesh,
-        DirectionFunction getDirection,
-        StopCondition stopCondition) {
-    auto previous = getClosestIntersection(mesh.boundary);
-    RayState rayState;
-    rayState.currentDirection = this->lastDirection;
-    rayState.lastIntersection = previous[0];
-
-    while (!previous.empty() && !stopCondition(rayState.lastIntersection.quadrilateral)) {
-        intersections.emplace_back(previous[0]);
-        rayState.currentDirection = this->lastDirection;
-        rayState.lastIntersection = previous[0];
-        this->lastDirection = getDirection(rayState);
-        previous = this->findNext(previous[0].quadrilateral, mesh);
-    }
-
-    if (this->intersections.empty()) {
-        throw std::logic_error("No intersections found! Did you miss the boundary?");
     }
 }
 
