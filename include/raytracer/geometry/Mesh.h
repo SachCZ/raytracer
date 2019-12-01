@@ -1,147 +1,207 @@
 #ifndef RAYTRACER_MESH_H
 #define RAYTRACER_MESH_H
 
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <memory>
-
-#include "Quadrilateral.h"
-#include "raytracer/utility/AdjacencyList.h"
-
 /**
  * Namespace of the whole library
  */
-namespace raytracer {
-    /**
-     * Implementation namespace
-     * Ignore this as a API user!
-     */
-    namespace impl {
-        class MeshSerializer;
-    }
+#include <vector>
 
+#include "Vector.h"
+#include "Point.h"
+#include <mfem.hpp>
+
+namespace raytracer {
     /**
      * Namespace encapsulating all the abstractions related to geometry
      */
     namespace geometry {
+        class Mesh;
+        class Element;
 
-        struct AdjacentElement {
-            Vector connection{};
-            Quadrilateral element;
+        /** Class representing a face in mesh (edge in 2D, surface face in 3D).
+         *  Instance of this object should not be initialized by user.
+         */
+        class Face {
+        public:
+            /** Calculate a normal to the face (edge in 2D).
+             *  By convention in 2D, the normal is outward for points
+             *  in clockwise order forming a polygon.
+             *  @return the normal vector.
+             */
+            Vector getNormal() const {
+                if (this->points.size() == 2){
+                    auto direction = points[1] - points[0];
+                    return direction.getNormal();
+                } else {
+                    throw std::logic_error("Can get normal to face!");
+                }
+            }
+
+            /** Get the points forming the face.
+             *
+             * @return the points.
+             */
+            const std::vector<Point>& getPoints() const {
+                return this->points;
+            }
+        private:
+            explicit Face(int id, std::vector<Point> points) :
+                    id(id),
+                    points(std::move(points)) {}
+
+            int id;
+            std::vector<Point> points;
+
+            friend class Mesh;
+            friend class Element;
+        };
+
+        /** Class representing a single volume element in mesh.
+         *  Could be any element given by set of faces (edges, surfaces).
+         * Instance of this object should not be initialized by user.
+         */
+        class Element {
+        public:
+            /**
+             * Get the faces of the mesh excluding the given face.
+             * This is useful for intersection finding if
+             * @param face
+             * @return
+             */
+            const std::vector<Face>& getFaces() const {
+                return this->faces;
+            }
+        private:
+            explicit Element(int id, std::vector<Face> faces) :
+                    id(id),
+                    faces(std::move(faces)) {}
+
+            int id;
+            std::vector<Face> faces;
+
+            friend class Mesh;
+        };
+
+        /** Structure representing a discretisation of a distance.
+         * That is how many equidistant nodes are on the line with given width.
+         */
+        struct DiscreteLine {
+            double width;
+            size_t nodeCount;
         };
 
         /**
-         * Class representing a mesh of quadrilaterals.
-         * Mesh class represents a mesh and provides ways to query the mesh for info. It also
-         * encapsulates some basic loading and storing capabilities.
+         * Class representing a mesh. For now it is a mesh of quadrilaterals.
+         * It encapsulates the class mfem::Mesh and provides some convenience methods.
          */
         class Mesh {
         public:
-
-            /**
-             * Constructs a 2D mesh given an STL file
-             * Use ".vtk" file to initialize the mesh. Such a file can be generated
-             * using specialized software.
-             * This constructor throws an std::logic_error if the file loading fails.
-             * @param filename name of the file to be loaded
+            /** Create a rectangular mesh given two discrete lines (the sides of the rectangle).
+             * The mesh will be a rectangular equidistant grid.
+             *
+             * @param sideA
+             * @param sideB
              */
-            explicit Mesh(const std::string &filename);
-
-            /**
-             * Constructs a 2D mesh given a list of points and quadrilaterals as indexes in the list of points
-             * If some of the quadrilaterals share edges (meaning the real
-             * point values of edges no C++ objects) they will be evaluated as adjacent.
-             * @param quadrilaterals list of quadrilaterals
-             */
-            explicit Mesh(const std::vector<Point>& points, std::vector<std::vector<size_t>>  quadIndexes);
-
-            /**
-             * Returns the adjacent quadrilaterals.
-             * This will work only given a quadrilateral from the mesh (obtained for example by another getAdjacent call).
-             * @param quadrilateral whose adjacent quads to get
-             * @return list of adjacent quads
-             */
-            std::vector<Quadrilateral> getAdjacent(const Quadrilateral &quadrilateral) const;
-            std::vector<AdjacentElement> getAdjacent(const Edge &) const {
-                return {};
+            explicit Mesh(DiscreteLine sideA, DiscreteLine sideB) {
+                this->mesh = std::make_unique<mfem::Mesh>(
+                        sideA.nodeCount,
+                        sideB.nodeCount,
+                        mfem::Element::Type::QUADRILATERAL,
+                        true,
+                        sideA.width,
+                        sideB.width,
+                        true);
+                this->boundaryFacesIds = Mesh::genBoundaryFacesIds(this->mesh.get());
             }
 
-            /**
-             * Returns the quad count.
-             * @return number of quads
+            /** Given a face return the adjacent element to this face in given direction.
+             *  It is expected that there are two or less elements adjacent to the face. If there is no
+             *  element adjacent in given direction, nullptr is returned.
+             * @param face whose adjacent elements are to be found.
+             * @param direction in which to search for elements.
+             * @return The element pointer if found or nullptr if not.
              */
-            size_t getFacesCount();
+            std::unique_ptr<Element> getAdjacentElement(const Face &face, const Vector &direction) const {
+                int elementA, elementB;
+                this->mesh->GetFaceElements(face.id, &elementA, &elementB);
 
-            /**
-             * Saves the mesh using JSON.
-             * It serialized the mesh into two main JSON objects: points and quadrilaterals
-             * both being sequences. Points is a sequence of points eg. [[3,5], [-1,3]].
-             * Quadrilateral is a sequence of point indexes eg [0, 2, 3, 4] meaning the four points making up the
-             * quadrilateral are the zeroth second, third and fourth point in the points sequence.
-             * This format is useful for matplotlib visualization.
-             * @param filename filename without suffix (.json will be added)
-             */
-            void saveToJson(const std::string &filename) const;
+                auto normal = face.getNormal();
 
-            /**
-             * Subscript operator.
-             * Use it to access the i-th quadrilateral of the mesh
-             * @param index index to access
-             * @return a quad
-             */
-            const Quadrilateral &operator[](int index) const;
+                if (normal * direction < 0) {
+                    return this->getElementFromId(elementA);
+                } else {
+                    return this->getElementFromId(elementB);
+                }
+            }
 
-            /**
-             * Get the list of all quadrilaterals (as a const reference)
-             * @return list of quadrilaterals
-             */
-            const std::vector<Quadrilateral>& getQuads() const;
-
-            std::vector<raytracer::geometry::Quadrilateral> boundary;
+            std::vector<Face> getBoundary() const {
+                return this->getFacesFromIds(this->boundaryFacesIds);
+            }
 
         private:
-            std::vector<std::unique_ptr<Point>> points;
-            std::vector<std::vector<size_t>> quadIndexes;
-            std::vector<Quadrilateral> quads;
-            utility::AdjacencyList adjacencyList;
-            static impl::MeshSerializer serializer;
+            std::unique_ptr<mfem::Mesh> mesh;
+            std::vector<int> boundaryFacesIds;
 
-            std::vector<Quadrilateral> getBoundary() const;
+            std::unique_ptr<Element> getElementFromId(int id) const {
+                if (id == -1) return nullptr;
 
-            std::vector<Quadrilateral> generateQuads();
+                mfem::Array<int> facesIds;
+                mfem::Array<int> _;
 
-            Quadrilateral quadFromIndexes(const std::vector<size_t>& indexes);
+                if (this->mesh->Dimension() == 2) {
+                    this->mesh->GetElementEdges(id, facesIds, _);
+                } else if (this->mesh->Dimension() == 3){
+                    this->mesh->GetElementFaces(id, facesIds, _);
+                }
 
-            void generateAdjacencyList();
+                //Not using make_unique, because Element constructor is private.
+                std::unique_ptr<Element> element(new Element(id, this->getFacesFromIds(facesIds)));
+                return element;
+            }
 
-            bool isAdjacent(const Quadrilateral &quadA, const Quadrilateral &quadB) const;
+            Point getPointFromId(int id) const { //TODO refactor this, dimension specific
+                std::vector<double> coords(this->mesh->Dimension());
+                mesh->GetNode(id, &coords[0]);
+                return {coords[0], coords[1]};
+            }
 
-            std::vector<Point> getPoints() const;
+            std::vector<Point> getPointsFromIds(const mfem::Array<int> &ids) const {
+                std::vector<Point> result;
+                for (auto id : ids) {
+                    result.emplace_back(this->getPointFromId(id));
+                }
+                return result;
+            }
 
-            std::vector<std::vector<size_t>> getQuadsAsIndexes() const;
+            Face getFaceFromId(int id) const {
+                mfem::Array<int> faceVerticesIds;
+                this->mesh->GetFaceVertices(id, faceVerticesIds);
 
-            bool isOnBoundary(const Quadrilateral &quad) const;
+                return Face(id, this->getPointsFromIds(faceVerticesIds));
+            }
 
-            friend class impl::MeshSerializer;
+            template <typename Sequence>
+            std::vector<Face> getFacesFromIds(const Sequence &ids) const {
+                std::vector<Face> result;
+                size_t size = std::distance(ids.begin(), ids.end());
+                result.reserve(size);
+                for (auto id : ids) {
+                    result.emplace_back(this->getFaceFromId(id));
+                }
+                return result;
+            }
 
-            void annotateQuads();
-        };
-    }
-
-    namespace impl {
-        class MeshSerializer {
-        public:
-            geometry::Mesh parseVTK(const std::string &filename) const;
-
-            void saveToJson(const geometry::Mesh &mesh, const std::string &filename) const;
-
-        private:
-            bool strContains(const std::string &text, const std::string &toFind) const;
-
-            geometry::Point pointFromString(const std::string &pointRepresentation) const;
-
-            std::vector<size_t> quadIndexesFromString(const std::string& basicString) const;
+            static std::vector<int> genBoundaryFacesIds(const mfem::Mesh* _mesh) {
+                std::vector<int> result;
+                for (int i = 0; i < _mesh->GetNumFaces(); ++i){
+                    int id1, id2;
+                    _mesh->GetFaceElements(i, &id1, &id2);
+                    if (id1 == -1 || id2 == -1){
+                        result.emplace_back(i);
+                    }
+                }
+                return result;
+            }
         };
     }
 }

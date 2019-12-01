@@ -1,5 +1,5 @@
-add_library(geometry Ray.cpp Point.cpp Vector.cpp Edge.cpp Quadrilateral.cpp Mesh.cpp MeshFunction.cpp ../../include/raytracer/geometry/MeshFunction.h)
+add_library(geometry Ray.cpp Point.cpp Vector.cpp Mesh.cpp FreeFunctions.cpp)
 target_include_directories(geometry PUBLIC ../../include/raytracer/geometry ../../include)
-target_link_libraries(geometry PUBLIC utility)
+target_link_libraries(geometry PUBLIC utility mfem)
 target_compile_options(geometry PRIVATE $<$<CONFIG:DEBUG>:-Werror -Wall -Wextra>)
 target_compile_options(geometry PRIVATE $<$<CONFIG:RELEASE>:-O3>)

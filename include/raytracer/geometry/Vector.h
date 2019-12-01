@@ -34,6 +34,10 @@ namespace raytracer {
              */
             double getNorm() const;
 
+            Vector getNormal() const {
+                return {this->y, -this->x};
+            }
+
         private:
             friend const Vector operator * (double k, Vector a);
             friend const Vector operator * (Vector a, double k);

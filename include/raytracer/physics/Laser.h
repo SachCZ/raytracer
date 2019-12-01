@@ -10,7 +10,6 @@
 #include <raytracer/utility/FreeFunctions.h>
 
 #include "Point.h"
-#include "Edge.h"
 #include "LaserRay.h"
 
 namespace raytracer {
