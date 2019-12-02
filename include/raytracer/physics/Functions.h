@@ -1,5 +1,5 @@
-#ifndef RAYTRACER_FUNCTIONS_H
-#define RAYTRACER_FUNCTIONS_H
+#ifndef RAYTRACER_PHYSICS_FUNCTIONS_H
+#define RAYTRACER_PHYSICS_FUNCTIONS_H
 
 #include <cmath>
 #include <Vector.h>
@@ -41,4 +41,4 @@ namespace raytracer {
     }
 }
 
-#endif //RAYTRACER_FUNCTIONS_H
+#endif //RAYTRACER_PHYSICS_FUNCTIONS_H
