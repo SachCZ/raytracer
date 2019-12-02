@@ -9,19 +9,6 @@ foreach(file ${files})
     execute_process(COMMAND "${CMAKE_COMMAND}" --build . WORKING_DIRECTORY "${EXTERNAL_BINARY_DIR}/${filename}-download")
 endforeach()
 
-
-## Download and unpack jsoncpp at configure time
-#configure_file(cmake/JsonCpp.cmake ${EXTERNAL_BINARY_DIR}/jsoncpp-download/CMakeLists.txt)
-#execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" . WORKING_DIRECTORY "${EXTERNAL_BINARY_DIR}/jsoncpp-download")
-#execute_process(COMMAND "${CMAKE_COMMAND}" --build . WORKING_DIRECTORY "${EXTERNAL_BINARY_DIR}/jsoncpp-download")
-#
-#
-## Download and unpack mfem at configure time
-#configure_file(cmake/Mfem.cmake ${EXTERNAL_BINARY_DIR}/mfem-download/CMakeLists.txt)
-#execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" . WORKING_DIRECTORY "${EXTERNAL_BINARY_DIR}/mfem-download")
-#execute_process(COMMAND "${CMAKE_COMMAND}" --build . WORKING_DIRECTORY "${EXTERNAL_BINARY_DIR}/mfem-download")
-
-
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 add_subdirectory("${EXTERNAL_BINARY_DIR}/gtest-src" "${EXTERNAL_BINARY_DIR}/gtest-build")
 

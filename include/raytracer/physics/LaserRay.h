@@ -4,8 +4,8 @@
 #include <cmath>
 
 #include "Magnitudes.h"
-#include "raytracer/geometry/Point.h"
-#include "raytracer/geometry/Vector.h"
+#include "Point.h"
+#include "Vector.h"
 #include "Constants.h"
 
 namespace raytracer {

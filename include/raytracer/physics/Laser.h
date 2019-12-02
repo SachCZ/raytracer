@@ -1,13 +1,9 @@
-#include <utility>
-
-#include <utility>
-
 #ifndef RAYTRACER_LASER_H
 #define RAYTRACER_LASER_H
 
 #include <vector>
 #include <functional>
-#include <raytracer/utility/FreeFunctions.h>
+#include "FreeFunctions.h"
 
 #include "Point.h"
 #include "LaserRay.h"

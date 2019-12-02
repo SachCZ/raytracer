@@ -1,5 +1,5 @@
 #include <raytracer/geometry/Mesh.h>
-#include <raytracer/geometry/FreeFunctions.h>
+#include <raytracer/geometry/Functions.h>
 #include <raytracer/geometry/Ray.h>
 #include <chrono>
 #include <iostream>

@@ -1,9 +1,11 @@
-#ifndef RAYTRACER_FREE_FUNCTIONS_H
-#define RAYTRACER_FREE_FUNCTIONS_H
+#ifndef RAYTRACER_FUNCTIONS_H
+#define RAYTRACER_FUNCTIONS_H
+
+#include <memory>
 
 #include "Point.h"
 #include "Vector.h"
-#include "Mesh.h" //TODO move face to separate file and include that
+#include "Face.h"
 #include "Constants.h"
 
 namespace raytracer {

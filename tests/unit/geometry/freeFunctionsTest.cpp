@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "raytracer/geometry/FreeFunctions.h"
+#include "raytracer/geometry/Functions.h"
 #include "raytracer/geometry/Point.h"
 #include "raytracer/geometry/Vector.h"
 #include "raytracer/geometry/Mesh.h"
