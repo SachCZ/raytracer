@@ -1,15 +1,11 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <raytracer/geometry/Mesh.h>
-#include <raytracer/utility/AdjacencyList.h>
 #include <raytracer/geometry/Point.h>
 #include <raytracer/geometry/Vector.h>
 
 using namespace testing;
-using Mesh = raytracer::geometry::Mesh;
-using DiscreteLine = raytracer::geometry::DiscreteLine;
-using Face = raytracer::geometry::Face;
-using Vector = raytracer::geometry::Vector;
+using namespace raytracer::geometry;
 
 
 class initialized_mesh : public Test {
