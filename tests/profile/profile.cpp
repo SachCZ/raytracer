@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
                 mesh,
                 [](const Intersection *previousIntersection, const Element *element) -> std::unique_ptr<Intersection> {
                     if (!element) return nullptr;
-                    return findClosestIntersection(previousIntersection->halfLine, element->getFaces());
+                    return findClosestIntersection(previousIntersection->orientation, element->getFaces());
                 },
                 [](const Intersection *previousIntersection, const Element *element) {
                     return false;

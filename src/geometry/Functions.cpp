@@ -57,7 +57,7 @@ raytracer::geometry::findClosestIntersection(const raytracer::geometry::HalfLine
     for (const auto& face : faces){
         auto intersection = findIntersection(halfLine, face);
         if (intersection) {
-            auto norm = (intersection->halfLine.point - halfLine.point).getNorm();
+            auto norm = (intersection->orientation.point - halfLine.point).getNorm();
             if (norm < distance){
                 result = std::move(intersection);
                 distance = norm;

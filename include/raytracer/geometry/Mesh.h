@@ -33,6 +33,11 @@ namespace raytracer {
             const std::vector<Face>& getFaces() const {
                 return this->faces;
             }
+
+            //TODO delete this
+            int getId() const {
+                return this->id;
+            }
         private:
             explicit Element(int id, std::vector<Face> faces) :
                     id(id),
@@ -49,7 +54,7 @@ namespace raytracer {
          */
         struct DiscreteLine {
             double width;
-            size_t nodeCount;
+            size_t segmentCount;
         };
 
         /**

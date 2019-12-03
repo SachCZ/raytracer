@@ -16,11 +16,11 @@ namespace raytracer {
         };
 
         struct Intersection {
-            Intersection(const HalfLine& halfLine, Face face):
-                    halfLine(halfLine), face(std::move(face))
+            Intersection(const HalfLine& orientation, Face face):
+                    orientation(orientation), face(std::move(face))
             {}
 
-            HalfLine halfLine;
+            HalfLine orientation;
             Face face;
         };
 

@@ -19,12 +19,11 @@ public:
 TEST_F(initialized_ray, trace_through_steps_throught_mesh_according_to_find_intersection){
     auto intersections = ray.findIntersections(
             mesh,
-            [](const Intersection* previousIntersection, const Element* element) -> std::unique_ptr<Intersection> {
-                if (!element) return nullptr;
-                return findClosestIntersection(previousIntersection->halfLine, element->getFaces());
+            [](const Intersection& previousIntersection, const Element& element) -> std::unique_ptr<Intersection> {
+                return findClosestIntersection(previousIntersection.orientation, element.getFaces());
             },
-            [](const Intersection* previousIntersection, const Element* element){
+            [](const Intersection& previousIntersection, const Element& element){
                 return false;
             });
-    return;
+    ASSERT_THAT(intersections, SizeIs(11));
 }

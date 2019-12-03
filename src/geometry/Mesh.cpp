@@ -20,8 +20,8 @@ namespace raytracer {
 
         Mesh::Mesh(DiscreteLine sideA, DiscreteLine sideB) {
             this->mesh = std::make_unique<mfem::Mesh>(
-                    sideA.nodeCount,
-                    sideB.nodeCount,
+                    sideA.segmentCount,
+                    sideB.segmentCount,
                     mfem::Element::Type::QUADRILATERAL,
                     true,
                     sideA.width,
