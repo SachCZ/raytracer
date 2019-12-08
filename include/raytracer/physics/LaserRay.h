@@ -10,6 +10,10 @@
 
 namespace raytracer {
     namespace physics {
+
+        /**
+         * Structure representing a single LaserRay. It has associated energy but no width for now.
+         */
         struct LaserRay {
             geometry::Point startPoint{};
             geometry::Vector direction{};

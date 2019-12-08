@@ -1,5 +1,5 @@
 #include <raytracer/geometry/Mesh.h>
-#include <raytracer/geometry/Functions.h>
+#include <raytracer/geometry/GeometryFunctions.h>
 #include <raytracer/geometry/Ray.h>
 #include <chrono>
 #include <iostream>
@@ -18,11 +18,10 @@ int main(int argc, char *argv[]) {
     for (size_t i = 0; i < steps; ++i){
         auto intersections = ray.findIntersections(
                 mesh,
-                [](const Intersection *previousIntersection, const Element *element) -> std::unique_ptr<Intersection> {
-                    if (!element) return nullptr;
-                    return findClosestIntersection(previousIntersection->orientation, element->getFaces());
+                [](const Intersection& previousIntersection, const Element& element) -> std::unique_ptr<Intersection> {
+                    return findClosestIntersection(previousIntersection.orientation, element.getFaces());
                 },
-                [](const Intersection *previousIntersection, const Element *element) {
+                [](const Intersection& previousIntersection, const Element& element) {
                     return false;
                 }
         );

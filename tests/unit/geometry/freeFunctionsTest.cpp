@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "raytracer/geometry/Functions.h"
+#include "raytracer/geometry/GeometryFunctions.h"
 #include "raytracer/geometry/Point.h"
 #include "raytracer/geometry/Vector.h"
 #include "raytracer/geometry/Mesh.h"
@@ -16,7 +16,7 @@ public:
 
 TEST_F(find_intersection, returns_the_intersection_if_line_and_edge_are_intersecting) {
     HalfLine halfLine{Point(0.5, -1), Vector(0, 1)};
-    auto face = mesh.getBoundary()[0];
+    auto face = *mesh.getBoundary()[0];
     auto intersection = findIntersection(halfLine, face);
     EXPECT_THAT(intersection->orientation.point.x, DoubleEq(0.5));
     ASSERT_THAT(intersection->orientation.point.y, DoubleEq(0));
@@ -24,14 +24,14 @@ TEST_F(find_intersection, returns_the_intersection_if_line_and_edge_are_intersec
 
 TEST_F(find_intersection, returns_null_if_line_and_edge_are_not_intersecting) {
     HalfLine halfLine{Point(0.5, -1), Vector(2, 1)};
-    auto face = mesh.getBoundary()[0];
+    auto face = *mesh.getBoundary()[0];
     auto intersection = findIntersection(halfLine, face);
     EXPECT_THAT(intersection, IsNull());
 }
 
 TEST_F(find_intersection, returns_intersection_if_border_point_is_intersected) {
     HalfLine halfLine{Point(0.5, -0.5), Vector(1, 1)};
-    auto face = mesh.getBoundary()[0];
+    auto face = *mesh.getBoundary()[0];
     auto intersection = findIntersection(halfLine, face);
     EXPECT_THAT(intersection->orientation.point.x, DoubleEq(1));
     ASSERT_THAT(intersection->orientation.point.y, DoubleEq(0));

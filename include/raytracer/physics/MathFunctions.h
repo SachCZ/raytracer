@@ -1,16 +1,31 @@
-#ifndef RAYTRACER_PHYSICS_FUNCTIONS_H
-#define RAYTRACER_PHYSICS_FUNCTIONS_H
+#ifndef RAYTRACER_MATH_FUNCTIONS_H
+#define RAYTRACER_MATH_FUNCTIONS_H
 
 #include <cmath>
 #include <Vector.h>
 
 namespace raytracer {
     namespace physics {
+
+        /**
+         * Class representing a 1D gaussian with given parametrs
+         */
         class Gaussian {
         public:
+            /**
+             * Construct the gaussian using FWHM, value at maxim (also the value of the integral) and the center point
+             * @param FWHM
+             * @param maximum or also the intgral value
+             * @param center point
+             */
             explicit Gaussian(double FWHM, double maximum = 1, double center = 0):
             FWHM(FWHM), maximum(maximum), center(center) {}
 
+            /**
+             * Value of the gaussian at given point x
+             * @param x
+             * @return the value
+             */
             double operator()(double x){
                 auto w = this->FWHM;
                 auto a = this->maximum *  (2 * std::sqrt(std::log(2))) / (w * std::sqrt(M_PI));
@@ -23,22 +38,7 @@ namespace raytracer {
             double maximum;
             double center;
         };
-
-        class LinearFunction {
-        public:
-            LinearFunction(double k, double q):
-            k(k), q(q) {}
-
-            double operator()(double x){
-                return k*x + q;
-            }
-
-        private:
-            double k, q;
-        };
-
-        
     }
 }
 
-#endif //RAYTRACER_PHYSICS_FUNCTIONS_H
+#endif //RAYTRACER_MATH_FUNCTIONS_H

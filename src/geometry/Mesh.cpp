@@ -1,7 +1,7 @@
 #include "Mesh.h"
 namespace raytracer {
     namespace geometry {
-        std::unique_ptr <Element> Mesh::getAdjacentElement(const Face &face, const Vector &direction) const {
+        Element * Mesh::getAdjacentElement(const Face &face, const Vector &direction) const {
             int elementA, elementB;
             this->mesh->GetFaceElements(face.id, &elementA, &elementB);
 
@@ -14,8 +14,10 @@ namespace raytracer {
             }
         }
 
-        std::vector <Face> Mesh::getBoundary() const {
-            return this->getFacesFromIds(this->boundaryFacesIds);
+
+
+        std::vector<Face *> Mesh::getBoundary() const {
+            return this->boundaryFaces;
         }
 
         Mesh::Mesh(DiscreteLine sideA, DiscreteLine sideB) {
@@ -27,10 +29,15 @@ namespace raytracer {
                     sideA.width,
                     sideB.width,
                     true);
-            this->boundaryFacesIds = Mesh::genBoundaryFacesIds(this->mesh.get());
+
+            this->points = this->genPoints();
+            this->faces = this->genFaces();
+            this->elements = this->genElements();
+
+            this->boundaryFaces = Mesh::genBoundaryFaces();
         }
 
-        std::unique_ptr <Element> Mesh::getElementFromId(int id) const {
+        std::unique_ptr <Element> Mesh::createElementFromId(int id) const {
             if (id == -1) return nullptr;
 
             mfem::Array<int> facesIds;
@@ -47,35 +54,81 @@ namespace raytracer {
             return element;
         }
 
-        Point Mesh::getPointFromId(int id) const { //TODO refactor this, dimension specific
+        std::unique_ptr<Point> Mesh::createPointFromId(int id) const { //TODO refactor this, dimension specific
             double coords[2];
             mesh->GetNode(id, coords);
-            return {coords[0], coords[1]};
+            return std::make_unique<Point>(coords[0], coords[1]);
         }
 
-        std::vector <Point> Mesh::getPointsFromIds(const mfem::Array<int> &ids) const {
-            std::vector<Point> result;
+        std::vector<Point *> Mesh::getPointsFromIds(const mfem::Array<int> &ids) const {
+            std::vector<Point*> result;
             for (auto id : ids) {
-                result.emplace_back(this->getPointFromId(id));
+                result.emplace_back(this->points[id].get());
             }
             return result;
         }
 
-        Face Mesh::getFaceFromId(int id) const {
+        std::unique_ptr<Face> Mesh::createFaceFromId(int id) const {
             mfem::Array<int> faceVerticesIds;
             this->mesh->GetFaceVertices(id, faceVerticesIds);
 
-            return Face(id, this->getPointsFromIds(faceVerticesIds));
+            std::unique_ptr<Face> face(new Face(id, this->getPointsFromIds(faceVerticesIds)));
+            return face;
         }
 
-        std::vector<int> Mesh::genBoundaryFacesIds(const mfem::Mesh *_mesh) {
-            std::vector<int> result;
-            for (int i = 0; i < _mesh->GetNumFaces(); ++i){
+        std::vector<Face *> Mesh::genBoundaryFaces() {
+            std::vector<Face*> result;
+            for (int i = 0; i < this->mesh->GetNumFaces(); ++i){
                 int id1, id2;
-                _mesh->GetFaceElements(i, &id1, &id2);
+                this->mesh->GetFaceElements(i, &id1, &id2);
                 if (id1 == -1 || id2 == -1){
-                    result.emplace_back(i);
+                    result.emplace_back(this->faces[i].get());
                 }
+            }
+            return result;
+        }
+
+        Element *Mesh::getElementFromId(int id) const {
+            if (id < 0) return nullptr;
+            else return this->elements[id].get();
+        }
+
+        std::vector<std::unique_ptr<Point>> Mesh::genPoints() {
+            std::vector<std::unique_ptr<Point>> result;
+            result.reserve(mesh->GetNV());
+            for (int id = 0; id < mesh->GetNV(); ++id){
+                result.emplace_back(this->createPointFromId(id));
+            }
+            return result;
+        }
+
+        std::vector<std::unique_ptr<Face>> Mesh::genFaces() {
+            std::vector<std::unique_ptr<Face>> result;
+            int facesCount = this->mesh->Dimension() == 2 ? this->mesh->GetNEdges() : this->mesh->GetNFaces();
+
+            result.reserve(facesCount);
+            for (int id = 0; id < facesCount; ++id) {
+                result.emplace_back(this->createFaceFromId(id));
+            }
+            return result;
+        }
+
+        std::vector<std::unique_ptr<Element>> Mesh::genElements() {
+            std::vector<std::unique_ptr<Element>> result;
+
+            result.reserve(mesh->GetNE());
+            for (int id = 0; id < mesh->GetNE(); ++id) {
+                result.emplace_back(this->createElementFromId(id));
+            }
+            return result;
+        }
+
+        std::vector<Face *> Mesh::getFacesFromIds(const mfem::Array<int> &ids) const {
+            std::vector<Face *> result;
+            size_t size = std::distance(ids.begin(), ids.end());
+            result.reserve(size);
+            for (auto id : ids) {
+                result.emplace_back(this->faces[id].get());
             }
             return result;
         }

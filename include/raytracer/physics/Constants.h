@@ -3,6 +3,9 @@
 
 namespace raytracer {
     namespace physics {
+        /**
+         * Basic physics constants in cgs units.
+         */
         namespace constants {
 
             constexpr double electron_charge = 4.8032068e-10;

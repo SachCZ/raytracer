@@ -29,13 +29,13 @@ namespace raytracer {
              *
              * @return the points.
              */
-            const std::vector<Point>& getPoints() const;
+            const std::vector<Point*>& getPoints() const;
 
         private:
-            explicit Face(int id, std::vector<Point> points);
+            explicit Face(int id, std::vector<Point*> points);
 
             int id;
-            std::vector<Point> points;
+            std::vector<Point*> points;
 
             friend class Mesh;
             friend class Element;

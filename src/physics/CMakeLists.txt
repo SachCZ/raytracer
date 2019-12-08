@@ -1,4 +1,4 @@
-add_library(physics LaserRay.cpp Functions.cpp ../../include/raytracer/physics/Functions.h Laser.cpp ../../include/raytracer/physics/Laser.h)
+add_library(physics LaserRay.cpp GeometryFunctions.cpp ../../include/raytracer/physics/MathFunctions.h Laser.cpp ../../include/raytracer/physics/Laser.h)
 target_include_directories(physics PUBLIC ../../include/raytracer/physics)
 target_link_libraries(physics PUBLIC geometry utility)
 target_compile_options(physics PRIVATE $<$<CONFIG:DEBUG>:-Werror -Wall -Wextra>)

@@ -30,7 +30,7 @@ namespace raytracer {
              * @param face
              * @return
              */
-            const std::vector<Face>& getFaces() const {
+            const std::vector<Face *> &getFaces() const {
                 return this->faces;
             }
 
@@ -38,13 +38,14 @@ namespace raytracer {
             int getId() const {
                 return this->id;
             }
+
         private:
-            explicit Element(int id, std::vector<Face> faces) :
+            explicit Element(int id, std::vector<Face *> faces) :
                     id(id),
                     faces(std::move(faces)) {}
 
             int id;
-            std::vector<Face> faces;
+            std::vector<Face *> faces;
 
             friend class Mesh;
         };
@@ -66,8 +67,8 @@ namespace raytracer {
             /** Create a rectangular mesh given two discrete lines (the sides of the rectangle).
              * The mesh will be a rectangular equidistant grid.
              *
-             * @param sideA
-             * @param sideB
+             * @param sideA of the mesh
+             * @param sideB of the mesh
              */
             explicit Mesh(DiscreteLine sideA, DiscreteLine sideB);
 
@@ -78,44 +79,40 @@ namespace raytracer {
              * @param direction in which to search for elements.
              * @return The element pointer if found or nullptr if not.
              */
-            std::unique_ptr<Element> getAdjacentElement(const Face &face, const Vector &direction) const;
+            Element *getAdjacentElement(const Face &face, const Vector &direction) const;
 
             /**
              * Return a sequence of faces that are on the mesh boundary.
              * @return sequence of faces.
              */
-            std::vector<Face> getBoundary() const;
+            std::vector<Face *> getBoundary() const;
 
         private:
             std::unique_ptr<mfem::Mesh> mesh;
-            std::vector<int> boundaryFacesIds;
+            std::vector<Face*> boundaryFaces;
+            std::vector<std::unique_ptr<Element>> elements;
+            std::vector<std::unique_ptr<Face>> faces;
+            std::vector<std::unique_ptr<Point>> points;
 
-            std::unique_ptr<Element> getElementFromId(int id) const;
 
-            Point getPointFromId(int id) const;
+            std::unique_ptr<Point> createPointFromId(int id) const;
+            std::unique_ptr<Face> createFaceFromId(int id) const;
+            std::unique_ptr<Element> createElementFromId(int id) const;
 
-            std::vector<Point> getPointsFromIds(const mfem::Array<int> &ids) const;
 
-            Face getFaceFromId(int id) const;
+            std::vector<Point *> getPointsFromIds(const mfem::Array<int> &ids) const;
+            std::vector<Face *> getFacesFromIds(const mfem::Array<int>& ids) const;
+            Element* getElementFromId(int id) const;
 
-            template <typename Sequence>
-            std::vector<Face> getFacesFromIds(const Sequence &ids) const;
+            std::vector<std::unique_ptr<Point>> genPoints();
 
-            static std::vector<int> genBoundaryFacesIds(const mfem::Mesh* _mesh);
+            std::vector<std::unique_ptr<Face>> genFaces();
+
+            std::vector<std::unique_ptr<Element>> genElements();
+
+            std::vector<Face *> genBoundaryFaces();
         };
     }
-}
-
-//Template definitions
-template <typename Sequence>
-std::vector<raytracer::geometry::Face> raytracer::geometry::Mesh::getFacesFromIds(const Sequence &ids) const {
-    std::vector<Face> result;
-    size_t size = std::distance(ids.begin(), ids.end());
-    result.reserve(size);
-    for (auto id : ids) {
-        result.emplace_back(this->getFaceFromId(id));
-    }
-    return result;
 }
 
 #endif //RAYTRACER_MESH_H

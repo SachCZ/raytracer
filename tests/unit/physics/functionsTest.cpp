@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <raytracer/physics/Functions.h>
+#include <raytracer/physics/MathFunctions.h>
 
 using namespace testing;
 using Gaussian = raytracer::physics::Gaussian;
