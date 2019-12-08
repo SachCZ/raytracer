@@ -1,3 +1,5 @@
+#include <utility>
+
 #ifndef RAYTRACER_LASER_H
 #define RAYTRACER_LASER_H
 
@@ -6,6 +8,7 @@
 #include "FreeFunctions.h"
 
 #include "Point.h"
+#include "Face.h"
 #include "LaserRay.h"
 
 namespace raytracer {
@@ -20,7 +23,8 @@ namespace raytracer {
         public:
 
             /**
-             * Construct it using the wavelength in cm, directionFunction and energyFunction.
+             * Construct it using the wavelength in cm, directionFunction, energyFunction and two points in space
+             * between which the laser originates.
              *
              * The directionFunction should return the direction of the laser given an arbitrary point in space.
              * The energy function should return the energy of the laser base on the parameter x. X is expected to
@@ -30,26 +34,33 @@ namespace raytracer {
              * @param directionFunction function with signature (const Point& point) -> Vector
              * @param energyFunction function with signature (double x) -> double.
              */
-            Laser(Length wavelength, DirectionFun directionFunction, EnergyFun energyFunction) :
+            Laser(
+                    Length wavelength,
+                    DirectionFun directionFunction,
+                    EnergyFun energyFunction,
+                    geometry::Point startPoint,
+                    geometry::Point endPoint) :
                     wavelength(wavelength),
                     directionFunction(std::move(directionFunction)),
-                    energyFunction(std::move(energyFunction)) {}
+                    energyFunction(std::move(energyFunction)),
+                    startPoint(startPoint),
+                    endPoint(endPoint){}
 
             /** Generate a set of equidistant LaserRays given by the parameters of the whole laser.
-             * The rays are generated originating from an edge between a start and end points.
+             * The rays are generated originating from an edge between a start and end points of the laser.
              *
              * @param count number of rays to be generated
              * @param startPoint from which to start the generation of the rays
              * @param endPoint where to end the generation of the points
              * @return a sequence of rays
              */
-            std::vector<LaserRay> generateRays(size_t count, geometry::Point startPoint, geometry::Point endPoint) {
+            std::vector<LaserRay> generateRays(size_t count) {
                 std::vector<LaserRay> result;
                 result.reserve(count);
-                auto x = utility::linspace(startPoint.x, endPoint.x, count);
-                auto y = utility::linspace(startPoint.y, endPoint.y, count);
+                auto x = utility::linspace(this->startPoint.x, this->endPoint.x, count);
+                auto y = utility::linspace(this->startPoint.y, this->endPoint.y, count);
 
-                double sourceWidth = (startPoint - endPoint).getNorm();
+                double sourceWidth = (this->startPoint - this->endPoint).getNorm();
                 double parameter = -sourceWidth / 2;
                 double deltaParameter = sourceWidth / (count - 1);
                 parameter -= deltaParameter / 2; //Integrate with ray in the middle
@@ -72,6 +83,8 @@ namespace raytracer {
             Length wavelength;
             DirectionFun directionFunction;
             EnergyFun energyFunction;
+            geometry::Point startPoint;
+            geometry::Point endPoint;
         };
     }
 }
