@@ -12,7 +12,6 @@ namespace raytracer {
     namespace geometry {
         class Mesh;
         class Element;
-
         /** Class representing a face in mesh (edge in 2D, surface face in 3D).
          *  Instance of this object should not be initialized by user.
          */

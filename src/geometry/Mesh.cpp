@@ -1,11 +1,13 @@
 #include "Mesh.h"
+#include "Element.h"
+
 namespace raytracer {
     namespace geometry {
-        Element * Mesh::getAdjacentElement(const Face &face, const Vector &direction) const {
+        Element * Mesh::getAdjacentElement(const Face *face, const Vector &direction) const {
             int elementA, elementB;
-            this->mesh->GetFaceElements(face.id, &elementA, &elementB);
+            this->mesh->GetFaceElements(face->id, &elementA, &elementB);
 
-            auto normal = face.getNormal();
+            auto normal = face->getNormal();
 
             if (normal * direction < 0) {
                 return this->getElementFromId(elementA);

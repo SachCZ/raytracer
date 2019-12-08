@@ -7,6 +7,7 @@
 #include "Vector.h"
 #include "Face.h"
 #include "Constants.h"
+#include "Element.h"
 
 namespace raytracer {
     namespace geometry {
@@ -29,17 +30,9 @@ namespace raytracer {
          * Structure representing a single intersection of HalfLine with a mesh.
          */
         struct Intersection {
-            /**
-             * Construct it using the HalfLine (orientation) that intersected a Face
-             * @param orientation of the the HalfLine that intersected the ray
-             * @param face that was intersected
-             */
-            Intersection(const HalfLine& orientation, Face face):
-                    orientation(orientation), face(std::move(face))
-            {}
-
-            HalfLine orientation;
-            Face face;
+            HalfLine orientation{};
+            const Face* face{};
+            const Element* element{};
         };
 
         /**
@@ -59,7 +52,7 @@ namespace raytracer {
          * @param face to be intersected
          * @return an intersection structure pointer or nullptr if no intersection exists.
          */
-        std::unique_ptr<Intersection> findIntersection(const HalfLine &halfLine, const Face &face);
+        std::unique_ptr<Intersection> findIntersection(const HalfLine &halfLine, const Face *face);
 
         /**
          * For a given set of faces find all its intersections with a HalfLine and return the one that is closest to the

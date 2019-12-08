@@ -16,40 +16,6 @@ namespace raytracer {
      * Namespace encapsulating all the abstractions related to geometry
      */
     namespace geometry {
-        class Mesh;
-
-        /** Class representing a single volume element in mesh.
-         *  Could be any element given by set of faces (edges, surfaces).
-         * Instance of this object should not be initialized by user.
-         */
-        class Element {
-        public:
-            /**
-             * Get the faces of the mesh excluding the given face.
-             * This is useful for intersection finding if
-             * @param face
-             * @return
-             */
-            const std::vector<Face *> &getFaces() const {
-                return this->faces;
-            }
-
-            //TODO delete this
-            int getId() const {
-                return this->id;
-            }
-
-        private:
-            explicit Element(int id, std::vector<Face *> faces) :
-                    id(id),
-                    faces(std::move(faces)) {}
-
-            int id;
-            std::vector<Face *> faces;
-
-            friend class Mesh;
-        };
-
         /** Structure representing a discretisation of a distance.
          * That is how many equidistant nodes are on the line with given width.
          */
@@ -79,7 +45,7 @@ namespace raytracer {
              * @param direction in which to search for elements.
              * @return The element pointer if found or nullptr if not.
              */
-            Element *getAdjacentElement(const Face &face, const Vector &direction) const;
+            Element *getAdjacentElement(const Face *face, const Vector &direction) const;
 
             /**
              * Return a sequence of faces that are on the mesh boundary.

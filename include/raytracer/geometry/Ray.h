@@ -59,15 +59,16 @@ namespace raytracer {
 
 
                 do {
-                    result.emplace_back(*intersection);
                     nextElement = mesh.getAdjacentElement(
                             intersection->face,
                             intersection->orientation.direction);
+                    intersection->element = nextElement;
+                    result.emplace_back(*intersection);
                     if (!nextElement) {
                         break;
                     }
-                    intersection = std::move(findInters(*intersection, *nextElement));
-                } while (intersection && !stopCondition(*intersection, *nextElement));
+                    intersection = std::move(findInters(*intersection));
+                } while (intersection && !stopCondition(*intersection));
                 return result;
             }
 

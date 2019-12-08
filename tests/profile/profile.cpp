@@ -18,10 +18,11 @@ int main(int argc, char *argv[]) {
     for (size_t i = 0; i < steps; ++i){
         auto intersections = ray.findIntersections(
                 mesh,
-                [](const Intersection& previousIntersection, const Element& element) -> std::unique_ptr<Intersection> {
-                    return findClosestIntersection(previousIntersection.orientation, element.getFaces());
+                [](const Intersection& previousIntersection) -> std::unique_ptr<Intersection> {
+                    const auto element = previousIntersection.element;
+                    return findClosestIntersection(previousIntersection.orientation, element->getFaces());
                 },
-                [](const Intersection& previousIntersection, const Element& element) {
+                [](const Intersection& previousIntersection) {
                     return false;
                 }
         );

@@ -26,8 +26,8 @@ bool raytracer::geometry::impl::isIntersecting(double k, double t) {
 
 std::unique_ptr<raytracer::geometry::Intersection>
 raytracer::geometry::findIntersection(const HalfLine &halfLine,
-                                      const raytracer::geometry::Face &face) {
-    const auto& points = face.getPoints();
+                                      const Face *face) {
+    const auto& points = face->getPoints();
     if (points.size() == 2){
         double k = impl::getParamK(halfLine, points);
         double t = impl::getParamT(halfLine, points);
@@ -36,7 +36,10 @@ raytracer::geometry::findIntersection(const HalfLine &halfLine,
             auto point = (halfLine.point + t*halfLine.direction);
             auto direction = halfLine.direction;
             HalfLine newHalfLine{point, direction};
-            auto intersection = std::make_unique<Intersection>(newHalfLine, face);
+            auto intersection = std::make_unique<Intersection>();
+            intersection->orientation = newHalfLine;
+            intersection->face = face;
+
             return intersection;
         } else {
             return nullptr;
@@ -55,7 +58,7 @@ raytracer::geometry::findClosestIntersection(const HalfLine &halfLine,
 
 
     for (const auto& face : faces){
-        auto intersection = findIntersection(halfLine, *face);
+        auto intersection = findIntersection(halfLine, face);
         if (intersection) {
             auto norm = (intersection->orientation.point - halfLine.point).getNorm();
             if (norm < distance){
