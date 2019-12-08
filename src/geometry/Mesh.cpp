@@ -22,16 +22,7 @@ namespace raytracer {
             return this->boundaryFaces;
         }
 
-        Mesh::Mesh(DiscreteLine sideA, DiscreteLine sideB) {
-            this->mesh = std::make_unique<mfem::Mesh>(
-                    sideA.segmentCount,
-                    sideB.segmentCount,
-                    mfem::Element::Type::QUADRILATERAL,
-                    true,
-                    sideA.width,
-                    sideB.width,
-                    true);
-
+        Mesh::Mesh(mfem::Mesh *mesh): mesh(mesh) {
             this->points = this->genPoints();
             this->faces = this->genFaces();
             this->elements = this->genElements();
@@ -135,5 +126,15 @@ namespace raytracer {
             return result;
         }
 
+        std::unique_ptr<mfem::Mesh> constructRectangleMesh(DiscreteLine sideA, DiscreteLine sideB) {
+            return std::make_unique<mfem::Mesh>(
+                    sideA.segmentCount,
+                    sideB.segmentCount,
+                    mfem::Element::Type::QUADRILATERAL,
+                    true,
+                    sideA.width,
+                    sideB.width,
+                    true);
+        }
     }
 }

@@ -11,21 +11,25 @@ using namespace raytracer::geometry;
 
 class initialized_mesh : public Test {
 public:
-    DiscreteLine sideA{1.0, 2};
-    DiscreteLine sideB{1.0, 2};
-
-    Mesh mesh{sideA, sideB};
-
+    initialized_mesh() {
+        DiscreteLine sideA{1.0, 2};
+        DiscreteLine sideB{1.0, 2};
+        mfemMesh = std::move(constructRectangleMesh(sideA, sideB));
+        mesh = std::make_unique<Mesh>(mfemMesh.get());
+    }
+    std::unique_ptr<mfem::Mesh> mfemMesh;
+    std::unique_ptr<Mesh> mesh;
 };
 
+
 TEST_F(initialized_mesh, has_proper_boundary) {
-    auto boundary = mesh.getBoundary();
+    auto boundary = mesh->getBoundary();
     ASSERT_THAT(boundary, SizeIs(8));
 }
 
 TEST_F(initialized_mesh, has_a_way_to_retrive_element_adjacent_to_face_in_direction){
-    auto boundary = mesh.getBoundary();
-    auto element = mesh.getAdjacentElement(boundary[0], Vector(0, 1));
+    auto boundary = mesh->getBoundary();
+    auto element = mesh->getAdjacentElement(boundary[0], Vector(0, 1));
     auto faces = element->getFaces();
     auto normal = faces[2]->getNormal();
 
@@ -33,7 +37,7 @@ TEST_F(initialized_mesh, has_a_way_to_retrive_element_adjacent_to_face_in_direct
     EXPECT_THAT(normal.y, DoubleEq(0.5));
 
     //Double check
-    element = mesh.getAdjacentElement(faces[1], Vector(0, -1));
+    element = mesh->getAdjacentElement(faces[1], Vector(0, -1));
     faces = element->getFaces();
     normal = faces[0]->getNormal();
 

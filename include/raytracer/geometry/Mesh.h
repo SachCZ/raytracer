@@ -25,18 +25,24 @@ namespace raytracer {
         };
 
         /**
+         * Construct a mfem::Mesh given two discrete lines (the sides of the rectangle).
+         * The mesh will be a rectangular equidistant grid.
+         *
+         * @param sideA of the mesh
+         * @param sideB of the mesh
+         * @return the unique pointer to the mesh
+         */
+        std::unique_ptr<mfem::Mesh> constructRectangleMesh(DiscreteLine sideA, DiscreteLine sideB);
+
+        /**
          * Class representing a mesh. For now it is a mesh of quadrilaterals.
          * It encapsulates the class mfem::Mesh and provides some convenience methods.
          */
         class Mesh {
         public:
-            /** Create a rectangular mesh given two discrete lines (the sides of the rectangle).
-             * The mesh will be a rectangular equidistant grid.
-             *
-             * @param sideA of the mesh
-             * @param sideB of the mesh
+            /** Create a rectangular mesh given
              */
-            explicit Mesh(DiscreteLine sideA, DiscreteLine sideB);
+            explicit Mesh(mfem::Mesh *mesh);
 
             /** Given a face return the adjacent element to this face in given direction.
              *  It is expected that there are two or less elements adjacent to the face. If there is no
@@ -54,7 +60,7 @@ namespace raytracer {
             std::vector<Face *> getBoundary() const;
 
         private:
-            std::unique_ptr<mfem::Mesh> mesh;
+            mfem::Mesh* mesh;
             std::vector<Face*> boundaryFaces;
             std::vector<std::unique_ptr<Element>> elements;
             std::vector<std::unique_ptr<Face>> faces;
