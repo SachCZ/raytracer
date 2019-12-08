@@ -1,4 +1,4 @@
-add_library(geometry Ray.cpp Point.cpp Vector.cpp Mesh.cpp MathFunctions.cpp Face.cpp Element.cpp Element.h)
+add_library(geometry Ray.cpp Point.cpp Vector.cpp Mesh.cpp MathFunctions.cpp Face.cpp Element.cpp)
 target_include_directories(geometry PUBLIC ../../include/raytracer/geometry)
 target_link_libraries(geometry PUBLIC utility mfem)
 target_compile_options(geometry PRIVATE $<$<CONFIG:DEBUG>:-Werror -Wall -Wextra>)
