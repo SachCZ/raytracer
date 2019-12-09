@@ -36,6 +36,7 @@ namespace raytracer {
             std::vector<Face *> faces;
 
             friend class Mesh;
+            friend class MeshFunction;
         };
     }
 }
