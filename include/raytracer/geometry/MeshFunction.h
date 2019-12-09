@@ -17,15 +17,23 @@ namespace raytracer {
             }
 
             double& operator[](const Element& element){
-                mfem::Array<int> vdofs;
-                finiteElementSpace.GetElementInteriorDofs(element.id, vdofs);
-                auto &trueVector = gridFunction.GetTrueVector();
-                return trueVector[vdofs[0]];
+                return const_cast<double&>(const_cast<const MeshFunction*>(this)->get(element));
+            }
+
+            const double& operator[](const Element& element) const {
+                return this->get(element);
             }
 
         private:
             mfem::GridFunction& gridFunction;
             const mfem::FiniteElementSpace& finiteElementSpace;
+
+            const double& get(const Element& element) const {
+                mfem::Array<int> vdofs;
+                finiteElementSpace.GetElementInteriorDofs(element.id, vdofs);
+                auto &trueVector = gridFunction.GetTrueVector();
+                return trueVector[vdofs[0]];
+            }
         };
     }
 }
