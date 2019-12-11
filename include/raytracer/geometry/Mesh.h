@@ -20,7 +20,11 @@ namespace raytracer {
          * That is how many equidistant nodes are on the line with given width.
          */
         struct DiscreteLine {
-            double width;
+            /**Length of the line*/
+            double length;
+            /**Number of segments of the line.
+             * Eg. DiscreteLine split by four points has three segments.
+             */
             size_t segmentCount;
         };
 
@@ -60,21 +64,25 @@ namespace raytracer {
             std::vector<Face *> getBoundary() const;
 
         private:
-            mfem::Mesh* mesh;
-            std::vector<Face*> boundaryFaces;
+            mfem::Mesh *mesh;
+            std::vector<Face *> boundaryFaces;
             std::vector<std::unique_ptr<Element>> elements;
             std::vector<std::unique_ptr<Face>> faces;
             std::vector<std::unique_ptr<Point>> points;
 
 
             std::unique_ptr<Point> createPointFromId(int id) const;
+
             std::unique_ptr<Face> createFaceFromId(int id) const;
+
             std::unique_ptr<Element> createElementFromId(int id) const;
 
 
             std::vector<Point *> getPointsFromIds(const mfem::Array<int> &ids) const;
-            std::vector<Face *> getFacesFromIds(const mfem::Array<int>& ids) const;
-            Element* getElementFromId(int id) const;
+
+            std::vector<Face *> getFacesFromIds(const mfem::Array<int> &ids) const;
+
+            Element *getElementFromId(int id) const;
 
             std::vector<std::unique_ptr<Point>> genPoints();
 

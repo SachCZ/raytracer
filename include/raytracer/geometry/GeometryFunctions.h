@@ -30,8 +30,13 @@ namespace raytracer {
          * Structure representing a single intersection of HalfLine with a mesh.
          */
         struct Intersection {
+            /**Orientation is represented by HalfLine. The origin of the HalfLine is the intersection point.
+             * The direction of the HalfLine is the direction the ray had when it intersected the Mesh.*/
             HalfLine orientation{};
+            /**Pointer to the Face that was intersected by the ray.*/
             const Face* face{};
+            /**Pointer to the next Element that the ray would go to from the Face.
+             * Could be null if the ray just left the Mesh.*/
             const Element* element{};
         };
 

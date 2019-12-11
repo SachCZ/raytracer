@@ -132,8 +132,8 @@ namespace raytracer {
                     sideB.segmentCount,
                     mfem::Element::Type::QUADRILATERAL,
                     true,
-                    sideA.width,
-                    sideB.width,
+                    sideA.length,
+                    sideB.length,
                     true);
         }
     }

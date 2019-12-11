@@ -14,7 +14,7 @@ public:
     initialized_laser() {
         DiscreteLine side{};
         side.segmentCount = 15;
-        side.width = 1;
+        side.length = 1;
         mfemMesh = constructRectangleMesh(side, side);
         mesh = std::make_unique<Mesh>(mfemMesh.get());
     }

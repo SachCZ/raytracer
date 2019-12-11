@@ -36,6 +36,8 @@ namespace raytracer {
              * @param wavelength of the laser in cm
              * @param directionFunction function with signature (const Point& point) -> Vector
              * @param energyFunction function with signature (double x) -> double.
+             * @param startPoint from which to start the generation of the rays
+             * @param endPoint where to end the generation of the points
              */
             Laser(
                     Length wavelength,
@@ -47,16 +49,13 @@ namespace raytracer {
                     directionFunction(std::move(directionFunction)),
                     energyFunction(std::move(energyFunction)),
                     startPoint(startPoint),
-                    endPoint(endPoint){}
+                    endPoint(endPoint) {}
 
             /** Generate a set of equidistant LaserRays given by the parameters of the whole laser.
              * The rays are generated originating from an edge between a start and end points of the laser.
              * These will be set to the this Laser state.
              *
-             *
              * @param count number of rays to be generated
-             * @param startPoint from which to start the generation of the rays
-             * @param endPoint where to end the generation of the points
              * @return a sequence of rays
              */
             void generateRays(size_t count) {
@@ -83,10 +82,24 @@ namespace raytracer {
                 }
             }
 
-            const std::vector<LaserRay>& getRays(){
+            /**
+             * Get all the rays in that are in the current state of Laser
+             * @return all rays
+             */
+            const std::vector<LaserRay> &getRays() {
                 return this->rays;
             }
 
+            /**
+             * If there are any rays in Laser theit intersections with given mesh will be found.
+             * This just calls LaserRay::generateIntersections for each of the rays.
+             * @tparam IntersFunc function with signature (Intersection) -> std::unique_ptr<Intersection>
+             * @tparam StopCondition function with signature (Intersection, LaserRay) -> bool
+             * @param mesh to be intersected
+             * @param findInters is propagated to LaserRay::generateIntersections
+             * @param stopCondition is propagated to LaserRay::generateIntersections
+             * with additional parameter being the laserRay
+             */
             template<typename IntersFunc, typename StopCondition>
             void generateIntersections(const geometry::Mesh &mesh,
                                        IntersFunc findInters,
@@ -94,21 +107,26 @@ namespace raytracer {
                 if (this->rays.empty()) throw std::logic_error("There are no rays!");
 
                 for (auto &laserRay : this->rays) {
-                    auto stopper = [&stopCondition, &laserRay](const geometry::Intersection& intersection){
+                    auto stopper = [&stopCondition, &laserRay](const geometry::Intersection &intersection) {
                         return stopCondition(intersection, laserRay);
                     };
                     laserRay.generateIntersections(mesh, findInters, stopper);
                 }
             }
 
-            void saveRaysToJson(const std::string& filename){
+            /**
+             * Save all the rays to a file in JSON format.
+             * There will be one object called rays. It is an array of rays each beeing a sequence of points eg. [0, 1]
+             * @param filename name of the json file including extension
+             */
+            void saveRaysToJson(const std::string &filename) {
                 Json::Value root;
 
                 root["rays"] = Json::Value(Json::arrayValue);
-                for (const auto& ray : this->getRays()){
+                for (const auto &ray : this->getRays()) {
                     Json::Value rayJson = Json::Value(Json::arrayValue);
 
-                    for (const auto& intersection : ray.intersections){
+                    for (const auto &intersection : ray.intersections) {
                         Json::Value pointJson;
                         pointJson[0] = intersection.orientation.point.x;
                         pointJson[1] = intersection.orientation.point.y;

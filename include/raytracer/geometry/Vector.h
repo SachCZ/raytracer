@@ -34,6 +34,10 @@ namespace raytracer {
              */
             double getNorm() const;
 
+            /**
+             * Return the normal to the vector using the convention (y, -x)
+             * @return
+             */
             Vector getNormal() const {
                 return {this->y, -this->x};
             }

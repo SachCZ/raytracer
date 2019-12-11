@@ -13,18 +13,12 @@ namespace raytracer {
         class Element {
         public:
             /**
-             * Get the faces of the mesh excluding the given face.
-             * This is useful for intersection finding if
-             * @param face
-             * @return
+             * Get the faces of the Element.
+             * Edges in 2D, surfaces in 3D.
+             * @return the face
              */
             const std::vector<Face *> &getFaces() const {
                 return this->faces;
-            }
-
-            //TODO delete this
-            int getId() const {
-                return this->id;
             }
 
         private:
