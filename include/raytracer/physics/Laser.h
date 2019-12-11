@@ -5,6 +5,9 @@
 
 #include <vector>
 #include <functional>
+#include <fstream>
+#include <json/json.h>
+
 #include "FreeFunctions.h"
 
 #include "Point.h"
@@ -96,6 +99,27 @@ namespace raytracer {
                     };
                     laserRay.generateIntersections(mesh, findInters, stopper);
                 }
+            }
+
+            void saveRaysToJson(const std::string& filename){
+                Json::Value root;
+
+                root["rays"] = Json::Value(Json::arrayValue);
+                for (const auto& ray : this->getRays()){
+                    Json::Value rayJson = Json::Value(Json::arrayValue);
+
+                    for (const auto& intersection : ray.intersections){
+                        Json::Value pointJson;
+                        pointJson[0] = intersection.orientation.point.x;
+                        pointJson[1] = intersection.orientation.point.y;
+
+                        rayJson.append(pointJson);
+                    }
+
+                    root["rays"].append(rayJson);
+                }
+                std::ofstream file(filename);
+                file << root;
             }
 
         private:
