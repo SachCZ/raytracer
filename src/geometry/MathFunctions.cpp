@@ -21,7 +21,7 @@ double raytracer::geometry::impl::getParamT(const HalfLine &halfLine,
 }
 
 bool raytracer::geometry::impl::isIntersecting(double k, double t) {
-    return k > 0 && k < 1 && t > -constants::epsilon; //TODO when using the terrible hack, it is possible to compare with 0, 1
+    return k > 0 && k < 1 && t > constants::epsilon; //TODO when using the terrible hack, it is possible to compare with 0, 1
 }
 
 std::unique_ptr<raytracer::geometry::Intersection>
@@ -33,9 +33,9 @@ raytracer::geometry::findIntersection(const HalfLine &halfLine,
         double t = impl::getParamT(halfLine, points);
         //TODO delete this terrible hack
         if (std::abs(k - 1) < constants::epsilon){
-            k = 1 - constants::epsilon;
+            k = 1 - 10*constants::epsilon;
         } else if (std::abs(k) < constants::epsilon){
-            k = constants::epsilon;
+            k = 10*constants::epsilon;
         }
 
         if (impl::isIntersecting(k, t)) {
