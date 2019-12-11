@@ -35,7 +35,7 @@ TEST_F(initialized_laser, can_generateproper_rays) {
     EXPECT_THAT(rays, SizeIs(51));
     EXPECT_THAT(rays[25].startPoint.y, DoubleEq(0.5));
     EXPECT_THAT(rays[10].direction.x, DoubleEq(1));
-    ASSERT_THAT(rays[5].energy.asDouble, DoubleEq(1.2 / 50*0.8));
+    ASSERT_THAT(rays[5].energy.asDouble, DoubleEq(1.2 / 50 * 0.8));
 }
 
 TEST_F(initialized_laser, can_generate_intersections) {
@@ -43,9 +43,12 @@ TEST_F(initialized_laser, can_generate_intersections) {
     laser.generateIntersections(
             *mesh,
             [](const Intersection &intersection) {
-                return findClosestIntersection(intersection.orientation, intersection.nextElement->getFaces());
+                return findClosestIntersection(
+                        intersection.orientation,
+                        intersection.nextElement->getFaces(),
+                        intersection.face);
             },
-            [](const Intersection &, const LaserRay& laserRay) { return false; }
+            [](const Intersection &, const LaserRay &laserRay) { return false; }
     );
 
     ASSERT_THAT(laser.getRays()[17].intersections, SizeIs(16));

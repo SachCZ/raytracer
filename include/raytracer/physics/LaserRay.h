@@ -44,7 +44,7 @@ namespace raytracer {
                     const geometry::Mesh &mesh,
                     IntersFunc findInters,
                     StopCondition stopCondition) {
-                geometry::Ray ray(geometry::HalfLine{this->startPoint, this->direction});
+                geometry::Ray ray(geometry::Line{this->startPoint, this->direction});
 
                 this->intersections = ray.findIntersections(mesh, findInters, stopCondition);
             }

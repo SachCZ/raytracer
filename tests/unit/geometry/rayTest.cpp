@@ -12,25 +12,30 @@ class initialized_ray : public Test {
 public:
 public:
     initialized_ray() {
-        DiscreteLine sideA{10.0 , 10};
+        DiscreteLine sideA{10.0, 10};
         mfemMesh = std::move(constructRectangleMesh(sideA, sideA));
         mesh = std::make_unique<Mesh>(mfemMesh.get());
     }
+
     std::unique_ptr<mfem::Mesh> mfemMesh;
     std::unique_ptr<Mesh> mesh;
 
-    HalfLine halfLine{Point(-1, 4.5), Vector(1, 0)};
+    Line halfLine{Point(-1, 4.5), Vector(1, 0)};
     Ray ray{halfLine};
 };
 
-TEST_F(initialized_ray, trace_through_steps_throught_mesh_according_to_find_intersection){
+TEST_F(initialized_ray, trace_through_steps_throught_mesh_according_to_find_intersection) {
     auto intersections = ray.findIntersections(
             *mesh,
-            [](const Intersection& previousIntersection) -> std::unique_ptr<Intersection> {
+            [](const Intersection &previousIntersection) -> std::unique_ptr<Intersection> {
                 const auto element = previousIntersection.nextElement;
-                return findClosestIntersection(previousIntersection.orientation, element->getFaces());
+                return findClosestIntersection(
+                        previousIntersection.orientation,
+                        element->getFaces(),
+                        previousIntersection.face
+                );
             },
-            [](const Intersection& previousIntersection){
+            [](const Intersection &previousIntersection) {
                 return false;
             });
     ASSERT_THAT(intersections, SizeIs(11));

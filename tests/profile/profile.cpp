@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
     DiscreteLine sideA{10.0, 100};
     auto mfemMesh = constructRectangleMesh(sideA, sideA);
     Mesh mesh{mfemMesh.get()};
-    HalfLine orientation{Point(-1, 4.5), Vector(1, 0)};
+    Line orientation{Point(-1, 4.5), Vector(1, 0)};
     Ray ray{orientation};
     size_t steps = 10000;
 
