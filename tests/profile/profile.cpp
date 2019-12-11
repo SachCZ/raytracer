@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
         auto intersections = ray.findIntersections(
                 mesh,
                 [](const Intersection& previousIntersection) -> std::unique_ptr<Intersection> {
-                    const auto element = previousIntersection.element;
+                    const auto element = previousIntersection.nextElement;
                     return findClosestIntersection(previousIntersection.orientation, element->getFaces());
                 },
                 [](const Intersection& previousIntersection) {

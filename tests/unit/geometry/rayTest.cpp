@@ -27,7 +27,7 @@ TEST_F(initialized_ray, trace_through_steps_throught_mesh_according_to_find_inte
     auto intersections = ray.findIntersections(
             *mesh,
             [](const Intersection& previousIntersection) -> std::unique_ptr<Intersection> {
-                const auto element = previousIntersection.element;
+                const auto element = previousIntersection.nextElement;
                 return findClosestIntersection(previousIntersection.orientation, element->getFaces());
             },
             [](const Intersection& previousIntersection){

@@ -37,7 +37,10 @@ namespace raytracer {
             const Face* face{};
             /**Pointer to the next Element that the ray would go to from the Face.
              * Could be null if the ray just left the Mesh.*/
-            const Element* element{};
+            const Element* nextElement{};
+            /**Pointer to the previous Element that the ray actually came from.
+             * could be null if the ray just entered the Mesh. */
+            const Element* previousElement{};
         };
 
         /**
