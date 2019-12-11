@@ -48,15 +48,17 @@ namespace raytracer {
 
             /** Generate a set of equidistant LaserRays given by the parameters of the whole laser.
              * The rays are generated originating from an edge between a start and end points of the laser.
+             * These will be set to the this Laser state.
+             *
              *
              * @param count number of rays to be generated
              * @param startPoint from which to start the generation of the rays
              * @param endPoint where to end the generation of the points
              * @return a sequence of rays
              */
-            std::vector<LaserRay> generateRays(size_t count) {
-                std::vector<LaserRay> result;
-                result.reserve(count);
+            void generateRays(size_t count) {
+                this->rays.clear();
+                this->rays.reserve(count);
                 auto x = utility::linspace(this->startPoint.x, this->endPoint.x, count);
                 auto y = utility::linspace(this->startPoint.y, this->endPoint.y, count);
 
@@ -72,11 +74,25 @@ namespace raytracer {
                     laserRay.wavelength = this->wavelength;
                     laserRay.startPoint = geometry::Point(x[i], y[i]);
 
-                    result.emplace_back(laserRay);
+                    this->rays.emplace_back(laserRay);
 
                     parameter += deltaParameter;
                 }
-                return result;
+            }
+
+            const std::vector<LaserRay>& getRays(){
+                return this->rays;
+            }
+
+            template<typename IntersFunc, typename StopCondition>
+            void generateIntersections(const geometry::Mesh &mesh,
+                                       IntersFunc findInters,
+                                       StopCondition stopCondition) {
+                if (this->rays.empty()) throw std::logic_error("There are no rays!");
+
+                for (auto &laserRay : this->rays) {
+                    laserRay.generateIntersections(mesh, findInters, stopCondition);
+                }
             }
 
         private:
@@ -85,6 +101,8 @@ namespace raytracer {
             EnergyFun energyFunction;
             geometry::Point startPoint;
             geometry::Point endPoint;
+
+            std::vector<LaserRay> rays;
         };
     }
 }

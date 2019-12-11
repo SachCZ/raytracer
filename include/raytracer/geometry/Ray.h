@@ -52,13 +52,14 @@ namespace raytracer {
                 std::vector<Intersection> result;
 
                 std::unique_ptr<Intersection> intersection = findClosestIntersection(initialRay, mesh.getBoundary());
+
+                if (!intersection)
+                    throw std::logic_error("No intersection found! Did you miss the target?");
+
                 intersection->element = mesh.getAdjacentElement(
                         intersection->face,
                         intersection->orientation.direction);
                 result.emplace_back(*intersection);
-
-                if (!intersection)
-                    throw std::logic_error("No intersection found! Did you miss the target?");
 
 
                 while (intersection->element && !stopCondition(*intersection)) {
