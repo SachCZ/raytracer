@@ -22,7 +22,7 @@ namespace raytracer {
              * Construct it using a HalfLine (that is the initial orientation of the Ray)
              * @param initialRay
              */
-            explicit Ray(const Line &initialRay) :
+            explicit Ray(const HalfLine &initialRay) :
                     initialRay(initialRay) {}
 
             /**
@@ -77,7 +77,7 @@ namespace raytracer {
             }
 
         private:
-            Line initialRay;
+            HalfLine initialRay;
         };
     }
 }

@@ -20,7 +20,7 @@ public:
     std::unique_ptr<mfem::Mesh> mfemMesh;
     std::unique_ptr<Mesh> mesh;
 
-    Line halfLine{Point(-1, 4.5), Vector(1, 0)};
+    HalfLine halfLine{Point(-1, 4.5), Vector(1, 0)};
     Ray ray{halfLine};
 };
 
