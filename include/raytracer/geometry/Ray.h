@@ -66,7 +66,7 @@ namespace raytracer {
                 while (intersection->nextElement && !stopCondition(*intersection)) {
                     auto previousElement = intersection->nextElement;
                     intersection = std::move(findInters(*intersection));
-                    if (!intersection) break;
+                    if (!intersection) throw std::logic_error("No intersection found, but it should exist!");
                     intersection->previousElement = previousElement;
                     intersection->nextElement = mesh.getAdjacentElement(
                             intersection->face,
