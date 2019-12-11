@@ -91,7 +91,10 @@ namespace raytracer {
                 if (this->rays.empty()) throw std::logic_error("There are no rays!");
 
                 for (auto &laserRay : this->rays) {
-                    laserRay.generateIntersections(mesh, findInters, stopCondition);
+                    auto stopper = [&stopCondition, &laserRay](const geometry::Intersection& intersection){
+                        return stopCondition(intersection, laserRay);
+                    };
+                    laserRay.generateIntersections(mesh, findInters, stopper);
                 }
             }
 
