@@ -10,27 +10,11 @@ namespace raytracer {
 
             auto normal = face->getNormal();
 
-            Element* nextElement;
             if (normal * orientation.direction < 0) {
-                nextElement = this->getElementFromId(elementA);
+                return this->getElementFromId(elementA);
             } else {
-                nextElement = this->getElementFromId(elementB);
+                return this->getElementFromId(elementB);
             }
-
-            if (!nextElement) return nullptr;
-
-            for (const auto& point : face->getPoints()){
-                if ((*point - orientation.point).getNorm() < constants::epsilon){
-                    for (const auto& referenceFace : nextElement->getFaces()){
-                        for (const auto& referencePoint : referenceFace->getPoints()){
-                            if (referenceFace != face && referencePoint == point){
-                                return this->getAdjacentElement(referenceFace, HalfLine{Point(-999, -999), orientation.direction});
-                            }
-                        }
-                    }
-                }
-            }
-            return nextElement;
         }
 
 
