@@ -42,7 +42,7 @@ TEST_F(initialized_ray, trace_through_steps_throught_mesh_according_to_find_inte
 }
 
 TEST_F(initialized_ray, intersecting_can_deal_with_diagonal_case) {
-    HalfLine diagonalHalfLine{Point(-1, 11), Vector(1, -1)};
+    HalfLine diagonalHalfLine{Point(-1, 9), Vector(1, -1)};
     Ray diagonalRay{diagonalHalfLine};
 
     auto intersections = diagonalRay.findIntersections(
@@ -58,5 +58,5 @@ TEST_F(initialized_ray, intersecting_can_deal_with_diagonal_case) {
             [](const Intersection &previousIntersection) {
                 return false;
             });
-    ASSERT_THAT(intersections, SizeIs(20));
+    ASSERT_THAT(intersections, SizeIs(18));
 }
