@@ -58,7 +58,7 @@ namespace raytracer {
 
                 intersection->nextElement = mesh.getAdjacentElement(
                         intersection->face,
-                        intersection->orientation.direction);
+                        intersection->orientation);
                 intersection->previousElement = nullptr;
                 result.emplace_back(*intersection);
 
@@ -70,7 +70,7 @@ namespace raytracer {
                     intersection->previousElement = previousElement;
                     intersection->nextElement = mesh.getAdjacentElement(
                             intersection->face,
-                            intersection->orientation.direction);
+                            intersection->orientation);
                     result.emplace_back(*intersection);
                 }
                 return result;

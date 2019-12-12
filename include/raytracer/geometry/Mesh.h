@@ -6,6 +6,7 @@
 #include "Vector.h"
 #include "Point.h"
 #include "Face.h"
+#include "GeometryFunctions.h"
 #include <mfem.hpp>
 
 /**
@@ -52,10 +53,10 @@ namespace raytracer {
              *  It is expected that there are two or less elements adjacent to the face. If there is no
              *  element adjacent in given direction, nullptr is returned.
              * @param face whose adjacent elements are to be found.
-             * @param direction in which to search for elements.
+             * @param orientation in which to search for elements.
              * @return The element pointer if found or nullptr if not.
              */
-            Element *getAdjacentElement(const Face *face, const Vector &direction) const;
+            Element *getAdjacentElement(const Face *face, const HalfLine &orientation) const;
 
             /**
              * Return a sequence of faces that are on the mesh boundary.

@@ -58,5 +58,5 @@ TEST_F(initialized_ray, intersecting_can_deal_with_diagonal_case) {
             [](const Intersection &previousIntersection) {
                 return false;
             });
-    ASSERT_THAT(intersections, SizeIs(18));
+    ASSERT_THAT(intersections, SizeIs(9));
 }

@@ -1,19 +1,36 @@
+#include <GeometryFunctions.h>
 #include "Mesh.h"
 #include "Element.h"
 
 namespace raytracer {
     namespace geometry {
-        Element * Mesh::getAdjacentElement(const Face *face, const Vector &direction) const {
+        Element * Mesh::getAdjacentElement(const Face *face, const raytracer::geometry::HalfLine &orientation) const {
             int elementA, elementB;
             this->mesh->GetFaceElements(face->id, &elementA, &elementB);
 
             auto normal = face->getNormal();
 
-            if (normal * direction < 0) {
-                return this->getElementFromId(elementA);
+            Element* nextElement;
+            if (normal * orientation.direction < 0) {
+                nextElement = this->getElementFromId(elementA);
             } else {
-                return this->getElementFromId(elementB);
+                nextElement = this->getElementFromId(elementB);
             }
+
+            if (!nextElement) return nullptr;
+
+            for (const auto& point : face->getPoints()){
+                if ((*point - orientation.point).getNorm() < constants::epsilon){
+                    for (const auto& referenceFace : nextElement->getFaces()){
+                        for (const auto& referencePoint : referenceFace->getPoints()){
+                            if (referenceFace != face && referencePoint == point){
+                                return this->getAdjacentElement(referenceFace, HalfLine{Point(-999, -999), orientation.direction});
+                            }
+                        }
+                    }
+                }
+            }
+            return nextElement;
         }
 
 

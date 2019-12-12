@@ -13,7 +13,7 @@ namespace raytracer {
             /**
              * Tolerance up to which two doubles are considered equal
              */
-            constexpr auto epsilon = 100 * std::numeric_limits<double>::epsilon();
+            constexpr auto epsilon = std::numeric_limits<double>::epsilon();
         }
     }
 }
