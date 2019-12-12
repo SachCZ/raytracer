@@ -38,7 +38,7 @@ TEST_F(find_intersection, returns_intersection_if_border_point_is_intersected) {
     HalfLine halfLine{Point(0.5, -0.5), Vector(1, 1)};
     auto face = mesh->getBoundary()[0];
     auto intersection = findIntersection(halfLine, face);
-    EXPECT_THAT(intersection->orientation.point.x, DoubleEq(1));
+    EXPECT_THAT(intersection->orientation.point.x, DoubleNear(1, 1e-8));
     ASSERT_THAT(intersection->orientation.point.y, DoubleEq(0));
 }
 

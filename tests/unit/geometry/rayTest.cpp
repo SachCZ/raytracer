@@ -40,3 +40,23 @@ TEST_F(initialized_ray, trace_through_steps_throught_mesh_according_to_find_inte
             });
     ASSERT_THAT(intersections, SizeIs(11));
 }
+
+TEST_F(initialized_ray, intersecting_can_deal_with_diagonal_case) {
+    HalfLine diagonalHalfLine{Point(-1, 11), Vector(1, -1)};
+    Ray diagonalRay{diagonalHalfLine};
+
+    auto intersections = diagonalRay.findIntersections(
+            *mesh,
+            [](const Intersection &previousIntersection) -> std::unique_ptr<Intersection> {
+                const auto element = previousIntersection.nextElement;
+                return findClosestIntersection(
+                        previousIntersection.orientation,
+                        element->getFaces(),
+                        previousIntersection.face
+                );
+            },
+            [](const Intersection &previousIntersection) {
+                return false;
+            });
+    ASSERT_THAT(intersections, SizeIs(20));
+}
