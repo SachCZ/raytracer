@@ -33,9 +33,9 @@ raytracer::geometry::findIntersection(const HalfLine &halfLine,
         double t = impl::getParamT(halfLine, points);
         //TODO delete this terrible hack
         if (std::abs(k - 1) < constants::epsilon){
-            k = 1 - 100*constants::epsilon;
+            k = 1 - 1000*constants::epsilon;
         } else if (std::abs(k) < constants::epsilon){
-            k = 100*constants::epsilon;
+            k = 1000*constants::epsilon;
         }
 
         if (impl::isIntersecting(k, t)) {
