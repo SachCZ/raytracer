@@ -93,10 +93,11 @@ namespace raytracer {
             /**
              * If there are any rays in Laser theit intersections with given mesh will be found.
              * This just calls LaserRay::generateIntersections for each of the rays.
-             * @tparam IntersFunc function with signature (Intersection) -> std::unique_ptr<Intersection>
+             * @tparam IntersFunc function with signature (Intersection, LaserRay) -> std::unique_ptr<Intersection>
              * @tparam StopCondition function with signature (Intersection, LaserRay) -> bool
              * @param mesh to be intersected
              * @param findInters is propagated to LaserRay::generateIntersections
+             * with additional parameter being the laserRay
              * @param stopCondition is propagated to LaserRay::generateIntersections
              * with additional parameter being the laserRay
              */
@@ -110,7 +111,10 @@ namespace raytracer {
                     auto stopper = [&stopCondition, &laserRay](const geometry::Intersection &intersection) {
                         return stopCondition(intersection, laserRay);
                     };
-                    laserRay.generateIntersections(mesh, findInters, stopper);
+                    auto finder = [&findInters, &laserRay](const geometry::Intersection& intersection) {
+                        return findInters(intersection, laserRay);
+                    };
+                    laserRay.generateIntersections(mesh, finder, stopper);
                 }
             }
 

@@ -127,7 +127,7 @@ namespace raytracer {
             return result;
         }
 
-        Element *Mesh::getFaceAdjacentElement(const Face *face, const Vector direction) const {
+        Element *Mesh::getFaceAdjacentElement(const Face *face, const Vector &direction) const {
             int elementA, elementB;
             this->mesh->GetFaceElements(face->id, &elementA, &elementB);
 

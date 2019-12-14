@@ -73,7 +73,7 @@ namespace raytracer {
             std::vector<std::unique_ptr<Face>> faces;
             std::vector<std::unique_ptr<Point>> points;
 
-            Element * getFaceAdjacentElement(const Face *face, const Vector direction) const;
+            Element * getFaceAdjacentElement(const Face *face, const Vector &direction) const;
 
 
             std::unique_ptr<Point> createPointFromId(int id) const;
