@@ -18,5 +18,12 @@ namespace raytracer {
         Face::Face(int id, std::vector<Point*> points) :
                 id(id),
                 points(std::move(points)) {}
+
+        const Point *Face::isBoundary(const Point &point) const {
+            for (const auto& referencePoint : this->points) {
+                if ((point - *referencePoint).getNorm() < constants::epsilon) return referencePoint;
+            }
+            return nullptr;
+        }
     }
 }

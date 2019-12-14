@@ -29,6 +29,8 @@ namespace raytracer {
             int id;
             std::vector<Face *> faces;
 
+            const Face* getBoundaryPointFirstAdjacentFace(const Point* point, const Face* omitFace = nullptr) const;
+
             friend class Mesh;
             friend class MeshFunction;
         };

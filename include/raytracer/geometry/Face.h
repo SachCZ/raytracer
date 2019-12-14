@@ -7,6 +7,7 @@
 
 #include "Vector.h"
 #include "Point.h"
+#include "Constants.h"
 
 namespace raytracer {
     namespace geometry {
@@ -32,6 +33,8 @@ namespace raytracer {
 
         private:
             explicit Face(int id, std::vector<Point*> points);
+
+            const Point* isBoundary(const Point& point) const;
 
             int id;
             std::vector<Point*> points;

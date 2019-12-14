@@ -52,6 +52,8 @@ namespace raytracer {
             /** Given a face return the adjacent element to this face in given direction.
              *  It is expected that there are two or less elements adjacent to the face. If there is no
              *  element adjacent in given direction, nullptr is returned.
+             *  If the orientation point is exactly in the face corner point a special check is made to find
+             *  a possibly diagonal element.
              * @param face whose adjacent elements are to be found.
              * @param orientation in which to search for elements.
              * @return The element pointer if found or nullptr if not.
@@ -70,6 +72,8 @@ namespace raytracer {
             std::vector<std::unique_ptr<Element>> elements;
             std::vector<std::unique_ptr<Face>> faces;
             std::vector<std::unique_ptr<Point>> points;
+
+            Element * getFaceAdjacentElement(const Face *face, const Vector direction) const;
 
 
             std::unique_ptr<Point> createPointFromId(int id) const;

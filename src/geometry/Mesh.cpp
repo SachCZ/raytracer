@@ -5,35 +5,19 @@
 namespace raytracer {
     namespace geometry {
         Element * Mesh::getAdjacentElement(const Face *face, const raytracer::geometry::HalfLine &orientation) const {
-            int elementA, elementB;
-            this->mesh->GetFaceElements(face->id, &elementA, &elementB);
-
-            auto normal = face->getNormal();
-
-            Element* nextElement;
-            if (normal * orientation.direction < 0) {
-                nextElement = this->getElementFromId(elementA);
-            } else {
-                nextElement = this->getElementFromId(elementB);
-            }
+            Element* nextElement = this->getFaceAdjacentElement(face, orientation.direction);
 
             if (!nextElement) return nullptr;
 
-            for (const auto& point : face->getPoints()){
-                if ((*point - orientation.point).getNorm() < constants::epsilon){
-                    for (const auto& referenceFace : nextElement->getFaces()){
-                        for (const auto& referencePoint : referenceFace->getPoints()){
-                            if (referenceFace != face && referencePoint == point){
-                                return this->getAdjacentElement(referenceFace, HalfLine{Point(-999, -999), orientation.direction});
-                            }
-                        }
-                    }
-                }
+            auto boundaryPoint = face->isBoundary(orientation.point);
+            if (!boundaryPoint){
+                return nextElement;
+            } else {
+                //Diagonal edge case
+                auto nextFace = nextElement->getBoundaryPointFirstAdjacentFace(boundaryPoint, face);
+                return this->getFaceAdjacentElement(nextFace, orientation.direction);
             }
-            return nextElement;
         }
-
-
 
         std::vector<Face *> Mesh::getBoundary() const {
             return this->boundaryFaces;
@@ -141,6 +125,19 @@ namespace raytracer {
                 result.emplace_back(this->faces[id].get());
             }
             return result;
+        }
+
+        Element *Mesh::getFaceAdjacentElement(const Face *face, const Vector direction) const {
+            int elementA, elementB;
+            this->mesh->GetFaceElements(face->id, &elementA, &elementB);
+
+            auto normal = face->getNormal();
+
+            if (normal * direction < 0) {
+                return this->getElementFromId(elementA);
+            } else {
+                return this->getElementFromId(elementB);
+            }
         }
 
         std::unique_ptr<mfem::Mesh> constructRectangleMesh(DiscreteLine sideA, DiscreteLine sideB) {
