@@ -32,6 +32,7 @@ namespace raytracer {
             const Face* getBoundaryPointFirstAdjacentFace(const Point* point, const Face* omitFace = nullptr) const;
 
             friend class Mesh;
+            template <typename ValueType>
             friend class MeshFunction;
         };
     }
