@@ -11,6 +11,8 @@ namespace raytracer {
          * Wrapper class around mfem::GridFunction.
          * Provides a way to query the GridFunction given an element.
          */
+
+        template<typename ValueType>
         class MeshFunction {
         public:
 
@@ -32,7 +34,7 @@ namespace raytracer {
              * @param element
              * @return the value of GridFunction at the element true dof.
              */
-            double& operator[](const Element& element){
+            ValueType& operator[](const Element& element){
                 return const_cast<double&>(const_cast<const MeshFunction*>(this)->get(element));
             }
 
@@ -41,7 +43,7 @@ namespace raytracer {
              * @param element
              * @return the value of GridFunction at the element true dof.
              */
-            const double& operator[](const Element& element) const {
+            const ValueType& operator[](const Element& element) const {
                 return this->get(element);
             }
 
@@ -49,11 +51,11 @@ namespace raytracer {
             mfem::GridFunction& gridFunction;
             const mfem::FiniteElementSpace& finiteElementSpace;
 
-            const double& get(const Element& element) const {
+            const ValueType& get(const Element& element) const {
                 mfem::Array<int> vdofs;
                 finiteElementSpace.GetElementInteriorDofs(element.id, vdofs);
                 auto &trueVector = gridFunction.GetTrueVector();
-                return trueVector[vdofs[0]];
+                return {trueVector[vdofs[0]]};
             }
         };
     }

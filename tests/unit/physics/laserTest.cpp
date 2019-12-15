@@ -42,7 +42,7 @@ TEST_F(initialized_laser, can_generate_intersections) {
     laser.generateRays(51);
     laser.generateIntersections(
             *mesh,
-            [](const Intersection &intersection) {
+            [](const Intersection &intersection, const LaserRay &laserRay) {
                 return findClosestIntersection(
                         intersection.orientation,
                         intersection.nextElement->getFaces(),
