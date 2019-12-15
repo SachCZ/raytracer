@@ -26,7 +26,7 @@ public:
 
         mfem::FunctionCoefficient densityFunctionCoefficient{density};
         densityGridFunction->ProjectCoefficient(densityFunctionCoefficient);
-        meshFunction = std::make_unique<MeshFunction<double>>(*densityGridFunction, *finiteElementSpace);
+        meshFunction = std::make_unique<MeshFunction>(*densityGridFunction, *finiteElementSpace);
     }
 
     std::unique_ptr<mfem::Mesh> mfemMesh;
@@ -36,7 +36,7 @@ public:
     std::unique_ptr<mfem::FiniteElementSpace> finiteElementSpace;
 
     std::unique_ptr<mfem::GridFunction> densityGridFunction;
-    std::unique_ptr<MeshFunction<double>> meshFunction;
+    std::unique_ptr<MeshFunction> meshFunction;
 };
 
 TEST_F(mesh_function, value_can_be_retrieved_given_an_element) {
