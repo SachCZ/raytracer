@@ -3,6 +3,7 @@
 
 #include <mfem.hpp>
 #include <Element.h>
+#include <stdexcept>
 
 namespace raytracer {
     namespace geometry {
@@ -25,6 +26,13 @@ namespace raytracer {
                     const mfem::FiniteElementSpace& finiteElementSpace):
             gridFunction(gridFunction),
             finiteElementSpace(finiteElementSpace){
+                if (!this->hasProperVdofs()){
+                    throw std::logic_error("Elements in finite elements space must have exactly"
+                                           " one internal degree of freedom to be used with MeshFunction");
+                }
+                if (this->orderIs(0)){
+                    this->isZerothOrder = true;
+                }
                 gridFunction.SetTrueVector();
             }
 
@@ -34,8 +42,7 @@ namespace raytracer {
              * @return the value of GridFunction at the element true dof.
              */
             double& operator[](const Element& element){
-                return const_cast<double&>(const_cast<const MeshFunction*>(this)->get(element));
-            }
+                return const_cast<double&>(const_cast<const MeshFunction*>(this)->get(element)); }
 
             /**
              * Get a const reference of underlying mfem::GridFunction based on an element.
@@ -46,9 +53,36 @@ namespace raytracer {
                 return this->get(element);
             }
 
+
+            Vector getGradient(const Element& element){
+                if (this->isZerothOrder) throw std::logic_error("Gradient on zeroth order finite"
+                                                                "element space will always be zero!");
+                mfem::Vector result;
+                auto isoparametricTransformation = this->finiteElementSpace.GetElementTransformation(element.id);
+                this->gridFunction.GetGradient(*isoparametricTransformation, result);
+                return {result[0], result[1]};
+            }
+
         private:
             mfem::GridFunction& gridFunction;
             const mfem::FiniteElementSpace& finiteElementSpace;
+            bool isZerothOrder = false;
+
+            bool orderIs(int order){
+                for (int i = 0; i < finiteElementSpace.GetNE(); ++i){
+                    if (finiteElementSpace.GetOrder(i) != order) return false;
+                }
+                return true;
+            }
+
+            bool hasProperVdofs(){
+                for (int i = 0; i < finiteElementSpace.GetNE(); ++i){
+                    mfem::Array<int> vdofs;
+                    finiteElementSpace.GetElementInteriorDofs(i, vdofs);
+                    if (vdofs.Size() != 1) return false;
+                }
+                return true;
+            }
 
             const double& get(const Element& element) const {
                 mfem::Array<int> vdofs;

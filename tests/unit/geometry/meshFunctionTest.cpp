@@ -32,7 +32,7 @@ public:
     std::unique_ptr<mfem::Mesh> mfemMesh;
     std::unique_ptr<Mesh> mesh;
 
-    mfem::L2_FECollection finiteElementCollection{0, 2};
+    mfem::H1_FECollection finiteElementCollection{2, 2};
     std::unique_ptr<mfem::FiniteElementSpace> finiteElementSpace;
 
     std::unique_ptr<mfem::GridFunction> densityGridFunction;
@@ -54,4 +54,13 @@ TEST_F(mesh_function, value_can_be_set_given_an_element) {
     (*meshFunction)[*element] += 12.8e20 / 4;
     auto value = (*meshFunction)[*element];
     ASSERT_THAT(value,  DoubleEq(12.8e20 / 2));
+}
+
+TEST_F(mesh_function, gradient_can_be_retrieved) {
+    auto boundary = mesh->getBoundary();
+    auto element = mesh->getAdjacentElement(boundary[0], HalfLine{Point(0.4, 0), Vector(0, 1)});
+    auto gradient = meshFunction->getGradient(*element);
+
+    EXPECT_THAT(gradient.y, DoubleEq(0));
+    ASSERT_THAT(gradient.x, DoubleEq(12.8e20));
 }
