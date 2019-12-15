@@ -35,7 +35,7 @@ namespace raytracer {
              * @return the value of GridFunction at the element true dof.
              */
             ValueType& operator[](const Element& element){
-                return const_cast<double&>(const_cast<const MeshFunction*>(this)->get(element));
+                return const_cast<ValueType&>(const_cast<const MeshFunction*>(this)->get(element));
             }
 
             /**
