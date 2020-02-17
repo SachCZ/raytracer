@@ -28,11 +28,9 @@ namespace raytracer {
             finiteElementSpace(finiteElementSpace){
                 if (!this->hasProperVdofs()){
                     throw std::logic_error("Elements in finite elements space must have exactly"
-                                           " one internal degree of freedom to be used with MeshFunction");
+                                           " one internal degree of freedom to be used with MeshFunction!");
                 }
-                if (this->orderIs(0)){
-                    this->isZerothOrder = true;
-                }
+                if (!this->orderIs(0)) throw std::logic_error("Zeroth order elements are expected!");
                 gridFunction.SetTrueVector();
             }
 
@@ -55,18 +53,12 @@ namespace raytracer {
 
 
             Vector getGradient(const Element& element){
-                if (this->isZerothOrder) throw std::logic_error("Gradient on zeroth order finite"
-                                                                "element space will always be zero!");
-                mfem::Vector result;
-                auto isoparametricTransformation = this->finiteElementSpace.GetElementTransformation(element.id);
-                this->gridFunction.GetGradient(*isoparametricTransformation, result);
-                return {result[0], result[1]};
+                return {}; //TODO use the Method suggested by Kucharik
             }
 
         private:
             mfem::GridFunction& gridFunction;
             const mfem::FiniteElementSpace& finiteElementSpace;
-            bool isZerothOrder = false;
 
             bool orderIs(int order){
                 for (int i = 0; i < finiteElementSpace.GetNE(); ++i){
@@ -86,9 +78,10 @@ namespace raytracer {
 
             const double& get(const Element& element) const {
                 mfem::Array<int> vdofs;
-                finiteElementSpace.GetElementInteriorDofs(element.id, vdofs);
-                auto &trueVector = gridFunction.GetTrueVector();
-                return trueVector[vdofs[0]];
+                mfem::Vector result;
+                finiteElementSpace.GetElementVDofs(element.id, vdofs);
+                gridFunction.GetSubVector(vdofs, result);
+                return result[0];
             }
         };
     }
