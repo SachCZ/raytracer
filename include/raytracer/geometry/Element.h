@@ -21,12 +21,12 @@ namespace raytracer {
                 return this->faces;
             }
 
+            int id;
         private:
             explicit Element(int id, std::vector<Face *> faces) :
                     id(id),
                     faces(std::move(faces)) {}
 
-            int id;
             std::vector<Face *> faces;
 
             const Face* getBoundaryPointFirstAdjacentFace(const Point* point, const Face* omitFace = nullptr) const;
