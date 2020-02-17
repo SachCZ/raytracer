@@ -22,66 +22,49 @@ namespace raytracer {
              * @param finiteElementSpace const reference will be kept - caution: L2 space is expected!
              */
             explicit MeshFunction(
-                    mfem::GridFunction& gridFunction,
-                    const mfem::FiniteElementSpace& finiteElementSpace):
-            gridFunction(gridFunction),
-            finiteElementSpace(finiteElementSpace){
-                if (!this->hasProperVdofs()){
-                    throw std::logic_error("Elements in finite elements space must have exactly"
-                                           " one internal degree of freedom to be used with MeshFunction!");
-                }
-                if (!this->orderIs(0)) throw std::logic_error("Zeroth order elements are expected!");
+                    mfem::GridFunction &gridFunction,
+                    const mfem::FiniteElementSpace &finiteElementSpace) :
+                    gridFunction(gridFunction),
+                    finiteElementSpace(finiteElementSpace) {
                 gridFunction.SetTrueVector();
             }
 
             /**
-             * Get a mutable reference of underlying mfem::GridFunction based on an element.
+             * Get a value of mfem::GridFunction based on an element.
              * @param element
              * @return the value of GridFunction at the element true dof.
              */
-            double& operator[](const Element& element){
-                return const_cast<double&>(const_cast<const MeshFunction*>(this)->get(element)); }
-
-            /**
-             * Get a const reference of underlying mfem::GridFunction based on an element.
-             * @param element
-             * @return the value of GridFunction at the element true dof.
-             */
-            const double& operator[](const Element& element) const {
-                return this->get(element);
+            double getValue(const Element &element) const {
+                return const_cast<MeshFunction*>(this)->get(element);
             }
 
+            /**
+             * Set a value of mfem::GridFunction based on an element.
+             * @param element
+             * @param value
+             */
+            void setValue(const Element &element, double value) {
+                this->get(element) = value;
+            }
 
-            Vector getGradient(const Element& element){
-                return {}; //TODO use the Method suggested by Kucharik
+            /**
+             * Add a value to existing value of mfem::GridFunction based on an element.
+             * @param element
+             * @param value
+             */
+            void addValue(const Element &element, double value) {
+                this->get(element) += value;
             }
 
         private:
-            mfem::GridFunction& gridFunction;
-            const mfem::FiniteElementSpace& finiteElementSpace;
+            mfem::GridFunction &gridFunction;
+            const mfem::FiniteElementSpace &finiteElementSpace;
 
-            bool orderIs(int order){
-                for (int i = 0; i < finiteElementSpace.GetNE(); ++i){
-                    if (finiteElementSpace.GetOrder(i) != order) return false;
-                }
-                return true;
-            }
-
-            bool hasProperVdofs(){
-                for (int i = 0; i < finiteElementSpace.GetNE(); ++i){
-                    mfem::Array<int> vdofs;
-                    finiteElementSpace.GetElementInteriorDofs(i, vdofs);
-                    if (vdofs.Size() != 1) return false;
-                }
-                return true;
-            }
-
-            const double& get(const Element& element) const {
+            double &get(const Element &element) {
                 mfem::Array<int> vdofs;
-                mfem::Vector result;
-                finiteElementSpace.GetElementVDofs(element.id, vdofs);
-                gridFunction.GetSubVector(vdofs, result);
-                return result[0];
+                finiteElementSpace.GetElementInteriorDofs(element.id, vdofs);
+                auto &trueVector = gridFunction.GetTrueVector();
+                return trueVector[vdofs[0]];
             }
         };
     }

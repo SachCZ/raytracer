@@ -43,7 +43,7 @@ TEST_F(mesh_function, value_can_be_retrieved_given_an_element) {
     auto boundary = mesh->getBoundary();
     auto element = mesh->getAdjacentElement(boundary[0], HalfLine{Point(0.4, 0), Vector(0, 1)});
 
-    auto value = (*meshFunction)[*element];
+    auto value = meshFunction->getValue(*element);
     ASSERT_THAT(value, DoubleEq(12.8e20 / 4));
 }
 
@@ -51,15 +51,7 @@ TEST_F(mesh_function, value_can_be_set_given_an_element) {
     auto boundary = mesh->getBoundary();
     auto element = mesh->getAdjacentElement(boundary[0], HalfLine{Point(0.4, 0), Vector(0, 1)});
 
-    (*meshFunction)[*element] += 12.8e20 / 4;
-    auto value = (*meshFunction)[*element];
+    meshFunction->addValue(*element, 12.8e20 / 4);
+    auto value = meshFunction->getValue(*element);
     ASSERT_THAT(value,  DoubleEq(12.8e20 / 2));
-}
-
-TEST_F(mesh_function, gradient_can_be_retrieved) {
-    auto boundary = mesh->getBoundary();
-    auto element = mesh->getAdjacentElement(boundary[0], HalfLine{Point(0.4, 0), Vector(0, 1)});
-    auto gradient = meshFunction->getGradient(*element);
-
-    //TODO implement the gradient
 }
