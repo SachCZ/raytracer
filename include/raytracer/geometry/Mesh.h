@@ -2,6 +2,7 @@
 #define RAYTRACER_MESH_H
 
 #include <vector>
+#include <set>
 
 #include "Vector.h"
 #include "Point.h"
@@ -66,15 +67,41 @@ namespace raytracer {
              */
             std::vector<Face *> getBoundary() const;
 
+            /**
+             * Return the elements adjacent to given point
+             * @param point
+             * @return
+             */
+            std::vector<Element *> getAdjacentElements(const Point *point) const {
+                int pointId = -1;
+                for (uint i = 0; i < this->points.size(); i++) {
+                    if (point == this->points[i].get()) {
+                        pointId = i;
+                        break;
+                    }
+                }
+
+                mfem::Array<int> elementIds(
+                        this->vertexToElementTable->GetRow(pointId),
+                        this->vertexToElementTable->RowSize(pointId)
+                );
+                std::vector<Element*> result;
+                result.reserve(elementIds.Size());
+                for (auto id : elementIds){
+                    result.emplace_back(this->getElementFromId(id));
+                }
+                return result;
+            }
+
         private:
             mfem::Mesh *mesh;
             std::vector<Face *> boundaryFaces;
             std::vector<std::unique_ptr<Element>> elements;
             std::vector<std::unique_ptr<Face>> faces;
             std::vector<std::unique_ptr<Point>> points;
+            std::unique_ptr<mfem::Table> vertexToElementTable;
 
-            Element * getFaceAdjacentElement(const Face *face, const Vector &direction) const;
-
+            Element *getFaceAdjacentElement(const Face *face, const Vector &direction) const;
 
             std::unique_ptr<Point> createPointFromId(int id) const;
 

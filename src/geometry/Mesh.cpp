@@ -1,21 +1,23 @@
 #include <GeometryFunctions.h>
 #include "Mesh.h"
 #include "Element.h"
+#include <cmath>
 
 namespace raytracer {
     namespace geometry {
         Element * Mesh::getAdjacentElement(const Face *face, const raytracer::geometry::HalfLine &orientation) const {
-            Element* nextElement = this->getFaceAdjacentElement(face, orientation.direction);
-
-            if (!nextElement) return nullptr;
-
             auto boundaryPoint = face->isBoundary(orientation.point);
             if (!boundaryPoint){
-                return nextElement;
+                return this->getFaceAdjacentElement(face, orientation.direction);
             } else {
                 //Diagonal edge case
-                auto nextFace = nextElement->getBoundaryPointFirstAdjacentFace(boundaryPoint, face);
-                return this->getFaceAdjacentElement(nextFace, orientation.direction);
+                auto candidateElements = this->getAdjacentElements(boundaryPoint);
+                for (const auto& element : candidateElements){
+                    if (findClosestIntersection(orientation, element->getFaces())){
+                        return element;
+                    }
+                }
+                return nullptr;
             }
         }
 
@@ -23,7 +25,7 @@ namespace raytracer {
             return this->boundaryFaces;
         }
 
-        Mesh::Mesh(mfem::Mesh *mesh): mesh(mesh) {
+        Mesh::Mesh(mfem::Mesh *mesh): mesh(mesh), vertexToElementTable(mesh->GetVertexToElementTable()) {
             this->points = this->genPoints();
             this->faces = this->genFaces();
             this->elements = this->genElements();
