@@ -2,6 +2,7 @@
 #include "Mesh.h"
 #include "Element.h"
 #include <cmath>
+#include <algorithm>
 
 namespace raytracer {
     namespace geometry {
@@ -13,7 +14,15 @@ namespace raytracer {
                 //Diagonal edge case
                 auto candidateElements = this->getAdjacentElements(boundaryPoint);
                 for (const auto& element : candidateElements){
-                    if (findClosestIntersection(orientation, element->getFaces())){
+                    auto _faces = element->getFaces();
+                    std::vector<Face*> oppositeFaces;
+                    std::copy_if(_faces.begin(), _faces.end(), std::back_inserter(oppositeFaces),
+                            [boundaryPoint](const Face* face){
+                        const auto& _points =  face->getPoints();
+                        return !(_points[0] == boundaryPoint || _points[1] == boundaryPoint);
+                    });
+
+                    if (findClosestIntersection(orientation, oppositeFaces)){
                         return element;
                     }
                 }
