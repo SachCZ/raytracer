@@ -21,7 +21,8 @@ namespace raytracer {
 
         const Point *Face::isBoundary(const Point &point) const {
             for (const auto& referencePoint : this->points) {
-                if ((point - *referencePoint).getNorm() < constants::epsilon) return referencePoint;
+                auto norm = (*points[1] - *points[0]).getNorm();
+                if ((point - *referencePoint).getNorm() < 1e-11*norm) return referencePoint;
             }
             return nullptr;
         }
