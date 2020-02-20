@@ -31,16 +31,16 @@ namespace raytracer {
              */
             const std::vector<Point*>& getPoints() const;
 
-        private:
             explicit Face(int id, std::vector<Point*> points);
 
             const Point* isBoundary(const Point& point) const;
 
+            int getId() const {
+                return this->id;
+            }
+        private:
             int id;
             std::vector<Point*> points;
-
-            friend class Mesh;
-            friend class Element;
         };
     }
 }

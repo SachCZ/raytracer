@@ -52,7 +52,7 @@ namespace raytracer {
                 mfem::IntegrationPoint integrationPoint{};
                 integrationPoint.Set2(point.x, point.y);
 
-                auto transformation = this->h1Space.GetElementTransformation(element.id);
+                auto transformation = this->h1Space.GetElementTransformation(element.getId());
                 transformation->SetIntPoint(&integrationPoint);
                 this->_density.GetGradient(*transformation, result);
 

@@ -21,16 +21,15 @@ namespace raytracer {
                 return this->faces;
             }
 
-            int id;
-        private:
             explicit Element(int id, std::vector<Face *> faces) :
                     id(id),
                     faces(std::move(faces)) {}
-
+            int getId() const {
+                return this->id;
+            }
+        private:
+            int id;
             std::vector<Face *> faces;
-
-            friend class Mesh;
-            friend class MfemMeshFunction;
         };
     }
 }

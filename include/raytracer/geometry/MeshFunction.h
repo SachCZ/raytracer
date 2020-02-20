@@ -68,7 +68,7 @@ namespace raytracer {
 
             double &get(const Element &element) {
                 mfem::Array<int> vdofs;
-                finiteElementSpace.GetElementInteriorDofs(element.id, vdofs);
+                finiteElementSpace.GetElementInteriorDofs(element.getId(), vdofs);
                 auto &trueVector = gridFunction.GetTrueVector();
                 return trueVector[vdofs[0]];
             }

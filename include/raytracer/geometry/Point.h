@@ -43,11 +43,6 @@ namespace raytracer {
              * @return true if they almost equal
              */
             bool operator==(const Point& anotherPoint) const;
-
-        private:
-            friend const Vector operator - (Point A, Point B);
-            friend const Point operator + (Point A, Vector b);
-            friend const Point operator + (Vector b, Point A);
         };
 
         /**
