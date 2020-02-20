@@ -39,36 +39,60 @@ namespace raytracer {
             const geometry::MeshFunction &density;
         };
 
+        /**
+         * Functor for ray propagation that returns false in any case. Convenience struct to keep the call similar to
+         * eg. StopAtCritical.
+         */
         struct DontStop {
-            bool operator()(const geometry::Intersection&, const LaserRay&) {
+            /**
+             * Just returns false.
+             * @return false.
+             */
+            bool operator()(const geometry::Intersection &, const LaserRay &) {
                 return false;
             }
         };
 
+        /**
+         * Functor that given an intersection finds next intersection in straight line through intersection.nextElement.
+         */
+        struct ContinueStraight {
+            /**
+             * Finds the closest intersection with intersection.nextElement
+             * @param intersection
+             * @return intersection unique pointer if intersection is found, else it returns nullptr
+             */
+            std::unique_ptr<geometry::Intersection> operator()(
+                    const geometry::Intersection &intersection,
+                    const LaserRay &) {
+                return findClosestIntersection(
+                        intersection.orientation,
+                        intersection.nextElement->getFaces(),
+                        intersection.face);
+            }
+        };
 
-        std::unique_ptr<geometry::Intersection> continueStraight(const geometry::Intersection &intersection, const LaserRay &) {
-            return findClosestIntersection(intersection.orientation, intersection.nextElement->getFaces(), intersection.face);
-        }
 
         struct SnellsLaw {
             explicit SnellsLaw(const geometry::MeshFunction &density, const GradientCalculator &gradientCalculator) :
                     density(density), gradientCalculator(gradientCalculator) {}
 
-            std::unique_ptr<geometry::Intersection> operator()(const geometry::Intersection &intersection, const LaserRay &laserRay) {
+            std::unique_ptr<geometry::Intersection>
+            operator()(const geometry::Intersection &intersection, const LaserRay &laserRay) {
                 const auto previousElement = intersection.previousElement;
                 const auto nextElement = intersection.nextElement;
 
                 if (!previousElement) {
-                    return findClosestIntersection(intersection.orientation, nextElement->getFaces(), intersection.face);
+                    return findClosestIntersection(intersection.orientation, nextElement->getFaces(),
+                                                   intersection.face);
                 }
 
                 auto newIntersection = findClosestIntersection(
-                        intersection.orientation,
+                        geometry::HalfLine{
+                                intersection.orientation.point,
+                                getDirection(intersection, laserRay)},
                         nextElement->getFaces(),
                         intersection.face);
-                if (!newIntersection)
-                    return newIntersection;
-                newIntersection->orientation.direction = getDirection(intersection, laserRay.getCriticalDensity());
                 return newIntersection;
             }
 
@@ -76,9 +100,11 @@ namespace raytracer {
             const geometry::MeshFunction &density;
             const GradientCalculator &gradientCalculator;
 
-            geometry::Vector getDirection(const geometry::Intersection &intersection, Density criticalDensity) {
-                const double n1 = std::sqrt(1 - density.getValue(*intersection.previousElement) / criticalDensity.asDouble);
-                const double n2 = std::sqrt(1 - density.getValue(*intersection.nextElement) / criticalDensity.asDouble);
+            geometry::Vector getDirection(const geometry::Intersection &intersection, const LaserRay &laserRay) {
+                const auto rho1 = Density{density.getValue(*intersection.previousElement)};
+                const auto rho2 = Density{density.getValue(*intersection.nextElement)};
+                const double n1 = laserRay.getRefractiveIndex(rho1);
+                const double n2 = laserRay.getRefractiveIndex(rho2);
 
                 const auto gradient = gradientCalculator.getGradient(intersection);
                 const auto &direction = intersection.orientation.direction;
