@@ -8,12 +8,18 @@
 namespace raytracer {
     namespace geometry {
 
+        class MeshFunction {
+        public:
+            virtual double getValue(const Element&) const = 0;
+            virtual void setValue(const Element&, double value) = 0;
+            virtual void addValue(const Element&, double value) = 0;
+        };
+
         /**
          * Wrapper class around mfem::GridFunction.
          * Provides a way to query the GridFunction given an element.
          */
-
-        class MeshFunction {
+        class MfemMeshFunction : public MeshFunction {
         public:
 
             /**
@@ -21,7 +27,7 @@ namespace raytracer {
              * @param gridFunction a mutable reference will be kept.
              * @param finiteElementSpace const reference will be kept - caution: L2 space is expected!
              */
-            explicit MeshFunction(
+            explicit MfemMeshFunction(
                     mfem::GridFunction &gridFunction,
                     const mfem::FiniteElementSpace &finiteElementSpace) :
                     gridFunction(gridFunction),
@@ -34,8 +40,8 @@ namespace raytracer {
              * @param element
              * @return the value of GridFunction at the element true dof.
              */
-            double getValue(const Element &element) const {
-                return const_cast<MeshFunction*>(this)->get(element);
+            double getValue(const Element &element) const override {
+                return const_cast<MfemMeshFunction*>(this)->get(element);
             }
 
             /**
@@ -43,7 +49,7 @@ namespace raytracer {
              * @param element
              * @param value
              */
-            void setValue(const Element &element, double value) {
+            void setValue(const Element &element, double value) override {
                 this->get(element) = value;
             }
 
@@ -52,7 +58,7 @@ namespace raytracer {
              * @param element
              * @param value
              */
-            void addValue(const Element &element, double value) {
+            void addValue(const Element &element, double value) override {
                 this->get(element) += value;
             }
 

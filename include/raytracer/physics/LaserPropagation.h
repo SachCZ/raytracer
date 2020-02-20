@@ -8,10 +8,25 @@
 
 namespace raytracer {
     namespace physics {
+        /**
+         * Functor for ray propagation termination based on critical density expected to used with laseRay
+         * intersection finding procedure
+         */
         struct StopAtCritical {
+            /**
+             * Constructor the functor using a density MeshFunction
+             * @param density
+             */
             explicit StopAtCritical(const geometry::MeshFunction &density) :
                     density(density) {}
 
+            /** Returns true if the density at the laserRay next element to go to is greater than criticalDensity of
+             * the laser ray
+             *
+             * @param intersection current laserRay intersection
+             * @param laserRay
+             * @return true if current density is grater than critical
+             */
             bool operator()(const geometry::Intersection &intersection, const LaserRay &laserRay) {
                 const auto element = *intersection.nextElement;
 
