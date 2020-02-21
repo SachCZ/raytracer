@@ -96,7 +96,7 @@ namespace raytracer {
                         nextElement->getFaces(),
                         intersection.face);
                 if (!newIntersection) {
-                    findClosestIntersection(
+                    newIntersection = findClosestIntersection(
                             orientation,
                             previousElement->getFaces(),
                             intersection.face);
