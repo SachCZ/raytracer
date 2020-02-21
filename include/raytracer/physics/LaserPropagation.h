@@ -87,12 +87,23 @@ namespace raytracer {
                                                    intersection.face);
                 }
 
+                auto orientation = geometry::HalfLine{
+                        intersection.orientation.point,
+                        getDirection(intersection, laserRay)
+                };
                 auto newIntersection = findClosestIntersection(
-                        geometry::HalfLine{
-                                intersection.orientation.point,
-                                getDirection(intersection, laserRay)},
+                        orientation,
                         nextElement->getFaces(),
                         intersection.face);
+                if (!newIntersection) {
+                    findClosestIntersection(
+                            orientation,
+                            previousElement->getFaces(),
+                            intersection.face);
+                    if (newIntersection){
+                        newIntersection->nextElement = previousElement;
+                    }
+                }
                 return newIntersection;
             }
 
