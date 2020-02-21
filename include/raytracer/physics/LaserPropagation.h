@@ -103,6 +103,9 @@ namespace raytracer {
                     if (newIntersection){
                         newIntersection->nextElement = previousElement;
                     }
+                    else {
+                        throw std::logic_error("No intersection found");
+                    }
                 }
                 return newIntersection;
             }
