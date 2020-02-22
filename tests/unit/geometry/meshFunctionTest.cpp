@@ -8,11 +8,11 @@
 using namespace testing;
 using namespace raytracer::geometry;
 
-double density(const mfem::Vector &x) {
-    return 12.8e20 * x(0);
-}
 
 class mesh_function : public Test {
+    static double density(const mfem::Vector &x) {
+        return 12.8e20 * x(0);
+    }
 public:
     mesh_function() {
         DiscreteLine sideA{1.0, 2};
@@ -24,7 +24,7 @@ public:
         finiteElementSpace = std::make_unique<mfem::FiniteElementSpace>(mfemMesh.get(), &finiteElementCollection);
         densityGridFunction = std::make_unique<mfem::GridFunction>(finiteElementSpace.get());
 
-        mfem::FunctionCoefficient densityFunctionCoefficient{density};
+        mfem::FunctionCoefficient densityFunctionCoefficient{mesh_function::density};
         densityGridFunction->ProjectCoefficient(densityFunctionCoefficient);
         meshFunction = std::make_unique<MfemMeshFunction>(*densityGridFunction, *finiteElementSpace);
     }

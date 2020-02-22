@@ -9,15 +9,30 @@
 
 namespace raytracer {
     namespace physics {
+        /**
+         * Abstract interface to provide a GradientCalculator. To obey this interface implement the
+         * getGradient method.
+         */
         class GradientCalculator {
         public:
             virtual geometry::Vector getGradient(const geometry::Intersection &) const = 0;
         };
 
+        /**
+         * GradientCalculator that returns a constant Vector no matter what.
+         */
         class ConstantGradientCalculator : public GradientCalculator {
         public:
+            /**
+             * Constructor that takes the Vector that will be returned every time as parameter.
+             * @param gradient - the vector to be returned
+             */
             explicit ConstantGradientCalculator(const geometry::Vector &gradient) : gradient(gradient) {}
 
+            /**
+             * Returns always the same Vector given at construction.
+             * @return vector gradient.
+             */
             geometry::Vector getGradient(const geometry::Intersection &) const override {
                 return this->gradient;
             }
