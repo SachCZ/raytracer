@@ -21,9 +21,20 @@ namespace raytracer {
                 return this->faces;
             }
 
+            /**
+             * Constructor taking an id and std::vector of faces of the element.
+             * Clockwise order of faces is preferred in 2D.
+             * @param id
+             * @param faces
+             */
             explicit Element(int id, std::vector<Face *> faces) :
                     id(id),
                     faces(std::move(faces)) {}
+
+            /**
+             * Retrieve the id of element.
+             * @return id
+             */
             int getId() const {
                 return this->id;
             }

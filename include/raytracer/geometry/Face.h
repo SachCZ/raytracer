@@ -31,10 +31,24 @@ namespace raytracer {
              */
             const std::vector<Point*>& getPoints() const;
 
+            /**
+             * Construct the face using an id and std::vector of points that the face consist of.
+             * @param id
+             * @param points
+             */
             explicit Face(int id, std::vector<Point*> points);
 
+            /**
+             * Return the point on boundary if given point is reasonably close to it.
+             * @param point to be compared with all face points
+             * @return on of the face points if it is close to given point. Else it returns nullptr.
+             */
             const Point* isBoundary(const Point& point) const;
 
+            /**
+             * Get the if of the face.
+             * @return id
+             */
             int getId() const {
                 return this->id;
             }

@@ -8,6 +8,10 @@
 namespace raytracer {
     namespace geometry {
 
+        /**
+         * Abstract interface. To obey this MeshFunction interface getValue, setValue and addValue methods must be
+         * implemented.
+         */
         class MeshFunction {
         public:
             virtual double getValue(const Element&) const = 0;

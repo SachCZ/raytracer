@@ -73,10 +73,20 @@ namespace raytracer {
         };
 
 
+        /**
+         * Functor that given an intersection finds next intersection base on the Snells's law.
+         */
         struct SnellsLaw {
             explicit SnellsLaw(const geometry::MeshFunction &density, const GradientCalculator &gradientCalculator) :
                     density(density), gradientCalculator(gradientCalculator) {}
 
+            /**
+             * Tries to find another intersection based on Snells law, density (provides an index of rarefaction)
+             * and gradient (provides edge direction). Could throw error no intersection found!
+             * @param intersection
+             * @param laserRay
+             * @return found intersection or throw
+             */
             std::unique_ptr<geometry::Intersection>
             operator()(const geometry::Intersection &intersection, const LaserRay &laserRay) {
                 const auto previousElement = intersection.previousElement;
@@ -96,6 +106,7 @@ namespace raytracer {
                         nextElement->getFaces(),
                         intersection.face);
                 if (!newIntersection) {
+                    //The ray must have reflected unexpectedly
                     newIntersection = findClosestIntersection(
                             orientation,
                             previousElement->getFaces(),
