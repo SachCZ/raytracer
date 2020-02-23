@@ -41,18 +41,45 @@ namespace raytracer {
             const geometry::Vector gradient;
         };
 
+        /**
+         * GradientCalculator that stores a density grid function defined in H1 space obtained from function given
+         * if L2. When getGradient is called the gradient of this function is calculated at given point.
+         */
         class H1GradientCalculator : public GradientCalculator {
         public:
+            /**
+             * Constructor that expects the l2 and h1 spaces. L2 is the space in which density is usually defined
+             * and H1 is the space into which the density is tranformed to be able to evaluate gradient.
+             * @param l2Space
+             * @param h1Space
+             */
             H1GradientCalculator(mfem::FiniteElementSpace &l2Space, mfem::FiniteElementSpace &h1Space):
                     l2Space(l2Space), h1Space(h1Space), _density(&h1Space) {}
 
+            /**
+             * Return the value of gradient at the intersection point.
+             * @param intersection
+             * @return
+             */
             geometry::Vector getGradient(const geometry::Intersection &intersection) const override {
                 auto point = intersection.orientation.point;
-                auto previousGradient = this->getGradientAt(*intersection.previousElement, point);
-                auto nextGradient = this->getGradientAt(*intersection.nextElement, point);
-                return 0.5 * (previousGradient + nextGradient);
+                if (intersection.previousElement && intersection.nextElement){
+                    auto previousGradient = this->getGradientAt(*intersection.previousElement, point);
+                    auto nextGradient = this->getGradientAt(*intersection.nextElement, point);
+                    return 0.5 * (previousGradient + nextGradient);
+                } else if (intersection.nextElement){
+                    return this->getGradientAt(*intersection.nextElement, point);
+                } else if (intersection.previousElement) {
+                    return this->getGradientAt(*intersection.previousElement, point);
+                } else {
+                    throw std::logic_error("Intersection has no elements!");
+                }
             }
 
+            /**
+             * Update the density from which the gradient is calculated. The density should be a function in L2 space.
+             * @param density defined over L2
+             */
             void updateDensity(mfem::GridFunction& density){
                 this->_density = convertH1toL2(density);
             }
@@ -81,18 +108,19 @@ namespace raytracer {
                 A.Finalize();
 
                 mfem::MixedBilinearForm B(&l2Space, &h1Space);
-                B.AddDomainIntegrator(new mfem::MassIntegrator);
+                B.AddDomainIntegrator(new mfem::MixedScalarMassIntegrator);
                 B.Assemble();
                 B.Finalize();
 
                 mfem::LinearForm b(&h1Space);
                 B.Mult(function, b);
 
-                mfem::DSmoother smoother(A.SpMat());
+                mfem::GSSmoother smoother(A.SpMat());
 
                 mfem::GridFunction result(&h1Space);
                 result = 0;
                 mfem::PCG(A, smoother, b, result);
+
                 return result;
             }
         };

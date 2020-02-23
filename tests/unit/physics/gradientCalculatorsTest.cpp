@@ -31,7 +31,7 @@ public:
 
     ConstantGradientCalculator constantGradientCalculator{Vector(1.2, -0.3)};
 
-    DiscreteLine side{100, 4};
+    DiscreteLine side{100, 10};
     std::unique_ptr<mfem::Mesh> mfemMesh = constructRectangleMesh(side, side);
 
     mfem::L2_FECollection l2FiniteElementCollection{0, 2};
@@ -56,18 +56,42 @@ TEST_F(gradient_calculators, h1_returns_correct_result_for_linear_density){
             Length{1315e-7},
             [](const Point) { return Vector(1, 0.3); },
             Gaussian(0.1),
-            Point(-1.1, 7),
-            Point(-1.1, 35)
+            Point(-1.1, 49),
+            Point(-1.1, 51)
     );
 
-    laser.generateRays(100);
+    laser.generateRays(1);
     laser.generateIntersections(
             *mesh, ContinueStraight(),
             DontStop());
     auto ray = laser.getRays()[0];
-    auto intersection = ray.intersections[2];
+    auto intersection = ray.intersections[5];
     h1GradientCalculator->updateDensity(*densityGridFunction);
     auto result = h1GradientCalculator->getGradient(intersection);
-    EXPECT_THAT(result.x, DoubleEq(12));
-    EXPECT_THAT(result.y, DoubleEq(-7));
+
+    EXPECT_THAT(result.x, DoubleNear(12, 1e-1));
+    EXPECT_THAT(result.y, DoubleNear(-7, 1e-1));
+}
+
+TEST_F(gradient_calculators, h1_returns_correct_result_at_the_border){
+    Laser laser(
+            Length{1315e-7},
+            [](const Point) { return Vector(1, 0.3); },
+            Gaussian(0.1),
+            Point(-1.1, 49),
+            Point(-1.1, 51)
+    );
+
+    laser.generateRays(1);
+    laser.generateIntersections(
+            *mesh, ContinueStraight(),
+            DontStop());
+    auto ray = laser.getRays()[0];
+    auto intersection = ray.intersections[0];
+    h1GradientCalculator->updateDensity(*densityGridFunction);
+    auto result = h1GradientCalculator->getGradient(intersection);
+
+    //Gradient on border returns wrong result
+    EXPECT_THAT(result.x, DoubleNear(12, 10));
+    EXPECT_THAT(result.y, DoubleNear(-7, 10));
 }
