@@ -17,9 +17,7 @@ namespace raytracer {
              * Edges in 2D, surfaces in 3D.
              * @return the face
              */
-            const std::vector<Face *> &getFaces() const {
-                return this->faces;
-            }
+            const std::vector<Face *> &getFaces() const;
 
             /**
              * Constructor taking an id and std::vector of faces of the element.
@@ -27,17 +25,13 @@ namespace raytracer {
              * @param id
              * @param faces
              */
-            explicit Element(int id, std::vector<Face *> faces) :
-                    id(id),
-                    faces(std::move(faces)) {}
+            explicit Element(int id, std::vector<Face *> faces);
 
             /**
              * Retrieve the id of element.
              * @return id
              */
-            int getId() const {
-                return this->id;
-            }
+            int getId() const;
         private:
             int id;
             std::vector<Face *> faces;

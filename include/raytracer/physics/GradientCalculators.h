@@ -27,15 +27,13 @@ namespace raytracer {
              * Constructor that takes the Vector that will be returned every time as parameter.
              * @param gradient - the vector to be returned
              */
-            explicit ConstantGradientCalculator(const geometry::Vector &gradient) : gradient(gradient) {}
+            explicit ConstantGradientCalculator(const geometry::Vector &gradient);
 
             /**
              * Returns always the same Vector given at construction.
              * @return vector gradient.
              */
-            geometry::Vector getGradient(const geometry::Intersection &) const override {
-                return this->gradient;
-            }
+            geometry::Vector getGradient(const geometry::Intersection &) const override;
 
         private:
             const geometry::Vector gradient;
@@ -53,76 +51,29 @@ namespace raytracer {
              * @param l2Space
              * @param h1Space
              */
-            H1GradientCalculator(mfem::FiniteElementSpace &l2Space, mfem::FiniteElementSpace &h1Space):
-                    l2Space(l2Space), h1Space(h1Space), _density(&h1Space) {}
+            H1GradientCalculator(mfem::FiniteElementSpace &l2Space, mfem::FiniteElementSpace &h1Space);
 
             /**
              * Return the value of gradient at the intersection point.
              * @param intersection
              * @return
              */
-            geometry::Vector getGradient(const geometry::Intersection &intersection) const override {
-                auto point = intersection.orientation.point;
-                if (intersection.previousElement && intersection.nextElement){
-                    auto previousGradient = this->getGradientAt(*intersection.previousElement, point);
-                    auto nextGradient = this->getGradientAt(*intersection.nextElement, point);
-                    return 0.5 * (previousGradient + nextGradient);
-                } else if (intersection.nextElement){
-                    return this->getGradientAt(*intersection.nextElement, point);
-                } else if (intersection.previousElement) {
-                    return this->getGradientAt(*intersection.previousElement, point);
-                } else {
-                    throw std::logic_error("Intersection has no elements!");
-                }
-            }
+            geometry::Vector getGradient(const geometry::Intersection &intersection) const override;
 
             /**
              * Update the density from which the gradient is calculated. The density should be a function in L2 space.
              * @param density defined over L2
              */
-            void updateDensity(mfem::GridFunction& density){
-                this->_density = convertH1toL2(density);
-            }
+            void updateDensity(mfem::GridFunction& density);
 
         private:
             mfem::FiniteElementSpace &l2Space;
             mfem::FiniteElementSpace &h1Space;
             mfem::GridFunction _density;
 
-            geometry::Vector getGradientAt(const geometry::Element& element, const geometry::Point& point) const {
-                mfem::Vector result(2);
-                mfem::IntegrationPoint integrationPoint{};
-                integrationPoint.Set2(point.x, point.y);
+            geometry::Vector getGradientAt(const geometry::Element& element, const geometry::Point& point) const;
 
-                auto transformation = this->h1Space.GetElementTransformation(element.getId());
-                transformation->SetIntPoint(&integrationPoint);
-                this->_density.GetGradient(*transformation, result);
-
-                return {result[0], result[1]};
-            }
-
-            mfem::GridFunction convertH1toL2(const mfem::GridFunction &function) {
-                mfem::BilinearForm A(&h1Space);
-                A.AddDomainIntegrator(new mfem::MassIntegrator);
-                A.Assemble();
-                A.Finalize();
-
-                mfem::MixedBilinearForm B(&l2Space, &h1Space);
-                B.AddDomainIntegrator(new mfem::MixedScalarMassIntegrator);
-                B.Assemble();
-                B.Finalize();
-
-                mfem::LinearForm b(&h1Space);
-                B.Mult(function, b);
-
-                mfem::GSSmoother smoother(A.SpMat());
-
-                mfem::GridFunction result(&h1Space);
-                result = 0;
-                mfem::PCG(A, smoother, b, result);
-
-                return result;
-            }
+            mfem::GridFunction convertH1toL2(const mfem::GridFunction &function);
         };
     }
 }

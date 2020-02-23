@@ -26,5 +26,9 @@ namespace raytracer {
             }
             return nullptr;
         }
+
+        int Face::getId() const {
+            return this->id;
+        }
     }
 }

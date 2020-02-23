@@ -18,20 +18,14 @@ namespace raytracer {
              * @param maximum or also the intgral value
              * @param center point
              */
-            explicit Gaussian(double FWHM, double maximum = 1, double center = 0):
-            FWHM(FWHM), maximum(maximum), center(center) {}
+            explicit Gaussian(double FWHM, double maximum = 1, double center = 0);
 
             /**
              * Value of the gaussian at given point x
              * @param x
              * @return the value
              */
-            double operator()(double x){
-                auto w = this->FWHM;
-                auto a = this->maximum *  (2 * std::sqrt(std::log(2))) / (w * std::sqrt(M_PI));
-                auto b = this->center;
-                return a * std::exp(-4 * std::log(2) * std::pow(x - b, 2) / std::pow(w, 2));
-            }
+            double operator()(double x);
 
         private:
             double FWHM;

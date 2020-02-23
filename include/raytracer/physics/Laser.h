@@ -44,12 +44,7 @@ namespace raytracer {
                     DirectionFun directionFunction,
                     EnergyFun energyFunction,
                     geometry::Point startPoint,
-                    geometry::Point endPoint) :
-                    wavelength(wavelength),
-                    directionFunction(std::move(directionFunction)),
-                    energyFunction(std::move(energyFunction)),
-                    startPoint(startPoint),
-                    endPoint(endPoint) {}
+                    geometry::Point endPoint);
 
             /** Generate a set of equidistant LaserRays given by the parameters of the whole laser.
              * The rays are generated originating from an edge between a start and end points of the laser.
@@ -58,37 +53,13 @@ namespace raytracer {
              * @param count number of rays to be generated
              * @return a sequence of rays
              */
-            void generateRays(size_t count) {
-                this->rays.clear();
-                this->rays.reserve(count);
-                auto x = utility::linspace(this->startPoint.x, this->endPoint.x, count);
-                auto y = utility::linspace(this->startPoint.y, this->endPoint.y, count);
-
-                double sourceWidth = (this->startPoint - this->endPoint).getNorm();
-                double parameter = -sourceWidth / 2;
-                double deltaParameter = sourceWidth / (count - 1);
-                parameter -= deltaParameter / 2; //Integrate with ray in the middle
-
-                for (size_t i = 0; i < count; ++i) {
-                    LaserRay laserRay{};
-                    laserRay.direction = directionFunction(geometry::Point(x[i], y[i]));
-                    laserRay.energy = Energy{utility::integrateTrapz(energyFunction, parameter, deltaParameter)};
-                    laserRay.wavelength = this->wavelength;
-                    laserRay.startPoint = geometry::Point(x[i], y[i]);
-
-                    this->rays.emplace_back(laserRay);
-
-                    parameter += deltaParameter;
-                }
-            }
+            void generateRays(size_t count);
 
             /**
              * Get all the rays in that are in the current state of Laser
              * @return all rays
              */
-            const std::vector<LaserRay> &getRays() {
-                return this->rays;
-            }
+            const std::vector<LaserRay> &getRays();
 
             /**
              * If there are any rays in Laser theit intersections with given mesh will be found.
@@ -123,26 +94,7 @@ namespace raytracer {
              * There will be one object called rays. It is an array of rays each beeing a sequence of points eg. [0, 1]
              * @param filename name of the json file including extension
              */
-            void saveRaysToJson(const std::string &filename) {
-                Json::Value root;
-
-                root["rays"] = Json::Value(Json::arrayValue);
-                for (const auto &ray : this->getRays()) {
-                    Json::Value rayJson = Json::Value(Json::arrayValue);
-
-                    for (const auto &intersection : ray.intersections) {
-                        Json::Value pointJson;
-                        pointJson[0] = intersection.orientation.point.x;
-                        pointJson[1] = intersection.orientation.point.y;
-
-                        rayJson.append(pointJson);
-                    }
-
-                    root["rays"].append(rayJson);
-                }
-                std::ofstream file(filename);
-                file << root;
-            }
+            void saveRaysToJson(const std::string &filename);
 
         private:
             Length wavelength;

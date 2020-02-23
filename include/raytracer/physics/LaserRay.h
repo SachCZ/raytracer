@@ -30,9 +30,7 @@ namespace raytracer {
             /** The electron critical density of the LaserRay */
             Density getCriticalDensity() const;
 
-            double getRefractiveIndex(const Density& density) const {
-                return std::sqrt(1 - density.asDouble / this->getCriticalDensity().asDouble);
-            }
+            double getRefractiveIndex(const Density& density) const;
             /** Wrapper around Ray::findIntersections.
              * It generates a ray based on the LaserRay properties and saves the result to LaserRay::intersections.
              *

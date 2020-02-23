@@ -151,6 +151,27 @@ namespace raytracer {
             }
         }
 
+        std::vector<Element *> Mesh::getAdjacentElements(const Point *point) const {
+            int pointId = -1;
+            for (uint i = 0; i < this->points.size(); i++) {
+                if (point == this->points[i].get()) {
+                    pointId = i;
+                    break;
+                }
+            }
+
+            mfem::Array<int> elementIds(
+                    this->vertexToElementTable->GetRow(pointId),
+                    this->vertexToElementTable->RowSize(pointId)
+            );
+            std::vector<Element*> result;
+            result.reserve(elementIds.Size());
+            for (auto id : elementIds){
+                result.emplace_back(this->getElementFromId(id));
+            }
+            return result;
+        }
+
         std::unique_ptr<mfem::Mesh> constructRectangleMesh(DiscreteLine sideA, DiscreteLine sideB) {
             return std::make_unique<mfem::Mesh>(
                     sideA.segmentCount,

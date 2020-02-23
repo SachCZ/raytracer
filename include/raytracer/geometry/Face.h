@@ -49,9 +49,7 @@ namespace raytracer {
              * Get the if of the face.
              * @return id
              */
-            int getId() const {
-                return this->id;
-            }
+            int getId() const;
         private:
             int id;
             std::vector<Point*> points;

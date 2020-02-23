@@ -44,38 +44,27 @@ namespace raytracer {
              * @param element
              * @return the value of GridFunction at the element true dof.
              */
-            double getValue(const Element &element) const override {
-                return const_cast<MfemMeshFunction*>(this)->get(element);
-            }
+            double getValue(const Element &element) const override;
 
             /**
              * Set a value of mfem::GridFunction based on an element.
              * @param element
              * @param value
              */
-            void setValue(const Element &element, double value) override {
-                this->get(element) = value;
-            }
+            void setValue(const Element &element, double value) override;
 
             /**
              * Add a value to existing value of mfem::GridFunction based on an element.
              * @param element
              * @param value
              */
-            void addValue(const Element &element, double value) override {
-                this->get(element) += value;
-            }
+            void addValue(const Element &element, double value) override;
 
         private:
             mfem::GridFunction &gridFunction;
             const mfem::FiniteElementSpace &finiteElementSpace;
 
-            double &get(const Element &element) {
-                mfem::Array<int> vdofs;
-                finiteElementSpace.GetElementInteriorDofs(element.getId(), vdofs);
-                auto &trueVector = gridFunction.GetTrueVector();
-                return trueVector[vdofs[0]];
-            }
+            double &get(const Element &element);
         };
     }
 }
