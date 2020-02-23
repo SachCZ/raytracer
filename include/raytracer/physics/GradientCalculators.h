@@ -14,6 +14,10 @@ namespace raytracer {
          */
         class GradientCalculator {
         public:
+            /**
+             * Override this.
+             * @return the gradient at given intersection (point).
+             */
             virtual geometry::Vector getGradient(const geometry::Intersection &) const = 0;
         };
 

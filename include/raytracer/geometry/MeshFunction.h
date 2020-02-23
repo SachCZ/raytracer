@@ -13,8 +13,20 @@ namespace raytracer {
          */
         class MeshFunction {
         public:
+            /**
+             * Override this.
+             * @return value of MeshFunction at element
+             */
             virtual double getValue(const Element&) const = 0;
+            /**
+             * Override this.
+             * @param value value to be set at element
+             */
             virtual void setValue(const Element&, double value) = 0;
+            /**
+             * Override this.
+             * @param value to be added to current value at element.
+             */
             virtual void addValue(const Element&, double value) = 0;
         };
 

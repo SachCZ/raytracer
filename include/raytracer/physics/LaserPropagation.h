@@ -62,6 +62,12 @@ namespace raytracer {
          * Functor that given an intersection finds next intersection base on the Snells's law.
          */
         struct SnellsLaw {
+            /**
+             * Construct the SnellsLaw using the density function reference and a given GradientCalculator.
+             * Density values are expected to change.
+             * @param density
+             * @param gradientCalculator
+             */
             explicit SnellsLaw(const geometry::MeshFunction &density, const GradientCalculator &gradientCalculator);
 
             /**

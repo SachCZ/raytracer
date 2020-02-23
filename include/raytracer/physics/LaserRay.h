@@ -25,7 +25,13 @@ namespace raytracer {
             /** The electron critical density of the LaserRay */
             Density getCriticalDensity() const;
 
+            /**
+             * Calculate the index of refraction based on current density and critical density of this LaserRay.
+             * @param density at which the refractive index is to be calculated
+             * @return refractive index
+             */
             double getRefractiveIndex(const Density& density) const;
+
             /** Wrapper around Ray::findIntersections.
              * It generates a ray based on the LaserRay properties and saves the result to LaserRay::intersections.
              *
