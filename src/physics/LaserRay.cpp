@@ -14,8 +14,8 @@ namespace raytracer {
             return { constant *  std::pow(lamb.asDouble, -2)};
         }
 
-        double LaserRay::getRefractiveIndex(const Density &density) const {
-            return std::sqrt(1 - density.asDouble / this->getCriticalDensity().asDouble);
+        double LaserRay::getRefractiveIndex(const Density &density, const Frequency& collisionFrequency) const {
+            return std::sqrt(this->getPermittivity(density, collisionFrequency)).real();
         }
     }
 }

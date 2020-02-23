@@ -25,8 +25,16 @@ namespace raytracer {
             return false;
         }
 
-        SnellsLaw::SnellsLaw(const geometry::MeshFunction &density, const GradientCalculator &gradientCalculator) :
-                density(density), gradientCalculator(gradientCalculator) {}
+        SnellsLaw::SnellsLaw(
+                const geometry::MeshFunction &density,
+                const geometry::MeshFunction& temperature,
+                const GradientCalculator &gradientCalculator,
+                const CollisionalFrequencyCalculator& collisionalFrequencyCalculator
+        ) :
+        density(density),
+        temperature(temperature),
+        gradientCalculator(gradientCalculator),
+        collisionalFrequencyCalculator(collisionalFrequencyCalculator) {}
 
         std::unique_ptr<geometry::Intersection>
         SnellsLaw::operator()(const geometry::Intersection &intersection, const LaserRay &laserRay) {
@@ -65,8 +73,15 @@ namespace raytracer {
         geometry::Vector SnellsLaw::getDirection(const geometry::Intersection &intersection, const LaserRay &laserRay) {
             const auto rho1 = Density{density.getValue(*intersection.previousElement)};
             const auto rho2 = Density{density.getValue(*intersection.nextElement)};
-            const double n1 = laserRay.getRefractiveIndex(rho1);
-            const double n2 = laserRay.getRefractiveIndex(rho2);
+
+            const auto T1 = Temperature{temperature.getValue(*intersection.previousElement)};
+            const auto T2 = Temperature{temperature.getValue(*intersection.nextElement)};
+
+            const auto nu_ei_1 = collisionalFrequencyCalculator.getCollisionalFrequency(rho1, T1);
+            const auto nu_ei_2 = collisionalFrequencyCalculator.getCollisionalFrequency(rho2, T2);
+
+            const double n1 = laserRay.getRefractiveIndex(rho1, nu_ei_1);
+            const double n2 = laserRay.getRefractiveIndex(rho2, nu_ei_2);
 
             const auto gradient = gradientCalculator.getGradient(intersection);
             const auto &direction = intersection.orientation.direction;

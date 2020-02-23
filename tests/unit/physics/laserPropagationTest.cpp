@@ -10,7 +10,7 @@ using namespace testing;
 using namespace raytracer::physics;
 using namespace raytracer::geometry;
 
-class DensityMeshFunctionMock : public MeshFunction {
+class MeshFunctionMock : public MeshFunction {
 public:
     double getValue(const Element &element) const override {
         return this->_value;
@@ -34,7 +34,7 @@ public:
     }
 
     LaserRay laserRay;
-    DensityMeshFunctionMock density;
+    MeshFunctionMock density;
     Element element{0, {}};
     Intersection intersection;
 
@@ -72,6 +72,13 @@ public:
     }
 };
 
+class MockCollisionalFrequencyCalculator : public CollisionalFrequencyCalculator {
+public:
+    Frequency getCollisionalFrequency(const Density &density, const Temperature &temperature) const override {
+        return {0};
+    }
+};
+
 class propagation_direction : public Test {
 public:
     void SetUp() override {
@@ -84,6 +91,7 @@ public:
 
     LaserRay laserRay;
     DensityInterfaceMeshFunctionMock density;
+    MeshFunctionMock temperature;
     Element previousElement{0, {}};
 
     Point pointA{0,0};
@@ -99,7 +107,8 @@ public:
     Intersection intersection;
     ContinueStraight continueStraight;
     MockGradientCalculator gradient;
-    SnellsLaw snellsLaw{density, gradient};
+    MockCollisionalFrequencyCalculator frequencyCalculator;
+    SnellsLaw snellsLaw{density, temperature, gradient, frequencyCalculator};
 };
 
 TEST_F(propagation_direction, continue_straight_finds_the_correct_intersection){

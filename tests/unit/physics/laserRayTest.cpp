@@ -6,12 +6,8 @@
 #include <raytracer/physics/Magnitudes.h>
 
 using namespace testing;
-using LaserRay = raytracer::physics::LaserRay;
-using Vector = raytracer::geometry::Vector;
-using Point = raytracer::geometry::Point;
-using Energy = raytracer::physics::Energy;
-using Length = raytracer::physics::Length;
-using Density = raytracer::physics::Density;
+using namespace raytracer::physics;
+using namespace raytracer::geometry;
 
 class laser_ray : public Test {
 public:
@@ -38,6 +34,13 @@ TEST_F(laser_ray, critical_density_calculation_works){
 }
 
 TEST_F(laser_ray, rerfactive_index_calculation_works){
-    auto result = laserRay.getRefractiveIndex(Density{6.447e20});
+    auto result = laserRay.getRefractiveIndex(Density{6.447e20}, Frequency{0});
     EXPECT_THAT(result, DoubleNear(0, 1e17));
 }
+
+TEST_F(laser_ray, permitivity_calculation_works){
+    auto result = laserRay.getPermittivity(Density{6.447e20}, Frequency{0});
+    EXPECT_THAT(result.real(), DoubleNear(0, 1e17));
+    ASSERT_THAT(result.imag(), DoubleNear(0, 1e17));
+}
+

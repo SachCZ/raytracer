@@ -4,6 +4,7 @@
 #include "MeshFunction.h"
 #include "LaserRay.h"
 #include "GradientCalculators.h"
+#include "CollisionalFrequencyCalculators.h"
 
 namespace raytracer {
     namespace physics {
@@ -63,12 +64,21 @@ namespace raytracer {
          */
         struct SnellsLaw {
             /**
-             * Construct the SnellsLaw using the density function reference and a given GradientCalculator.
-             * Density values are expected to change.
+             * Construct the SnellsLaw using the density and temperature function reference. Provide gradientCalculator
+             * to calculate the plane of rarefaction. Provide collisionalFrequencyCalculator to evaluate the index
+             * of rarefaction.
+             * Density and temperature values are expected to change.
              * @param density
+             * @param temperature
              * @param gradientCalculator
+             * @param collisionalFrequencyCalculator
              */
-            explicit SnellsLaw(const geometry::MeshFunction &density, const GradientCalculator &gradientCalculator);
+            explicit SnellsLaw(
+                    const geometry::MeshFunction &density,
+                    const geometry::MeshFunction& temperature,
+                    const GradientCalculator &gradientCalculator,
+                    const CollisionalFrequencyCalculator& collisionalFrequencyCalculator
+            );
 
             /**
              * Tries to find another intersection based on Snells law, density (provides an index of rarefaction)
@@ -82,7 +92,9 @@ namespace raytracer {
 
         private:
             const geometry::MeshFunction &density;
+            const geometry::MeshFunction& temperature;
             const GradientCalculator &gradientCalculator;
+            const CollisionalFrequencyCalculator& collisionalFrequencyCalculator;
 
             geometry::Vector getDirection(const geometry::Intersection &intersection, const LaserRay &laserRay);
         };
