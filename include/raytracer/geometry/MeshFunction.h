@@ -3,7 +3,6 @@
 
 #include <mfem.hpp>
 #include <Element.h>
-#include <stdexcept>
 
 namespace raytracer {
     namespace geometry {
@@ -33,11 +32,7 @@ namespace raytracer {
              */
             explicit MfemMeshFunction(
                     mfem::GridFunction &gridFunction,
-                    const mfem::FiniteElementSpace &finiteElementSpace) :
-                    gridFunction(gridFunction),
-                    finiteElementSpace(finiteElementSpace) {
-                gridFunction.SetTrueVector();
-            }
+                    const mfem::FiniteElementSpace &finiteElementSpace);
 
             /**
              * Get a value of mfem::GridFunction based on an element.

@@ -1,4 +1,5 @@
 #include "GeometryFunctions.h"
+#include "Constants.h"
 
 double raytracer::geometry::impl::getParamK(const HalfLine &halfLine,
                                             const std::vector<raytracer::geometry::Point*> &points) {

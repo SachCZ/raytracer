@@ -1,15 +1,10 @@
 #ifndef RAYTRACER_LASER_RAY_H
 #define RAYTRACER_LASER_RAY_H
 
-#include <cmath>
 #include <vector>
 
 #include "Ray.h"
 #include "Magnitudes.h"
-#include "Point.h"
-#include "Vector.h"
-#include "Constants.h"
-#include "GeometryFunctions.h"
 
 namespace raytracer {
     namespace physics {

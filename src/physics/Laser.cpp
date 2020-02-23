@@ -1,4 +1,6 @@
 #include "Laser.h"
+#include <fstream>
+#include <json/json.h>
 
 namespace raytracer {
     namespace physics {

@@ -1,4 +1,5 @@
 #include "MathFunctions.h"
+#include <cmath>
 
 namespace raytracer {
     namespace physics {

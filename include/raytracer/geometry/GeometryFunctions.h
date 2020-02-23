@@ -1,12 +1,11 @@
 #ifndef RAYTRACER_GEOMETRY_FUNCTIONS_H
 #define RAYTRACER_GEOMETRY_FUNCTIONS_H
 
+#include <vector>
 #include <memory>
 
 #include "Point.h"
-#include "Vector.h"
 #include "Face.h"
-#include "Constants.h"
 #include "Element.h"
 
 namespace raytracer {

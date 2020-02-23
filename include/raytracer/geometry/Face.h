@@ -2,12 +2,9 @@
 #define RAYTRACER_FACE_H
 
 #include <vector>
-#include <stdexcept>
-
 
 #include "Vector.h"
 #include "Point.h"
-#include "Constants.h"
 
 namespace raytracer {
     namespace geometry {

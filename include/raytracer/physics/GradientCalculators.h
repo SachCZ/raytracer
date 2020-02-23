@@ -4,7 +4,6 @@
 #include "Vector.h"
 #include "GeometryFunctions.h"
 #include "mfem.hpp"
-#include "Element.h"
 #include "Point.h"
 
 namespace raytracer {

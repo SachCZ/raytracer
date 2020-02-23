@@ -2,11 +2,12 @@
 #define RAYTRACER_MESH_H
 
 #include <vector>
-#include <set>
+#include <memory>
 
 #include "Vector.h"
 #include "Point.h"
 #include "Face.h"
+#include "Element.h"
 #include "GeometryFunctions.h"
 #include <mfem.hpp>
 

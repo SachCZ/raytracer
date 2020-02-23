@@ -1,9 +1,6 @@
 #ifndef RAYTRACER_MATH_FUNCTIONS_H
 #define RAYTRACER_MATH_FUNCTIONS_H
 
-#include <cmath>
-#include <Vector.h>
-
 namespace raytracer {
     namespace physics {
 

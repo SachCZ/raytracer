@@ -20,5 +20,12 @@ namespace raytracer {
             auto &trueVector = gridFunction.GetTrueVector();
             return trueVector[vdofs[0]];
         }
+
+        MfemMeshFunction::MfemMeshFunction(mfem::GridFunction &gridFunction,
+                                           const mfem::FiniteElementSpace &finiteElementSpace) :
+                gridFunction(gridFunction),
+                finiteElementSpace(finiteElementSpace) {
+            gridFunction.SetTrueVector();
+        }
     }
 }

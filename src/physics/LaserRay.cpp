@@ -1,4 +1,5 @@
 #include "LaserRay.h"
+#include "Constants.h"
 
 namespace raytracer {
     namespace physics {

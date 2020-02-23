@@ -3,7 +3,6 @@
 
 #include "MeshFunction.h"
 #include "LaserRay.h"
-#include "Vector.h"
 #include "GradientCalculators.h"
 
 namespace raytracer {

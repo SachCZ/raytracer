@@ -5,14 +5,9 @@
 
 #include <vector>
 #include <functional>
-#include <fstream>
-#include <json/json.h>
-
 #include "FreeFunctions.h"
-
-#include "Point.h"
-#include "Face.h"
 #include "LaserRay.h"
+#include "Point.h"
 
 namespace raytracer {
     namespace physics {

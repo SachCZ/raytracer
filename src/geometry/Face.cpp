@@ -1,4 +1,6 @@
 #include "Face.h"
+#include <stdexcept>
+
 
 namespace raytracer {
     namespace geometry {
