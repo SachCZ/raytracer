@@ -22,7 +22,7 @@ public:
         l2FiniteElementSpace = std::make_unique<mfem::FiniteElementSpace>(mfemMesh.get(), &l2FiniteElementCollection);
         h1FiniteElementSpace = std::make_unique<mfem::FiniteElementSpace>(mfemMesh.get(), &h1FiniteElementCollection);
 
-        h1GradientCalculator = std::make_unique<H1GradientCalculator>(*l2FiniteElementSpace, *h1FiniteElementSpace);
+        h1GradientCalculator = std::make_unique<H1GradientCalculator>(*l2FiniteElementSpace, *h1FiniteElementSpace, *mfemMesh);
 
         densityGridFunction = std::make_unique<mfem::GridFunction>(l2FiniteElementSpace.get());
         mfem::FunctionCoefficient densityFunctionCoefficient(gradient_calculators::density);
@@ -31,7 +31,7 @@ public:
 
     ConstantGradientCalculator constantGradientCalculator{Vector(1.2, -0.3)};
 
-    DiscreteLine side{100, 10};
+    DiscreteLine side{100, 4};
     std::unique_ptr<mfem::Mesh> mfemMesh = constructRectangleMesh(side, side);
 
     mfem::L2_FECollection l2FiniteElementCollection{0, 2};
@@ -65,12 +65,12 @@ TEST_F(gradient_calculators, h1_returns_correct_result_for_linear_density){
             *mesh, ContinueStraight(),
             DontStop());
     auto ray = laser.getRays()[0];
-    auto intersection = ray.intersections[5];
+    auto intersection = ray.intersections[1];
     h1GradientCalculator->updateDensity(*densityGridFunction);
     auto result = h1GradientCalculator->getGradient(intersection);
 
-    EXPECT_THAT(result.x, DoubleNear(12, 1e-1));
-    EXPECT_THAT(result.y, DoubleNear(-7, 1e-1));
+    EXPECT_THAT(result.x, DoubleNear(12, 1e-4));
+    EXPECT_THAT(result.y, DoubleNear(-7, 1e-4));
 }
 
 TEST_F(gradient_calculators, h1_returns_correct_result_at_the_border){

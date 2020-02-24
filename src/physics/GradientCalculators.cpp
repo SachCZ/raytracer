@@ -8,9 +8,11 @@ namespace raytracer {
             return this->gradient;
         }
 
-        H1GradientCalculator::H1GradientCalculator(mfem::FiniteElementSpace &l2Space, mfem::FiniteElementSpace &h1Space)
-                :
-                l2Space(l2Space), h1Space(h1Space), _density(&h1Space) {}
+        H1GradientCalculator::H1GradientCalculator(
+                mfem::FiniteElementSpace &l2Space,
+                mfem::FiniteElementSpace &h1Space,
+                const mfem::Mesh& mesh):
+                l2Space(l2Space), h1Space(h1Space), _density(&h1Space), mesh(mesh) {}
 
         geometry::Vector H1GradientCalculator::getGradient(const geometry::Intersection &intersection) const {
             auto point = intersection.orientation.point;
@@ -45,24 +47,47 @@ namespace raytracer {
         }
 
         mfem::GridFunction H1GradientCalculator::convertH1toL2(const mfem::GridFunction &function) {
-            mfem::BilinearForm A(&h1Space);
-            A.AddDomainIntegrator(new mfem::MassIntegrator);
-            A.Assemble();
-            A.Finalize();
+            mfem::Array<int> ess_tdof_list;
+            if (mesh.bdr_attributes.Size())
+            {
+                mfem::Array<int> ess_bdr(mesh.bdr_attributes.Max());
+                ess_bdr = 1;
+                l2Space.GetEssentialTrueDofs(ess_bdr, ess_tdof_list);
+            }
 
-            mfem::MixedBilinearForm B(&l2Space, &h1Space);
-            B.AddDomainIntegrator(new mfem::MixedScalarMassIntegrator);
-            B.Assemble();
-            B.Finalize();
+            mfem::BilinearForm formA(&h1Space);
+            formA.AddDomainIntegrator(new mfem::MassIntegrator);
+            formA.Assemble();
+            formA.Finalize();
+
+            mfem::MixedBilinearForm formB(&l2Space, &h1Space);
+            formB.AddDomainIntegrator(new mfem::MixedScalarMassIntegrator);
+            formB.Assemble();
+            formB.Finalize();
 
             mfem::LinearForm b(&h1Space);
-            B.Mult(function, b);
-
-            mfem::GSSmoother smoother(A.SpMat());
+            formB.Mult(function, b);
 
             mfem::GridFunction result(&h1Space);
             result = 0;
-            mfem::PCG(A, smoother, b, result);
+
+            mfem::OperatorPtr A;
+            mfem::Vector B, X;
+            formA.FormLinearSystem(ess_tdof_list, result, b, A, X, B);
+
+            mfem::GSSmoother M((mfem::SparseMatrix&)(*A));
+            PCG(*A, M, B, X, 0, 1000, 1e-12, 0.0);
+
+            formA.RecoverFEMSolution(X, b, result);
+
+
+            std::ofstream mesh_ofs("refined.mesh");
+            mesh_ofs.precision(8);
+            mesh.Print(mesh_ofs);
+            std::ofstream sol_ofs("sol.gf");
+            sol_ofs.precision(8);
+            result.Save(sol_ofs);
+
 
             return result;
         }
