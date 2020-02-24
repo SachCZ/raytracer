@@ -27,12 +27,22 @@ namespace raytracer {
             Density getCriticalDensity() const;
 
             /**
-             * Calculate the index of refraction based on current density, collisionalFrequency
-             * and critical density of this LaserRay.
+             * Calculate the index of refraction based on current density, collisional frequency.
              * @param density at which the refractive index is to be calculated
              * @return refractive index
              */
             double getRefractiveIndex(const Density &density, const Frequency &collisionFrequency) const;
+
+            /**
+             * Calculate the inverse bremsstrahlung coefficient base on current density and collisional frequency.
+             * @param density
+             * @param collisionFrequency
+             * @return
+             */
+            double getInverseBremsstrahlungCoeff(const Density &density, const Frequency &collisionFrequency) const {
+                auto eps = this->getPermittivity(density, collisionFrequency);
+                return 4*M_PI / this->wavelength.asDouble * std::sqrt(eps).imag();
+            }
 
             /**
              * Calculate the permittivity based on current density and collisionFrequency
@@ -46,14 +56,14 @@ namespace raytracer {
                 using namespace std::complex_literals;
 
                 auto nu_ei = collisionFrequency.asDouble;
-                auto ne = density.asDouble;
-                auto ne_crit = this->getCriticalDensity().asDouble;
+                auto n_e = density.asDouble;
                 auto m_e = constants::electron_mass;
                 auto e = constants::electron_charge;
+                auto omega = 2 * M_PI * constants::speed_of_light / this->wavelength.asDouble;
+                auto omega_p2 = 4 * M_PI * e*e * n_e / m_e;
 
-                auto k = m_e / (4 * M_PI * e * e) * nu_ei * nu_ei;
-                auto term = ne / (ne_crit + k);
-                return 1 - term + 1i * std::sqrt(k / ne_crit) * term;
+                auto term = omega_p2 / (omega*omega + nu_ei*nu_ei);
+                return 1 - term + 1i * nu_ei / omega * term;
             }
 
             /** Wrapper around Ray::findIntersections.

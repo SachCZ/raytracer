@@ -44,3 +44,8 @@ TEST_F(laser_ray, permitivity_calculation_works){
     ASSERT_THAT(result.imag(), DoubleNear(0, 1e17));
 }
 
+TEST_F(laser_ray, inverse_bremsstrahlung_coefficient_calculation_works){
+    auto result = laserRay.getInverseBremsstrahlungCoeff(Density{6.447e20}, Frequency{1e17});
+    //TODO test this somehow
+}
+
