@@ -76,6 +76,7 @@ namespace raytracer {
             explicit SnellsLaw(
                     const geometry::MeshFunction &density,
                     const geometry::MeshFunction& temperature,
+                    const geometry::MeshFunction& ionization,
                     const GradientCalculator &gradientCalculator,
                     const CollisionalFrequencyCalculator& collisionalFrequencyCalculator
             );
@@ -93,6 +94,7 @@ namespace raytracer {
         private:
             const geometry::MeshFunction &density;
             const geometry::MeshFunction& temperature;
+            const geometry::MeshFunction& ionization;
             const GradientCalculator &gradientCalculator;
             const CollisionalFrequencyCalculator& collisionalFrequencyCalculator;
 

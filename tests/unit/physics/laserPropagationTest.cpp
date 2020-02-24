@@ -74,8 +74,10 @@ public:
 
 class MockCollisionalFrequencyCalculator : public CollisionalFrequencyCalculator {
 public:
-    Frequency getCollisionalFrequency(const Density &density, const Temperature &temperature) const override {
-        return {0};
+    Frequency
+    getCollisionalFrequency(const Density &density, const Temperature &temperature, const Length &laserWavelength,
+                            double ionization) const override {
+        return Frequency{0};
     }
 };
 
@@ -92,6 +94,7 @@ public:
     LaserRay laserRay;
     DensityInterfaceMeshFunctionMock density;
     MeshFunctionMock temperature;
+    MeshFunctionMock ionization;
     Element previousElement{0, {}};
 
     Point pointA{0,0};
@@ -108,7 +111,7 @@ public:
     ContinueStraight continueStraight;
     MockGradientCalculator gradient;
     MockCollisionalFrequencyCalculator frequencyCalculator;
-    SnellsLaw snellsLaw{density, temperature, gradient, frequencyCalculator};
+    SnellsLaw snellsLaw{density, temperature, ionization, gradient, frequencyCalculator};
 };
 
 TEST_F(propagation_direction, continue_straight_finds_the_correct_intersection){

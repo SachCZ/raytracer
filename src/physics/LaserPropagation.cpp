@@ -28,11 +28,13 @@ namespace raytracer {
         SnellsLaw::SnellsLaw(
                 const geometry::MeshFunction &density,
                 const geometry::MeshFunction& temperature,
+                const geometry::MeshFunction& ionization,
                 const GradientCalculator &gradientCalculator,
                 const CollisionalFrequencyCalculator& collisionalFrequencyCalculator
         ) :
         density(density),
         temperature(temperature),
+        ionization(ionization),
         gradientCalculator(gradientCalculator),
         collisionalFrequencyCalculator(collisionalFrequencyCalculator) {}
 
@@ -77,8 +79,11 @@ namespace raytracer {
             const auto T1 = Temperature{temperature.getValue(*intersection.previousElement)};
             const auto T2 = Temperature{temperature.getValue(*intersection.nextElement)};
 
-            const auto nu_ei_1 = collisionalFrequencyCalculator.getCollisionalFrequency(rho1, T1);
-            const auto nu_ei_2 = collisionalFrequencyCalculator.getCollisionalFrequency(rho2, T2);
+            const auto Z1 = ionization.getValue(*intersection.previousElement);
+            const auto Z2 = ionization.getValue(*intersection.nextElement);
+
+            const auto nu_ei_1 = collisionalFrequencyCalculator.getCollisionalFrequency(rho1, T1, laserRay.wavelength, Z1);
+            const auto nu_ei_2 = collisionalFrequencyCalculator.getCollisionalFrequency(rho2, T2, laserRay.wavelength, Z2);
 
             const double n1 = laserRay.getRefractiveIndex(rho1, nu_ei_1);
             const double n2 = laserRay.getRefractiveIndex(rho2, nu_ei_2);
