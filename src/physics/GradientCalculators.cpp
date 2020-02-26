@@ -30,7 +30,7 @@ namespace raytracer {
         }
 
         void H1GradientCalculator::updateDensity(mfem::GridFunction &density) {
-            this->_density = convertH1toL2(density);
+            this->_density = this->projectL2toH1(density);
         }
 
         geometry::Vector
@@ -46,48 +46,25 @@ namespace raytracer {
             return {result[0], result[1]};
         }
 
-        mfem::GridFunction H1GradientCalculator::convertH1toL2(const mfem::GridFunction &function) {
-            mfem::Array<int> ess_tdof_list;
-            if (mesh.bdr_attributes.Size())
-            {
-                mfem::Array<int> ess_bdr(mesh.bdr_attributes.Max());
-                ess_bdr = 1;
-                l2Space.GetEssentialTrueDofs(ess_bdr, ess_tdof_list);
-            }
+        mfem::GridFunction H1GradientCalculator::projectL2toH1(const mfem::GridFunction &function) {
+            mfem::BilinearForm A(&h1Space);
+            A.AddDomainIntegrator(new mfem::MassIntegrator);
+            A.Assemble();
+            A.Finalize();
 
-            mfem::BilinearForm formA(&h1Space);
-            formA.AddDomainIntegrator(new mfem::MassIntegrator);
-            formA.Assemble();
-            formA.Finalize();
-
-            mfem::MixedBilinearForm formB(&l2Space, &h1Space);
-            formB.AddDomainIntegrator(new mfem::MixedScalarMassIntegrator);
-            formB.Assemble();
-            formB.Finalize();
+            mfem::MixedBilinearForm B(&l2Space, &h1Space);
+            B.AddDomainIntegrator(new mfem::MixedScalarMassIntegrator);
+            B.Assemble();
+            B.Finalize();
 
             mfem::LinearForm b(&h1Space);
-            formB.Mult(function, b);
+            B.Mult(function, b);
+
+            mfem::GSSmoother smoother(A.SpMat());
 
             mfem::GridFunction result(&h1Space);
             result = 0;
-
-            mfem::OperatorPtr A;
-            mfem::Vector B, X;
-            formA.FormLinearSystem(ess_tdof_list, result, b, A, X, B);
-
-            mfem::GSSmoother M((mfem::SparseMatrix&)(*A));
-            PCG(*A, M, B, X, 0, 1000, 1e-12, 0.0);
-
-            formA.RecoverFEMSolution(X, b, result);
-
-
-            std::ofstream mesh_ofs("refined.mesh");
-            mesh_ofs.precision(8);
-            mesh.Print(mesh_ofs);
-            std::ofstream sol_ofs("sol.gf");
-            sol_ofs.precision(8);
-            result.Save(sol_ofs);
-
+            mfem::PCG(A, smoother, b, result);
 
             return result;
         }

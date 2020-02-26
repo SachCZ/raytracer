@@ -66,6 +66,7 @@ namespace raytracer {
              */
             geometry::Vector getGradient(const geometry::Intersection &intersection) const override;
 
+
             /**
              * Update the density from which the gradient is calculated. The density should be a function in L2 space.
              * @param density defined over L2
@@ -80,7 +81,7 @@ namespace raytracer {
 
             geometry::Vector getGradientAt(const geometry::Element& element, const geometry::Point& point) const;
 
-            mfem::GridFunction convertH1toL2(const mfem::GridFunction &function);
+            mfem::GridFunction projectL2toH1(const mfem::GridFunction &function);
         };
     }
 }
