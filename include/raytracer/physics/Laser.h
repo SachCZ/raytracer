@@ -54,7 +54,7 @@ namespace raytracer {
              * Get all the rays in that are in the current state of Laser
              * @return all rays
              */
-            const std::vector<LaserRay> &getRays();
+            const std::vector<LaserRay> &getRays() const;
 
             /**
              * If there are any rays in Laser theit intersections with given mesh will be found.
