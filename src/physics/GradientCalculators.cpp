@@ -2,7 +2,7 @@
 
 namespace raytracer {
     namespace physics {
-        ConstantGradientCalculator::ConstantGradientCalculator(const geometry::Vector &gradient) : gradient(gradient) {}
+        ConstantGradientCalculator::ConstantGradientCalculator(const geometry::Vector &gradient): gradient(gradient) {}
 
         geometry::Vector ConstantGradientCalculator::getGradient(const geometry::Intersection &) const {
             return this->gradient;
@@ -10,17 +10,17 @@ namespace raytracer {
 
         H1GradientCalculator::H1GradientCalculator(
                 mfem::FiniteElementSpace &l2Space,
-                mfem::FiniteElementSpace &h1Space
-        ) :
-                l2Space(l2Space), h1Space(h1Space), _density(&h1Space) {}
+                mfem::FiniteElementSpace &h1Space,
+                const mfem::Mesh& mesh):
+                l2Space(l2Space), h1Space(h1Space), _density(&h1Space), mesh(mesh) {}
 
         geometry::Vector H1GradientCalculator::getGradient(const geometry::Intersection &intersection) const {
             auto point = intersection.orientation.point;
-            if (intersection.previousElement && intersection.nextElement) {
+            if (intersection.previousElement && intersection.nextElement){
                 auto previousGradient = this->getGradientAt(*intersection.previousElement, point);
                 auto nextGradient = this->getGradientAt(*intersection.nextElement, point);
                 return 0.5 * (previousGradient + nextGradient);
-            } else if (intersection.nextElement) {
+            } else if (intersection.nextElement){
                 return this->getGradientAt(*intersection.nextElement, point);
             } else if (intersection.previousElement) {
                 return this->getGradientAt(*intersection.previousElement, point);
