@@ -56,8 +56,8 @@ namespace raytracer {
              */
             H1GradientCalculator(
                     mfem::FiniteElementSpace &l2Space,
-                    mfem::FiniteElementSpace &h1Space,
-                    const mfem::Mesh& mesh);
+                    mfem::FiniteElementSpace &h1Space
+                    );
 
             /**
              * Return the value of gradient at the intersection point.
@@ -77,7 +77,6 @@ namespace raytracer {
             mfem::FiniteElementSpace &l2Space;
             mfem::FiniteElementSpace &h1Space;
             mfem::GridFunction _density;
-            const mfem::Mesh& mesh;
 
             geometry::Vector getGradientAt(const geometry::Element& element, const geometry::Point& point) const;
 
