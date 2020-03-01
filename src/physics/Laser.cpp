@@ -38,7 +38,7 @@ namespace raytracer {
             }
         }
 
-        const std::vector<LaserRay> &Laser::getRays() const {
+        const std::vector<LaserRay> &Laser::getRays() {
             return this->rays;
         }
 
