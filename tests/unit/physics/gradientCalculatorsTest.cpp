@@ -21,7 +21,7 @@ public:
         l2FiniteElementSpace = std::make_unique<mfem::FiniteElementSpace>(mfemMesh.get(), &l2FiniteElementCollection);
         h1FiniteElementSpace = std::make_unique<mfem::FiniteElementSpace>(mfemMesh.get(), &h1FiniteElementCollection);
 
-        h1GradientCalculator = std::make_unique<H1GradientCalculator>(*l2FiniteElementSpace, *h1FiniteElementSpace, *mfemMesh);
+        h1GradientCalculator = std::make_unique<H1GradientCalculator>(*l2FiniteElementSpace, *h1FiniteElementSpace);
 
         densityGridFunction = std::make_unique<mfem::GridFunction>(l2FiniteElementSpace.get());
         mfem::FunctionCoefficient densityFunctionCoefficient(gradient_calculators::density);
