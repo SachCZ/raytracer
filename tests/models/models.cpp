@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
                     Density{density},
                     Temperature{150},
                     laserRay.wavelength,
-                    22
+                    0
             );
             return laserRay.getRefractiveIndex(Density{density}, frequency);
         },

@@ -13,7 +13,7 @@ if __name__ == "__main__":
             plt.grid()
 
             if function["logarithmic"]:
-                plt.semilogy(x, y)
+                plt.loglog(x, y)
             else:
                 plt.plot(x, y)
             plt.show()
