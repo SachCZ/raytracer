@@ -3,8 +3,10 @@
 
 #include "raytracer/physics/LaserRay.h"
 #include "raytracer/physics/Magnitudes.h"
-#include "raytracer/physics/LaserPropagation.h"
+#include "raytracer/physics/Propagation.h"
 #include "raytracer/geometry/MeshFunction.h"
+#include "Refraction.h"
+#include "Termination.h"
 
 using namespace testing;
 using namespace raytracer::physics;

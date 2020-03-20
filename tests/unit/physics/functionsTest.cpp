@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <raytracer/physics/MathFunctions.h>
+#include <raytracer/utility/FreeFunctions.h>
 
 using namespace testing;
-using Gaussian = raytracer::physics::Gaussian;
+using Gaussian = raytracer::utility::Gaussian;
 
 class initialized_gaussian : public Test {
 public:

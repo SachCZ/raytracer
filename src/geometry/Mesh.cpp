@@ -1,4 +1,4 @@
-#include <GeometryFunctions.h>
+#include <Intersection.h>
 #include "Mesh.h"
 #include "Element.h"
 #include <cmath>

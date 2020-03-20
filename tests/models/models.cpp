@@ -1,4 +1,4 @@
-#include <raytracer/physics/CollisionalFrequencyCalculators.h>
+#include <raytracer/physics/CollisionalFrequency.h>
 #include <raytracer/utility/FreeFunctions.h>
 #include <fstream>
 #include <json/json.h>

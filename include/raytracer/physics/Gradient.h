@@ -1,8 +1,8 @@
-#ifndef RAYTRACER_GRADIENTCALCULATORS_H
-#define RAYTRACER_GRADIENTCALCULATORS_H
+#ifndef RAYTRACER_GRADIENT_H
+#define RAYTRACER_GRADIENT_H
 
 #include "Vector.h"
-#include "GeometryFunctions.h"
+#include "Intersection.h"
 #include "mfem.hpp"
 #include "Point.h"
 
@@ -110,4 +110,4 @@ namespace raytracer {
 }
 
 
-#endif //RAYTRACER_GRADIENTCALCULATORS_H
+#endif //RAYTRACER_GRADIENT_H

@@ -3,11 +3,13 @@
 #include <mfem.hpp>
 #include <raytracer/geometry/Mesh.h>
 #include <raytracer/geometry/MeshFunction.h>
-#include <raytracer/physics/GradientCalculators.h>
-#include <raytracer/physics/CollisionalFrequencyCalculators.h>
-#include <raytracer/physics/LaserPropagation.h>
+#include <raytracer/physics/Gradient.h>
+#include <raytracer/physics/CollisionalFrequency.h>
+#include <raytracer/physics/Propagation.h>
 #include <raytracer/physics/Laser.h>
-#include <raytracer/physics/MathFunctions.h>
+#include <raytracer/utility/FreeFunctions.h>
+#include "Refraction.h"
+#include "Termination.h"
 
 double densityFunction(const mfem::Vector &x) {
     return 12.8e20 * x(0) + 12.8e20;
@@ -24,6 +26,7 @@ double ionizationFunction(const mfem::Vector &) {
 TEST(tracing, throught_mesh_should_work_as_expected_for_dummy_mesh) {
     using namespace raytracer::geometry;
     using namespace raytracer::physics;
+    using namespace raytracer::utility;
     using namespace testing;
 
     auto mfemMesh = std::make_unique<mfem::Mesh>("mesh.vtk", 1, 0);

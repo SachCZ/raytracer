@@ -1,4 +1,4 @@
-#include "GradientCalculators.h"
+#include "Gradient.h"
 
 namespace raytracer {
     namespace physics {

@@ -3,7 +3,9 @@
 #include <raytracer/physics/Laser.h>
 #include <raytracer/physics/Magnitudes.h>
 #include <mfem.hpp>
-#include <raytracer/physics/LaserPropagation.h>
+#include <raytracer/physics/Propagation.h>
+#include "Refraction.h"
+#include "Termination.h"
 
 using namespace testing;
 using namespace raytracer::physics;

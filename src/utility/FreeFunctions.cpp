@@ -1,8 +1,8 @@
-#include "MathFunctions.h"
+#include "FreeFunctions.h"
 #include <cmath>
 
 namespace raytracer {
-    namespace physics {
+    namespace utility {
         Gaussian::Gaussian(double FWHM, double maximum, double center) :
                 FWHM(FWHM), maximum(maximum), center(center) {}
 
@@ -14,4 +14,3 @@ namespace raytracer {
         }
     }
 }
-

@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "Mesh.h"
-#include "GeometryFunctions.h"
+#include "Intersection.h"
 
 
 namespace raytracer {

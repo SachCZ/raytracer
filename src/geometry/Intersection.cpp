@@ -1,5 +1,5 @@
 #include <limits>
-#include "GeometryFunctions.h"
+#include "Intersection.h"
 
 double raytracer::geometry::impl::getParamK(const HalfLine &halfLine,
                                             const std::vector<raytracer::geometry::Point*> &points) {
@@ -68,6 +68,7 @@ raytracer::geometry::findClosestIntersection(const HalfLine &halfLine,
                 norm =  std::numeric_limits<double>::infinity();//If it is too close, prefer others
                 //TODO I dont like this at all
                 //TODO Easily solvable with triangles
+                //TODO not so easy with quads
             }
             if (norm <= distance){
                 result = std::move(pointOnFace);

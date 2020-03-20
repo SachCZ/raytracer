@@ -2,14 +2,17 @@
 #include <gmock/gmock.h>
 
 #include <raytracer/geometry/Mesh.h>
-#include <raytracer/physics/LaserPropagation.h>
+#include <raytracer/physics/Propagation.h>
 #include <raytracer/physics/Laser.h>
-#include <raytracer/physics/MathFunctions.h>
-#include "raytracer/physics/GradientCalculators.h"
+#include "raytracer/physics/Gradient.h"
+#include "raytracer/utility/FreeFunctions.h"
+#include "Refraction.h"
+#include "Termination.h"
 
 using namespace testing;
 using namespace raytracer::physics;
 using namespace raytracer::geometry;
+using namespace raytracer::utility;
 
 class gradient_calculators : public Test {
     static double density(const mfem::Vector &x) {

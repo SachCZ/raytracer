@@ -8,7 +8,7 @@
 #include "Point.h"
 #include "Face.h"
 #include "Element.h"
-#include "GeometryFunctions.h"
+#include "Intersection.h"
 #include <mfem.hpp>
 
 /**
