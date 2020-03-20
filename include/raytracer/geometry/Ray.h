@@ -10,6 +10,21 @@
 
 namespace raytracer {
     namespace geometry {
+        /**
+         * Structure representing a single intersection of HalfLine with a mesh.
+         */
+        struct Intersection {
+            Vector direction{};
+
+            PointOnFace pointOnFace{};
+
+            /**Pointer to the next Element that the ray would go to from the Face.
+             * Could be null if the ray just left the Mesh.*/
+            const Element *nextElement{};
+            /**Pointer to the previous Element that the ray actually came from.
+             * could be null if the ray just entered the Mesh. */
+            const Element *previousElement{};
+        };
 
         /**
          * Class representing a ray propagating through mesh.
@@ -43,37 +58,66 @@ namespace raytracer {
              * @param stopCondition function with signature (const Intersection& previousIntersection, const Element& element) -> bool.
              * @return sequence of found intersections
              */
-            template<typename IntersFunc, typename StopCondition>
+            template<typename DirectionFunction, typename IntersectionFunction, typename StopCondition>
             std::vector<Intersection> findIntersections(
                     const Mesh &mesh,
-                    IntersFunc findInters,
+                    DirectionFunction findDirection,
+                    IntersectionFunction findIntersection,
                     StopCondition stopCondition) {
 
                 std::vector<Intersection> result;
 
-                std::unique_ptr<Intersection> intersection = findClosestIntersection(initialRay, mesh.getBoundary());
+                std::unique_ptr<PointOnFace> initialPointOnFace = findClosestIntersection(
+                        initialRay,
+                        mesh.getBoundary()
+                );
 
-                if (!intersection)
+                if (!initialPointOnFace)
                     throw std::logic_error("No intersection found! Did you miss the target?");
 
-                intersection->nextElement = mesh.getAdjacentElement(
-                        intersection->face,
-                        intersection->orientation);
-                intersection->previousElement = nullptr;
-                result.emplace_back(*intersection);
+                Intersection previousIntersection{};
+                previousIntersection.nextElement = mesh.getFaceAdjacentElement(
+                        initialPointOnFace->face,
+                        initialRay.direction
+                );
+                if (!previousIntersection.nextElement) throw std::logic_error("Could not find next element at border!");
+                previousIntersection.previousElement = nullptr;
+                previousIntersection.pointOnFace = *initialPointOnFace;
+                previousIntersection.direction = initialRay.direction;
 
+                result.emplace_back(previousIntersection);
 
-                while (intersection->nextElement && !stopCondition(*intersection)) {
-                    auto previousElement = intersection->nextElement;
-                    intersection = std::move(findInters(*intersection));
-                    if (!intersection)
-                        throw std::logic_error("No intersection found, but it should exist!");
-                    intersection->previousElement = previousElement;
-                    intersection->nextElement = mesh.getAdjacentElement(
-                            intersection->face,
-                            intersection->orientation);
-                    result.emplace_back(*intersection);
+                while (!stopCondition(*(result.back().nextElement))){
+                    auto nextElementForDirection = mesh.getFaceAdjacentElement( //NextElement
+                            previousIntersection.pointOnFace.face,
+                            previousIntersection.direction
+                    );
+                    if (!nextElementForDirection) break;
+                    auto direction = findDirection(
+                            previousIntersection.pointOnFace, //At which point
+                            previousIntersection.direction, //Previous direction
+                            *previousIntersection.nextElement, //Previous element
+                            *nextElementForDirection
+                    );
+
+                    auto nextElementToGo = mesh.getFaceAdjacentElement(
+                            previousIntersection.pointOnFace.face,
+                            direction
+                    );
+                    if (!nextElementToGo) break;
+
+                    PointOnFace nextPointOnFace = findIntersection(previousIntersection.pointOnFace, direction, *nextElementToGo);
+
+                    Intersection intersection{};
+                    intersection.nextElement = nextElementToGo;
+                    intersection.previousElement = previousIntersection.nextElement;
+                    intersection.pointOnFace = nextPointOnFace;
+                    intersection.direction = direction;
+
+                    result.emplace_back(intersection);
+                    previousIntersection = intersection;
                 }
+
                 return result;
             }
 

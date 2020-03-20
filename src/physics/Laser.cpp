@@ -51,8 +51,8 @@ namespace raytracer {
 
                 for (const auto &intersection : ray.intersections) {
                     Json::Value pointJson;
-                    pointJson[0] = intersection.orientation.point.x;
-                    pointJson[1] = intersection.orientation.point.y;
+                    pointJson[0] = intersection.pointOnFace.point.x;
+                    pointJson[1] = intersection.pointOnFace.point.y;
 
                     rayJson.append(pointJson);
                 }

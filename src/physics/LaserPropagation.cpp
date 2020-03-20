@@ -5,93 +5,57 @@ namespace raytracer {
         StopAtCritical::StopAtCritical(const geometry::MeshFunction &density) :
                 density(density) {}
 
-        bool StopAtCritical::operator()(const geometry::Intersection &intersection, const LaserRay &laserRay) {
-            const auto element = *intersection.nextElement;
-
+        bool StopAtCritical::operator()(const geometry::Element &element, const LaserRay &laserRay) {
             auto currentDensity = density.getValue(element);
             auto criticalDensity = laserRay.getCriticalDensity();
             return currentDensity > criticalDensity.asDouble;
         }
 
-        std::unique_ptr<geometry::Intersection>
-        ContinueStraight::operator()(const geometry::Intersection &intersection, const LaserRay &) {
-            return findClosestIntersection(
-                    intersection.orientation,
-                    intersection.nextElement->getFaces(),
-                    intersection.face);
-        }
-
-        bool DontStop::operator()(const geometry::Intersection &, const LaserRay &) {
+        bool DontStop::operator()(const geometry::Element &, const LaserRay &) {
             return false;
         }
 
         SnellsLaw::SnellsLaw(
                 const geometry::MeshFunction &density,
-                const geometry::MeshFunction& temperature,
-                const geometry::MeshFunction& ionization,
+                const geometry::MeshFunction &temperature,
+                const geometry::MeshFunction &ionization,
                 const GradientCalculator &gradientCalculator,
-                const CollisionalFrequencyCalculator& collisionalFrequencyCalculator
+                const CollisionalFrequencyCalculator &collisionalFrequencyCalculator
         ) :
-        density(density),
-        temperature(temperature),
-        ionization(ionization),
-        gradientCalculator(gradientCalculator),
-        collisionalFrequencyCalculator(collisionalFrequencyCalculator) {}
+                density(density),
+                temperature(temperature),
+                ionization(ionization),
+                gradientCalculator(gradientCalculator),
+                collisionalFrequencyCalculator(collisionalFrequencyCalculator) {}
 
-        std::unique_ptr<geometry::Intersection>
-        SnellsLaw::operator()(const geometry::Intersection &intersection, const LaserRay &laserRay) {
-            const auto previousElement = intersection.previousElement;
-            const auto nextElement = intersection.nextElement;
 
-            if (!previousElement) {
-                return findClosestIntersection(intersection.orientation, nextElement->getFaces(),
-                                               intersection.face);
-            }
+        geometry::Vector SnellsLaw::operator()(
+                const geometry::PointOnFace &pointOnFace,
+                const geometry::Vector &previousDirection,
+                const geometry::Element &previousElement,
+                const geometry::Element &nextElement,
+                const LaserRay &laserRay
+        ) {
+            const auto rho1 = Density{density.getValue(previousElement)};
+            const auto rho2 = Density{density.getValue(nextElement)};
 
-            auto orientation = geometry::HalfLine{
-                    intersection.orientation.point,
-                    getDirection(intersection, laserRay)
-            };
-            auto newIntersection = findClosestIntersection(
-                    orientation,
-                    nextElement->getFaces(),
-                    intersection.face);
-            if (!newIntersection) {
-                //The ray must have reflected unexpectedly
-                newIntersection = findClosestIntersection(
-                        orientation,
-                        previousElement->getFaces(),
-                        intersection.face);
-                if (newIntersection){
-                    newIntersection->nextElement = previousElement;
-                }
-                else {
-                    throw std::logic_error("No intersection found");
-                }
-            }
-            return newIntersection;
-        }
+            const auto T1 = Temperature{temperature.getValue(previousElement)};
+            const auto T2 = Temperature{temperature.getValue(nextElement)};
 
-        geometry::Vector SnellsLaw::getDirection(const geometry::Intersection &intersection, const LaserRay &laserRay) {
-            const auto rho1 = Density{density.getValue(*intersection.previousElement)};
-            const auto rho2 = Density{density.getValue(*intersection.nextElement)};
+            const auto Z1 = ionization.getValue(previousElement);
+            const auto Z2 = ionization.getValue(nextElement);
 
-            const auto T1 = Temperature{temperature.getValue(*intersection.previousElement)};
-            const auto T2 = Temperature{temperature.getValue(*intersection.nextElement)};
-
-            const auto Z1 = ionization.getValue(*intersection.previousElement);
-            const auto Z2 = ionization.getValue(*intersection.nextElement);
-
-            const auto nu_ei_1 = collisionalFrequencyCalculator.getCollisionalFrequency(rho1, T1, laserRay.wavelength, Z1);
-            const auto nu_ei_2 = collisionalFrequencyCalculator.getCollisionalFrequency(rho2, T2, laserRay.wavelength, Z2);
+            const auto nu_ei_1 = collisionalFrequencyCalculator.getCollisionalFrequency(rho1, T1, laserRay.wavelength,
+                                                                                        Z1);
+            const auto nu_ei_2 = collisionalFrequencyCalculator.getCollisionalFrequency(rho2, T2, laserRay.wavelength,
+                                                                                        Z2);
 
             const double n1 = laserRay.getRefractiveIndex(rho1, nu_ei_1);
             const double n2 = laserRay.getRefractiveIndex(rho2, nu_ei_2);
 
-            const auto gradient = gradientCalculator.getGradient(intersection);
-            const auto &direction = intersection.orientation.direction;
+            const auto gradient = gradientCalculator.getGradient(pointOnFace, previousElement, nextElement);
 
-            const auto l = 1 / direction.getNorm() * direction;
+            const auto l = 1 / previousDirection.getNorm() * previousDirection;
             auto n = 1 / gradient.getNorm() * gradient;
             auto c = (-1) * n * l;
             if (c < 0) {
@@ -106,6 +70,22 @@ namespace raytracer {
             } else {
                 return l + 2 * c * n;
             }
+        }
+
+        geometry::PointOnFace
+        intersectStraight(
+                const geometry::PointOnFace &pointOnFace,
+                const geometry::Vector &direction,
+                const geometry::Element &nextElement,
+                const LaserRay &
+        ) {
+            auto newPointOnFace = geometry::findClosestIntersection(
+                    {pointOnFace.point, direction},
+                    nextElement.getFaces(),
+                    pointOnFace.face
+            );
+            if (!newPointOnFace) throw std::logic_error("No intersection found, but it should definitely exist!");
+            return *newPointOnFace;
         }
     }
 }

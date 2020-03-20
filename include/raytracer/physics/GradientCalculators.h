@@ -18,7 +18,11 @@ namespace raytracer {
              * Override this.
              * @return the gradient at given intersection (point).
              */
-            virtual geometry::Vector getGradient(const geometry::Intersection &) const = 0;
+            virtual geometry::Vector getGradient(
+                    const geometry::PointOnFace &pointOnFace,
+                    const geometry::Element &previousElement,
+                    const geometry::Element &nextElement
+            ) const = 0;
         };
 
         /**
@@ -36,7 +40,11 @@ namespace raytracer {
              * Returns always the same Vector given at construction.
              * @return vector gradient.
              */
-            geometry::Vector getGradient(const geometry::Intersection &) const override;
+            geometry::Vector getGradient(
+                    const geometry::PointOnFace &pointOnFace,
+                    const geometry::Element &previousElement,
+                    const geometry::Element &nextElement
+            ) const override;
 
         private:
             const geometry::Vector gradient;
@@ -57,30 +65,46 @@ namespace raytracer {
             H1GradientCalculator(
                     mfem::FiniteElementSpace &l2Space,
                     mfem::FiniteElementSpace &h1Space
-                    );
+            );
 
             /**
              * Return the value of gradient at the intersection point.
              * @param intersection
              * @return
              */
-            geometry::Vector getGradient(const geometry::Intersection &intersection) const override;
+            geometry::Vector getGradient(
+                    const geometry::PointOnFace &pointOnFace,
+                    const geometry::Element &previousElement,
+                    const geometry::Element &nextElement
+            ) const override;
 
 
             /**
              * Update the density from which the gradient is calculated. The density should be a function in L2 space.
              * @param density defined over L2
              */
-            void updateDensity(mfem::GridFunction& density);
+            void updateDensity(mfem::GridFunction &density);
 
         private:
             mfem::FiniteElementSpace &l2Space;
             mfem::FiniteElementSpace &h1Space;
             mfem::GridFunction _density;
 
-            geometry::Vector getGradientAt(const geometry::Element& element, const geometry::Point& point) const;
+            geometry::Vector getGradientAt(const geometry::Element &element, const geometry::Point &point) const;
 
             mfem::GridFunction projectL2toH1(const mfem::GridFunction &function);
+        };
+
+        class StepGradient : public GradientCalculator {
+        public:
+            geometry::Vector getGradient(
+                    const geometry::PointOnFace &pointOnFace,
+                    const geometry::Element &,
+                    const geometry::Element &
+            ) const override {
+                //TODO fix direction
+                return pointOnFace.face->getNormal();
+            }
         };
     }
 }

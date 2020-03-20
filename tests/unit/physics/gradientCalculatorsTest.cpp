@@ -13,8 +13,9 @@ using namespace raytracer::geometry;
 
 class gradient_calculators : public Test {
     static double density(const mfem::Vector &x) {
-        return 12 * x(0)  - 7 * x(1);
+        return 12 * x(0) - 7 * x(1);
     }
+
 public:
     void SetUp() override {
         mesh = std::make_unique<Mesh>(mfemMesh.get());
@@ -43,14 +44,17 @@ public:
     std::unique_ptr<Mesh> mesh;
 };
 
-TEST_F(gradient_calculators, constant_gradient_calculator_returns_constant_vector_any_time){
-    Intersection intersection{};
-    auto result = constantGradientCalculator.getGradient(intersection);
+TEST_F(gradient_calculators, constant_gradient_calculator_returns_constant_vector_any_time) {
+    auto result = constantGradientCalculator.getGradient(
+            PointOnFace{},
+            Element(0, {}),
+            Element(1, {})
+    );
     EXPECT_THAT(result.x, DoubleEq(1.2));
     EXPECT_THAT(result.y, DoubleEq(-0.3));
 }
 
-TEST_F(gradient_calculators, h1_returns_correct_result_for_linear_density){
+TEST_F(gradient_calculators, h1_returns_correct_result_for_linear_density) {
     Laser laser(
             Length{1315e-7},
             [](const Point) { return Vector(1, 0.3); },
@@ -61,19 +65,25 @@ TEST_F(gradient_calculators, h1_returns_correct_result_for_linear_density){
 
     laser.generateRays(1);
     laser.generateIntersections(
-            *mesh, ContinueStraight(),
+            *mesh,
+            ContinueStraight(),
+            intersectStraight,
             DontStop());
     auto ray = laser.getRays()[0];
     auto intersection = ray.intersections[5];
     h1GradientCalculator->updateDensity(*densityGridFunction);
-    auto result = h1GradientCalculator->getGradient(intersection);
+    auto result = h1GradientCalculator->getGradient(
+            intersection.pointOnFace,
+            *intersection.previousElement,
+            *intersection.nextElement
+    );
 
     //Pretty far
-    EXPECT_THAT(result.x, DoubleNear(12, 1e-1));
-    EXPECT_THAT(result.y, DoubleNear(-7, 1e-1));
+    EXPECT_THAT(result.x, DoubleNear(12, 0.2));
+    EXPECT_THAT(result.y, DoubleNear(-7, 0.2));
 }
 
-TEST_F(gradient_calculators, h1_returns_correct_result_at_the_border){
+TEST_F(gradient_calculators, h1_returns_correct_result_at_the_border) {
     Laser laser(
             Length{1315e-7},
             [](const Point) { return Vector(1, 0.3); },
@@ -84,12 +94,18 @@ TEST_F(gradient_calculators, h1_returns_correct_result_at_the_border){
 
     laser.generateRays(1);
     laser.generateIntersections(
-            *mesh, ContinueStraight(),
+            *mesh,
+            ContinueStraight(),
+            intersectStraight,
             DontStop());
     auto ray = laser.getRays()[0];
-    auto intersection = ray.intersections[0];
+    auto intersection = ray.intersections[1];
     h1GradientCalculator->updateDensity(*densityGridFunction);
-    auto result = h1GradientCalculator->getGradient(intersection);
+    auto result = h1GradientCalculator->getGradient(
+            intersection.pointOnFace,
+            *intersection.previousElement,
+            *intersection.nextElement
+    );
 
     //Gradient on border returns wrong result
     EXPECT_THAT(result.x, DoubleNear(12, 10));

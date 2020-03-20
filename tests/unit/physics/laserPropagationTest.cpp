@@ -30,45 +30,50 @@ class propagation_terminator : public Test {
 public:
     void SetUp() override {
         laserRay.wavelength = Length{1315e-7};
-        intersection.nextElement = &element;
+
     }
 
     LaserRay laserRay;
     MeshFunctionMock density;
     Element element{0, {}};
-    Intersection intersection;
 
     StopAtCritical stopAtCritical{density};
     DontStop dontStop;
 };
 
-TEST_F(propagation_terminator, stop_at_critical_returns_true_if_density_at_element_is_bigger_than_density_and_vice_versa){
+TEST_F(propagation_terminator,
+       stop_at_critical_returns_true_if_density_at_element_is_bigger_than_density_and_vice_versa) {
     auto critical = laserRay.getCriticalDensity();
 
     density.setValue(element, 1.1 * critical.asDouble);
-    EXPECT_THAT(stopAtCritical(intersection, laserRay), true);
+    EXPECT_THAT(stopAtCritical(element, laserRay), true);
     density.setValue(element, 0.9 * critical.asDouble);
-    ASSERT_THAT(stopAtCritical(intersection, laserRay), false);
+    ASSERT_THAT(stopAtCritical(element, laserRay), false);
 }
 
-TEST_F(propagation_terminator, dont_stop_returns_false_in_any_case){
-    ASSERT_THAT(dontStop(intersection, laserRay), false);
+TEST_F(propagation_terminator, dont_stop_returns_false_in_any_case) {
+    ASSERT_THAT(dontStop(element, laserRay), false);
 }
 
 class DensityInterfaceMeshFunctionMock : public MeshFunction {
 public:
     double getValue(const Element &element) const override {
-        return element.getId() == 0 ? 0 : 3.0 / 4.0 *  6.447e20;
+        return element.getId() == 0 ? 0 : 3.0 / 4.0 * 6.447e20;
     }
 
     void setValue(const Element &element, double value) override {}
+
     void addValue(const Element &element, double value) override {}
 };
 
 class MockGradientCalculator : public GradientCalculator {
 public:
-    Vector getGradient(const Intersection &intersection) const override {
-        return {1,0};
+    Vector getGradient(
+            const PointOnFace &pointOnFace,
+            const Element &previousElement,
+            const Element &nextElement
+    ) const override {
+        return {1, 0};
     }
 };
 
@@ -85,10 +90,8 @@ class propagation_direction : public Test {
 public:
     void SetUp() override {
         laserRay.wavelength = Length{1315e-7};
-        intersection.previousElement = &previousElement;
-        intersection.nextElement = &nextElement;
-        intersection.orientation = HalfLine{Point(0,0.1), Vector(1,sqrt(3)/3)};
-        intersection.face = &faceD;
+        currentPointOnFace.face = &faceD;
+        currentPointOnFace.point = Point(0, 0.1);
     }
 
     LaserRay laserRay;
@@ -97,33 +100,47 @@ public:
     MeshFunctionMock ionization;
     Element previousElement{0, {}};
 
-    Point pointA{0,0};
-    Point pointB{1,0};
-    Point pointC{1,1};
-    Point pointD{0,1};
+    Point pointA{0, 0};
+    Point pointB{1, 0};
+    Point pointC{1, 1};
+    Point pointD{0, 1};
     Face faceA{0, {&pointA, &pointB}};
     Face faceB{1, {&pointB, &pointC}};
     Face faceC{2, {&pointC, &pointD}};
     Face faceD{3, {&pointD, &pointA}};
 
+    Vector previousDirection{1, sqrt(3) / 3};
+    PointOnFace currentPointOnFace;
+
     Element nextElement{1, {&faceA, &faceB, &faceC, &faceD}};
-    Intersection intersection;
     ContinueStraight continueStraight;
     MockGradientCalculator gradient;
     MockCollisionalFrequencyCalculator frequencyCalculator;
     SnellsLaw snellsLaw{density, temperature, ionization, gradient, frequencyCalculator};
 };
 
-TEST_F(propagation_direction, continue_straight_finds_the_correct_intersection){
-    auto newIntersection = continueStraight(intersection, laserRay);
+TEST_F(propagation_direction, continue_straight_finds_the_correct_intersection) {
+    auto newDirection = continueStraight(
+            currentPointOnFace,
+            previousDirection,
+            previousElement,
+            nextElement,
+            laserRay
+    );
 
-    EXPECT_THAT(newIntersection->orientation.point.x, DoubleEq(1));
-    ASSERT_THAT(newIntersection->orientation.point.y, DoubleEq(0.1+sqrt(3)/3));
+    EXPECT_THAT(newDirection.x, DoubleEq(previousDirection.x));
+    ASSERT_THAT(newDirection.y, DoubleEq(previousDirection.y));
 }
 
-TEST_F(propagation_direction, snells_law_bends_the_ray_as_expected){
-    auto newIntersection = snellsLaw(intersection, laserRay);
+TEST_F(propagation_direction, snells_law_bends_the_ray_as_expected) {
+    auto newDirection = snellsLaw(
+            currentPointOnFace,
+            previousDirection,
+            previousElement,
+            nextElement,
+            laserRay
+    );
 
-    EXPECT_THAT(newIntersection->orientation.point.x, DoubleNear(0, 1e-2));
-    ASSERT_THAT(newIntersection->orientation.point.y, DoubleEq(1));
+    EXPECT_THAT(newDirection.x, DoubleNear(0, 1e-2));
+    ASSERT_THAT(newDirection.y, DoubleNear(1, 1e-2));
 }

@@ -34,15 +34,6 @@ namespace raytracer {
              * y coordinate
              */
             double y;
-
-            /**
-             * Equality operator.
-             * Two points are equal if their coordinates difference is less than given
-             * project wide epsilon (defined in constants)
-             * @param anotherPoint to comapre with
-             * @return true if they almost equal
-             */
-            bool operator==(const Point& anotherPoint) const;
         };
 
         /**

@@ -26,7 +26,7 @@ namespace raytracer {
              * @param laserRay
              * @return true if current density is grater than critical
              */
-            bool operator()(const geometry::Intersection &intersection, const LaserRay &laserRay);
+            bool operator()(const geometry::Element &, const LaserRay &laserRay);
 
         private:
             const geometry::MeshFunction &density;
@@ -41,7 +41,7 @@ namespace raytracer {
              * Just returns false.
              * @return false.
              */
-            bool operator()(const geometry::Intersection &, const LaserRay &);
+            bool operator()(const geometry::Element &, const LaserRay &);
         };
 
         /**
@@ -53,9 +53,15 @@ namespace raytracer {
              * @param intersection
              * @return intersection unique pointer if intersection is found, else it returns nullptr
              */
-            std::unique_ptr<geometry::Intersection> operator()(
-                    const geometry::Intersection &intersection,
-                    const LaserRay &);
+            geometry::Vector operator()(
+                    const geometry::PointOnFace &,
+                    const geometry::Vector &previousDirection,
+                    const geometry::Element &,
+                    const geometry::Element &,
+                    const LaserRay &
+            ) {
+                return previousDirection;
+            }
         };
 
 
@@ -75,10 +81,10 @@ namespace raytracer {
              */
             explicit SnellsLaw(
                     const geometry::MeshFunction &density,
-                    const geometry::MeshFunction& temperature,
-                    const geometry::MeshFunction& ionization,
+                    const geometry::MeshFunction &temperature,
+                    const geometry::MeshFunction &ionization,
                     const GradientCalculator &gradientCalculator,
-                    const CollisionalFrequencyCalculator& collisionalFrequencyCalculator
+                    const CollisionalFrequencyCalculator &collisionalFrequencyCalculator
             );
 
             /**
@@ -88,18 +94,28 @@ namespace raytracer {
              * @param laserRay
              * @return found intersection or throw
              */
-            std::unique_ptr<geometry::Intersection>
-            operator()(const geometry::Intersection &intersection, const LaserRay &laserRay);
+            geometry::Vector operator()(
+                    const geometry::PointOnFace &pointOnFace,
+                    const geometry::Vector &previousDirection,
+                    const geometry::Element &previousElement,
+                    const geometry::Element &nextElement,
+                    const LaserRay &laserRay
+            );
 
         private:
             const geometry::MeshFunction &density;
-            const geometry::MeshFunction& temperature;
-            const geometry::MeshFunction& ionization;
+            const geometry::MeshFunction &temperature;
+            const geometry::MeshFunction &ionization;
             const GradientCalculator &gradientCalculator;
-            const CollisionalFrequencyCalculator& collisionalFrequencyCalculator;
-
-            geometry::Vector getDirection(const geometry::Intersection &intersection, const LaserRay &laserRay);
+            const CollisionalFrequencyCalculator &collisionalFrequencyCalculator;
         };
+
+        geometry::PointOnFace intersectStraight(
+                const geometry::PointOnFace &pointOnFace,
+                const geometry::Vector &direction,
+                const geometry::Element &nextElement,
+                const LaserRay &
+        );
     }
 }
 

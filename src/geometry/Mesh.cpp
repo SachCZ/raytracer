@@ -6,30 +6,6 @@
 
 namespace raytracer {
     namespace geometry {
-        Element * Mesh::getAdjacentElement(const Face *face, const raytracer::geometry::HalfLine &orientation) const {
-            auto boundaryPoint = face->isBoundary(orientation.point);
-            if (!boundaryPoint){
-                return this->getFaceAdjacentElement(face, orientation.direction);
-            } else {
-                //Diagonal edge case
-                auto candidateElements = this->getAdjacentElements(boundaryPoint);
-                for (const auto& element : candidateElements){
-                    auto _faces = element->getFaces();
-                    std::vector<Face*> oppositeFaces;
-                    std::copy_if(_faces.begin(), _faces.end(), std::back_inserter(oppositeFaces),
-                            [boundaryPoint](const Face* face){
-                        const auto& _points =  face->getPoints();
-                        return !(_points[0] == boundaryPoint || _points[1] == boundaryPoint);
-                    });
-
-                    if (findClosestIntersection(orientation, oppositeFaces)){
-                        return element;
-                    }
-                }
-                return nullptr;
-            }
-        }
-
         std::vector<Face *> Mesh::getBoundary() const {
             return this->boundaryFaces;
         }
@@ -149,27 +125,6 @@ namespace raytracer {
             } else {
                 return this->getElementFromId(elementB);
             }
-        }
-
-        std::vector<Element *> Mesh::getAdjacentElements(const Point *point) const {
-            int pointId = -1;
-            for (uint i = 0; i < this->points.size(); i++) {
-                if (point == this->points[i].get()) {
-                    pointId = i;
-                    break;
-                }
-            }
-
-            mfem::Array<int> elementIds(
-                    this->vertexToElementTable->GetRow(pointId),
-                    this->vertexToElementTable->RowSize(pointId)
-            );
-            std::vector<Element*> result;
-            result.reserve(elementIds.Size());
-            for (auto id : elementIds){
-                result.emplace_back(this->getElementFromId(id));
-            }
-            return result;
         }
 
         std::unique_ptr<mfem::Mesh> constructRectangleMesh(DiscreteLine sideA, DiscreteLine sideB) {

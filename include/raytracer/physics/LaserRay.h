@@ -75,14 +75,15 @@ namespace raytracer {
              * @param findInters will be propagated to Ray::findIntersections as is.
              * @param stopCondition will be propagated to ray::findIntersections as is.
              */
-            template<typename IntersFunc, typename StopCondition>
+            template<typename DirectionFunction, typename IntersFunc, typename StopCondition>
             void generateIntersections(
                     const geometry::Mesh &mesh,
+                    DirectionFunction findDirection,
                     IntersFunc findInters,
                     StopCondition stopCondition) {
                 geometry::Ray ray(geometry::HalfLine{this->startPoint, this->direction});
 
-                this->intersections = ray.findIntersections(mesh, findInters, stopCondition);
+                this->intersections = ray.findIntersections(mesh, findDirection, findInters, stopCondition);
             }
 
             /** Sequence of all intersections with given Mesh.

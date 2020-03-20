@@ -67,20 +67,33 @@ namespace raytracer {
              * @param stopCondition is propagated to LaserRay::generateIntersections
              * with additional parameter being the laserRay
              */
-            template<typename IntersFunc, typename StopCondition>
+            template<typename DirFunc, typename IntersFunc, typename StopCondition>
             void generateIntersections(const geometry::Mesh &mesh,
+                                       DirFunc findDir,
                                        IntersFunc findInters,
                                        StopCondition stopCondition) {
                 if (this->rays.empty()) throw std::logic_error("There are no rays!");
 
                 for (auto &laserRay : this->rays) {
-                    auto stopper = [&stopCondition, &laserRay](const geometry::Intersection &intersection) {
-                        return stopCondition(intersection, laserRay);
+                    auto stopper = [&stopCondition, &laserRay](const geometry::Element &nextElement) {
+                        return stopCondition(nextElement, laserRay);
                     };
-                    auto finder = [&findInters, &laserRay](const geometry::Intersection& intersection) {
-                        return findInters(intersection, laserRay);
+                    auto finder = [&findInters, &laserRay](
+                            const geometry::PointOnFace& pointOnFace,
+                            const geometry::Vector& direction,
+                            const geometry::Element& nextElement
+                            ) {
+                        return findInters(pointOnFace, direction, nextElement, laserRay);
                     };
-                    laserRay.generateIntersections(mesh, finder, stopper);
+                    auto directioner = [&findDir, &laserRay](
+                            const geometry::PointOnFace& pointOnFace,
+                            const geometry::Vector& previousDirection,
+                            const geometry::Element& previousElement,
+                            const geometry::Element& nextElement
+                            ) {
+                        return findDir(pointOnFace, previousDirection, previousElement, nextElement, laserRay);
+                    };
+                    laserRay.generateIntersections(mesh, directioner, finder, stopper);
                 }
             }
 

@@ -26,20 +26,11 @@ namespace raytracer {
         };
 
         /**
-         * Structure representing a single intersection of HalfLine with a mesh.
+         * Structure representing a point on a face
          */
-        struct Intersection {
-            /**Orientation is represented by HalfLine. The origin of the HalfLine is the intersection point.
-             * The direction of the HalfLine is the direction the ray had when it intersected the Mesh.*/
-            HalfLine orientation{};
-            /**Pointer to the Face that was intersected by the ray.*/
-            const Face* face{};
-            /**Pointer to the next Element that the ray would go to from the Face.
-             * Could be null if the ray just left the Mesh.*/
-            const Element* nextElement{};
-            /**Pointer to the previous Element that the ray actually came from.
-             * could be null if the ray just entered the Mesh. */
-            const Element* previousElement{};
+        struct PointOnFace {
+            Point point;
+            const Face* face;
         };
 
         /**
@@ -59,7 +50,7 @@ namespace raytracer {
          * @param face to be intersected
          * @return an intersection structure pointer or nullptr if no intersection exists.
          */
-        std::unique_ptr<Intersection> findIntersection(const HalfLine &halfLine, const Face *face);
+        std::unique_ptr<PointOnFace> findIntersection(const HalfLine &halfLine, const Face *face);
 
         /**
          * For a given set of faces find all its intersections with a HalfLine and return the one that is closest to the
@@ -69,7 +60,7 @@ namespace raytracer {
          * @param omitFace faces to omit when searching for intersection
          * @return an intersection structure pointer or nullptr if no intersection exists.
          */
-        std::unique_ptr<Intersection> findClosestIntersection(
+        std::unique_ptr<PointOnFace> findClosestIntersection(
                 const HalfLine &halfLine,
                 const std::vector<Face *> &faces,
                 const Face* omitFace = nullptr);

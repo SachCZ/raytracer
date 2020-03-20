@@ -3,6 +3,7 @@
 #include <raytracer/physics/Laser.h>
 #include <raytracer/physics/Magnitudes.h>
 #include <mfem.hpp>
+#include <raytracer/physics/LaserPropagation.h>
 
 using namespace testing;
 using namespace raytracer::physics;
@@ -42,13 +43,9 @@ TEST_F(initialized_laser, can_generate_intersections) {
     laser.generateRays(51);
     laser.generateIntersections(
             *mesh,
-            [](const Intersection &intersection, const LaserRay &laserRay) {
-                return findClosestIntersection(
-                        intersection.orientation,
-                        intersection.nextElement->getFaces(),
-                        intersection.face);
-            },
-            [](const Intersection &, const LaserRay &laserRay) { return false; }
+            ContinueStraight(),
+            intersectStraight,
+            DontStop()
     );
 
     ASSERT_THAT(laser.getRays()[17].intersections, SizeIs(16));

@@ -57,23 +57,16 @@ namespace raytracer {
              *  If the orientation point is exactly in the face corner point a special check is made to find
              *  a possibly diagonal element.
              * @param face whose adjacent elements are to be found.
-             * @param orientation in which to search for elements.
+             * @param direction in which to search for elements.
              * @return The element pointer if found or nullptr if not.
              */
-            Element *getAdjacentElement(const Face *face, const HalfLine &orientation) const;
+            Element *getFaceAdjacentElement(const Face *face, const Vector &direction) const;
 
             /**
              * Return a sequence of faces that are on the mesh boundary.
              * @return sequence of faces.
              */
             std::vector<Face *> getBoundary() const;
-
-            /**
-             * Return the elements adjacent to given point
-             * @param point
-             * @return
-             */
-            std::vector<Element *> getAdjacentElements(const Point *point) const;
 
         private:
             mfem::Mesh *mesh;
@@ -82,8 +75,6 @@ namespace raytracer {
             std::vector<std::unique_ptr<Face>> faces;
             std::vector<std::unique_ptr<Point>> points;
             std::unique_ptr<mfem::Table> vertexToElementTable;
-
-            Element *getFaceAdjacentElement(const Face *face, const Vector &direction) const;
 
             std::unique_ptr<Point> createPointFromId(int id) const;
 

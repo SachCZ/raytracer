@@ -16,6 +16,7 @@ if(BUILD_TESTS)
     add_subdirectory(tests/unit)
     add_subdirectory(tests/profile)
     add_subdirectory(tests/models)
+    add_subdirectory(tests/integration)
 endif(BUILD_TESTS)
 
 add_library(raytracer src/raytracer.cpp)

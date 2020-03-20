@@ -4,7 +4,11 @@ namespace raytracer {
     namespace physics {
         ConstantGradientCalculator::ConstantGradientCalculator(const geometry::Vector &gradient) : gradient(gradient) {}
 
-        geometry::Vector ConstantGradientCalculator::getGradient(const geometry::Intersection &) const {
+        geometry::Vector ConstantGradientCalculator::getGradient(
+                const geometry::PointOnFace &,
+                const geometry::Element &,
+                const geometry::Element &
+        ) const {
             return this->gradient;
         }
 
@@ -14,19 +18,15 @@ namespace raytracer {
         ) :
                 l2Space(l2Space), h1Space(h1Space), _density(&h1Space) {}
 
-        geometry::Vector H1GradientCalculator::getGradient(const geometry::Intersection &intersection) const {
-            auto point = intersection.orientation.point;
-            if (intersection.previousElement && intersection.nextElement) {
-                auto previousGradient = this->getGradientAt(*intersection.previousElement, point);
-                auto nextGradient = this->getGradientAt(*intersection.nextElement, point);
-                return 0.5 * (previousGradient + nextGradient);
-            } else if (intersection.nextElement) {
-                return this->getGradientAt(*intersection.nextElement, point);
-            } else if (intersection.previousElement) {
-                return this->getGradientAt(*intersection.previousElement, point);
-            } else {
-                throw std::logic_error("Intersection has no elements!");
-            }
+        geometry::Vector H1GradientCalculator::getGradient(
+                const geometry::PointOnFace &pointOnFace,
+                const geometry::Element &previousElement,
+                const geometry::Element &nextElement
+        ) const {
+            auto point = pointOnFace.point;
+            auto previousGradient = this->getGradientAt(previousElement, point);
+            auto nextGradient = this->getGradientAt(nextElement, point);
+            return 0.5 * (previousGradient + nextGradient); //TODO look into this
         }
 
         void H1GradientCalculator::updateDensity(mfem::GridFunction &density) {
