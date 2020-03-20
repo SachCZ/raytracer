@@ -3,22 +3,21 @@
 #include "Termination.h"
 
 namespace raytracer {
-    namespace physics {
-        geometry::PointOnFace
-        intersectStraight(
-                const geometry::PointOnFace &pointOnFace,
-                const geometry::Vector &direction,
-                const geometry::Element &nextElement,
-                const LaserRay &
-        ) {
-            auto newPointOnFace = geometry::findClosestIntersection(
-                    {pointOnFace.point, direction},
-                    nextElement.getFaces(),
-                    pointOnFace.face
-            );
-            if (!newPointOnFace) throw std::logic_error("No intersection found, but it should definitely exist!");
-            return *newPointOnFace;
-        }
+    PointOnFace
+    intersectStraight(
+            const PointOnFace &pointOnFace,
+            const Vector &direction,
+            const Element &nextElement,
+            const LaserRay &
+    ) {
+        auto newPointOnFace = findClosestIntersection(
+                {pointOnFace.point, direction},
+                nextElement.getFaces(),
+                pointOnFace.face
+        );
+        if (!newPointOnFace) throw std::logic_error("No intersection found, but it should definitely exist!");
+        return *newPointOnFace;
     }
+    
 }
 

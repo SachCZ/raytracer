@@ -9,62 +9,61 @@
 #include "Element.h"
 
 namespace raytracer {
-    namespace geometry {
 
+    /**
+     * Structure representing a half line. It originates from a point and has a direction.
+     */
+    struct HalfLine {
         /**
-         * Structure representing a half line. It originates from a point and has a direction.
+         * Origin
          */
-        struct HalfLine {
-            /**
-             * Origin
-             */
-            Point point;
-            /**
-             * Direction
-             */
-            Vector direction;
-        };
-
+        Point point;
         /**
-         * Structure representing a point on a face
+         * Direction
          */
-        struct PointOnFace {
-            Point point;
-            const Face* face;
-        };
+        Vector direction;
+    };
 
-        /**
-         * This namespace should be ignored by the end use
-         */
-        namespace impl {
-            double getParamK(const HalfLine &halfLine, const std::vector<Point*> &points);
+    /**
+     * Structure representing a point on a face
+     */
+    struct PointOnFace {
+        Point point;
+        const Face *face;
+    };
 
-            double getParamT(const HalfLine &halfLine, const std::vector<Point*> &points);
+    /**
+     * This namespace should be ignored by the end use
+     */
+    namespace impl {
+        double getParamK(const HalfLine &halfLine, const std::vector<Point *> &points);
 
-            bool isIntersecting(double k, double t);
-        }
+        double getParamT(const HalfLine &halfLine, const std::vector<Point *> &points);
 
-        /**
-         * Find an intersection of HalfLine with a face. If there is no intersection a nullptr is returned.
-         * @param halfLine
-         * @param face to be intersected
-         * @return an intersection structure pointer or nullptr if no intersection exists.
-         */
-        std::unique_ptr<PointOnFace> findIntersection(const HalfLine &halfLine, const Face *face);
-
-        /**
-         * For a given set of faces find all its intersections with a HalfLine and return the one that is closest to the
-         * origin of the HalfLine. You can optionally specify a Face* to face you wish to exclude from search.
-         * @param halfLine
-         * @param faces sequence of faces to be checked
-         * @param omitFace faces to omit when searching for intersection
-         * @return an intersection structure pointer or nullptr if no intersection exists.
-         */
-        std::unique_ptr<PointOnFace> findClosestIntersection(
-                const HalfLine &halfLine,
-                const std::vector<Face *> &faces,
-                const Face* omitFace = nullptr);
+        bool isIntersecting(double k, double t);
     }
+
+    /**
+     * Find an intersection of HalfLine with a face. If there is no intersection a nullptr is returned.
+     * @param halfLine
+     * @param face to be intersected
+     * @return an intersection structure pointer or nullptr if no intersection exists.
+     */
+    std::unique_ptr<PointOnFace> findIntersection(const HalfLine &halfLine, const Face *face);
+
+    /**
+     * For a given set of faces find all its intersections with a HalfLine and return the one that is closest to the
+     * origin of the HalfLine. You can optionally specify a Face* to face you wish to exclude from search.
+     * @param halfLine
+     * @param faces sequence of faces to be checked
+     * @param omitFace faces to omit when searching for intersection
+     * @return an intersection structure pointer or nullptr if no intersection exists.
+     */
+    std::unique_ptr<PointOnFace> findClosestIntersection(
+            const HalfLine &halfLine,
+            const std::vector<Face *> &faces,
+            const Face *omitFace = nullptr);
+
 }
 
 #endif //RAYTRACER_FREE_FUNCTIONS_H

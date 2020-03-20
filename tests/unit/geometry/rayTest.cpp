@@ -6,7 +6,7 @@
 #include "raytracer/geometry/Mesh.h"
 
 using namespace testing;
-using namespace raytracer::geometry;
+using namespace raytracer;
 
 class initialized_ray : public Test {
 public:

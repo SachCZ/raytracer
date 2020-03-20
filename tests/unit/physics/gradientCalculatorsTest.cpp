@@ -10,9 +10,7 @@
 #include "Termination.h"
 
 using namespace testing;
-using namespace raytracer::physics;
-using namespace raytracer::geometry;
-using namespace raytracer::utility;
+using namespace raytracer;
 
 class gradient_calculators : public Test {
     static double density(const mfem::Vector &x) {

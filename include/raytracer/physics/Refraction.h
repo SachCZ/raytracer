@@ -7,72 +7,71 @@
 #include "CollisionalFrequency.h"
 
 namespace raytracer {
-    namespace physics {
+    /**
+     * Functor that given an intersection finds next intersection in straight line through intersection.nextElement.
+     */
+    struct ContinueStraight {
         /**
-         * Functor that given an intersection finds next intersection in straight line through intersection.nextElement.
+         * Finds the closest intersection with intersection.nextElement
+         * @param intersection
+         * @return intersection unique pointer if intersection is found, else it returns nullptr
          */
-        struct ContinueStraight {
-            /**
-             * Finds the closest intersection with intersection.nextElement
-             * @param intersection
-             * @return intersection unique pointer if intersection is found, else it returns nullptr
-             */
-            raytracer::geometry::Vector operator()(
-                    const raytracer::geometry::PointOnFace &,
-                    const raytracer::geometry::Vector &previousDirection,
-                    const raytracer::geometry::Element &,
-                    const raytracer::geometry::Element &,
-                    const raytracer::physics::LaserRay &
-            ) {
-                return previousDirection;
-            }
-        };
+        Vector operator()(
+                const PointOnFace &,
+                const Vector &previousDirection,
+                const Element &,
+                const Element &,
+                const LaserRay &
+        ) {
+            return previousDirection;
+        }
+    };
 
 /**
  * Functor that given an intersection finds next intersection base on the Snells's law.
  */
-        struct SnellsLaw {
-            /**
-             * Construct the SnellsLaw using the density and temperature function reference. Provide gradientCalculator
-             * to calculate the plane of rarefaction. Provide collisionalFrequencyCalculator to evaluate the index
-             * of rarefaction.
-             * Density and temperature values are expected to change.
-             * @param density
-             * @param temperature
-             * @param gradientCalculator
-             * @param collisionalFrequencyCalculator
-             */
-            explicit SnellsLaw(
-                    const raytracer::geometry::MeshFunction &density,
-                    const raytracer::geometry::MeshFunction &temperature,
-                    const raytracer::geometry::MeshFunction &ionization,
-                    const raytracer::physics::GradientCalculator &gradientCalculator,
-                    const raytracer::physics::CollisionalFrequencyCalculator &collisionalFrequencyCalculator
-            );
+    struct SnellsLaw {
+        /**
+         * Construct the SnellsLaw using the density and temperature function reference. Provide gradientCalculator
+         * to calculate the plane of rarefaction. Provide collisionalFrequencyCalculator to evaluate the index
+         * of rarefaction.
+         * Density and temperature values are expected to change.
+         * @param density
+         * @param temperature
+         * @param gradientCalculator
+         * @param collisionalFrequencyCalculator
+         */
+        explicit SnellsLaw(
+                const MeshFunction &density,
+                const MeshFunction &temperature,
+                const MeshFunction &ionization,
+                const GradientCalculator &gradientCalculator,
+                const CollisionalFrequencyCalculator &collisionalFrequencyCalculator
+        );
 
-            /**
-             * Tries to find another intersection based on Snells law, density (provides an index of rarefaction)
-             * and gradient (provides edge direction). Could throw error no intersection found!
-             * @param intersection
-             * @param laserRay
-             * @return found intersection or throw
-             */
-            raytracer::geometry::Vector operator()(
-                    const raytracer::geometry::PointOnFace &pointOnFace,
-                    const raytracer::geometry::Vector &previousDirection,
-                    const raytracer::geometry::Element &previousElement,
-                    const raytracer::geometry::Element &nextElement,
-                    const raytracer::physics::LaserRay &laserRay
-            );
+        /**
+         * Tries to find another intersection based on Snells law, density (provides an index of rarefaction)
+         * and gradient (provides edge direction). Could throw error no intersection found!
+         * @param intersection
+         * @param laserRay
+         * @return found intersection or throw
+         */
+        Vector operator()(
+                const PointOnFace &pointOnFace,
+                const Vector &previousDirection,
+                const Element &previousElement,
+                const Element &nextElement,
+                const LaserRay &laserRay
+        );
 
-        private:
-            const raytracer::geometry::MeshFunction &density;
-            const raytracer::geometry::MeshFunction &temperature;
-            const raytracer::geometry::MeshFunction &ionization;
-            const raytracer::physics::GradientCalculator &gradientCalculator;
-            const raytracer::physics::CollisionalFrequencyCalculator &collisionalFrequencyCalculator;
-        };
-    }
+    private:
+        const MeshFunction &density;
+        const MeshFunction &temperature;
+        const MeshFunction &ionization;
+        const GradientCalculator &gradientCalculator;
+        const CollisionalFrequencyCalculator &collisionalFrequencyCalculator;
+    };
+
 }
 
 #endif //RAYTRACER_REFRACTION_H

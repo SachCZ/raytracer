@@ -7,16 +7,15 @@
 #include "CollisionalFrequency.h"
 
 namespace raytracer {
-    namespace physics {
 
 
-        geometry::PointOnFace intersectStraight(
-                const geometry::PointOnFace &pointOnFace,
-                const geometry::Vector &direction,
-                const geometry::Element &nextElement,
-                const LaserRay &
-        );
-    }
+    PointOnFace intersectStraight(
+            const PointOnFace &pointOnFace,
+            const Vector &direction,
+            const Element &nextElement,
+            const LaserRay &
+    );
+
 }
 
 

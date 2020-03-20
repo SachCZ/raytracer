@@ -2,13 +2,12 @@
 #include "Refraction.h"
 
 namespace raytracer {
-    namespace physics {
         SnellsLaw::SnellsLaw(
-                const raytracer::geometry::MeshFunction &density,
-                const raytracer::geometry::MeshFunction &temperature,
-                const raytracer::geometry::MeshFunction &ionization,
-                const raytracer::physics::GradientCalculator &gradientCalculator,
-                const raytracer::physics::CollisionalFrequencyCalculator &collisionalFrequencyCalculator
+                const MeshFunction &density,
+                const MeshFunction &temperature,
+                const MeshFunction &ionization,
+                const GradientCalculator &gradientCalculator,
+                const CollisionalFrequencyCalculator &collisionalFrequencyCalculator
         ) :
                 density(density),
                 temperature(temperature),
@@ -16,18 +15,18 @@ namespace raytracer {
                 gradientCalculator(gradientCalculator),
                 collisionalFrequencyCalculator(collisionalFrequencyCalculator) {}
 
-        raytracer::geometry::Vector SnellsLaw::operator()(
-                const raytracer::geometry::PointOnFace &pointOnFace,
-                const raytracer::geometry::Vector &previousDirection,
-                const raytracer::geometry::Element &previousElement,
-                const raytracer::geometry::Element &nextElement,
-                const raytracer::physics::LaserRay &laserRay
+        Vector SnellsLaw::operator()(
+                const PointOnFace &pointOnFace,
+                const Vector &previousDirection,
+                const Element &previousElement,
+                const Element &nextElement,
+                const LaserRay &laserRay
         ) {
-            const auto rho1 = raytracer::physics::Density{density.getValue(previousElement)};
-            const auto rho2 = raytracer::physics::Density{density.getValue(nextElement)};
+            const auto rho1 = Density{density.getValue(previousElement)};
+            const auto rho2 = Density{density.getValue(nextElement)};
 
-            const auto T1 = raytracer::physics::Temperature{temperature.getValue(previousElement)};
-            const auto T2 = raytracer::physics::Temperature{temperature.getValue(nextElement)};
+            const auto T1 = Temperature{temperature.getValue(previousElement)};
+            const auto T2 = Temperature{temperature.getValue(nextElement)};
 
             const auto Z1 = ionization.getValue(previousElement);
             const auto Z2 = ionization.getValue(nextElement);
@@ -58,5 +57,4 @@ namespace raytracer {
                 return l + 2 * c * n;
             }
         }
-    }
 }

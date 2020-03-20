@@ -3,7 +3,7 @@
 #include <raytracer/utility/FreeFunctions.h>
 
 using namespace testing;
-using Gaussian = raytracer::utility::Gaussian;
+using Gaussian = raytracer::Gaussian;
 
 class initialized_gaussian : public Test {
 public:

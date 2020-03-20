@@ -6,8 +6,7 @@
 #include <raytracer/physics/Magnitudes.h>
 
 using namespace testing;
-using namespace raytracer::physics;
-using namespace raytracer::geometry;
+using namespace raytracer;
 
 class laser_ray : public Test {
 public:

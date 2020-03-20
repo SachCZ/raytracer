@@ -24,9 +24,7 @@ double ionizationFunction(const mfem::Vector &) {
 }
 
 TEST(tracing, throught_mesh_should_work_as_expected_for_dummy_mesh) {
-    using namespace raytracer::geometry;
-    using namespace raytracer::physics;
-    using namespace raytracer::utility;
+    using namespace raytracer;
     using namespace testing;
 
     auto mfemMesh = std::make_unique<mfem::Mesh>("mesh.vtk", 1, 0);

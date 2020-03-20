@@ -8,8 +8,7 @@
 #include "Termination.h"
 
 using namespace testing;
-using namespace raytracer::physics;
-using namespace raytracer::geometry;
+using namespace raytracer;
 
 class initialized_laser : public Test {
 

@@ -3,7 +3,7 @@
 #include <raytracer/geometry/Vector.h>
 
 using namespace testing;
-using Vector = raytracer::geometry::Vector;
+using Vector = raytracer::Vector;
 
 class initialized_vector : public Test {
 public:

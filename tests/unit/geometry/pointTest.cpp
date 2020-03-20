@@ -4,8 +4,8 @@
 #include <raytracer/geometry/Vector.h>
 
 using namespace testing;
-using Point = raytracer::geometry::Point;
-using Vector = raytracer::geometry::Vector;
+using Point = raytracer::Point;
+using Vector = raytracer::Vector;
 
 class initialized_point : public Test {
 public:

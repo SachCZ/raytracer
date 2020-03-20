@@ -6,7 +6,7 @@
 #include "raytracer/geometry/Mesh.h"
 
 using namespace testing;
-using namespace raytracer::geometry;
+using namespace raytracer;
 
 class find_intersection : public Test {
 public:
