@@ -10,6 +10,10 @@
 #include "Point.h"
 
 namespace raytracer {
+    /**
+     * \addtogroup api
+     * @{
+     */
 
     /**
      * Class representing a real physical laser. It is given by its origin, and energy.
@@ -60,7 +64,7 @@ namespace raytracer {
          * Find intersections finds all the Intersection of each LaserRay in Laser with Mesh.
          * There are multiple functional parameters to ensure high variability of this method.
          *
-         * \note
+         * @note
          * <b>This is the highly modular main method that is the main concern for the user.</b>
          *
          * @tparam DirectionFunction function type
@@ -69,7 +73,7 @@ namespace raytracer {
          * @param mesh to be intersected
          * @param findDirection function that decides new direction every time a Face is encountered.
          * The function must have the following form:
-         * \code{.cpp}
+         * @code{.cpp}
             Vector findDirection()(
                 const PointOnFace &pointOnFace,
                 const Vector &previousDirection,
@@ -80,12 +84,12 @@ namespace raytracer {
                 //x, y = ...
                 return Vector(x, y);
             }
-         * \endcode
+         * @endcode
          * It is recommended that you copy and paste this to implement findDirection.
          * @param findIntersection function that finds the path of the Ray through given Element and returns
          * PointOnFace where the Ray escapes the Element.
          * The function mush have the following form:
-         * \code{.cpp}
+         * @code{.cpp}
             PointOnFace findIntersection(
                 const PointOnFace &entryPointOnFace,
                 const Vector &entryDirection,
@@ -98,11 +102,11 @@ namespace raytracer {
                 pointOnFace.face = face;
                 return pointOnFace;
             }
-         * \endcode
+         * @endcode
          * It is recommended that you copy and paste this to implement findIntersection.
          * @param stopCondition function that returns true if the Ray should stop propagation.
          * The function mush have the following form:
-         * \code{.cpp}
+         * @code{.cpp}
             bool stopCondition(
                 const Element &,
                 const LaserRay &laserRay
@@ -110,7 +114,7 @@ namespace raytracer {
                 //shouldStop = ...
                 return shouldStop;
             }
-         * \endcode
+         * @endcode
          * It is recommended that you copy and paste this to implement stopCondition.
          */
         template<typename DirectionFunction, typename IntersectionFunction, typename StopCondition>
@@ -160,6 +164,9 @@ namespace raytracer {
         std::vector<LaserRay> rays;
     };
 
+    /**
+     * @}
+     */
 }
 
 

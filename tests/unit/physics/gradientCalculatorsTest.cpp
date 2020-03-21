@@ -23,14 +23,14 @@ public:
         l2FiniteElementSpace = std::make_unique<mfem::FiniteElementSpace>(mfemMesh.get(), &l2FiniteElementCollection);
         h1FiniteElementSpace = std::make_unique<mfem::FiniteElementSpace>(mfemMesh.get(), &h1FiniteElementCollection);
 
-        h1GradientCalculator = std::make_unique<H1GradientCalculator>(*l2FiniteElementSpace, *h1FiniteElementSpace);
+        h1GradientCalculator = std::make_unique<H1Gradient>(*l2FiniteElementSpace, *h1FiniteElementSpace);
 
         densityGridFunction = std::make_unique<mfem::GridFunction>(l2FiniteElementSpace.get());
         mfem::FunctionCoefficient densityFunctionCoefficient(gradient_calculators::density);
         densityGridFunction->ProjectCoefficient(densityFunctionCoefficient);
     }
 
-    ConstantGradientCalculator constantGradientCalculator{Vector(1.2, -0.3)};
+    ConstantGradient constantGradientCalculator{Vector(1.2, -0.3)};
 
     DiscreteLine side{100, 10};
     std::unique_ptr<mfem::Mesh> mfemMesh = constructRectangleMesh(side, side);
@@ -41,12 +41,12 @@ public:
     std::unique_ptr<mfem::FiniteElementSpace> h1FiniteElementSpace;
     std::unique_ptr<mfem::GridFunction> densityGridFunction;
 
-    std::unique_ptr<H1GradientCalculator> h1GradientCalculator;
+    std::unique_ptr<H1Gradient> h1GradientCalculator;
     std::unique_ptr<Mesh> mesh;
 };
 
 TEST_F(gradient_calculators, constant_gradient_calculator_returns_constant_vector_any_time) {
-    auto result = constantGradientCalculator.getGradient(
+    auto result = constantGradientCalculator.get(
             PointOnFace{},
             Element(0, {}),
             Element(1, {})
@@ -73,7 +73,7 @@ TEST_F(gradient_calculators, h1_returns_correct_result_for_linear_density) {
     auto ray = laser.getRays()[0];
     auto intersection = ray.intersections[5];
     h1GradientCalculator->updateDensity(*densityGridFunction);
-    auto result = h1GradientCalculator->getGradient(
+    auto result = h1GradientCalculator->get(
             intersection.pointOnFace,
             *intersection.previousElement,
             *intersection.nextElement
@@ -102,7 +102,7 @@ TEST_F(gradient_calculators, h1_returns_correct_result_at_the_border) {
     auto ray = laser.getRays()[0];
     auto intersection = ray.intersections[1];
     h1GradientCalculator->updateDensity(*densityGridFunction);
-    auto result = h1GradientCalculator->getGradient(
+    auto result = h1GradientCalculator->get(
             intersection.pointOnFace,
             *intersection.previousElement,
             *intersection.nextElement

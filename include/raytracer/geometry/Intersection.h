@@ -25,6 +25,7 @@ namespace raytracer {
     };
 
     /**
+     * @ingroup api
      * Structure representing a point on a face. This struct is used as return type of findClosestIntersection().
      */
     struct PointOnFace {

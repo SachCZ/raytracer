@@ -8,6 +8,11 @@
 
 namespace raytracer {
     /**
+     * \addtogroup stopConditions
+     * @{
+     */
+
+    /**
     * Functor for ray propagation termination based on critical density expected to used with laseRay
     * intersection finding procedure
     */
@@ -44,6 +49,9 @@ namespace raytracer {
         bool operator()(const Element &, const LaserRay &);
     };
 
+    /**
+     * @}
+     */
 }
 
 #endif //RAYTRACER_TERMINATION_H

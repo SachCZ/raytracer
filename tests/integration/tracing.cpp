@@ -49,7 +49,7 @@ TEST(tracing, throught_mesh_should_work_as_expected_for_dummy_mesh) {
     ionizationGridFunction.ProjectCoefficient(ionizationFunctionCoefficient);
     MfemMeshFunction ionizationMeshFunction(ionizationGridFunction, l2FiniteElementSpace);
 
-    ConstantGradientCalculator gradientCalculator(Vector(12.8e20, 0));
+    ConstantGradient gradientCalculator(Vector(12.8e20, 0));
 
     SpitzerFrequency spitzerFrequencyCalculator;
     SnellsLaw snellsLaw(

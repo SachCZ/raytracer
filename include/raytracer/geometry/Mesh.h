@@ -15,6 +15,10 @@
  * Namespace of the whole library.
  */
 namespace raytracer {
+    /**
+     * \addtogroup api
+     * @{
+     */
 
     /**
      * Structure representing a discretization of a distance.
@@ -97,6 +101,10 @@ namespace raytracer {
 
         std::vector<Face *> genBoundaryFaces();
     };
+
+    /**
+     * @}
+     */
 }
 
 

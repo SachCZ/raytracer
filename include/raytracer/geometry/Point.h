@@ -6,6 +6,11 @@
 namespace raytracer {
 
     /**
+     * \addtogroup api
+     * @{
+     */
+
+    /**
      * Class representing a point
      * A point is given by two coordinates x and y
      */
@@ -59,7 +64,9 @@ namespace raytracer {
      */
     const Point operator+(Vector b, Point A);
 
-
+    /**
+     * @}
+     */
 }
 
 

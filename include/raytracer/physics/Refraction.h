@@ -8,6 +8,11 @@
 
 namespace raytracer {
     /**
+     * \addtogroup directionFinders
+     * @{
+     */
+
+    /**
      * Functor that returns always the previousDirection.
      */
     struct ContinueStraight {
@@ -47,7 +52,7 @@ namespace raytracer {
                 const MeshFunction &density,
                 const MeshFunction &temperature,
                 const MeshFunction &ionization,
-                const GradientCalculator &gradientCalculator,
+                const Gradient &gradientCalculator,
                 const CollisionalFrequency &collisionalFrequencyCalculator
         );
 
@@ -76,10 +81,13 @@ namespace raytracer {
         const MeshFunction &density;
         const MeshFunction &temperature;
         const MeshFunction &ionization;
-        const GradientCalculator &gradientCalculator;
+        const Gradient &gradientCalculator;
         const CollisionalFrequency &collisionalFrequencyCalculator;
     };
 
+    /**
+     * @}
+     */
 }
 
 #endif //RAYTRACER_REFRACTION_H

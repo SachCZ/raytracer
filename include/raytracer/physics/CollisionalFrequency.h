@@ -8,6 +8,11 @@
 
 namespace raytracer {
     /**
+     * \addtogroup frequency
+     * @{
+     */
+
+    /**
      * Abstract interface. To obey this interface a method get returning the collisional frequency must be implemented.
      */
     class CollisionalFrequency {
@@ -57,6 +62,9 @@ namespace raytracer {
         ) const;
     };
 
+    /**
+     * @}
+     */
 }
 
 

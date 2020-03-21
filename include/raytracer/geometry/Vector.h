@@ -3,6 +3,11 @@
 
 namespace raytracer {
     /**
+     * \addtogroup api
+     * @{
+     */
+
+    /**
      * Class representing a physical vector
      */
     class Vector {
@@ -83,6 +88,9 @@ namespace raytracer {
      */
     const Vector operator-(Vector a, Vector b);
 
+    /**
+     * @}
+     */
 }
 
 

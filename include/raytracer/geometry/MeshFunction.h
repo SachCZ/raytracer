@@ -5,6 +5,10 @@
 #include <Element.h>
 
 namespace raytracer {
+    /**
+     * \addtogroup api
+     * @{
+     */
 
     /**
      * Abstract interface. To obey this MeshFunction interface getValue, setValue and addValue methods must be
@@ -75,6 +79,9 @@ namespace raytracer {
         double &get(const Element &element);
     };
 
+    /**
+     * @}
+     */
 }
 
 

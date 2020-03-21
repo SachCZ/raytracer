@@ -8,16 +8,21 @@
 
 namespace raytracer {
     /**
-     * Abstract interface to provide a GradientCalculator. To obey this interface implement the
-     * getGradient method.
+     * \addtogroup gradients
+     * @{
      */
-    class GradientCalculator {
+
+    /**
+     * Abstract interface to provide a GradientCalculator. To obey this interface implement the
+     * get method.
+     */
+    class Gradient {
     public:
         /**
          * Override this.
          * @return the gradient at given intersection PointOnFace.
          */
-        virtual Vector getGradient(
+        virtual Vector get(
                 const PointOnFace &pointOnFace,
                 const Element &previousElement,
                 const Element &nextElement
@@ -27,19 +32,19 @@ namespace raytracer {
     /**
      * GradientCalculator that returns a constant Vector no matter what.
      */
-    class ConstantGradientCalculator : public GradientCalculator {
+    class ConstantGradient : public Gradient {
     public:
         /**
          * Constructor that takes the Vector that will be returned every time as parameter.
          * @param gradient - the vector to be returned
          */
-        explicit ConstantGradientCalculator(const Vector &gradient);
+        explicit ConstantGradient(const Vector &gradient);
 
         /**
          * Returns always the same Vector given at construction.
          * @return vector gradient.
          */
-        Vector getGradient(
+        Vector get(
                 const PointOnFace &pointOnFace,
                 const Element &previousElement,
                 const Element &nextElement
@@ -51,12 +56,12 @@ namespace raytracer {
 
     /**
      * GradientCalculator that stores a density grid function defined in H1 space obtained from function given
-     * if L2. When getGradient is called the gradient of this function is calculated at given point.
+     * if L2. When get is called the gradient of this function is calculated at given point.
      *
-     * \warning
-     * Please note that updateDensity() must be called before calling getGradient().
+     * @warning
+     * Please note that updateDensity() must be called before calling get().
      */
-    class H1GradientCalculator : public GradientCalculator {
+    class H1Gradient : public Gradient {
     public:
         /**
          * Constructor that expects the l2 and h1 spaces. L2 is the space in which density is usually defined
@@ -64,7 +69,7 @@ namespace raytracer {
          * @param l2Space
          * @param h1Space
          */
-        H1GradientCalculator(
+        H1Gradient(
                 mfem::FiniteElementSpace &l2Space,
                 mfem::FiniteElementSpace &h1Space
         );
@@ -77,7 +82,7 @@ namespace raytracer {
          * @param nextElement
          * @return gradient at given point
          */
-        Vector getGradient(
+        Vector get(
                 const PointOnFace &pointOnFace,
                 const Element &previousElement,
                 const Element &nextElement
@@ -103,7 +108,7 @@ namespace raytracer {
     /**
      * GradientCalculator that returns the normal to the face as Gradient.
      */
-    class StepGradient : public GradientCalculator {
+    class StepGradient : public Gradient {
     public:
         /**
          * Get gradient as a normal to the Face given by PointOnFace.
@@ -111,7 +116,7 @@ namespace raytracer {
          * @param pointOnFace
          * @return normal as gradient
          */
-        Vector getGradient(
+        Vector get(
                 const PointOnFace &pointOnFace,
                 const Element &,
                 const Element &
@@ -120,7 +125,9 @@ namespace raytracer {
             return pointOnFace.face->getNormal();
         }
     };
-
+    /**
+     * @}
+     */
 }
 
 

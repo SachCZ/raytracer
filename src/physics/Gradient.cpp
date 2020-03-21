@@ -2,9 +2,9 @@
 
 namespace raytracer {
 
-    ConstantGradientCalculator::ConstantGradientCalculator(const Vector &gradient) : gradient(gradient) {}
+    ConstantGradient::ConstantGradient(const Vector &gradient) : gradient(gradient) {}
 
-    Vector ConstantGradientCalculator::getGradient(
+    Vector ConstantGradient::get(
             const PointOnFace &,
             const Element &,
             const Element &
@@ -12,13 +12,13 @@ namespace raytracer {
         return this->gradient;
     }
 
-    H1GradientCalculator::H1GradientCalculator(
+    H1Gradient::H1Gradient(
             mfem::FiniteElementSpace &l2Space,
             mfem::FiniteElementSpace &h1Space
     ) :
             l2Space(l2Space), h1Space(h1Space), _density(&h1Space) {}
 
-    Vector H1GradientCalculator::getGradient(
+    Vector H1Gradient::get(
             const PointOnFace &pointOnFace,
             const Element &previousElement,
             const Element &nextElement
@@ -29,12 +29,12 @@ namespace raytracer {
         return 0.5 * (previousGradient + nextGradient); //TODO look into this
     }
 
-    void H1GradientCalculator::updateDensity(mfem::GridFunction &density) {
+    void H1Gradient::updateDensity(mfem::GridFunction &density) {
         this->_density = this->projectL2toH1(density);
     }
 
     Vector
-    H1GradientCalculator::getGradientAt(const Element &element, const Point &point) const {
+    H1Gradient::getGradientAt(const Element &element, const Point &point) const {
         mfem::Vector result(2);
         mfem::IntegrationPoint integrationPoint{};
         integrationPoint.Set2(point.x, point.y);
@@ -46,7 +46,7 @@ namespace raytracer {
         return {result[0], result[1]};
     }
 
-    mfem::GridFunction H1GradientCalculator::projectL2toH1(const mfem::GridFunction &function) {
+    mfem::GridFunction H1Gradient::projectL2toH1(const mfem::GridFunction &function) {
         mfem::BilinearForm A(&h1Space);
         A.AddDomainIntegrator(new mfem::MassIntegrator);
         A.Assemble();

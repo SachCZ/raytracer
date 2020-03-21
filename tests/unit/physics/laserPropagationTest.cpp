@@ -67,9 +67,9 @@ public:
     void addValue(const Element &element, double value) override {}
 };
 
-class MockGradientCalculator : public GradientCalculator {
+class MockGradientCalculator : public Gradient {
 public:
-    Vector getGradient(
+    Vector get(
             const PointOnFace &pointOnFace,
             const Element &previousElement,
             const Element &nextElement

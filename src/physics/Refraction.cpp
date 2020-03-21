@@ -6,7 +6,7 @@ namespace raytracer {
                 const MeshFunction &density,
                 const MeshFunction &temperature,
                 const MeshFunction &ionization,
-                const GradientCalculator &gradientCalculator,
+                const Gradient &gradientCalculator,
                 const CollisionalFrequency &collisionalFrequencyCalculator
         ) :
                 density(density),
@@ -39,7 +39,7 @@ namespace raytracer {
             const double n1 = laserRay.getRefractiveIndex(rho1, nu_ei_1);
             const double n2 = laserRay.getRefractiveIndex(rho2, nu_ei_2);
 
-            const auto gradient = gradientCalculator.getGradient(pointOnFace, previousElement, nextElement);
+            const auto gradient = gradientCalculator.get(pointOnFace, previousElement, nextElement);
 
             const auto l = 1 / previousDirection.getNorm() * previousDirection;
             auto n = 1 / gradient.getNorm() * gradient;

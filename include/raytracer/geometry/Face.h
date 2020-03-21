@@ -8,13 +8,18 @@
 
 namespace raytracer {
 
+    /**
+     * \addtogroup api
+     * @{
+     */
+
     class Mesh;
 
     class Element;
 
     /**
      * Class representing a polygonal face in mesh (edge in 2D, surface polygon face in 3D).
-     * \warning
+     * @warning
      * Do not construct this manually unless you know what you are doing.
      */
     class Face {
@@ -37,7 +42,7 @@ namespace raytracer {
         /**
          * Construct the face using an id and std::vector of points that the face consist of.
          *
-         * \warning
+         * @warning
          * It is users responsibility for the id to be unique. It is thus advised to not construct instance of Face
          * manually.
          *
@@ -57,6 +62,9 @@ namespace raytracer {
         std::vector<Point *> points;
     };
 
+    /**
+     * @}
+     */
 }
 
 #endif //RAYTRACER_FACE_H

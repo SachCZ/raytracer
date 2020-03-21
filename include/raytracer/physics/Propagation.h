@@ -7,6 +7,10 @@
 #include "CollisionalFrequency.h"
 
 namespace raytracer {
+    /**
+     * \addtogroup intersectionFinders
+     * @{
+     */
 
     /**
      * Function to be used in Laser::generateIntersections() as findIntersection.
@@ -23,6 +27,9 @@ namespace raytracer {
             const LaserRay &
     );
 
+    /**
+     * @}
+     */
 }
 
 

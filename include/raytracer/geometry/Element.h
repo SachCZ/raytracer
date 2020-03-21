@@ -5,10 +5,14 @@
 #include "Face.h"
 
 namespace raytracer {
+    /**
+     * \addtogroup api
+     * @{
+     */
 
     /**
      * Class representing a single polygonal element in mesh. Could be 2D/3D given by set of faces (edges, surfaces).
-     * \warning
+     * @warning
      * Do not construct this manually unless you know what you are doing.
      */
     class Element {
@@ -22,7 +26,7 @@ namespace raytracer {
 
         /**
          * Constructor taking an id and std::vector of faces of the element.
-         * \warning
+         * @warning
          * It is users responsibility for the id to be unique. It is thus advised to not construct instance of Element
          * manually.
          *
@@ -43,6 +47,9 @@ namespace raytracer {
         std::vector<Face *> faces;
     };
 
+    /**
+     * @}
+     */
 }
 
 
