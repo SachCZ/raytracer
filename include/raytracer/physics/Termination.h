@@ -18,14 +18,15 @@ namespace raytracer {
          */
         explicit StopAtCritical(const MeshFunction &density);
 
-        /** Returns true if the density at the laserRay next element to go to is greater than criticalDensity of
-         * the laser ray
+        /**
+         * Returns true if the density at element to go to is greater than criticalDensity of
+         * the LaserRay.
          *
-         * @param intersection current laserRay intersection
+         * @param element
          * @param laserRay
          * @return true if current density is grater than critical
          */
-        bool operator()(const Element &, const LaserRay &laserRay);
+        bool operator()(const Element & element, const LaserRay &laserRay);
 
     private:
         const MeshFunction &density;

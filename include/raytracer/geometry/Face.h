@@ -12,19 +12,23 @@ namespace raytracer {
 
     class Element;
 
-    /** Class representing a face in mesh (edge in 2D, surface face in 3D).
-     *  Instance of this object should not be initialized by user.
+    /**
+     * Class representing a polygonal face in mesh (edge in 2D, surface polygon face in 3D).
+     * \warning
+     * Do not construct this manually unless you know what you are doing.
      */
     class Face {
     public:
-        /** Calculate a normal to the face (edge in 2D).
+        /**
+         *  Calculate a normal to the face (edge in 2D).
          *  By convention in 2D, the normal is outward for points
          *  in clockwise order forming a polygon.
          *  @return the normal vector.
          */
         Vector getNormal() const;
 
-        /** Get the points forming the face.
+        /**
+         * Get the points forming the face.
          *
          * @return the points.
          */
@@ -32,20 +36,18 @@ namespace raytracer {
 
         /**
          * Construct the face using an id and std::vector of points that the face consist of.
-         * @param id
-         * @param points
+         *
+         * \warning
+         * It is users responsibility for the id to be unique. It is thus advised to not construct instance of Face
+         * manually.
+         *
+         * @param id unique identification
+         * @param points the face consists of
          */
         explicit Face(int id, std::vector<Point *> points);
 
         /**
-         * Return the point on boundary if given point is reasonably close to it.
-         * @param point to be compared with all face points
-         * @return on of the face points if it is close to given point. Else it returns nullptr.
-         */
-        const Point *isBoundary(const Point &point) const;
-
-        /**
-         * Get the if of the face.
+         * Get the id of the face.
          * @return id
          */
         int getId() const;

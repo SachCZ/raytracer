@@ -5,15 +5,15 @@
 namespace raytracer {
     PointOnFace
     intersectStraight(
-            const PointOnFace &pointOnFace,
-            const Vector &direction,
-            const Element &nextElement,
+            const PointOnFace &entryPointOnFace,
+            const Vector &entryDirection,
+            const Element &element,
             const LaserRay &
     ) {
         auto newPointOnFace = findClosestIntersection(
-                {pointOnFace.point, direction},
-                nextElement.getFaces(),
-                pointOnFace.face
+                {entryPointOnFace.point, entryDirection},
+                element.getFaces(),
+                entryPointOnFace.face
         );
         if (!newPointOnFace) throw std::logic_error("No intersection found, but it should definitely exist!");
         return *newPointOnFace;

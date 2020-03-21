@@ -1,7 +1,7 @@
 #include "CollisionalFrequency.h"
 
 namespace raytracer {
-    Frequency SpitzerFrequencyCalculator::getCollisionalFrequency(
+    Frequency SpitzerFrequency::get(
             const Density &density,
             const Temperature &temperature,
             const Length &laserWavelength,
@@ -21,7 +21,7 @@ namespace raytracer {
                 std::pow(k_b * T_e + E_F, 3.0 / 2.0) * ln_lamb};
     }
 
-    double SpitzerFrequencyCalculator::getCoulombLogarithm(
+    double SpitzerFrequency::getCoulombLogarithm(
             const Density &density,
             const Temperature &temperature,
             const Length &laserWavelength,

@@ -28,6 +28,7 @@ namespace raytracer {
         /**
          * Calculate the index of refraction based on current density, collisional frequency.
          * @param density at which the refractive index is to be calculated
+         * @param collisionFrequency current collisional frequency
          * @return refractive index
          */
         double getRefractiveIndex(const Density &density, const Frequency &collisionFrequency) const;
@@ -65,24 +66,26 @@ namespace raytracer {
             return 1 - term + 1i * nu_ei / omega * term;
         }
 
-        /** Wrapper around Ray::findIntersections.
+        /**
+         * Wrapper around Ray::findIntersections().
          * It generates a ray based on the LaserRay properties and saves the result to LaserRay::intersections.
          *
-         * @tparam IntersFunc function with signature (Intersection) -> std::unique_ptr<Intersection>
-         * @tparam StopCondition function with signature (Intersection) -> bool
+         * @tparam IntersectionFunction
+         * @tparam StopCondition
          * @param mesh to be intersected
-         * @param findInters will be propagated to Ray::findIntersections as is.
-         * @param stopCondition will be propagated to ray::findIntersections as is.
+         * @param findDirection will be propagated to Ray::findIntersections() as is.
+         * @param findIntersection will be propagated to Ray::findIntersections() as is.
+         * @param stopCondition will be propagated to Ray::findIntersections() as is.
          */
-        template<typename DirectionFunction, typename IntersFunc, typename StopCondition>
+        template<typename DirectionFunction, typename IntersectionFunction, typename StopCondition>
         void generateIntersections(
                 const Mesh &mesh,
                 DirectionFunction findDirection,
-                IntersFunc findInters,
+                IntersectionFunction findIntersection,
                 StopCondition stopCondition) {
             Ray ray(HalfLine{this->startPoint, this->direction});
 
-            this->intersections = ray.findIntersections(mesh, findDirection, findInters, stopCondition);
+            this->intersections = ray.findIntersections(mesh, findDirection, findIntersection, stopCondition);
         }
 
         /** Sequence of all intersections with given Mesh.

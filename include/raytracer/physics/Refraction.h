@@ -8,13 +8,14 @@
 
 namespace raytracer {
     /**
-     * Functor that given an intersection finds next intersection in straight line through intersection.nextElement.
+     * Functor that returns always the previousDirection.
      */
     struct ContinueStraight {
         /**
-         * Finds the closest intersection with intersection.nextElement
-         * @param intersection
-         * @return intersection unique pointer if intersection is found, else it returns nullptr
+         * Function to be used in Laser::generateIntersections() as findDirection. It returns the previousDirection
+         * given, effectively continuing in a straight line.
+         * @param previousDirection
+         * @return previousDirection
          */
         Vector operator()(
                 const PointOnFace &,
@@ -28,16 +29,17 @@ namespace raytracer {
     };
 
 /**
- * Functor that given an intersection finds next intersection base on the Snells's law.
+ * Functor that finds new direction base on the Snells's law.
  */
     struct SnellsLaw {
         /**
-         * Construct the SnellsLaw using the density and temperature function reference. Provide gradientCalculator
-         * to calculate the plane of rarefaction. Provide collisionalFrequencyCalculator to evaluate the index
-         * of rarefaction.
-         * Density and temperature values are expected to change.
+         * Construct the SnellsLaw using the density, temperature and ionization function references.
+         * Provide gradientCalculator calculate the plane of rarefaction. Provide collisionalFrequencyCalculator
+         * to evaluate the index of rarefaction.
+         * Density, temperature and ionization values are expected to change.
          * @param density
          * @param temperature
+         * @param ionization
          * @param gradientCalculator
          * @param collisionalFrequencyCalculator
          */
@@ -46,15 +48,21 @@ namespace raytracer {
                 const MeshFunction &temperature,
                 const MeshFunction &ionization,
                 const GradientCalculator &gradientCalculator,
-                const CollisionalFrequencyCalculator &collisionalFrequencyCalculator
+                const CollisionalFrequency &collisionalFrequencyCalculator
         );
 
+
         /**
-         * Tries to find another intersection based on Snells law, density (provides an index of rarefaction)
+         * Function to be used in Laser::generateIntersections() as findDirection.
+         * Finds new direction based on Snells law between the two Element, density (provides an index of rarefaction)
          * and gradient (provides edge direction). Could throw error no intersection found!
-         * @param intersection
+         *
+         * @param pointOnFace
+         * @param previousDirection
+         * @param previousElement
+         * @param nextElement
          * @param laserRay
-         * @return found intersection or throw
+         * @return new direction based on Snells law.
          */
         Vector operator()(
                 const PointOnFace &pointOnFace,
@@ -69,7 +77,7 @@ namespace raytracer {
         const MeshFunction &temperature;
         const MeshFunction &ionization;
         const GradientCalculator &gradientCalculator;
-        const CollisionalFrequencyCalculator &collisionalFrequencyCalculator;
+        const CollisionalFrequency &collisionalFrequencyCalculator;
     };
 
 }

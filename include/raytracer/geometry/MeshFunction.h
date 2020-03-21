@@ -32,7 +32,7 @@ namespace raytracer {
     };
 
     /**
-     * Wrapper class around mfem::GridFunction.
+     * Discrete function what has constant values at Mesh elements.
      * Provides a way to query the GridFunction given an element.
      */
     class MfemMeshFunction : public MeshFunction {
@@ -48,21 +48,21 @@ namespace raytracer {
                 const mfem::FiniteElementSpace &finiteElementSpace);
 
         /**
-         * Get a value of mfem::GridFunction based on an element.
+         * Get a value at Element.
          * @param element
-         * @return the value of GridFunction at the element true dof.
+         * @return the value at Element
          */
         double getValue(const Element &element) const override;
 
         /**
-         * Set a value of mfem::GridFunction based on an element.
+         * Set a value at Element.
          * @param element
          * @param value
          */
         void setValue(const Element &element, double value) override;
 
         /**
-         * Add a value to existing value of mfem::GridFunction based on an element.
+         * Add a value to existing value at Element.
          * @param element
          * @param value
          */

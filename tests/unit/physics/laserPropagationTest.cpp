@@ -78,11 +78,11 @@ public:
     }
 };
 
-class MockCollisionalFrequencyCalculator : public CollisionalFrequencyCalculator {
+class MockCollisionalFrequencyCalculator : public CollisionalFrequency {
 public:
     Frequency
-    getCollisionalFrequency(const Density &density, const Temperature &temperature, const Length &laserWavelength,
-                            double ionization) const override {
+    get(const Density &density, const Temperature &temperature, const Length &laserWavelength,
+        double ionization) const override {
         return Frequency{0};
     }
 };

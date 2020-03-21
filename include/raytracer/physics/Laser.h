@@ -25,7 +25,7 @@ namespace raytracer {
          *
          * The directionFunction should return the direction of the laser given an arbitrary point in space.
          * The energy function should return the energy of the laser base on the parameter x. X is expected to
-         * be meassured from the center of the laser.
+         * be measured from the center of the laser.
          *
          * @param wavelength of the laser in cm
          * @param directionFunction function with signature (const Point& point) -> Vector
@@ -57,20 +57,66 @@ namespace raytracer {
         const std::vector<LaserRay> &getRays() const;
 
         /**
-         * If there are any rays in Laser theit intersections with given mesh will be found.
-         * This just calls LaserRay::generateIntersections for each of the rays.
-         * @tparam IntersFunc function with signature (Intersection, LaserRay) -> std::unique_ptr<Intersection>
-         * @tparam StopCondition function with signature (Intersection, LaserRay) -> bool
+         * Find intersections finds all the Intersection of each LaserRay in Laser with Mesh.
+         * There are multiple functional parameters to ensure high variability of this method.
+         *
+         * \note
+         * <b>This is the highly modular main method that is the main concern for the user.</b>
+         *
+         * @tparam DirectionFunction function type
+         * @tparam IntersectionFunction function type
+         * @tparam StopCondition function type
          * @param mesh to be intersected
-         * @param findInters is propagated to LaserRay::generateIntersections
-         * with additional parameter being the laserRay
-         * @param stopCondition is propagated to LaserRay::generateIntersections
-         * with additional parameter being the laserRay
+         * @param findDirection function that decides new direction every time a Face is encountered.
+         * The function must have the following form:
+         * \code{.cpp}
+            Vector findDirection()(
+                const PointOnFace &pointOnFace,
+                const Vector &previousDirection,
+                const Element &previousElement,
+                const Element &nextElement,
+                const LaserRay &laserRay
+            ) {
+                //x, y = ...
+                return Vector(x, y);
+            }
+         * \endcode
+         * It is recommended that you copy and paste this to implement findDirection.
+         * @param findIntersection function that finds the path of the Ray through given Element and returns
+         * PointOnFace where the Ray escapes the Element.
+         * The function mush have the following form:
+         * \code{.cpp}
+            PointOnFace findIntersection(
+                const PointOnFace &entryPointOnFace,
+                const Vector &entryDirection,
+                const Element &element,
+                const LaserRay &laserRay
+            ) {
+                //point, face = ...
+                PointOnFace pointOnFace{};
+                pointOnFace.point = point;
+                pointOnFace.face = face;
+                return pointOnFace;
+            }
+         * \endcode
+         * It is recommended that you copy and paste this to implement findIntersection.
+         * @param stopCondition function that returns true if the Ray should stop propagation.
+         * The function mush have the following form:
+         * \code{.cpp}
+            bool stopCondition(
+                const Element &,
+                const LaserRay &laserRay
+            ) {
+                //shouldStop = ...
+                return shouldStop;
+            }
+         * \endcode
+         * It is recommended that you copy and paste this to implement stopCondition.
          */
-        template<typename DirFunc, typename IntersFunc, typename StopCondition>
+        template<typename DirectionFunction, typename IntersectionFunction, typename StopCondition>
         void generateIntersections(const Mesh &mesh,
-                                   DirFunc findDir,
-                                   IntersFunc findInters,
+                                   DirectionFunction findDirection,
+                                   IntersectionFunction findIntersection,
                                    StopCondition stopCondition) {
             if (this->rays.empty()) throw std::logic_error("There are no rays!");
 
@@ -78,20 +124,20 @@ namespace raytracer {
                 auto stopper = [&stopCondition, &laserRay](const Element &nextElement) {
                     return stopCondition(nextElement, laserRay);
                 };
-                auto finder = [&findInters, &laserRay](
+                auto finder = [&findIntersection, &laserRay](
                         const PointOnFace &pointOnFace,
                         const Vector &direction,
                         const Element &nextElement
                 ) {
-                    return findInters(pointOnFace, direction, nextElement, laserRay);
+                    return findIntersection(pointOnFace, direction, nextElement, laserRay);
                 };
-                auto directioner = [&findDir, &laserRay](
+                auto directioner = [&findDirection, &laserRay](
                         const PointOnFace &pointOnFace,
                         const Vector &previousDirection,
                         const Element &previousElement,
                         const Element &nextElement
                 ) {
-                    return findDir(pointOnFace, previousDirection, previousElement, nextElement, laserRay);
+                    return findDirection(pointOnFace, previousDirection, previousElement, nextElement, laserRay);
                 };
                 laserRay.generateIntersections(mesh, directioner, finder, stopper);
             }
@@ -99,7 +145,7 @@ namespace raytracer {
 
         /**
          * Save all the rays to a file in JSON format.
-         * There will be one object called rays. It is an array of rays each beeing a sequence of points eg. [0, 1]
+         * There will be one object called rays. It is an array of rays each being a sequence of points eg. (0, 1)
          * @param filename name of the json file including extension
          */
         void saveRaysToJson(const std::string &filename);

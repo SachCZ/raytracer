@@ -6,7 +6,7 @@ namespace raytracer {
     double impl::getParamK(const HalfLine &halfLine,
                            const std::vector<Point *> &points) {
         auto normal = halfLine.direction.getNormal();
-        const auto &P = halfLine.point;
+        const auto &P = halfLine.origin;
         const auto &A = *points[0];
         const auto &B = *points[1];
         return (normal * (P - A)) / (normal * (B - A));
@@ -18,7 +18,7 @@ namespace raytracer {
         const auto &B = *points[1];
         auto normal = (B - A).getNormal();
         const auto &d = halfLine.direction;
-        const auto &P = halfLine.point;
+        const auto &P = halfLine.origin;
 
         return (normal * (A - P)) / (normal * d);
     }
@@ -65,7 +65,7 @@ namespace raytracer {
             if (face == omitFace) continue;
             auto pointOnFace = findIntersection(halfLine, face);
             if (pointOnFace) {
-                auto norm = (pointOnFace->point - halfLine.point).getNorm();
+                auto norm = (pointOnFace->point - halfLine.origin).getNorm();
                 if (norm < std::numeric_limits<double>::epsilon()) {
                     norm = std::numeric_limits<double>::infinity();//If it is too close, prefer others
                     //TODO I dont like this at all

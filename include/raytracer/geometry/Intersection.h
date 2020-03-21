@@ -17,7 +17,7 @@ namespace raytracer {
         /**
          * Origin
          */
-        Point point;
+        Point origin;
         /**
          * Direction
          */
@@ -25,15 +25,22 @@ namespace raytracer {
     };
 
     /**
-     * Structure representing a point on a face
+     * Structure representing a point on a face. This struct is used as return type of findClosestIntersection().
      */
     struct PointOnFace {
+        /**
+         * The point.
+         */
         Point point;
+        /**
+         * Pointer to the face the point is at.
+         */
         const Face *face;
     };
 
     /**
-     * This namespace should be ignored by the end use
+     * Implementation namespace.
+     * This namespace should be ignored by the end user/developer.
      */
     namespace impl {
         double getParamK(const HalfLine &halfLine, const std::vector<Point *> &points);
@@ -44,20 +51,21 @@ namespace raytracer {
     }
 
     /**
-     * Find an intersection of HalfLine with a face. If there is no intersection a nullptr is returned.
-     * @param halfLine
+     * Find an intersection of HalfLine with a Face. If there is no intersection a nullptr is returned.
+     * @param halfLine that is expected to intersect the face
      * @param face to be intersected
-     * @return an intersection structure pointer or nullptr if no intersection exists.
+     * @return PointOnFace or nullptr if no intersection exists.
      */
     std::unique_ptr<PointOnFace> findIntersection(const HalfLine &halfLine, const Face *face);
 
     /**
-     * For a given set of faces find all its intersections with a HalfLine and return the one that is closest to the
-     * origin of the HalfLine. You can optionally specify a Face* to face you wish to exclude from search.
-     * @param halfLine
-     * @param faces sequence of faces to be checked
-     * @param omitFace faces to omit when searching for intersection
-     * @return an intersection structure pointer or nullptr if no intersection exists.
+     * For a given set of faces use findIntersection() and return the one that is closest to the
+     * origin of the HalfLine (euclidean norm).
+     * You can optionally specify a Face wish to exclude from search.
+     * @param halfLine that is expected to intersect one of the faces
+     * @param faces sequence to be checked
+     * @param omitFace faces address to omit when searching for intersection
+     * @return PointOnFace or nullptr if no intersection exists
      */
     std::unique_ptr<PointOnFace> findClosestIntersection(
             const HalfLine &halfLine,

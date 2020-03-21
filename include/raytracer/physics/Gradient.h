@@ -15,7 +15,7 @@ namespace raytracer {
     public:
         /**
          * Override this.
-         * @return the gradient at given intersection (point).
+         * @return the gradient at given intersection PointOnFace.
          */
         virtual Vector getGradient(
                 const PointOnFace &pointOnFace,
@@ -52,12 +52,15 @@ namespace raytracer {
     /**
      * GradientCalculator that stores a density grid function defined in H1 space obtained from function given
      * if L2. When getGradient is called the gradient of this function is calculated at given point.
+     *
+     * \warning
+     * Please note that updateDensity() must be called before calling getGradient().
      */
     class H1GradientCalculator : public GradientCalculator {
     public:
         /**
          * Constructor that expects the l2 and h1 spaces. L2 is the space in which density is usually defined
-         * and H1 is the space into which the density is tranformed to be able to evaluate gradient.
+         * and H1 is the space into which the density is transformed to be able to evaluate gradient.
          * @param l2Space
          * @param h1Space
          */
@@ -68,8 +71,11 @@ namespace raytracer {
 
         /**
          * Return the value of gradient at the intersection point.
-         * @param intersection
-         * @return
+         *
+         * @param pointOnFace
+         * @param previousElement
+         * @param nextElement
+         * @return gradient at given point
          */
         Vector getGradient(
                 const PointOnFace &pointOnFace,
@@ -94,8 +100,17 @@ namespace raytracer {
         mfem::GridFunction projectL2toH1(const mfem::GridFunction &function);
     };
 
+    /**
+     * GradientCalculator that returns the normal to the face as Gradient.
+     */
     class StepGradient : public GradientCalculator {
     public:
+        /**
+         * Get gradient as a normal to the Face given by PointOnFace.
+         *
+         * @param pointOnFace
+         * @return normal as gradient
+         */
         Vector getGradient(
                 const PointOnFace &pointOnFace,
                 const Element &,

@@ -51,7 +51,7 @@ TEST(tracing, throught_mesh_should_work_as_expected_for_dummy_mesh) {
 
     ConstantGradientCalculator gradientCalculator(Vector(12.8e20, 0));
 
-    SpitzerFrequencyCalculator spitzerFrequencyCalculator;
+    SpitzerFrequency spitzerFrequencyCalculator;
     SnellsLaw snellsLaw(
             densityMeshFunction,
             temperatureMeshFunction,

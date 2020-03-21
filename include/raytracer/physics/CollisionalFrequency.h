@@ -7,10 +7,20 @@
 #include <algorithm>
 
 namespace raytracer {
-
-    class CollisionalFrequencyCalculator {
+    /**
+     * Abstract interface. To obey this interface a method get returning the collisional frequency must be implemented.
+     */
+    class CollisionalFrequency {
     public:
-        virtual Frequency getCollisionalFrequency(
+        /**
+         * Override this.
+         * @param density
+         * @param temperature
+         * @param laserWavelength
+         * @param ionization
+         * @return collisional frequency given state variables
+         */
+        virtual Frequency get(
                 const Density &density,
                 const Temperature &temperature,
                 const Length &laserWavelength,
@@ -18,9 +28,20 @@ namespace raytracer {
         ) const = 0;
     };
 
-    class SpitzerFrequencyCalculator : public CollisionalFrequencyCalculator {
+    /**
+     * Class representing a Spitzer-Harm frequency calculator.
+     */
+    class SpitzerFrequency : public CollisionalFrequency {
     public:
-        Frequency getCollisionalFrequency(
+        /**
+         * Based on the state variables return the Spitzer Harm frequency obtained according to Velechovsky thesis.
+         * @param density
+         * @param temperature
+         * @param laserWavelength
+         * @param ionization
+         * @return the collisional frequency
+         */
+        Frequency get(
                 const Density &density,
                 const Temperature &temperature,
                 const Length &laserWavelength,

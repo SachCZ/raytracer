@@ -7,7 +7,7 @@ namespace raytracer {
                 const MeshFunction &temperature,
                 const MeshFunction &ionization,
                 const GradientCalculator &gradientCalculator,
-                const CollisionalFrequencyCalculator &collisionalFrequencyCalculator
+                const CollisionalFrequency &collisionalFrequencyCalculator
         ) :
                 density(density),
                 temperature(temperature),
@@ -31,10 +31,10 @@ namespace raytracer {
             const auto Z1 = ionization.getValue(previousElement);
             const auto Z2 = ionization.getValue(nextElement);
 
-            const auto nu_ei_1 = collisionalFrequencyCalculator.getCollisionalFrequency(rho1, T1, laserRay.wavelength,
-                                                                                        Z1);
-            const auto nu_ei_2 = collisionalFrequencyCalculator.getCollisionalFrequency(rho2, T2, laserRay.wavelength,
-                                                                                        Z2);
+            const auto nu_ei_1 = collisionalFrequencyCalculator.get(rho1, T1, laserRay.wavelength,
+                                                                    Z1);
+            const auto nu_ei_2 = collisionalFrequencyCalculator.get(rho2, T2, laserRay.wavelength,
+                                                                    Z2);
 
             const double n1 = laserRay.getRefractiveIndex(rho1, nu_ei_1);
             const double n2 = laserRay.getRefractiveIndex(rho2, nu_ei_2);

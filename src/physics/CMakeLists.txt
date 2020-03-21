@@ -1,4 +1,5 @@
 add_library(physics
+        CollisionalFrequency.cpp
         LaserRay.cpp
         Laser.cpp
         Propagation.cpp

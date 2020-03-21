@@ -12,7 +12,7 @@ namespace raytracer {
     class Point {
     public:
         /**
-         * Construct the edge fiven x and y.
+         * Construct the edge given x and y.
          * Note that x goes first, be sure not to mix this up.
          * @param x coordinate
          * @param y coordinate
@@ -20,8 +20,8 @@ namespace raytracer {
         Point(double x, double y);
 
         /**
-         * Default contructor.
-         * Default contructed point has both x and y equal to 0
+         * Default constructor.
+         * Default constructed point has both x and y equal to 0
          */
         Point() = default;
 

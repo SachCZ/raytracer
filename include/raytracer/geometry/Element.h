@@ -6,24 +6,29 @@
 
 namespace raytracer {
 
-    /** Class representing a single volume element in mesh.
-     *  Could be any element given by set of faces (edges, surfaces).
-     * Instance of this object should not be initialized by user.
+    /**
+     * Class representing a single polygonal element in mesh. Could be 2D/3D given by set of faces (edges, surfaces).
+     * \warning
+     * Do not construct this manually unless you know what you are doing.
      */
     class Element {
     public:
         /**
          * Get the faces of the Element.
          * Edges in 2D, surfaces in 3D.
-         * @return the face
+         * @return the faces
          */
         const std::vector<Face *> &getFaces() const;
 
         /**
          * Constructor taking an id and std::vector of faces of the element.
+         * \warning
+         * It is users responsibility for the id to be unique. It is thus advised to not construct instance of Element
+         * manually.
+         *
          * Clockwise order of faces is preferred in 2D.
-         * @param id
-         * @param faces
+         * @param id unique identification
+         * @param faces of the element
          */
         explicit Element(int id, std::vector<Face *> faces);
 

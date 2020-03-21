@@ -8,11 +8,18 @@
 
 namespace raytracer {
 
-
+    /**
+     * Function to be used in Laser::generateIntersections() as findIntersection.
+     * It intersects the element in straight line.
+     * @param entryPointOnFace
+     * @param entryDirection
+     * @param element
+     * @return intersecting point in straight line from entryPointOnFace
+     */
     PointOnFace intersectStraight(
-            const PointOnFace &pointOnFace,
-            const Vector &direction,
-            const Element &nextElement,
+            const PointOnFace &entryPointOnFace,
+            const Vector &entryDirection,
+            const Element &element,
             const LaserRay &
     );
 

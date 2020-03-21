@@ -20,14 +20,6 @@ namespace raytracer {
             id(id),
             points(std::move(points)) {}
 
-    const Point *Face::isBoundary(const Point &point) const {
-        for (const auto &referencePoint : this->points) {
-            auto norm = (*points[1] - *points[0]).getNorm();
-            if ((point - *referencePoint).getNorm() < 1e-11 * norm) return referencePoint;
-        }
-        return nullptr;
-    }
-
     int Face::getId() const {
         return this->id;
     }
