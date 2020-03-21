@@ -10,9 +10,10 @@
 namespace raytracer {
 
     /**
-     * Structure representing a single LaserRay. It has associated energy but no width for now.
+     * Class representing a single LaserRay. It has associated energy but no width for now.
      */
-    struct LaserRay {
+    class LaserRay {
+    public:
         /** The point from which the LaserRay originates. */
         Point startPoint{};
         /** The initial direction of the LaserRay. */

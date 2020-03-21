@@ -6,7 +6,7 @@
     <tab type="pages" visible="yes" title="" intro=""/>
     <tab type="modules" visible="yes" title="API" intro=""/>
 
-    <tab type="usergroup" visible="yes" title="Developer reference">
+    <tab type="usergroup" visible="yes" title="Index">
       <tab type="namespacelist" visible="yes" title="" intro=""/>
       <tab type="namespacemembers" visible="yes" title="" intro=""/>
       <tab type="classlist" visible="yes" title="" intro=""/>
