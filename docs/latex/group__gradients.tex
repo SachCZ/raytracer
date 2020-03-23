@@ -1,0 +1,31 @@
+\hypertarget{group__gradients}{}\section{Gradients}
+\label{group__gradients}\index{Gradients@{Gradients}}
+
+
+\hyperlink{classraytracer_1_1Gradient}{Gradient} models to calculate gradient at given point in a \hyperlink{classraytracer_1_1MeshFunction}{Mesh\+Function}.  
+
+
+Collaboration diagram for Gradients\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=278pt]{group__gradients}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classraytracer_1_1Gradient}{raytracer\+::\+Gradient}
+\begin{DoxyCompactList}\small\item\em Abstract interface to provide a Gradient\+Calculator. \end{DoxyCompactList}\item 
+class \hyperlink{classraytracer_1_1ConstantGradient}{raytracer\+::\+Constant\+Gradient}
+\begin{DoxyCompactList}\small\item\em Gradient\+Calculator that returns a constant \hyperlink{classraytracer_1_1Vector}{Vector} no matter what. \end{DoxyCompactList}\item 
+class \hyperlink{classraytracer_1_1H1Gradient}{raytracer\+::\+H1\+Gradient}
+\begin{DoxyCompactList}\small\item\em Gradient\+Calculator that stores a density grid function defined in H1 space obtained from function given if L2. \end{DoxyCompactList}\item 
+class \hyperlink{classraytracer_1_1StepGradient}{raytracer\+::\+Step\+Gradient}
+\begin{DoxyCompactList}\small\item\em Gradient\+Calculator that returns the normal to the face as \hyperlink{classraytracer_1_1Gradient}{Gradient}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classraytracer_1_1Gradient}{Gradient} models to calculate gradient at given point in a \hyperlink{classraytracer_1_1MeshFunction}{Mesh\+Function}. 
+

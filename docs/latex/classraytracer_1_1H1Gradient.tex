@@ -1,0 +1,119 @@
+\hypertarget{classraytracer_1_1H1Gradient}{}\section{raytracer\+:\+:H1\+Gradient Class Reference}
+\label{classraytracer_1_1H1Gradient}\index{raytracer\+::\+H1\+Gradient@{raytracer\+::\+H1\+Gradient}}
+
+
+Gradient\+Calculator that stores a density grid function defined in H1 space obtained from function given if L2.  
+
+
+
+
+{\ttfamily \#include $<$Gradient.\+h$>$}
+
+
+
+Inheritance diagram for raytracer\+:\+:H1\+Gradient\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=190pt]{classraytracer_1_1H1Gradient__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for raytracer\+:\+:H1\+Gradient\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=190pt]{classraytracer_1_1H1Gradient__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classraytracer_1_1H1Gradient_a7499a9dcb45b6c813b09fe14d08d98e4}{H1\+Gradient} (mfem\+::\+Finite\+Element\+Space \&l2\+Space, mfem\+::\+Finite\+Element\+Space \&h1\+Space)
+\begin{DoxyCompactList}\small\item\em Constructor that expects the l2 and h1 spaces. \end{DoxyCompactList}\item 
+\hyperlink{classraytracer_1_1Vector}{Vector} \hyperlink{classraytracer_1_1H1Gradient_a7c847fef0d9cb6fbd143552acace82a5}{get} (const \hyperlink{structraytracer_1_1PointOnFace}{Point\+On\+Face} \&point\+On\+Face, const \hyperlink{classraytracer_1_1Element}{Element} \&previous\+Element, const \hyperlink{classraytracer_1_1Element}{Element} \&next\+Element) const override
+\begin{DoxyCompactList}\small\item\em Return the value of gradient at the intersection point. \end{DoxyCompactList}\item 
+void \hyperlink{classraytracer_1_1H1Gradient_a3a6918392cf6b2113061626400ef883a}{update\+Density} (mfem\+::\+Grid\+Function \&density)
+\begin{DoxyCompactList}\small\item\em Update the density from which the gradient is calculated. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Gradient\+Calculator that stores a density grid function defined in H1 space obtained from function given if L2. 
+
+When get is called the gradient of this function is calculated at given point.
+
+\begin{DoxyWarning}{Warning}
+Please note that \hyperlink{classraytracer_1_1H1Gradient_a3a6918392cf6b2113061626400ef883a}{update\+Density()} must be called before calling \hyperlink{classraytracer_1_1H1Gradient_a7c847fef0d9cb6fbd143552acace82a5}{get()}. 
+\end{DoxyWarning}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classraytracer_1_1H1Gradient_a7499a9dcb45b6c813b09fe14d08d98e4}\label{classraytracer_1_1H1Gradient_a7499a9dcb45b6c813b09fe14d08d98e4}} 
+\index{raytracer\+::\+H1\+Gradient@{raytracer\+::\+H1\+Gradient}!H1\+Gradient@{H1\+Gradient}}
+\index{H1\+Gradient@{H1\+Gradient}!raytracer\+::\+H1\+Gradient@{raytracer\+::\+H1\+Gradient}}
+\subsubsection{\texorpdfstring{H1\+Gradient()}{H1Gradient()}}
+{\footnotesize\ttfamily raytracer\+::\+H1\+Gradient\+::\+H1\+Gradient (\begin{DoxyParamCaption}\item[{mfem\+::\+Finite\+Element\+Space \&}]{l2\+Space,  }\item[{mfem\+::\+Finite\+Element\+Space \&}]{h1\+Space }\end{DoxyParamCaption})}
+
+
+
+Constructor that expects the l2 and h1 spaces. 
+
+L2 is the space in which density is usually defined and H1 is the space into which the density is transformed to be able to evaluate gradient. 
+\begin{DoxyParams}{Parameters}
+{\em l2\+Space} & \\
+\hline
+{\em h1\+Space} & \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classraytracer_1_1H1Gradient_a7c847fef0d9cb6fbd143552acace82a5}\label{classraytracer_1_1H1Gradient_a7c847fef0d9cb6fbd143552acace82a5}} 
+\index{raytracer\+::\+H1\+Gradient@{raytracer\+::\+H1\+Gradient}!get@{get}}
+\index{get@{get}!raytracer\+::\+H1\+Gradient@{raytracer\+::\+H1\+Gradient}}
+\subsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily \hyperlink{classraytracer_1_1Vector}{Vector} raytracer\+::\+H1\+Gradient\+::get (\begin{DoxyParamCaption}\item[{const \hyperlink{structraytracer_1_1PointOnFace}{Point\+On\+Face} \&}]{point\+On\+Face,  }\item[{const \hyperlink{classraytracer_1_1Element}{Element} \&}]{previous\+Element,  }\item[{const \hyperlink{classraytracer_1_1Element}{Element} \&}]{next\+Element }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Return the value of gradient at the intersection point. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point\+On\+Face} & \\
+\hline
+{\em previous\+Element} & \\
+\hline
+{\em next\+Element} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+gradient at given point 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classraytracer_1_1Gradient_a93ccfef0662634c5f9a3c8dd04e73496}{raytracer\+::\+Gradient}.
+
+\mbox{\Hypertarget{classraytracer_1_1H1Gradient_a3a6918392cf6b2113061626400ef883a}\label{classraytracer_1_1H1Gradient_a3a6918392cf6b2113061626400ef883a}} 
+\index{raytracer\+::\+H1\+Gradient@{raytracer\+::\+H1\+Gradient}!update\+Density@{update\+Density}}
+\index{update\+Density@{update\+Density}!raytracer\+::\+H1\+Gradient@{raytracer\+::\+H1\+Gradient}}
+\subsubsection{\texorpdfstring{update\+Density()}{updateDensity()}}
+{\footnotesize\ttfamily void raytracer\+::\+H1\+Gradient\+::update\+Density (\begin{DoxyParamCaption}\item[{mfem\+::\+Grid\+Function \&}]{density }\end{DoxyParamCaption})}
+
+
+
+Update the density from which the gradient is calculated. 
+
+The density should be a function in L2 space. 
+\begin{DoxyParams}{Parameters}
+{\em density} & defined over L2 \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/martin/\+C\+Lion\+Projects/raytracer/include/raytracer/physics/Gradient.\+h\end{DoxyCompactItemize}

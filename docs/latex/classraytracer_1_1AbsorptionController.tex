@@ -1,0 +1,64 @@
+\hypertarget{classraytracer_1_1AbsorptionController}{}\section{raytracer\+:\+:Absorption\+Controller Class Reference}
+\label{classraytracer_1_1AbsorptionController}\index{raytracer\+::\+Absorption\+Controller@{raytracer\+::\+Absorption\+Controller}}
+
+
+Class aggregating all instances of \hyperlink{classraytracer_1_1AbsorptionModel}{Absorption\+Model} used to update absorbed\+Energy mesh\+Function.  
+
+
+
+
+{\ttfamily \#include $<$Absorption.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classraytracer_1_1AbsorptionController_a4bde685a4fe1a5adc873e1483d91e2ae}{add\+Model} (const \hyperlink{classraytracer_1_1AbsorptionModel}{Absorption\+Model} $\ast$model)
+\begin{DoxyCompactList}\small\item\em Add an \hyperlink{classraytracer_1_1AbsorptionModel}{Absorption\+Model} that will be used when calling \hyperlink{classraytracer_1_1AbsorptionController_a5190d4b54293231350d30f3bf3acc59a}{absorb()}. \end{DoxyCompactList}\item 
+void \hyperlink{classraytracer_1_1AbsorptionController_a5190d4b54293231350d30f3bf3acc59a}{absorb} (const \hyperlink{classraytracer_1_1Laser}{Laser} \&laser, \hyperlink{classraytracer_1_1MeshFunction}{Mesh\+Function} \&absorbed\+Energy)
+\begin{DoxyCompactList}\small\item\em Add energy values based on \hyperlink{classraytracer_1_1AbsorptionModel}{Absorption\+Model} applied on the \hyperlink{classraytracer_1_1Laser}{Laser} to the absorbed\+Energy \hyperlink{classraytracer_1_1MeshFunction}{Mesh\+Function}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class aggregating all instances of \hyperlink{classraytracer_1_1AbsorptionModel}{Absorption\+Model} used to update absorbed\+Energy mesh\+Function. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classraytracer_1_1AbsorptionController_a5190d4b54293231350d30f3bf3acc59a}\label{classraytracer_1_1AbsorptionController_a5190d4b54293231350d30f3bf3acc59a}} 
+\index{raytracer\+::\+Absorption\+Controller@{raytracer\+::\+Absorption\+Controller}!absorb@{absorb}}
+\index{absorb@{absorb}!raytracer\+::\+Absorption\+Controller@{raytracer\+::\+Absorption\+Controller}}
+\subsubsection{\texorpdfstring{absorb()}{absorb()}}
+{\footnotesize\ttfamily void raytracer\+::\+Absorption\+Controller\+::absorb (\begin{DoxyParamCaption}\item[{const \hyperlink{classraytracer_1_1Laser}{Laser} \&}]{laser,  }\item[{\hyperlink{classraytracer_1_1MeshFunction}{Mesh\+Function} \&}]{absorbed\+Energy }\end{DoxyParamCaption})}
+
+
+
+Add energy values based on \hyperlink{classraytracer_1_1AbsorptionModel}{Absorption\+Model} applied on the \hyperlink{classraytracer_1_1Laser}{Laser} to the absorbed\+Energy \hyperlink{classraytracer_1_1MeshFunction}{Mesh\+Function}. 
+
+\begin{DoxyWarning}{Warning}
+For this to work properly, \hyperlink{classraytracer_1_1Laser_a40fd2b112fb1de646861d7e93ac303e3}{Laser\+::generate\+Intersections()} must be called first. 
+\end{DoxyWarning}
+
+\begin{DoxyParams}{Parameters}
+{\em laser} & \\
+\hline
+{\em absorbed\+Energy} & \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classraytracer_1_1AbsorptionController_a4bde685a4fe1a5adc873e1483d91e2ae}\label{classraytracer_1_1AbsorptionController_a4bde685a4fe1a5adc873e1483d91e2ae}} 
+\index{raytracer\+::\+Absorption\+Controller@{raytracer\+::\+Absorption\+Controller}!add\+Model@{add\+Model}}
+\index{add\+Model@{add\+Model}!raytracer\+::\+Absorption\+Controller@{raytracer\+::\+Absorption\+Controller}}
+\subsubsection{\texorpdfstring{add\+Model()}{addModel()}}
+{\footnotesize\ttfamily void raytracer\+::\+Absorption\+Controller\+::add\+Model (\begin{DoxyParamCaption}\item[{const \hyperlink{classraytracer_1_1AbsorptionModel}{Absorption\+Model} $\ast$}]{model }\end{DoxyParamCaption})}
+
+
+
+Add an \hyperlink{classraytracer_1_1AbsorptionModel}{Absorption\+Model} that will be used when calling \hyperlink{classraytracer_1_1AbsorptionController_a5190d4b54293231350d30f3bf3acc59a}{absorb()}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em model} & \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/martin/\+C\+Lion\+Projects/raytracer/include/raytracer/physics/Absorption.\+h\end{DoxyCompactItemize}

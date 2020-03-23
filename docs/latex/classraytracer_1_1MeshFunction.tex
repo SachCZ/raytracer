@@ -1,0 +1,98 @@
+\hypertarget{classraytracer_1_1MeshFunction}{}\section{raytracer\+:\+:Mesh\+Function Class Reference}
+\label{classraytracer_1_1MeshFunction}\index{raytracer\+::\+Mesh\+Function@{raytracer\+::\+Mesh\+Function}}
+
+
+Abstract interface.  
+
+
+
+
+{\ttfamily \#include $<$Mesh\+Function.\+h$>$}
+
+
+
+Inheritance diagram for raytracer\+:\+:Mesh\+Function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=227pt]{classraytracer_1_1MeshFunction__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual double \hyperlink{classraytracer_1_1MeshFunction_a49888c1924a473a1d98564a4732edd3a}{get\+Value} (const \hyperlink{classraytracer_1_1Element}{Element} \&) const =0
+\begin{DoxyCompactList}\small\item\em Override this. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classraytracer_1_1MeshFunction_a0d71fc5b456edd7a89267a071ae6dd81}{set\+Value} (const \hyperlink{classraytracer_1_1Element}{Element} \&, double value)=0
+\begin{DoxyCompactList}\small\item\em Override this. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classraytracer_1_1MeshFunction_a134b7ca4400d04030a67cadd691ee879}{add\+Value} (const \hyperlink{classraytracer_1_1Element}{Element} \&, double value)=0
+\begin{DoxyCompactList}\small\item\em Override this. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Abstract interface. 
+
+To obey this \hyperlink{classraytracer_1_1MeshFunction}{Mesh\+Function} interface get\+Value, set\+Value and add\+Value methods must be implemented. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classraytracer_1_1MeshFunction_a134b7ca4400d04030a67cadd691ee879}\label{classraytracer_1_1MeshFunction_a134b7ca4400d04030a67cadd691ee879}} 
+\index{raytracer\+::\+Mesh\+Function@{raytracer\+::\+Mesh\+Function}!add\+Value@{add\+Value}}
+\index{add\+Value@{add\+Value}!raytracer\+::\+Mesh\+Function@{raytracer\+::\+Mesh\+Function}}
+\subsubsection{\texorpdfstring{add\+Value()}{addValue()}}
+{\footnotesize\ttfamily virtual void raytracer\+::\+Mesh\+Function\+::add\+Value (\begin{DoxyParamCaption}\item[{const \hyperlink{classraytracer_1_1Element}{Element} \&}]{,  }\item[{double}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Override this. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & to be added to current value at element. \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \hyperlink{classraytracer_1_1MfemMeshFunction_a1c9f0ec943afb1d069ddeb85ee9bb2c8}{raytracer\+::\+Mfem\+Mesh\+Function}.
+
+\mbox{\Hypertarget{classraytracer_1_1MeshFunction_a49888c1924a473a1d98564a4732edd3a}\label{classraytracer_1_1MeshFunction_a49888c1924a473a1d98564a4732edd3a}} 
+\index{raytracer\+::\+Mesh\+Function@{raytracer\+::\+Mesh\+Function}!get\+Value@{get\+Value}}
+\index{get\+Value@{get\+Value}!raytracer\+::\+Mesh\+Function@{raytracer\+::\+Mesh\+Function}}
+\subsubsection{\texorpdfstring{get\+Value()}{getValue()}}
+{\footnotesize\ttfamily virtual double raytracer\+::\+Mesh\+Function\+::get\+Value (\begin{DoxyParamCaption}\item[{const \hyperlink{classraytracer_1_1Element}{Element} \&}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Override this. 
+
+\begin{DoxyReturn}{Returns}
+value of \hyperlink{classraytracer_1_1MeshFunction}{Mesh\+Function} at element 
+\end{DoxyReturn}
+
+
+Implemented in \hyperlink{classraytracer_1_1MfemMeshFunction_a3e7183c2cca55df6115176d1d9030846}{raytracer\+::\+Mfem\+Mesh\+Function}.
+
+\mbox{\Hypertarget{classraytracer_1_1MeshFunction_a0d71fc5b456edd7a89267a071ae6dd81}\label{classraytracer_1_1MeshFunction_a0d71fc5b456edd7a89267a071ae6dd81}} 
+\index{raytracer\+::\+Mesh\+Function@{raytracer\+::\+Mesh\+Function}!set\+Value@{set\+Value}}
+\index{set\+Value@{set\+Value}!raytracer\+::\+Mesh\+Function@{raytracer\+::\+Mesh\+Function}}
+\subsubsection{\texorpdfstring{set\+Value()}{setValue()}}
+{\footnotesize\ttfamily virtual void raytracer\+::\+Mesh\+Function\+::set\+Value (\begin{DoxyParamCaption}\item[{const \hyperlink{classraytracer_1_1Element}{Element} \&}]{,  }\item[{double}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Override this. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & value to be set at element \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \hyperlink{classraytracer_1_1MfemMeshFunction_aa7c06ea3f585a45573174b073da58ee1}{raytracer\+::\+Mfem\+Mesh\+Function}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/martin/\+C\+Lion\+Projects/raytracer/include/raytracer/geometry/Mesh\+Function.\+h\end{DoxyCompactItemize}

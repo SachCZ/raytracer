@@ -1,0 +1,196 @@
+\hypertarget{classraytracer_1_1LaserRay}{}\section{raytracer\+:\+:Laser\+Ray Class Reference}
+\label{classraytracer_1_1LaserRay}\index{raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}}
+
+
+Class representing a single \hyperlink{classraytracer_1_1LaserRay}{Laser\+Ray}.  
+
+
+
+
+{\ttfamily \#include $<$Laser\+Ray.\+h$>$}
+
+
+
+Collaboration diagram for raytracer\+:\+:Laser\+Ray\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classraytracer_1_1LaserRay__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classraytracer_1_1LaserRay_ac7ca600dec49c7d782e18bbba144e483}\label{classraytracer_1_1LaserRay_ac7ca600dec49c7d782e18bbba144e483}} 
+\hyperlink{structraytracer_1_1Density}{Density} \hyperlink{classraytracer_1_1LaserRay_ac7ca600dec49c7d782e18bbba144e483}{get\+Critical\+Density} () const
+\begin{DoxyCompactList}\small\item\em The electron critical density of the \hyperlink{classraytracer_1_1LaserRay}{Laser\+Ray}. \end{DoxyCompactList}\item 
+double \hyperlink{classraytracer_1_1LaserRay_af841f0b8279f67242414c1709ce61212}{get\+Refractive\+Index} (const \hyperlink{structraytracer_1_1Density}{Density} \&density, const \hyperlink{structraytracer_1_1Frequency}{Frequency} \&collision\+Frequency) const
+\begin{DoxyCompactList}\small\item\em Calculate the index of refraction based on current density, collisional frequency. \end{DoxyCompactList}\item 
+double \hyperlink{classraytracer_1_1LaserRay_a9b73d2d5488310646ad750243f5e6b13}{get\+Inverse\+Bremsstrahlung\+Coeff} (const \hyperlink{structraytracer_1_1Density}{Density} \&density, const \hyperlink{structraytracer_1_1Frequency}{Frequency} \&collision\+Frequency) const
+\begin{DoxyCompactList}\small\item\em Calculate the inverse bremsstrahlung coefficient base on current density and collisional frequency. \end{DoxyCompactList}\item 
+std\+::complex$<$ double $>$ \hyperlink{classraytracer_1_1LaserRay_a7ab8b571769cf7bd6d9d71694db025aa}{get\+Permittivity} (const \hyperlink{structraytracer_1_1Density}{Density} \&density, const \hyperlink{structraytracer_1_1Frequency}{Frequency} \&collision\+Frequency) const
+\begin{DoxyCompactList}\small\item\em Calculate the permittivity based on current density and collision\+Frequency. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Direction\+Function , typename Intersection\+Function , typename Stop\+Condition $>$ }\\void \hyperlink{classraytracer_1_1LaserRay_a50a1b65c99c56fe6eb7fd89e01f84acf}{generate\+Intersections} (const \hyperlink{classraytracer_1_1Mesh}{Mesh} \&mesh, Direction\+Function find\+Direction, Intersection\+Function \hyperlink{namespaceraytracer_ae44c3032cf96db5f4ba9c07f12c9a207}{find\+Intersection}, Stop\+Condition stop\+Condition)
+\begin{DoxyCompactList}\small\item\em Wrapper around \hyperlink{classraytracer_1_1Ray_a9ebcb3641ec730e5b94452833b69c68d}{Ray\+::find\+Intersections()}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classraytracer_1_1Point}{Point} \hyperlink{classraytracer_1_1LaserRay_a6970072ba9bbe9a958d9595386d39cc9}{start\+Point} \{\}
+\begin{DoxyCompactList}\small\item\em The point from which the \hyperlink{classraytracer_1_1LaserRay}{Laser\+Ray} originates. \end{DoxyCompactList}\item 
+\hyperlink{classraytracer_1_1Vector}{Vector} \hyperlink{classraytracer_1_1LaserRay_af50d079eead68440a707dfe63b2029d8}{direction} \{\}
+\begin{DoxyCompactList}\small\item\em The initial direction of the \hyperlink{classraytracer_1_1LaserRay}{Laser\+Ray}. \end{DoxyCompactList}\item 
+\hyperlink{structraytracer_1_1Energy}{Energy} \hyperlink{classraytracer_1_1LaserRay_a5434b2b8f9c1e5c695761e4c1147b00e}{energy} \{\}
+\begin{DoxyCompactList}\small\item\em Absolute energy carried by the \hyperlink{classraytracer_1_1LaserRay}{Laser\+Ray}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classraytracer_1_1LaserRay_ae3b24463ade2202eb37972eb1cdb88e0}\label{classraytracer_1_1LaserRay_ae3b24463ade2202eb37972eb1cdb88e0}} 
+\hyperlink{structraytracer_1_1Length}{Length} \hyperlink{classraytracer_1_1LaserRay_ae3b24463ade2202eb37972eb1cdb88e0}{wavelength} \{\}
+\begin{DoxyCompactList}\small\item\em Wavelength of the \hyperlink{classraytracer_1_1LaserRay}{Laser\+Ray} in cm. \end{DoxyCompactList}\item 
+std\+::vector$<$ \hyperlink{structraytracer_1_1Intersection}{Intersection} $>$ \hyperlink{classraytracer_1_1LaserRay_a2f15a3a20e496fdc6308d62d0a520bfd}{intersections}
+\begin{DoxyCompactList}\small\item\em Sequence of all intersections with given \hyperlink{classraytracer_1_1Mesh}{Mesh}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class representing a single \hyperlink{classraytracer_1_1LaserRay}{Laser\+Ray}. 
+
+It has associated energy but no width for now. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classraytracer_1_1LaserRay_a50a1b65c99c56fe6eb7fd89e01f84acf}\label{classraytracer_1_1LaserRay_a50a1b65c99c56fe6eb7fd89e01f84acf}} 
+\index{raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}!generate\+Intersections@{generate\+Intersections}}
+\index{generate\+Intersections@{generate\+Intersections}!raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}}
+\subsubsection{\texorpdfstring{generate\+Intersections()}{generateIntersections()}}
+{\footnotesize\ttfamily template$<$typename Direction\+Function , typename Intersection\+Function , typename Stop\+Condition $>$ \\
+void raytracer\+::\+Laser\+Ray\+::generate\+Intersections (\begin{DoxyParamCaption}\item[{const \hyperlink{classraytracer_1_1Mesh}{Mesh} \&}]{mesh,  }\item[{Direction\+Function}]{find\+Direction,  }\item[{Intersection\+Function}]{find\+Intersection,  }\item[{Stop\+Condition}]{stop\+Condition }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Wrapper around \hyperlink{classraytracer_1_1Ray_a9ebcb3641ec730e5b94452833b69c68d}{Ray\+::find\+Intersections()}. 
+
+It generates a ray based on the \hyperlink{classraytracer_1_1LaserRay}{Laser\+Ray} properties and saves the result to \hyperlink{classraytracer_1_1LaserRay_a2f15a3a20e496fdc6308d62d0a520bfd}{Laser\+Ray\+::intersections}.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Intersection\+Function} & \\
+\hline
+{\em Stop\+Condition} & \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em mesh} & to be intersected \\
+\hline
+{\em find\+Direction} & will be propagated to \hyperlink{classraytracer_1_1Ray_a9ebcb3641ec730e5b94452833b69c68d}{Ray\+::find\+Intersections()} as is. \\
+\hline
+{\em find\+Intersection} & will be propagated to \hyperlink{classraytracer_1_1Ray_a9ebcb3641ec730e5b94452833b69c68d}{Ray\+::find\+Intersections()} as is. \\
+\hline
+{\em stop\+Condition} & will be propagated to \hyperlink{classraytracer_1_1Ray_a9ebcb3641ec730e5b94452833b69c68d}{Ray\+::find\+Intersections()} as is. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classraytracer_1_1LaserRay_a9b73d2d5488310646ad750243f5e6b13}\label{classraytracer_1_1LaserRay_a9b73d2d5488310646ad750243f5e6b13}} 
+\index{raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}!get\+Inverse\+Bremsstrahlung\+Coeff@{get\+Inverse\+Bremsstrahlung\+Coeff}}
+\index{get\+Inverse\+Bremsstrahlung\+Coeff@{get\+Inverse\+Bremsstrahlung\+Coeff}!raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}}
+\subsubsection{\texorpdfstring{get\+Inverse\+Bremsstrahlung\+Coeff()}{getInverseBremsstrahlungCoeff()}}
+{\footnotesize\ttfamily double raytracer\+::\+Laser\+Ray\+::get\+Inverse\+Bremsstrahlung\+Coeff (\begin{DoxyParamCaption}\item[{const \hyperlink{structraytracer_1_1Density}{Density} \&}]{density,  }\item[{const \hyperlink{structraytracer_1_1Frequency}{Frequency} \&}]{collision\+Frequency }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calculate the inverse bremsstrahlung coefficient base on current density and collisional frequency. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em density} & \\
+\hline
+{\em collision\+Frequency} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{classraytracer_1_1LaserRay_a7ab8b571769cf7bd6d9d71694db025aa}\label{classraytracer_1_1LaserRay_a7ab8b571769cf7bd6d9d71694db025aa}} 
+\index{raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}!get\+Permittivity@{get\+Permittivity}}
+\index{get\+Permittivity@{get\+Permittivity}!raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}}
+\subsubsection{\texorpdfstring{get\+Permittivity()}{getPermittivity()}}
+{\footnotesize\ttfamily std\+::complex$<$double$>$ raytracer\+::\+Laser\+Ray\+::get\+Permittivity (\begin{DoxyParamCaption}\item[{const \hyperlink{structraytracer_1_1Density}{Density} \&}]{density,  }\item[{const \hyperlink{structraytracer_1_1Frequency}{Frequency} \&}]{collision\+Frequency }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calculate the permittivity based on current density and collision\+Frequency. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em density} & \\
+\hline
+{\em collision\+Frequency} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+permittivity 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classraytracer_1_1LaserRay_af841f0b8279f67242414c1709ce61212}\label{classraytracer_1_1LaserRay_af841f0b8279f67242414c1709ce61212}} 
+\index{raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}!get\+Refractive\+Index@{get\+Refractive\+Index}}
+\index{get\+Refractive\+Index@{get\+Refractive\+Index}!raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}}
+\subsubsection{\texorpdfstring{get\+Refractive\+Index()}{getRefractiveIndex()}}
+{\footnotesize\ttfamily double raytracer\+::\+Laser\+Ray\+::get\+Refractive\+Index (\begin{DoxyParamCaption}\item[{const \hyperlink{structraytracer_1_1Density}{Density} \&}]{density,  }\item[{const \hyperlink{structraytracer_1_1Frequency}{Frequency} \&}]{collision\+Frequency }\end{DoxyParamCaption}) const}
+
+
+
+Calculate the index of refraction based on current density, collisional frequency. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em density} & at which the refractive index is to be calculated \\
+\hline
+{\em collision\+Frequency} & current collisional frequency \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+refractive index 
+\end{DoxyReturn}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classraytracer_1_1LaserRay_af50d079eead68440a707dfe63b2029d8}\label{classraytracer_1_1LaserRay_af50d079eead68440a707dfe63b2029d8}} 
+\index{raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}!direction@{direction}}
+\index{direction@{direction}!raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}}
+\subsubsection{\texorpdfstring{direction}{direction}}
+{\footnotesize\ttfamily \hyperlink{classraytracer_1_1Vector}{Vector} raytracer\+::\+Laser\+Ray\+::direction \{\}}
+
+
+
+The initial direction of the \hyperlink{classraytracer_1_1LaserRay}{Laser\+Ray}. 
+
+\mbox{\Hypertarget{classraytracer_1_1LaserRay_a5434b2b8f9c1e5c695761e4c1147b00e}\label{classraytracer_1_1LaserRay_a5434b2b8f9c1e5c695761e4c1147b00e}} 
+\index{raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}!energy@{energy}}
+\index{energy@{energy}!raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}}
+\subsubsection{\texorpdfstring{energy}{energy}}
+{\footnotesize\ttfamily \hyperlink{structraytracer_1_1Energy}{Energy} raytracer\+::\+Laser\+Ray\+::energy \{\}}
+
+
+
+Absolute energy carried by the \hyperlink{classraytracer_1_1LaserRay}{Laser\+Ray}. 
+
+\mbox{\Hypertarget{classraytracer_1_1LaserRay_a2f15a3a20e496fdc6308d62d0a520bfd}\label{classraytracer_1_1LaserRay_a2f15a3a20e496fdc6308d62d0a520bfd}} 
+\index{raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}!intersections@{intersections}}
+\index{intersections@{intersections}!raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}}
+\subsubsection{\texorpdfstring{intersections}{intersections}}
+{\footnotesize\ttfamily std\+::vector$<$\hyperlink{structraytracer_1_1Intersection}{Intersection}$>$ raytracer\+::\+Laser\+Ray\+::intersections}
+
+
+
+Sequence of all intersections with given \hyperlink{classraytracer_1_1Mesh}{Mesh}. 
+
+This is empty if no generate\+Intersections was called. \mbox{\Hypertarget{classraytracer_1_1LaserRay_a6970072ba9bbe9a958d9595386d39cc9}\label{classraytracer_1_1LaserRay_a6970072ba9bbe9a958d9595386d39cc9}} 
+\index{raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}!start\+Point@{start\+Point}}
+\index{start\+Point@{start\+Point}!raytracer\+::\+Laser\+Ray@{raytracer\+::\+Laser\+Ray}}
+\subsubsection{\texorpdfstring{start\+Point}{startPoint}}
+{\footnotesize\ttfamily \hyperlink{classraytracer_1_1Point}{Point} raytracer\+::\+Laser\+Ray\+::start\+Point \{\}}
+
+
+
+The point from which the \hyperlink{classraytracer_1_1LaserRay}{Laser\+Ray} originates. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/martin/\+C\+Lion\+Projects/raytracer/include/raytracer/physics/Laser\+Ray.\+h\end{DoxyCompactItemize}

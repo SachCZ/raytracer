@@ -1,0 +1,85 @@
+\hypertarget{classraytracer_1_1Element}{}\section{raytracer\+:\+:Element Class Reference}
+\label{classraytracer_1_1Element}\index{raytracer\+::\+Element@{raytracer\+::\+Element}}
+
+
+Class representing a single polygonal element in mesh.  
+
+
+
+
+{\ttfamily \#include $<$Element.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+const std\+::vector$<$ \hyperlink{classraytracer_1_1Face}{Face} $\ast$ $>$ \& \hyperlink{classraytracer_1_1Element_a46d4135d6ef7fd7c34656aa90f35b2ed}{get\+Faces} () const
+\begin{DoxyCompactList}\small\item\em Get the faces of the \hyperlink{classraytracer_1_1Element}{Element}. \end{DoxyCompactList}\item 
+\hyperlink{classraytracer_1_1Element_a70169ab8330ac32971e0925ae4ad2fd9}{Element} (int id, std\+::vector$<$ \hyperlink{classraytracer_1_1Face}{Face} $\ast$$>$ faces)
+\begin{DoxyCompactList}\small\item\em Constructor taking an id and std\+::vector of faces of the element. \end{DoxyCompactList}\item 
+int \hyperlink{classraytracer_1_1Element_ab56fe71038371416a91db232b27c006a}{get\+Id} () const
+\begin{DoxyCompactList}\small\item\em Retrieve the id of element. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class representing a single polygonal element in mesh. 
+
+Could be 2\+D/3D given by set of faces (edges, surfaces). \begin{DoxyWarning}{Warning}
+Do not construct this manually unless you know what you are doing. 
+\end{DoxyWarning}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classraytracer_1_1Element_a70169ab8330ac32971e0925ae4ad2fd9}\label{classraytracer_1_1Element_a70169ab8330ac32971e0925ae4ad2fd9}} 
+\index{raytracer\+::\+Element@{raytracer\+::\+Element}!Element@{Element}}
+\index{Element@{Element}!raytracer\+::\+Element@{raytracer\+::\+Element}}
+\subsubsection{\texorpdfstring{Element()}{Element()}}
+{\footnotesize\ttfamily raytracer\+::\+Element\+::\+Element (\begin{DoxyParamCaption}\item[{int}]{id,  }\item[{std\+::vector$<$ \hyperlink{classraytracer_1_1Face}{Face} $\ast$$>$}]{faces }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Constructor taking an id and std\+::vector of faces of the element. 
+
+\begin{DoxyWarning}{Warning}
+It is users responsibility for the id to be unique. It is thus advised to not construct instance of \hyperlink{classraytracer_1_1Element}{Element} manually.
+\end{DoxyWarning}
+Clockwise order of faces is preferred in 2D. 
+\begin{DoxyParams}{Parameters}
+{\em id} & unique identification \\
+\hline
+{\em faces} & of the element \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classraytracer_1_1Element_a46d4135d6ef7fd7c34656aa90f35b2ed}\label{classraytracer_1_1Element_a46d4135d6ef7fd7c34656aa90f35b2ed}} 
+\index{raytracer\+::\+Element@{raytracer\+::\+Element}!get\+Faces@{get\+Faces}}
+\index{get\+Faces@{get\+Faces}!raytracer\+::\+Element@{raytracer\+::\+Element}}
+\subsubsection{\texorpdfstring{get\+Faces()}{getFaces()}}
+{\footnotesize\ttfamily const std\+::vector$<$\hyperlink{classraytracer_1_1Face}{Face} $\ast$$>$\& raytracer\+::\+Element\+::get\+Faces (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the faces of the \hyperlink{classraytracer_1_1Element}{Element}. 
+
+Edges in 2D, surfaces in 3D. \begin{DoxyReturn}{Returns}
+the faces 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classraytracer_1_1Element_ab56fe71038371416a91db232b27c006a}\label{classraytracer_1_1Element_ab56fe71038371416a91db232b27c006a}} 
+\index{raytracer\+::\+Element@{raytracer\+::\+Element}!get\+Id@{get\+Id}}
+\index{get\+Id@{get\+Id}!raytracer\+::\+Element@{raytracer\+::\+Element}}
+\subsubsection{\texorpdfstring{get\+Id()}{getId()}}
+{\footnotesize\ttfamily int raytracer\+::\+Element\+::get\+Id (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Retrieve the id of element. 
+
+\begin{DoxyReturn}{Returns}
+id 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/martin/\+C\+Lion\+Projects/raytracer/include/raytracer/geometry/Element.\+h\end{DoxyCompactItemize}
