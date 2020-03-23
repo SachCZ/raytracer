@@ -1,8 +1,8 @@
 #ifndef RAYTRACER_ABSORPTION_H
 #define RAYTRACER_ABSORPTION_H
 
-#include <raytracer/geometry/Ray.h>
-#include <raytracer/geometry/MeshFunction.h>
+#include "Ray.h"
+#include "MeshFunction.h"
 #include "Magnitudes.h"
 #include "LaserRay.h"
 #include "Laser.h"
