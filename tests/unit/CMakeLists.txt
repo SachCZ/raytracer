@@ -8,9 +8,9 @@ add_executable(TestRunner
         geometry/freeFunctionsTest.cpp
         physics/laserRayTest.cpp
         physics/laserTest.cpp
-        physics/laserPropagationTest.cpp
-        physics/gradientCalculatorsTest.cpp
+        physics/propagationTest.cpp
+        physics/gradientTest.cpp
         utility/freeFunctionsTest.cpp
-        )
+        physics/absorptionTest.cpp)
 target_link_libraries(TestRunner PRIVATE gtest gtest gmock raytracer)
 configure_file(geometry/mesh.vtk ${CMAKE_CURRENT_BINARY_DIR}/geometry/mesh.vtk COPYONLY)

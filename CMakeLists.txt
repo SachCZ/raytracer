@@ -19,6 +19,6 @@ if(BUILD_TESTS)
     add_subdirectory(tests/integration)
 endif(BUILD_TESTS)
 
-add_library(raytracer src/raytracer.cpp)
+add_library(raytracer src/raytracer.cpp include/raytracer/physics/Absorption.cpp include/raytracer/physics/Absorption.h)
 target_link_libraries(raytracer PUBLIC geometry utility physics)
 target_include_directories(raytracer PUBLIC ./include)

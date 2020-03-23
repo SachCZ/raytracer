@@ -16,6 +16,8 @@
  *      Gradient models to calculate gradient at given point in a MeshFunction.
  *      @defgroup frequency Collisional frequencies
  *      CollisionalFrequency models to calculate collisional frequency.
+ *      @defgroup absorption Absorption models
+ *      All possible AbsorptionModel implementations are documented in this module.
  * @}
  */
 

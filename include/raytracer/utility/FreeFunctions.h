@@ -4,6 +4,14 @@
 #include <vector>
 
 namespace raytracer {
+    /**
+     * Return a vector of N equally distanced values from a to b.
+     * @tparam T
+     * @param a
+     * @param b
+     * @param N
+     * @return
+     */
     template<typename T>
     std::vector<T> linspace(T a, T b, size_t N) {
         T h = (b - a) / static_cast<T>(N - 1);
@@ -15,6 +23,15 @@ namespace raytracer {
         return xs;
     }
 
+    /**
+     * Given a function, integrate it at a point x using central rectangle approximation.
+     * @tparam T
+     * @tparam Function
+     * @param function
+     * @param x
+     * @param dx
+     * @return
+     */
     template<typename T, typename Function>
     T integrateTrapz(Function function, T x, T dx) {
         return dx * (function(x) + function(x + dx)) / 2.0;
