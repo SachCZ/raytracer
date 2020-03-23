@@ -54,7 +54,8 @@ namespace raytracer {
             if (root > 0) {
                 return r * l + (r * c - sqrt(root)) * n;
             } else {
-                return l + 2 * c * n;
+                if (gradient*previousDirection < 0) return previousDirection;
+                else return l + 2 * c * n;
             }
         }
 }
