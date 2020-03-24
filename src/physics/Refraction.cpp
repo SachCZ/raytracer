@@ -7,13 +7,16 @@ namespace raytracer {
                 const MeshFunction &temperature,
                 const MeshFunction &ionization,
                 const Gradient &gradientCalculator,
-                const CollisionalFrequency &collisionalFrequencyCalculator
+                const CollisionalFrequency &collisionalFrequencyCalculator,
+                Marker* reflected
         ) :
                 density(density),
                 temperature(temperature),
                 ionization(ionization),
                 gradientCalculator(gradientCalculator),
-                collisionalFrequencyCalculator(collisionalFrequencyCalculator) {}
+                collisionalFrequencyCalculator(collisionalFrequencyCalculator),
+                reflected(reflected)
+                {}
 
         Vector SnellsLaw::operator()(
                 const PointOnFace &pointOnFace,
@@ -54,8 +57,13 @@ namespace raytracer {
             if (root > 0) {
                 return r * l + (r * c - sqrt(root)) * n;
             } else {
-                if (gradient*previousDirection < 0) return previousDirection;
-                else return l + 2 * c * n;
+                if (n*l < 0) return previousDirection;
+                else {
+                    if (reflected){
+                        reflected->mark(previousElement);
+                    }
+                    return l + 2 * c * n;
+                }
             }
         }
 }

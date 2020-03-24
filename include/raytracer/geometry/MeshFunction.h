@@ -3,6 +3,7 @@
 
 #include <mfem.hpp>
 #include <Element.h>
+#include <set>
 
 namespace raytracer {
     /**
@@ -77,6 +78,38 @@ namespace raytracer {
         const mfem::FiniteElementSpace &finiteElementSpace;
 
         double &get(const Element &element);
+    };
+
+    /**
+     * Class used to mark elements that have some property. Actually it is just a set internally.
+     */
+    class Marker {
+    public:
+        /**
+         * Mark an Element.
+         * @param element
+         */
+        void mark(const Element& element){
+            marked.insert(element.getId());
+        }
+        /**
+         * Unmark an Element
+         * @param element
+         */
+        void unmark(const Element& element) {
+            marked.erase(element.getId());
+        }
+
+        /**
+         * Check whether an Element is marked by this marker.
+         * @param element
+         * @return
+         */
+        bool isMarked(const Element& element) {
+            return marked.find(element.getId()) != marked.end();
+        }
+    private:
+        std::set<int> marked;
     };
 
     /**

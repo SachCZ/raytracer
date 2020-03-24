@@ -53,7 +53,8 @@ namespace raytracer {
                 const MeshFunction &temperature,
                 const MeshFunction &ionization,
                 const Gradient &gradientCalculator,
-                const CollisionalFrequency &collisionalFrequencyCalculator
+                const CollisionalFrequency &collisionalFrequencyCalculator,
+                Marker* reflected = nullptr
         );
 
 
@@ -83,6 +84,7 @@ namespace raytracer {
         const MeshFunction &ionization;
         const Gradient &gradientCalculator;
         const CollisionalFrequency &collisionalFrequencyCalculator;
+        Marker* reflected;
     };
 
     /**
