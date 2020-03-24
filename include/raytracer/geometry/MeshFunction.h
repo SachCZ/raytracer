@@ -105,7 +105,7 @@ namespace raytracer {
          * @param element
          * @return
          */
-        bool isMarked(const Element& element) {
+        bool isMarked(const Element& element) const {
             return marked.find(element.getId()) != marked.end();
         }
     private:
