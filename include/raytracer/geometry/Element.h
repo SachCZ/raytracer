@@ -25,6 +25,14 @@ namespace raytracer {
         const std::vector<Face *> &getFaces() const;
 
         /**
+         * Get the points of the Element.
+         * @return the points
+         */
+        const std::vector<Point *> &getPoints() const {
+            return this->points;
+        };
+
+        /**
          * Constructor taking an id and std::vector of faces of the element.
          * @warning
          * It is users responsibility for the id to be unique. It is thus advised to not construct instance of Element
@@ -45,6 +53,7 @@ namespace raytracer {
     private:
         int id;
         std::vector<Face *> faces;
+        std::vector<Point *> points;
     };
 
     /**
