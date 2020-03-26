@@ -9,7 +9,7 @@ namespace raytracer {
         return this->boundaryFaces;
     }
 
-    Mesh::Mesh(mfem::Mesh *mesh) : mesh(mesh), vertexToElementTable(mesh->GetVertexToElementTable()) {
+    Mesh::Mesh(mfem::Mesh *mesh) : mesh(mesh), elementToElementTable(mesh->ElementToElementTable()) {
         this->points = this->genPoints();
         this->faces = this->genFaces();
         this->elements = this->genElements();

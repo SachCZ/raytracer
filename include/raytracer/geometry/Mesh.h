@@ -66,6 +66,19 @@ namespace raytracer {
          */
         Element *getFaceAdjacentElement(const Face *face, const Vector &direction) const;
 
+        std::vector<Element*> getElementAdjacentElements(const Element& element) const {
+            mfem::Array<int> elementIds(
+                    this->elementToElementTable.GetRow(element.getId()),
+                    this->elementToElementTable.RowSize(element.getId())
+            );
+            std::vector<Element*> result;
+            result.reserve(elementIds.Size());
+            for (auto id : elementIds){
+                result.emplace_back(this->getElementFromId(id));
+            }
+            return result;
+        }
+
         /**
          * Return a sequence of faces that are on the mesh boundary.
          * @return sequence of faces.
@@ -78,7 +91,7 @@ namespace raytracer {
         std::vector<std::unique_ptr<Element>> elements;
         std::vector<std::unique_ptr<Face>> faces;
         std::vector<std::unique_ptr<Point>> points;
-        std::unique_ptr<mfem::Table> vertexToElementTable;
+        mutable mfem::Table elementToElementTable;
 
         std::unique_ptr<Point> createPointFromId(int id) const;
 
