@@ -10,6 +10,14 @@
 using namespace testing;
 using namespace raytracer;
 
+class MockGradient : public Gradient {
+public:
+    Vector
+    get(const PointOnFace &, const Element &, const Element &) const override {
+        return {6.3e25, 0};
+    }
+};
+
 class MockModel : public AbsorptionModel {
 public:
     Energy getEnergyChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
@@ -36,7 +44,7 @@ private:
     double _value{5};
 };
 
-class absorption_controller : public Test {
+class absorption : public Test {
 
 public:
     void SetUp() override {
@@ -59,19 +67,32 @@ public:
     MockAbsorbedEnergy mockAbsorbedEnergy;
     Laser laser{
             Length{1356e-7},
-            [](Point) { return Vector(1, 0); },
-            [](double) { return 1; },
-            Point(-1, 0),
-            Point(-1, 1)
+            [](Point) { return Vector(1, 1); },
+            [](double) { return 1/0.28284271247461912; },
+            Point(-1.1, -0.9),
+            Point(-0.9, -1.1)
     };
     std::unique_ptr<mfem::Mesh> mfemMesh;
     std::unique_ptr<Mesh> mesh;
 };
 
-TEST_F(absorption_controller, does_absorb_energy_according_to_model) {
+TEST_F(absorption, controller_does_absorb_energy_according_to_model) {
     controller.addModel(&mockModel);
     controller.absorb(laser, mockAbsorbedEnergy);
 
     auto newEnergy = mockAbsorbedEnergy.getValue(Element(0, {}));
     ASSERT_THAT(newEnergy, DoubleEq(16.2));
+}
+
+TEST_F(absorption, using_resonance_model_works) {
+    MockGradient gradient;
+    Marker reflectedMarker;
+    reflectedMarker.mark(*laser.getRays().front().intersections[0].nextElement);
+    Resonance resonance(gradient, reflectedMarker);
+
+    controller.addModel(&resonance);
+    controller.absorb(laser, mockAbsorbedEnergy);
+
+    auto newEnergy = mockAbsorbedEnergy.getValue(Element(0, {}));
+    ASSERT_THAT(newEnergy, DoubleNear(5.48133, 1e-5));
 }

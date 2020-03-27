@@ -21,7 +21,7 @@ namespace raytracer {
 
         double sourceWidth = (this->startPoint - this->endPoint).getNorm();
         double parameter = -sourceWidth / 2;
-        double deltaParameter = sourceWidth / (count - 1);
+        double deltaParameter = sourceWidth / count;
         parameter -= deltaParameter / 2; //Integrate with ray in the middle
 
         for (size_t i = 0; i < count; ++i) {

@@ -7,6 +7,7 @@
 #include "LaserRay.h"
 #include "Laser.h"
 #include "CollisionalFrequency.h"
+#include "Gradient.h"
 
 namespace raytracer {
     /**
@@ -37,6 +38,43 @@ namespace raytracer {
     };
 
     /**
+     * Absorption model of energy change due to resonance.
+     */
+    class Resonance : public AbsorptionModel {
+    public:
+
+        /**
+         * Construct this using a Gradient and Marker that marks elements in which the ray was reflected.
+         * @param gradientCalculator
+         * @param reflectedMarker
+         */
+        Resonance(const Gradient &gradientCalculator, const Marker &reflectedMarker);
+
+        /**
+         * Get the energy absorbed into the single element based on resonance absorption model from Velechovsky thesis.
+         * @param previousIntersection
+         * @param currentIntersection
+         * @param currentEnergy
+         * @param laserRay
+         * @return
+         */
+        Energy getEnergyChange(
+                const Intersection &previousIntersection,
+                const Intersection &currentIntersection,
+                const Energy &currentEnergy,
+                const LaserRay &laserRay
+        ) const override;
+
+    private:
+        const Gradient &gradientCalculator;
+        const Marker &reflectedMarker;
+
+        bool isResonating(const Element &element) const;
+
+        static double getQ(const LaserRay &laserRay, Vector dir, Vector grad);
+    };
+
+    /**
      * Absorption model of energy exchange due to bremsstrahlung.
      */
     struct Bremsstrahlung : public AbsorptionModel {
@@ -54,11 +92,7 @@ namespace raytracer {
                 const MeshFunction &temperature,
                 const MeshFunction &ionization,
                 const CollisionalFrequency &collisionalFrequency
-        ) :
-                _density(density),
-                _temperature(temperature),
-                _ionization(ionization),
-                collisionalFrequency(collisionalFrequency) {}
+        );
 
         /**
          * Returns the energy absorbed into one element between two intersections based on bremsstrahlung model.
@@ -73,23 +107,7 @@ namespace raytracer {
                 const Intersection &currentIntersection,
                 const Energy &currentEnergy,
                 const LaserRay &laserRay
-        ) const override {
-            const auto &element = currentIntersection.previousElement;
-            if (!element) return Energy{0};
-            const auto &previousPoint = previousIntersection.pointOnFace.point;
-            const auto &point = currentIntersection.pointOnFace.point;
-
-            const auto distance = (point - previousPoint).getNorm();
-            const auto density = Density{this->_density.getValue(*element)};
-            const auto temperature = Temperature{this->_temperature.getValue(*element)};
-            const auto ionization = this->_ionization.getValue(*element);
-
-            auto frequency = collisionalFrequency.get(density, temperature, laserRay.wavelength, ionization);
-            const auto exponent = -laserRay.getInverseBremsstrahlungCoeff(density, frequency) * distance;
-
-            auto newEnergy = currentEnergy.asDouble * std::exp(exponent);
-            return Energy{currentEnergy.asDouble - newEnergy};
-        }
+        ) const override;
 
     private:
         const MeshFunction &_density;

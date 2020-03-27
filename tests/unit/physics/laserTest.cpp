@@ -37,7 +37,7 @@ TEST_F(initialized_laser, can_generateproper_rays) {
     EXPECT_THAT(rays, SizeIs(51));
     EXPECT_THAT(rays[25].startPoint.y, DoubleEq(0.5));
     EXPECT_THAT(rays[10].direction.x, DoubleEq(1));
-    ASSERT_THAT(rays[5].energy.asDouble, DoubleEq(1.2 / 50 * 0.8));
+    ASSERT_THAT(rays[5].energy.asDouble, DoubleEq(1.2 / 51 * 0.8));
 }
 
 TEST_F(initialized_laser, can_generate_intersections) {
