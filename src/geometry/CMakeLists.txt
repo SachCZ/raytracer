@@ -7,7 +7,7 @@ add_library(geometry
         Face.cpp
         Element.cpp
         MeshFunction.cpp
-        )
+        Matrix2D.cpp ../../include/raytracer/geometry/Matrix2D.h)
 target_include_directories(geometry PUBLIC ../../include/raytracer/geometry)
 target_link_libraries(geometry PUBLIC utility mfem)
 target_compile_options(geometry PRIVATE $<$<CONFIG:DEBUG>:-Werror -Wall -Wextra>)
