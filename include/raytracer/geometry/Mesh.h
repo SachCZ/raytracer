@@ -66,6 +66,11 @@ namespace raytracer {
          */
         Element *getFaceAdjacentElement(const Face *face, const Vector &direction) const;
 
+        /**
+         * Given an Element return elements adjacent to this element.
+         * @param element
+         * @return list of element pointers
+         */
         std::vector<Element*> getElementAdjacentElements(const Element& element) const {
             mfem::Array<int> elementIds(
                     this->elementToElementTable.GetRow(element.getId()),

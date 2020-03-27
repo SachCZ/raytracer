@@ -47,6 +47,8 @@ namespace raytracer {
          * @param ionization
          * @param gradientCalculator
          * @param collisionalFrequencyCalculator
+         * @param reflectedMarker Marker where after using SnellsLaw all Element where the ray was reflected will
+         * will be marked - optional parameter
          */
         explicit SnellsLaw(
                 const MeshFunction &density,
