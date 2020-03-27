@@ -137,13 +137,23 @@ namespace raytracer {
         get(const PointOnFace &, const Element &previousElement, const Element &nextElement) const override {
             auto previousGradient = this->getValueAt(previousElement, mesh.getElementAdjacentElements(previousElement));
             auto nextGradient = this->getValueAt(nextElement, mesh.getElementAdjacentElements(nextElement));
-            return 1.0 / (previousGradient.getNorm() + nextGradient.getNorm()) *
-                   (previousGradient.getNorm() * previousGradient + nextGradient.getNorm() * nextGradient);
+            return normWeightedAverage({previousGradient, nextGradient});
         }
 
     private:
         const Mesh &mesh;
         const MeshFunction &density;
+
+        static Vector normWeightedAverage(const std::vector<Vector>& vectors){
+            Vector numerator{};
+            double denominator = 0;
+            for (const auto& vector : vectors){
+                if (vector.getNorm() == 0) continue;
+                numerator = numerator + vector.getNorm() * vector;
+                denominator += vector.getNorm();
+            }
+            return denominator == 0 ? Vector(0,0) : 1.0 / denominator * numerator;
+        }
 
         static std::array<double, 2> getCentroid(const Element &element) {
             //TODO Horribly terrible just for triangles
