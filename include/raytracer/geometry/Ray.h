@@ -155,16 +155,17 @@ namespace raytracer {
                 );
                 if (!nextElementToGo) break;
 
+                PointOnFace nextPointOnFace = findIntersection(previousIntersection.pointOnFace, direction,
+                                                               *nextElementToGo);
+
                 Intersection intersection{};
                 intersection.nextElement = nextElementToGo;
                 intersection.previousElement = previousIntersection.nextElement;
-                intersection.pointOnFace = previousIntersection.pointOnFace;
+                intersection.pointOnFace = nextPointOnFace;
                 intersection.direction = direction;
 
                 result.emplace_back(intersection);
                 previousIntersection = intersection;
-                previousIntersection.pointOnFace = findIntersection(previousIntersection.pointOnFace, direction,
-                                                                    *nextElementToGo);
             }
 
             return result;
