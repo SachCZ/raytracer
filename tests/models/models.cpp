@@ -45,14 +45,13 @@ void dumpFunctionToJson(
 }
 
 int main(int argc, char *argv[]) {
-    using namespace raytracer::utility;
-    using namespace raytracer::physics;
+    using namespace raytracer;
 
-    SpitzerFrequencyCalculator collisionalFrequency;
+    SpitzerFrequency collisionalFrequency;
 
     dumpFunctionToJson(
             [&collisionalFrequency](double temperature) {
-                return collisionalFrequency.getCollisionalFrequency(
+                return collisionalFrequency.get(
                         Density{1e21},
                         Temperature{temperature},
                         Length{800e-7},
@@ -75,7 +74,7 @@ int main(int argc, char *argv[]) {
 
     dumpFunctionToJson(
         [&laserRay, &collisionalFrequency](double density) {
-            auto frequency = collisionalFrequency.getCollisionalFrequency(
+            auto frequency = collisionalFrequency.get(
                     Density{density},
                     Temperature{150},
                     laserRay.wavelength,

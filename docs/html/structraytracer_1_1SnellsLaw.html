@@ -78,9 +78,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a523a0d929eaaa78ea11bed701cac2d9d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structraytracer_1_1SnellsLaw.html#a523a0d929eaaa78ea11bed701cac2d9d">SnellsLaw</a> (const <a class="el" href="classraytracer_1_1MeshFunction.html">MeshFunction</a> &amp;density, const <a class="el" href="classraytracer_1_1MeshFunction.html">MeshFunction</a> &amp;temperature, const <a class="el" href="classraytracer_1_1MeshFunction.html">MeshFunction</a> &amp;ionization, const <a class="el" href="classraytracer_1_1Gradient.html">Gradient</a> &amp;gradientCalculator, const <a class="el" href="classraytracer_1_1CollisionalFrequency.html">CollisionalFrequency</a> &amp;collisionalFrequencyCalculator)</td></tr>
-<tr class="memdesc:a523a0d929eaaa78ea11bed701cac2d9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the <a class="el" href="structraytracer_1_1SnellsLaw.html" title="Functor that finds new direction base on the Snells&#39;s law. ">SnellsLaw</a> using the density, temperature and ionization function references.  <a href="#a523a0d929eaaa78ea11bed701cac2d9d">More...</a><br /></td></tr>
-<tr class="separator:a523a0d929eaaa78ea11bed701cac2d9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2dc1aeb5d50bc330417819f3f051b51"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structraytracer_1_1SnellsLaw.html#aa2dc1aeb5d50bc330417819f3f051b51">SnellsLaw</a> (const <a class="el" href="classraytracer_1_1MeshFunction.html">MeshFunction</a> &amp;density, const <a class="el" href="classraytracer_1_1MeshFunction.html">MeshFunction</a> &amp;temperature, const <a class="el" href="classraytracer_1_1MeshFunction.html">MeshFunction</a> &amp;ionization, const <a class="el" href="classraytracer_1_1Gradient.html">Gradient</a> &amp;gradientCalculator, const <a class="el" href="classraytracer_1_1CollisionalFrequency.html">CollisionalFrequency</a> &amp;collisionalFrequencyCalculator, <a class="el" href="classraytracer_1_1Marker.html">Marker</a> *reflectedMarker=nullptr)</td></tr>
+<tr class="memdesc:aa2dc1aeb5d50bc330417819f3f051b51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the <a class="el" href="structraytracer_1_1SnellsLaw.html" title="Functor that finds new direction base on the Snells&#39;s law. ">SnellsLaw</a> using the density, temperature and ionization function references.  <a href="#aa2dc1aeb5d50bc330417819f3f051b51">More...</a><br /></td></tr>
+<tr class="separator:aa2dc1aeb5d50bc330417819f3f051b51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1af745f1e3b826546eff6d938b33982"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classraytracer_1_1Vector.html">Vector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structraytracer_1_1SnellsLaw.html#ab1af745f1e3b826546eff6d938b33982">operator()</a> (const <a class="el" href="structraytracer_1_1PointOnFace.html">PointOnFace</a> &amp;pointOnFace, const <a class="el" href="classraytracer_1_1Vector.html">Vector</a> &amp;previousDirection, const <a class="el" href="classraytracer_1_1Element.html">Element</a> &amp;previousElement, const <a class="el" href="classraytracer_1_1Element.html">Element</a> &amp;nextElement, const <a class="el" href="classraytracer_1_1LaserRay.html">LaserRay</a> &amp;laserRay)</td></tr>
 <tr class="memdesc:ab1af745f1e3b826546eff6d938b33982"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to be used in <a class="el" href="classraytracer_1_1Laser.html#a40fd2b112fb1de646861d7e93ac303e3" title="Find intersections finds all the Intersection of each LaserRay in Laser with Mesh. ">Laser::generateIntersections()</a> as findDirection.  <a href="#ab1af745f1e3b826546eff6d938b33982">More...</a><br /></td></tr>
 <tr class="separator:ab1af745f1e3b826546eff6d938b33982"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -88,8 +88,8 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Functor that finds new direction base on the Snells's law. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a523a0d929eaaa78ea11bed701cac2d9d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a523a0d929eaaa78ea11bed701cac2d9d">&#9670;&nbsp;</a></span>SnellsLaw()</h2>
+<a id="aa2dc1aeb5d50bc330417819f3f051b51"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2dc1aeb5d50bc330417819f3f051b51">&#9670;&nbsp;</a></span>SnellsLaw()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -125,7 +125,13 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="classraytracer_1_1CollisionalFrequency.html">CollisionalFrequency</a> &amp;&#160;</td>
-          <td class="paramname"><em>collisionalFrequencyCalculator</em>&#160;</td>
+          <td class="paramname"><em>collisionalFrequencyCalculator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classraytracer_1_1Marker.html">Marker</a> *&#160;</td>
+          <td class="paramname"><em>reflectedMarker</em> = <code>nullptr</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -148,6 +154,7 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">ionization</td><td></td></tr>
     <tr><td class="paramname">gradientCalculator</td><td></td></tr>
     <tr><td class="paramname">collisionalFrequencyCalculator</td><td></td></tr>
+    <tr><td class="paramname">reflectedMarker</td><td><a class="el" href="classraytracer_1_1Marker.html" title="Class used to mark elements that have some property. ">Marker</a> where after using <a class="el" href="structraytracer_1_1SnellsLaw.html" title="Functor that finds new direction base on the Snells&#39;s law. ">SnellsLaw</a> all <a class="el" href="classraytracer_1_1Element.html" title="Class representing a single polygonal element in mesh. ">Element</a> where the ray was reflected will will be marked - optional parameter </td></tr>
   </table>
   </dd>
 </dl>
