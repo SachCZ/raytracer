@@ -137,26 +137,29 @@ namespace raytracer {
             result.emplace_back(previousIntersection);
 
             while (!stopCondition(*(result.back().nextElement))) {
+                PointOnFace nextPointOnFace = findIntersection(
+                        previousIntersection.pointOnFace,
+                        previousIntersection.direction,
+                        *previousIntersection.nextElement
+                );
+
                 auto nextElementForDirection = mesh.getFaceAdjacentElement( //NextElement
-                        previousIntersection.pointOnFace.face,
+                        nextPointOnFace.face,
                         previousIntersection.direction
                 );
                 if (!nextElementForDirection) break;
                 auto direction = findDirection(
-                        previousIntersection.pointOnFace, //At which point
+                        nextPointOnFace, //At which point
                         previousIntersection.direction, //Previous direction
                         *previousIntersection.nextElement, //Previous element
                         *nextElementForDirection
                 );
 
                 auto nextElementToGo = mesh.getFaceAdjacentElement(
-                        previousIntersection.pointOnFace.face,
+                        nextPointOnFace.face,
                         direction
                 );
                 if (!nextElementToGo) break;
-
-                PointOnFace nextPointOnFace = findIntersection(previousIntersection.pointOnFace, direction,
-                                                               *nextElementToGo);
 
                 Intersection intersection{};
                 intersection.nextElement = nextElementToGo;
