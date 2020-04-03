@@ -8,6 +8,7 @@ struct FunctionMetadata {
     std::string title = "";
     std::string xLabel = "";
     std::string yLabel = "";
+    std::string imageName = "";
     bool logarithmic = false;
 };
 
@@ -39,6 +40,7 @@ void dumpFunctionToJson(
     object["xlabel"] = metadata.xLabel;
     object["ylabel"] = metadata.yLabel;
     object["logarithmic"] = metadata.logarithmic;
+    object["imageName"] = metadata.imageName;
     root[metadata.title] = object;
     std::ofstream outputFile(filename);
     outputFile << root;
@@ -46,6 +48,10 @@ void dumpFunctionToJson(
 
 int main(int argc, char *argv[]) {
     using namespace raytracer;
+
+    const std::string filename = "data/models.json";
+    //Erase the file
+    std::remove(filename.data());
 
     SpitzerFrequency collisionalFrequency;
 
@@ -59,11 +65,12 @@ int main(int argc, char *argv[]) {
                 ).asDouble;
             },
             linspace(0.0, 500.0, 1000),
-            "models.json",
+            filename,
             FunctionMetadata{
-                    "Spitzer frequency n=1e21, wavelength=800nm, Z=22",
+                    "Spitzer frequency $n_e=10^{21}$, $\\lambda=800$ nm, $Z=22$",
                     "$T$ [eV]",
                     "$\\nu$ [s$^{-1}$]",
+                    "frequency_n_e1e21_lamb800_Z22.png",
                     true
             }
     );
@@ -83,11 +90,12 @@ int main(int argc, char *argv[]) {
             return laserRay.getRefractiveIndex(Density{density}, frequency);
         },
         linspace(criticalDensity - 0.5 * criticalDensity, criticalDensity + 0.5 * criticalDensity, 1000),
-        "models.json",
+        filename,
         FunctionMetadata{
-            "Refractive index",
+            "Refractive index at $T$ = 150 eV, $\\lambda = 800$ nm",
             "$n_e$ [cm^$-3$]",
-            "$n$ [-]"
+            "$n$ [-]",
+            "refindex_T150_lamb800.png"
         }
     );
 }

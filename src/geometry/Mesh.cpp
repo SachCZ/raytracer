@@ -130,7 +130,7 @@ namespace raytracer {
         return std::make_unique<mfem::Mesh>(
                 sideA.segmentCount,
                 sideB.segmentCount,
-                mfem::Element::Type::QUADRILATERAL,
+                mfem::Element::Type::TRIANGLE,
                 true,
                 sideA.length,
                 sideB.length,

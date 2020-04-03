@@ -1,0 +1,2 @@
+add_executable(SampleModels sampleModels.cpp)
+target_link_libraries(SampleModels PRIVATE raytracer)

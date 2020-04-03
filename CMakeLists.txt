@@ -14,10 +14,15 @@ option(BUILD_TESTS "Build unit tests" OFF)
 
 if(BUILD_TESTS)
     add_subdirectory(tests/unit)
-    add_subdirectory(tests/profile)
-    add_subdirectory(tests/models)
     add_subdirectory(tests/integration)
 endif(BUILD_TESTS)
+
+if (BUILD_EXAMPLES)
+    add_subdirectory(examples/sampleGradient)
+    add_subdirectory(examples/sampleModels)
+    add_subdirectory(examples/traceBremsstrahlung)
+    add_subdirectory(examples/traceResonance)
+endif(BUILD_EXAMPLES)
 
 add_library(raytracer src/raytracer.cpp src/physics/Absorption.cpp include/raytracer/physics/Absorption.h)
 target_link_libraries(raytracer PUBLIC geometry utility physics)

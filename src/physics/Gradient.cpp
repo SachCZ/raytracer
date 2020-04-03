@@ -135,6 +135,7 @@ namespace raytracer {
 
     Vector LeastSquare::solve(Matrix2D A, Vector b) { //Crammer
         auto det = A.yy * A.xx - A.xy * A.yx;
+        if (det == 0) return {0, 0};
         auto x = (b.x * A.yy - A.xy * b.y) / det;
         auto y = (A.xx*b.y - b.x * A.yx) / det;
         return {x, y};

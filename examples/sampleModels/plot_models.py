@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import json
 
 if __name__ == "__main__":
-    with open("models.json") as json_file:
+    with open("data/models.json") as json_file:
         data = json.load(json_file)
         for title, function in data.items():
             x = function["x"]
@@ -16,4 +16,5 @@ if __name__ == "__main__":
                 plt.loglog(x, y)
             else:
                 plt.plot(x, y)
-            plt.show()
+            plt.savefig("images/" + function["imageName"])
+            plt.clf()
