@@ -9,8 +9,6 @@
 #include <raytracer/physics/Absorption.h>
 #include "mfem.hpp"
 
-using namespace raytracer;
-
 double densityFunction(const mfem::Vector &x) {
     return 1e26 * x(0) + 6.44713e+20;
 }
@@ -24,18 +22,16 @@ double ionizationFunction(const mfem::Vector &) {
 }
 
 int main(int, char *[]) {
+    using namespace raytracer;
+
     auto mfemMesh = std::make_unique<mfem::Mesh>("data/mesh.vtk", 1, 0);
-
-
+    Mesh mesh(mfemMesh.get());
     mfem::L2_FECollection l2FiniteElementCollection(0, 2);
-    mfem::H1_FECollection h1FiniteElementCollection(1, 2);
     mfem::FiniteElementSpace l2FiniteElementSpace(mfemMesh.get(), &l2FiniteElementCollection);
-    mfem::FiniteElementSpace h1FiniteElementSpace(mfemMesh.get(), &h1FiniteElementCollection);
 
     mfem::GridFunction absorbedEnergyGridFunction(&l2FiniteElementSpace);
     absorbedEnergyGridFunction = 0;
-
-    Mesh mesh(mfemMesh.get());
+    MfemMeshFunction absorbedEnergyMeshFunction(absorbedEnergyGridFunction, l2FiniteElementSpace);
 
     mfem::GridFunction densityGridFunction(&l2FiniteElementSpace);
     mfem::FunctionCoefficient densityFunctionCoefficient(densityFunction);
@@ -52,8 +48,6 @@ int main(int, char *[]) {
     ionizationGridFunction.ProjectCoefficient(ionizationFunctionCoefficient);
     MfemMeshFunction ionizationMeshFunction(ionizationGridFunction, l2FiniteElementSpace);
 
-    MfemMeshFunction absorbedEnergyMeshFunction(absorbedEnergyGridFunction, l2FiniteElementSpace);
-
     LeastSquare leastSquareGradient(mesh, densityMeshFunction);
     SpitzerFrequency spitzerFrequency;
 
@@ -68,7 +62,7 @@ int main(int, char *[]) {
     Laser laser(
             Length{1315e-7},
             [](const Point) { return Vector(1, 0.7); },
-            Gaussian(0.3e-5),
+            Gaussian(0.3e-5, 1, 0),
             Point(-0.51e-5, -0.3e-5),
             Point(-0.51e-5, -0.5e-5)
     );

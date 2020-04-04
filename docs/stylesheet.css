@@ -299,6 +299,7 @@ div.contents {
 	background-color: white;
 	min-height: 550px;
 	margin-bottom: 150px;
+	overflow: auto;
 }
 
 td.indexkey {
@@ -1257,6 +1258,7 @@ dl.section dd {
 .image
 {
         text-align: center;
+		float: left;
 }
 
 .dotgraph

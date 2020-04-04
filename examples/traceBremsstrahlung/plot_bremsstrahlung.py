@@ -2,6 +2,7 @@
 
 import matplotlib.pyplot as plt
 import rayvis
+import matplotlib.ticker as ticker
 
 if __name__ == "__main__":
     _, axis = plt.subplots()
@@ -10,6 +11,14 @@ if __name__ == "__main__":
     nodes, elements = rayvis.read_vtk("data/mesh.vtk")
     rayvis.plot_vtk_mesh(axis, nodes, elements)
 
+    formatter = ticker.ScalarFormatter(useMathText=True)
+    formatter.set_scientific(True)
+    formatter.set_powerlimits((-1,1))
+    axis.yaxis.set_major_formatter(formatter)
+    axis.xaxis.set_major_formatter(formatter)
+    axis.set_xlabel("$x$ [cm]")
+    axis.set_ylabel("$y$ [cm]")
+
     plt.axis('equal')
     plt.savefig("images/rays.png")
     plt.clf()
@@ -17,5 +26,11 @@ if __name__ == "__main__":
     fig, axis = plt.subplots()
     values = rayvis.read_grid_function("data/absorbed_energy.txt")
     rayvis.plot_grid_function(fig, axis, nodes, elements, values)
+
+    axis.yaxis.set_major_formatter(formatter)
+    axis.xaxis.set_major_formatter(formatter)
+    axis.set_xlabel("$x$ [cm]")
+    axis.set_ylabel("$y$ [cm]")
+
     plt.axis('equal')
     plt.savefig("images/absorbed_energy.png")
