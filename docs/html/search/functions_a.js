@@ -1,0 +1,7 @@
+var searchData=
+[
+  ['operator_28_29',['operator()',['../structraytracer_1_1ContinueStraight.html#ad985691646c9dea102f182862750b071',1,'raytracer::ContinueStraight::operator()()'],['../structraytracer_1_1SnellsLaw.html#ab1af745f1e3b826546eff6d938b33982',1,'raytracer::SnellsLaw::operator()()'],['../structraytracer_1_1StopAtCritical.html#acc71054d773ea6fe0df52986d5d1512e',1,'raytracer::StopAtCritical::operator()()'],['../structraytracer_1_1DontStop.html#a1b7c7429e15c8aced0dd2a0d296c2e17',1,'raytracer::DontStop::operator()()'],['../classraytracer_1_1Gaussian.html#ac4bbe17132daa8b89dc431c353efc205',1,'raytracer::Gaussian::operator()()']]],
+  ['operator_2a',['operator*',['../group__api.html#ga03236160eb138b0ee089b67a71d4978e',1,'raytracer::operator*(double k, Vector a)'],['../group__api.html#ga299354d219d40b7431474c15b9718abb',1,'raytracer::operator*(Vector a, double k)'],['../group__api.html#gac6d4df29b0f3bc91c6744edb04582ef7',1,'raytracer::operator*(Vector a, Vector b)']]],
+  ['operator_2b',['operator+',['../group__api.html#gaad5be472789d2f603e44e25b5d835708',1,'raytracer::operator+(Point A, Vector b)'],['../group__api.html#ga4d268f6d854b65fc7b0c2b7331e233ae',1,'raytracer::operator+(Vector b, Point A)'],['../group__api.html#gaa2334c02fb14a238c09edd45c99e33fa',1,'raytracer::operator+(Vector a, Vector b)']]],
+  ['operator_2d',['operator-',['../group__api.html#ga600238d4569fec2dd95c6fec3f4e8b30',1,'raytracer::operator-(Point A, Point B)'],['../group__api.html#ga39d9dfe9600eef5b1e29f0baebc65e1c',1,'raytracer::operator-(Vector a, Vector b)']]]
+];
