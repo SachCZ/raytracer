@@ -1,4 +1,0 @@
-<map id="raytracer::AbsorptionModel" name="raytracer::AbsorptionModel">
-<area shape="rect" id="node2" href="$structraytracer_1_1Bremsstrahlung.html" title="Absorption model of energy exchange due to bremsstrahlung. " alt="" coords="5,80,177,107"/>
-<area shape="rect" id="node3" href="$classraytracer_1_1Resonance.html" title="Absorption model of energy change due to resonance. " alt="" coords="202,80,349,107"/>
-</map>

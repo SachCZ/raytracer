@@ -1,5 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classraytracer_1_1AbsorptionModel.html" title="Abstract interface, to obey this getEnergyChange must be implemented. " alt="" coords="5,31,184,57"/>
-<area shape="rect" id="node2" href="$structraytracer_1_1Bremsstrahlung.html" title="Absorption model of energy exchange due to bremsstrahlung. " alt="" coords="232,5,404,32"/>
-<area shape="rect" id="node3" href="$classraytracer_1_1Resonance.html" title="Absorption model of energy change due to resonance. " alt="" coords="245,56,391,83"/>
-</map>

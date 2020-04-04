@@ -1,8 +1,0 @@
-<map id="Raytracer laser API" name="Raytracer laser API">
-<area shape="rect" id="node1" href="$group__stopConditions.html" title="Functions and functors to be used with Laser::generateIntersections() as stopCondition parameter..." alt="" coords="211,5,323,32"/>
-<area shape="rect" id="node2" href="$group__gradients.html" title="Gradient models to calculate gradient at given point in a MeshFunction. " alt="" coords="228,56,307,83"/>
-<area shape="rect" id="node3" href="$group__absorption.html" title="All possible AbsorptionModel implementations are documented in this module. " alt="" coords="202,107,333,133"/>
-<area shape="rect" id="node4" href="$group__intersectionFinders.html" title="Functions and functors to be used with Laser::generateIntersections() as findIntersection parameter..." alt="" coords="201,157,334,184"/>
-<area shape="rect" id="node5" href="$group__frequency.html" title="CollisionalFrequency models to calculate collisional frequency. " alt="" coords="191,208,344,235"/>
-<area shape="rect" id="node6" href="$group__directionFinders.html" title="Functions and functors to be used with Laser::generateIntersections() as findDirection parameter..." alt="" coords="209,259,326,285"/>
-</map>
