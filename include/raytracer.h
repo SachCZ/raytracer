@@ -251,7 +251,7 @@
  * @image html sampleModels/images/refindex_T150_lamb800.png
  *
  * @mainpage Raytracer documentation
- * Raytracer is a code written to enable tracing of laser rays to be used in hydrodynamic simulations.
+ * Raytracer is a code written to enable tracing of laser rays. It is expected to be used in hydrodynamic simulations.
  *
  *
  * @section mainpage_sec1 Getting started
