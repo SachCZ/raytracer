@@ -302,6 +302,10 @@ div.contents {
 	overflow: auto;
 }
 
+div.contents p, div.contents h2, div.contents h1 {
+	clear: left;
+}
+
 td.indexkey {
 	background-color: #EBEFF6;
 	font-weight: bold;

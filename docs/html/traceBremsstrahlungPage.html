@@ -64,17 +64,17 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
-<ul><li class="level1"><a href="#sec">Example breakdown</a><ul><li class="level2"><a href="#subsec1">Code explanation</a></li>
-<li class="level2"><a href="#subsec2">Running the example and plotting</a></li>
+<ul><li class="level1"><a href="#brems_sec">Bremsstrahlung absorption</a><ul><li class="level2"><a href="#brems_subsec1">Code explanation</a></li>
+<li class="level2"><a href="#brems_subsec2">Running the example and plotting</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="textblock"> A simple example demonstrating tracing and bremsstrahlung model usage.</p>
-<h1><a class="anchor" id="sec"></a>
-Example breakdown</h1>
+<h1><a class="anchor" id="brems_sec"></a>
+Bremsstrahlung absorption</h1>
 <p>First make sure that you have raytracer properly setup and that you have a vtk mesh file which you wish to be traced through. You can use the file bundled with this example in data folder. You can find the whole example in raytracer/examples/sampleGradient. </p>
-<h2><a class="anchor" id="subsec1"></a>
+<h2><a class="anchor" id="brems_subsec1"></a>
 Code explanation</h2>
 <p>First lets define temperature, density and ionization functions that will be used to find a correct path and absorbed energy for each ray: <div class="fragment"><div class="line"><span class="keywordtype">double</span> densityFunction(<span class="keyword">const</span> mfem::Vector &amp;x) {</div><div class="line">    <span class="keywordflow">return</span> 1e26 * x(0) + 6.44713e+20;</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">double</span> temperatureFunction(<span class="keyword">const</span> mfem::Vector &amp;) {</div><div class="line">    <span class="keywordflow">return</span> 2000;</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keywordtype">double</span> ionizationFunction(<span class="keyword">const</span> mfem::Vector &amp;) {</div><div class="line">    <span class="keywordflow">return</span> 22;</div><div class="line">}</div></div><!-- fragment --> The executable code is defined in main, where the raytracer namespace is used: <div class="fragment"><div class="line"><span class="keywordtype">int</span> main(<span class="keywordtype">int</span>, <span class="keywordtype">char</span> *[]) {</div><div class="line">    <span class="keyword">using namespace </span><a class="code" href="namespaceraytracer.html">raytracer</a>;</div></div><!-- fragment --></p>
 <p>Make sure to load the vtk mesh and wrap it into <a class="el" href="classraytracer_1_1Mesh.html" title="Class representing a mesh (2D for now). ">raytracer::Mesh</a>. Besides that we will need a mfem::FiniteElementSpace: <div class="fragment"><div class="line">    <span class="keyword">auto</span> mfemMesh = std::make_unique&lt;mfem::Mesh&gt;(<span class="stringliteral">&quot;data/mesh.vtk&quot;</span>, 1, 0);</div><div class="line">    Mesh mesh(mfemMesh.get());</div><div class="line">    mfem::L2_FECollection l2FiniteElementCollection(0, 2);</div><div class="line">    mfem::FiniteElementSpace l2FiniteElementSpace(mfemMesh.get(), &amp;l2FiniteElementCollection);</div></div><!-- fragment --></p>
@@ -90,15 +90,15 @@ Code explanation</h2>
 <p>Specify the absorption models that are going to be used and register these to <a class="el" href="classraytracer_1_1AbsorptionController.html" title="Class aggregating all instances of AbsorptionModel used to update absorbedEnergy meshFunction. ">raytracer::AbsorptionController</a>. Here just one model is used, the <a class="el" href="structraytracer_1_1Bremsstrahlung.html" title="Absorption model of energy exchange due to bremsstrahlung. ">raytracer::Bremsstrahlung</a>: <div class="fragment"><div class="line">    Bremsstrahlung bremsstrahlungModel(</div><div class="line">            densityMeshFunction,</div><div class="line">            temperatureMeshFunction,</div><div class="line">            ionizationMeshFunction,</div><div class="line">            spitzerFrequency</div><div class="line">    );</div><div class="line">    absorber.addModel(&amp;bremsstrahlungModel);</div></div><!-- fragment --></p>
 <p>Update the absorbedEnergy <a class="el" href="classraytracer_1_1MeshFunction.html" title="Abstract interface. ">raytracer::MeshFunction</a> accordingly: <div class="fragment"><div class="line">    absorber.absorb(laser, absorbedEnergyMeshFunction);</div></div><!-- fragment --></p>
 <p>And at last write the output to files: <div class="fragment"><div class="line">    laser.saveRaysToJson(<span class="stringliteral">&quot;data/rays.json&quot;</span>);</div><div class="line">    std::ofstream absorbedResult(<span class="stringliteral">&quot;data/absorbed_energy.txt&quot;</span>);</div><div class="line">    absorbedEnergyGridFunction.Save(absorbedResult);</div></div><!-- fragment --></p>
-<h2><a class="anchor" id="subsec2"></a>
+<h2><a class="anchor" id="brems_subsec2"></a>
 Running the example and plotting</h2>
 <p>To run the example compile it using cmake and your compiler of choice. Make sure to run it inside the examples/sampleGradient folder as the paths to external files are hardcoded. Executing the script will result in absorbed_energy.txt and rays.json being generated inside the data folder.</p>
 <p>To plot these make sure that you have python <a href="https://github.com/SachCZ/rayvis">rayvis</a> installed. Then just run python3 plot_bremsstrahlung.py inside the same folder. This will generate two images inside the images folder. One depicting the how the rays were traced through the mesh and one showing the amount of absorbed energy due to bremsstrahlung.</p>
 <div class="image">
-<img src="absorbed_energy.png" alt="absorbed_energy.png"/>
+<img src="absorbed_bremsstrahlung_energy.png" alt="absorbed_bremsstrahlung_energy.png"/>
 </div>
  <div class="image">
-<img src="rays.png" alt="rays.png"/>
+<img src="bremsstrahlung_rays.png" alt="bremsstrahlung_rays.png"/>
 </div>
  </div></div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.13-->

@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['sampling_20of_20gradient_20models',['Sampling of gradient models',['../sampleGradientPage.html',1,'']]],
   ['saveraystojson',['saveRaysToJson',['../classraytracer_1_1Laser.html#aeb6e2f23b0ce9b8e74eea3dc0f543345',1,'raytracer::Laser']]],
   ['segmentcount',['segmentCount',['../structraytracer_1_1DiscreteLine.html#a80395f9fb7bed884f348199fca0f1ccf',1,'raytracer::DiscreteLine']]],
   ['setvalue',['setValue',['../classraytracer_1_1MeshFunction.html#a0d71fc5b456edd7a89267a071ae6dd81',1,'raytracer::MeshFunction::setValue()'],['../classraytracer_1_1MfemMeshFunction.html#aa7c06ea3f585a45573174b073da58ee1',1,'raytracer::MfemMeshFunction::setValue()']]],

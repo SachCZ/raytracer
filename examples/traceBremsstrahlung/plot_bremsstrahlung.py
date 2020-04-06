@@ -20,7 +20,7 @@ if __name__ == "__main__":
     axis.set_ylabel("$y$ [cm]")
 
     plt.axis('equal')
-    plt.savefig("images/rays.png")
+    plt.savefig("images/bremsstrahlung_rays.png")
     plt.clf()
 
     fig, axis = plt.subplots()
@@ -33,4 +33,4 @@ if __name__ == "__main__":
     axis.set_ylabel("$y$ [cm]")
 
     plt.axis('equal')
-    plt.savefig("images/absorbed_energy.png")
+    plt.savefig("images/absorbed_bremsstrahlung_energy.png")
