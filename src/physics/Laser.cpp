@@ -30,6 +30,7 @@ namespace raytracer {
             laserRay.energy = Energy{integrateTrapz(energyFunction, parameter, deltaParameter)};
             laserRay.wavelength = this->wavelength;
             laserRay.startPoint = Point(x[i], y[i]);
+            laserRay.id = i;
 
             this->rays.emplace_back(laserRay);
 

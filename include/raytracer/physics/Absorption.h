@@ -8,6 +8,7 @@
 #include "Laser.h"
 #include "CollisionalFrequency.h"
 #include "Gradient.h"
+#include "Refraction.h"
 
 namespace raytracer {
     /**
@@ -69,7 +70,7 @@ namespace raytracer {
         const Gradient &gradientCalculator;
         const Marker &reflectedMarker;
 
-        bool isResonating(const Element &element) const;
+        bool isResonating(const Element &element, const LaserRay& laserRay) const;
 
         static double getQ(const LaserRay &laserRay, Vector dir, Vector grad);
     };

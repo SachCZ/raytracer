@@ -7,6 +7,39 @@
 #include "CollisionalFrequency.h"
 
 namespace raytracer {
+
+    /**
+     * Class used to mark elements that have some property. Actually it is just a set internally.
+     */
+    class Marker {
+    public:
+        /**
+         * Mark an Element.
+         * @param element
+         */
+        void mark(const Element& element, const LaserRay& laserRay){
+            marked.insert(std::make_pair(element.getId(), laserRay.id));
+        }
+        /**
+         * Unmark an Element
+         * @param element
+         */
+        void unmark(const Element& element, const LaserRay& laserRay) {
+            marked.erase(std::make_pair(element.getId(), laserRay.id));
+        }
+
+        /**
+         * Check whether an Element is marked by this marker.
+         * @param element
+         * @return
+         */
+        bool isMarked(const Element& element, const LaserRay& laserRay) const {
+            return marked.find(std::make_pair(element.getId(), laserRay.id)) != marked.end();
+        }
+    private:
+        std::set<std::pair<int, int>> marked;
+    };
+
     /**
      * \addtogroup directionFinders
      * @{

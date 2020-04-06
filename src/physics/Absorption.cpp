@@ -38,7 +38,7 @@ namespace raytracer {
             const Energy &currentEnergy,
             const LaserRay &laserRay
     ) const {
-        if (!Resonance::isResonating(*currentIntersection.previousElement)) return Energy{0};
+        if (!Resonance::isResonating(*currentIntersection.previousElement, laserRay)) return Energy{0};
 
         auto grad = gradientCalculator.get(
                 currentIntersection.pointOnFace,
@@ -51,8 +51,8 @@ namespace raytracer {
         return Energy{currentEnergy.asDouble * term};
     }
 
-    bool Resonance::isResonating(const Element &element) const {
-        return reflectedMarker.isMarked(element);
+    bool Resonance::isResonating(const Element &element, const LaserRay& laserRay) const {
+        return reflectedMarker.isMarked(element, laserRay);
     }
 
     double Resonance::getQ(const LaserRay &laserRay, Vector dir, Vector grad) {

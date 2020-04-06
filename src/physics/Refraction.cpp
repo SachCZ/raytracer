@@ -62,7 +62,7 @@ namespace raytracer {
                 return previousDirection;
             }
             else {
-                if(reflectedMarker) reflectedMarker->mark(previousElement);
+                if(reflectedMarker) reflectedMarker->mark(previousElement, laserRay);
                 return l + 2 * c * n;
             }
         }

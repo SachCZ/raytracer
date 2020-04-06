@@ -22,6 +22,8 @@ namespace raytracer {
         Energy energy{};
         /** Wavelength of the LaserRay in cm */
         Length wavelength{};
+        /** Unique identifier of the LaserRay */
+        int id{};
 
         /** The electron critical density of the LaserRay */
         Density getCriticalDensity() const;
