@@ -31,10 +31,30 @@ namespace raytracer {
 
     void H1Gradient::updateDensity(mfem::GridFunction &density) {
         this->_density = this->projectL2toH1(density);
+
+        char vishost[] = "localhost";
+        int  visport   = 19916;
+        mfem::socketstream sol_sock(vishost, visport);
+        mfem::socketstream sol_sock2(vishost, visport);
+        sol_sock.precision(8);
+        sol_sock2.precision(8);
+        sol_sock << "solution\n" << *this->h1Space.GetMesh() << this->_density << std::flush;
+        sol_sock2 << "solution\n" << *this->l2Space.GetMesh() << density << std::flush;
     }
 
     Vector
     H1Gradient::getGradientAt(const Element &element, const Point &point) const {
+        /**
+        mfem::Vector result(2);
+        mfem::IntegrationPoint integrationPoint{};
+        integrationPoint.Set2(point.x, point.y);
+
+        //auto transformation = this->h1Space.GetElementTransformation(element.getId());
+        //transformation->SetIntPoint(&integrationPoint);
+        this->_density.GetVectorValue(element.getId(), integrationPoint, result);
+
+        return {result[0], result[1]};
+        **/
         mfem::Vector result(2);
         mfem::IntegrationPoint integrationPoint{};
         integrationPoint.Set2(point.x, point.y);
@@ -47,6 +67,17 @@ namespace raytracer {
     }
 
     mfem::GridFunction H1Gradient::projectL2toH1(const mfem::GridFunction &function) {
+        /**
+        mfem::GridFunction continuousInterpolant(&h1Space);
+        mfem::DiscreteLinearOperator discreteLinearOperator(&l2Space, &h1Space);
+        discreteLinearOperator.AddDomainInterpolator(new mfem::IdentityInterpolator());
+        discreteLinearOperator.Assemble();
+        discreteLinearOperator.Finalize();
+        discreteLinearOperator.Mult(function, continuousInterpolant);
+
+        return continuousInterpolant;
+
+        **/
         mfem::BilinearForm A(&h1Space);
         A.AddDomainIntegrator(new mfem::MassIntegrator);
         A.Assemble();
