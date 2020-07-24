@@ -140,5 +140,14 @@ namespace raytracer {
         auto y = (A.xx*b.y - b.x * A.yx) / det;
         return {x, y};
     }
+
+    Vector NormalGradient::get(const PointOnFace &pointOnFace, const Element &previousElement,
+                               const Element &nextElement) const {
+        auto previousDensity = this->density.getValue(previousElement);
+        auto nextDensity = this->density.getValue(nextElement);
+        double factor = previousDensity > nextDensity ? -1 : 1;
+        auto normal = pointOnFace.face->getNormal();
+        return factor / normal.getNorm() * normal;
+    }
 }
 

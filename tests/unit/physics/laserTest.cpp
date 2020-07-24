@@ -17,7 +17,7 @@ public:
         DiscreteLine side{};
         side.segmentCount = 15;
         side.length = 1;
-        mfemMesh = constructRectangleMesh(side, side);
+        mfemMesh = constructMfemMesh(side, side, mfem::Element::Type::QUADRILATERAL);
         mesh = std::make_unique<Mesh>(mfemMesh.get());
     }
 

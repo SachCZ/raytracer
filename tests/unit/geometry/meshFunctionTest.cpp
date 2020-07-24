@@ -17,7 +17,7 @@ public:
     mesh_function() {
         DiscreteLine sideA{1.0, 2};
         DiscreteLine sideB{1.0, 2};
-        mfemMesh = std::move(constructRectangleMesh(sideA, sideB));
+        mfemMesh = std::move(constructMfemMesh(sideA, sideB, mfem::Element::Type::QUADRILATERAL));
         mesh = std::make_unique<Mesh>(mfemMesh.get());
 
 
@@ -32,7 +32,7 @@ public:
     std::unique_ptr<mfem::Mesh> mfemMesh;
     std::unique_ptr<Mesh> mesh;
 
-    mfem::H1_FECollection finiteElementCollection{2, 2};
+    mfem::L2_FECollection finiteElementCollection{0, 2};
     std::unique_ptr<mfem::FiniteElementSpace> finiteElementSpace;
 
     std::unique_ptr<mfem::GridFunction> densityGridFunction;

@@ -8,6 +8,7 @@ from matplotlib import cm
 
 def analytic_gradient(x0, y0):
     return 2 * np.pi * np.cos(2 * np.pi * x0), 2 * np.pi * np.cos(2 * np.pi * y0)
+    # return np.divide(1, (np.power(x0, 2) - x0 + 1.25)), y0*0
 
 
 def save_compare_gradients(x, y, discrete_grad, analytic_grad, image_filename, title):

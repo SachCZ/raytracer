@@ -24,6 +24,6 @@ if (BUILD_EXAMPLES)
     add_subdirectory(examples/traceResonance)
 endif(BUILD_EXAMPLES)
 
-add_library(raytracer src/raytracer.cpp src/physics/Absorption.cpp include/raytracer/physics/Absorption.h)
+add_library(raytracer src/raytracer.cpp)
 target_link_libraries(raytracer PUBLIC geometry utility physics)
 target_include_directories(raytracer PUBLIC ./include)

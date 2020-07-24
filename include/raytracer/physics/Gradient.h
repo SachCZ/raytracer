@@ -108,6 +108,32 @@ namespace raytracer {
         mfem::GridFunction projectL2toH1(const mfem::GridFunction &function);
     };
 
+    /** Gradient model computes the gradient as a unit vector normal to the face and pointing int the direction
+     * of more dense element
+     */
+    class NormalGradient : public Gradient {
+    public:
+
+        explicit NormalGradient(const MeshFunction& density): density(density) {}
+
+        /**
+         * Return the value of gradient at the intersection point.
+         *
+         * @param pointOnFace
+         * @param previousElement
+         * @param nextElement
+         * @return gradient at given point
+         */
+        Vector get(
+                const PointOnFace &pointOnFace,
+                const Element &previousElement,
+                const Element &nextElement
+        ) const override;
+
+    private:
+        const MeshFunction& density;
+    };
+
     /**
      * Gradient model computes the gradient by fitting a plane to neighbour cells by means of lest squares.
      * The method is described in Kucharik's article.
@@ -134,7 +160,7 @@ namespace raytracer {
         const Mesh &mesh;
         const MeshFunction &density;
 
-        static Vector normWeightedAverage(const std::vector<Vector>& vectors);
+        static Vector normWeightedAverage(const std::vector<Vector> &vectors);
 
         static std::array<double, 2> getCentroid(const Element &element);
 

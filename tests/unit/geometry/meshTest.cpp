@@ -14,7 +14,7 @@ public:
     initialized_mesh() {
         DiscreteLine sideA{1.0, 2};
         DiscreteLine sideB{1.0, 2};
-        mfemMesh = std::move(constructRectangleMesh(sideA, sideB));
+        mfemMesh = std::move(constructMfemMesh(sideA, sideB, mfem::Element::Type::QUADRILATERAL));
         mesh = std::make_unique<Mesh>(mfemMesh.get());
     }
     std::unique_ptr<mfem::Mesh> mfemMesh;

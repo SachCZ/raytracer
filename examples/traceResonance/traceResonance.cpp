@@ -55,6 +55,7 @@ int main(int, char *[]) {
     MfemMeshFunction absorbedEnergyMeshFunction(absorbedEnergyGridFunction, l2FiniteElementSpace);
 
     LeastSquare leastSquareGradient(mesh, densityMeshFunction);
+    //NormalGradient normalGradient(densityMeshFunction);
     SpitzerFrequency spitzerFrequency;
 
     Marker reflectedMarker;

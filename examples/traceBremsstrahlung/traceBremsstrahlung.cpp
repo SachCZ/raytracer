@@ -10,11 +10,14 @@
 #include "mfem.hpp"
 
 double densityFunction(const mfem::Vector &x) {
-    return 1e26 * x(0) + 6.44713e+20;
+    //return 1e26 * x(0) + 6.44713e+20;
+    //return x(0) > 0 ? 1e28 : 1e6;
+    return 1e22  * (std::atan(x(0)*1e15)) - 1e22  * (std::atan(-5e-6*1e15));
 }
 
-double temperatureFunction(const mfem::Vector &) {
+double temperatureFunction(const mfem::Vector &x) {
     return 2000;
+    //return 2000 * (M_PI + std::atan(-x(0)*1e9));
 }
 
 double ionizationFunction(const mfem::Vector &) {
@@ -28,6 +31,9 @@ int main(int, char *[]) {
     Mesh mesh(mfemMesh.get());
     mfem::L2_FECollection l2FiniteElementCollection(0, 2);
     mfem::FiniteElementSpace l2FiniteElementSpace(mfemMesh.get(), &l2FiniteElementCollection);
+
+    mfem::H1_FECollection h1FiniteElementCollection(1, 2);
+    mfem::FiniteElementSpace h1FiniteElementSpace(mfemMesh.get(), &h1FiniteElementCollection);
 
     mfem::GridFunction absorbedEnergyGridFunction(&l2FiniteElementSpace);
     absorbedEnergyGridFunction = 0;
@@ -48,14 +54,17 @@ int main(int, char *[]) {
     ionizationGridFunction.ProjectCoefficient(ionizationFunctionCoefficient);
     MfemMeshFunction ionizationMeshFunction(ionizationGridFunction, l2FiniteElementSpace);
 
-    LeastSquare leastSquareGradient(mesh, densityMeshFunction);
+    H1Gradient h1Gradient(l2FiniteElementSpace, h1FiniteElementSpace);
+    h1Gradient.updateDensity(densityGridFunction);
+    //LeastSquare leastSquareGradient(mesh, densityMeshFunction);
+    //NormalGradient normalGradient(densityMeshFunction);
     SpitzerFrequency spitzerFrequency;
 
     SnellsLaw snellsLaw(
             densityMeshFunction,
             temperatureMeshFunction,
             ionizationMeshFunction,
-            leastSquareGradient,
+            h1Gradient,
             spitzerFrequency
     );
 
@@ -67,7 +76,7 @@ int main(int, char *[]) {
             Point(-0.51e-5, -0.5e-5)
     );
 
-    laser.generateRays(100);
+    laser.generateRays(1000);
     laser.generateIntersections(mesh, snellsLaw, intersectStraight, DontStop());
 
     AbsorptionController absorber;

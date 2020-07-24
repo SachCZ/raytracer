@@ -51,7 +51,7 @@ public:
         DiscreteLine side{};
         side.length = 1;
         side.segmentCount = 1;
-        mfemMesh = constructRectangleMesh(side, side);
+        mfemMesh = constructMfemMesh(side, side);
         mesh = std::make_unique<Mesh>(mfemMesh.get());
         laser.generateRays(1);
         laser.generateIntersections(
@@ -87,7 +87,7 @@ TEST_F(absorption, controller_does_absorb_energy_according_to_model) {
 TEST_F(absorption, using_resonance_model_works) {
     MockGradient gradient;
     Marker reflectedMarker;
-    reflectedMarker.mark(*laser.getRays().front().intersections[0].nextElement);
+    reflectedMarker.mark(*laser.getRays().front().intersections[0].nextElement, laser.getRays().front());
     Resonance resonance(gradient, reflectedMarker);
 
     controller.addModel(&resonance);

@@ -25,6 +25,7 @@ if __name__ == "__main__":
 
     fig, axis = plt.subplots()
     values = rayvis.read_grid_function("data/absorbed_energy.txt")
+    print(sum(values))
     rayvis.plot_grid_function(fig, axis, nodes, elements, values)
 
     axis.yaxis.set_major_formatter(formatter)

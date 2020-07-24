@@ -6,6 +6,7 @@ add_library(physics
         Gradient.cpp
         Refraction.cpp
         Termination.cpp
+        Absorption.cpp
         )
 target_include_directories(physics PUBLIC ../../include/raytracer/physics)
 target_link_libraries(physics PUBLIC geometry utility jsoncpp)

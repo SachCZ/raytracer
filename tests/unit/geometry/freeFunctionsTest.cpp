@@ -12,7 +12,7 @@ class find_intersection : public Test {
 public:
     find_intersection() {
         DiscreteLine sideA{1 , 1};
-        mfemMesh = std::move(constructRectangleMesh(sideA, sideA));
+        mfemMesh = std::move(constructMfemMesh(sideA, sideA, mfem::Element::Type::QUADRILATERAL));
         mesh = std::make_unique<Mesh>(mfemMesh.get());
     }
     std::unique_ptr<mfem::Mesh> mfemMesh;
@@ -39,7 +39,7 @@ TEST_F(find_intersection, returns_intersection_if_border_point_is_intersected) {
     auto face = mesh->getBoundary()[0];
     auto pointOnFace = findIntersection(halfLine, face);
     EXPECT_THAT(pointOnFace->point.x, DoubleNear(1, 1e-8));
-    ASSERT_THAT(pointOnFace->point.y, DoubleEq(0));
+    ASSERT_THAT(pointOnFace->point.y, DoubleNear(0, 1e-8));
 }
 
 

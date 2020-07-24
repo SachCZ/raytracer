@@ -126,11 +126,15 @@ namespace raytracer {
         }
     }
 
-    std::unique_ptr<mfem::Mesh> constructRectangleMesh(DiscreteLine sideA, DiscreteLine sideB) {
+    std::unique_ptr<mfem::Mesh> constructMfemMesh(
+            DiscreteLine sideA,
+            DiscreteLine sideB,
+            mfem::Element::Type elementType
+    ) {
         return std::make_unique<mfem::Mesh>(
                 sideA.segmentCount,
                 sideB.segmentCount,
-                mfem::Element::Type::TRIANGLE,
+                elementType,
                 true,
                 sideA.length,
                 sideB.length,

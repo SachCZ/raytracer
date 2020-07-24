@@ -33,7 +33,7 @@ public:
     ConstantGradient constantGradientCalculator{Vector(1.2, -0.3)};
 
     DiscreteLine side{100, 10};
-    std::unique_ptr<mfem::Mesh> mfemMesh = constructRectangleMesh(side, side);
+    std::unique_ptr<mfem::Mesh> mfemMesh = constructMfemMesh(side, side);
 
     mfem::L2_FECollection l2FiniteElementCollection{0, 2};
     mfem::H1_FECollection h1FiniteElementCollection{1, 2};

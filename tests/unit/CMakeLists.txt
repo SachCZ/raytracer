@@ -11,6 +11,7 @@ add_executable(TestRunner
         physics/propagationTest.cpp
         physics/gradientTest.cpp
         utility/freeFunctionsTest.cpp
+        utility/qrDecompositionTest.cpp
         physics/absorptionTest.cpp)
 target_link_libraries(TestRunner PRIVATE gtest gtest gmock raytracer)
 configure_file(geometry/mesh.vtk ${CMAKE_CURRENT_BINARY_DIR}/geometry/mesh.vtk COPYONLY)

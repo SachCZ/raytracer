@@ -42,8 +42,13 @@ namespace raytracer {
      * @param sideB of the mesh
      * @return the unique pointer to the mfem::Mesh
      */
-    std::unique_ptr<mfem::Mesh> constructRectangleMesh(DiscreteLine sideA, DiscreteLine sideB);
-    //TODO this should be constructing raytracer Mesh
+    std::unique_ptr<mfem::Mesh>
+    constructMfemMesh(
+            DiscreteLine sideA,
+            DiscreteLine sideB,
+            mfem::Element::Type elementType = mfem::Element::Type::TRIANGLE
+    );
+    //TODO this should be constructing raytracer MFEMMesh
 
     /**
      * Class representing a mesh (2D for now).
@@ -71,14 +76,14 @@ namespace raytracer {
          * @param element
          * @return list of element pointers
          */
-        std::vector<Element*> getElementAdjacentElements(const Element& element) const {
+        std::vector<Element *> getElementAdjacentElements(const Element &element) const {
             mfem::Array<int> elementIds(
                     this->elementToElementTable.GetRow(element.getId()),
                     this->elementToElementTable.RowSize(element.getId())
             );
-            std::vector<Element*> result;
+            std::vector<Element *> result;
             result.reserve(elementIds.Size());
-            for (auto id : elementIds){
+            for (auto id : elementIds) {
                 result.emplace_back(this->getElementFromId(id));
             }
             return result;

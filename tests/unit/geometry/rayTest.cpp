@@ -12,8 +12,8 @@ class initialized_ray : public Test {
 public:
 public:
     initialized_ray() {
-        DiscreteLine sideA{10.0, 10};
-        mfemMesh = std::move(constructRectangleMesh(sideA, sideA));
+        DiscreteLine sideA{10.0, 5};
+        mfemMesh = std::move(constructMfemMesh(sideA, sideA));
         mesh = std::make_unique<Mesh>(mfemMesh.get());
     }
 
@@ -77,5 +77,5 @@ TEST_F(initialized_ray, intersecting_can_deal_with_diagonal_case) {
             },
             [](const Element &) { return false; }
     );
-    ASSERT_THAT(intersections, SizeIs(18));
+    ASSERT_THAT(intersections, SizeIs(19));
 }

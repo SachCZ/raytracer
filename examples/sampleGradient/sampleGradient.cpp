@@ -8,6 +8,7 @@
 
 double densityFunction(const mfem::Vector &x) {
     return std::sin(2*M_PI*x(0)) + std::sin(2*M_PI*x(1));
+    //return std::atan(x(0) - 0.5);
 }
 
 
@@ -25,7 +26,7 @@ public:
         sideY.length = sideYLength + 2 * sideYLength / gridSize;
         sideY.segmentCount = gridSize + 2;
 
-        mfemMesh = constructRectangleMesh(sideX, sideY);
+        mfemMesh = constructMfemMesh(sideX, sideY, POINT);
         mesh = std::make_unique<Mesh>(mfemMesh.get());
     }
 
