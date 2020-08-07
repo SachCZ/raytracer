@@ -20,11 +20,13 @@ if __name__ == "__main__":
     axis.set_ylabel("$y$ [cm]")
 
     plt.axis('equal')
-    plt.savefig("images/bremsstrahlung_rays.png")
+    plt.savefig("images/bremsstrahlung_rays.svg", format='svg', dpi=1200)
     plt.clf()
 
     fig, axis = plt.subplots()
     values = rayvis.read_grid_function("data/absorbed_energy.txt")
+    print(sum(values))
+
     rayvis.plot_grid_function(fig, axis, nodes, elements, values)
 
     axis.yaxis.set_major_formatter(formatter)

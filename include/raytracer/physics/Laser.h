@@ -133,7 +133,7 @@ namespace raytracer {
                         const Vector &direction,
                         const Element &nextElement
                 ) {
-                    return findIntersection(pointOnFace, direction, nextElement, laserRay);
+                    return findIntersection(pointOnFace, direction, nextElement);
                 };
                 auto directioner = [&findDirection, &laserRay](
                         const PointOnFace &pointOnFace,

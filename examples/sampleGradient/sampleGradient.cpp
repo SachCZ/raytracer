@@ -9,6 +9,7 @@
 double densityFunction(const mfem::Vector &x) {
     return std::sin(2*M_PI*x(0)) + std::sin(2*M_PI*x(1));
     //return std::atan(x(0) - 0.5);
+    //return x(0) > 0.5 ? 1 : 0;
 }
 
 
@@ -26,8 +27,8 @@ public:
         sideY.length = sideYLength + 2 * sideYLength / gridSize;
         sideY.segmentCount = gridSize + 2;
 
-        mfemMesh = constructMfemMesh(sideX, sideY, POINT);
-        mesh = std::make_unique<Mesh>(mfemMesh.get());
+        mfemMesh = constructMfemMesh(sideX, sideY);
+        mesh = std::make_unique<MfemMesh>(mfemMesh.get());
     }
 
     mfem::Mesh* getMfemMesh(){
@@ -127,6 +128,8 @@ int main(int argc, char *argv[]) {
     MfemMeshFunction densityMeshFunction(densityGridFunction, l2FiniteElementSpace);
 
     LeastSquare leastSquareGradient(*gradientSampler.getMesh(), densityMeshFunction);
+    Householder householder(*gradientSampler.getMesh(), densityMeshFunction, 0.3);
+    householder.update(false);
     H1Gradient h1Gradient(l2FiniteElementSpace, h1FiniteElementSpace);
     h1Gradient.updateDensity(densityGridFunction);
 
@@ -136,6 +139,8 @@ int main(int argc, char *argv[]) {
     gradientSampler.sample("data/h1_gradient", &h1Gradient, "y");
     gradientSampler.sample("data/least_square", &leastSquareGradient, "x");
     gradientSampler.sample("data/least_square", &leastSquareGradient, "y");
+    gradientSampler.sample("data/householder", &householder, "x");
+    gradientSampler.sample("data/householder", &householder, "y");
 
     return 0;
 }

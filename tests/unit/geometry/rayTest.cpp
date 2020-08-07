@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <raytracer/physics/Propagation.h>
 #include "raytracer/geometry/Ray.h"
 #include "raytracer/geometry/Point.h"
 #include "raytracer/geometry/Vector.h"
@@ -14,11 +15,11 @@ public:
     initialized_ray() {
         DiscreteLine sideA{10.0, 5};
         mfemMesh = std::move(constructMfemMesh(sideA, sideA));
-        mesh = std::make_unique<Mesh>(mfemMesh.get());
+        mesh = std::make_unique<MfemMesh>(mfemMesh.get());
     }
 
     std::unique_ptr <mfem::Mesh> mfemMesh;
-    std::unique_ptr <Mesh> mesh;
+    std::unique_ptr <MfemMesh> mesh;
 
     HalfLine halfLine{Point(-1, 4.5), Vector(1, 0)};
     Ray ray{halfLine};
@@ -40,11 +41,7 @@ TEST_F(initialized_ray, trace_through_steps_throught_mesh_according_to_find_inte
                     const Vector &direction,
                     const Element &nextElement
             ) {
-                return *findClosestIntersection(
-                        {pointOnFace.point, direction},
-                        nextElement.getFaces(),
-                        pointOnFace.face
-                );
+                return intersectStraight(pointOnFace, direction, nextElement);
             },
             [](const Element &) { return false; }
     );
@@ -65,16 +62,7 @@ TEST_F(initialized_ray, intersecting_can_deal_with_diagonal_case) {
             ) {
                 return previousDirection;
             },
-            [](
-                    const PointOnFace &pointOnFace,
-                    const Vector &direction,
-                    const Element &nextElement
-            ) {
-                return *findClosestIntersection(
-                        {pointOnFace.point, direction},
-                        nextElement.getFaces(),
-                        pointOnFace.face);
-            },
+            intersectStraight,
             [](const Element &) { return false; }
     );
     ASSERT_THAT(intersections, SizeIs(19));

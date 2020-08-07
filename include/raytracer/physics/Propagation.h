@@ -23,8 +23,7 @@ namespace raytracer {
     PointOnFace intersectStraight(
             const PointOnFace &entryPointOnFace,
             const Vector &entryDirection,
-            const Element &element,
-            const LaserRay &
+            const Element &element
     );
 
     /**

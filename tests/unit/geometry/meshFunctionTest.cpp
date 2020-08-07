@@ -18,7 +18,7 @@ public:
         DiscreteLine sideA{1.0, 2};
         DiscreteLine sideB{1.0, 2};
         mfemMesh = std::move(constructMfemMesh(sideA, sideB, mfem::Element::Type::QUADRILATERAL));
-        mesh = std::make_unique<Mesh>(mfemMesh.get());
+        mesh = std::make_unique<MfemMesh>(mfemMesh.get());
 
 
         finiteElementSpace = std::make_unique<mfem::FiniteElementSpace>(mfemMesh.get(), &finiteElementCollection);
@@ -30,7 +30,7 @@ public:
     }
 
     std::unique_ptr<mfem::Mesh> mfemMesh;
-    std::unique_ptr<Mesh> mesh;
+    std::unique_ptr<MfemMesh> mesh;
 
     mfem::L2_FECollection finiteElementCollection{0, 2};
     std::unique_ptr<mfem::FiniteElementSpace> finiteElementSpace;

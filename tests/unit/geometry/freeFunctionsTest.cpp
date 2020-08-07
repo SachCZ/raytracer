@@ -13,10 +13,10 @@ public:
     find_intersection() {
         DiscreteLine sideA{1 , 1};
         mfemMesh = std::move(constructMfemMesh(sideA, sideA, mfem::Element::Type::QUADRILATERAL));
-        mesh = std::make_unique<Mesh>(mfemMesh.get());
+        mesh = std::make_unique<MfemMesh>(mfemMesh.get());
     }
     std::unique_ptr<mfem::Mesh> mfemMesh;
-    std::unique_ptr<Mesh> mesh;
+    std::unique_ptr<MfemMesh> mesh;
 };
 
 TEST_F(find_intersection, returns_the_intersection_if_line_and_edge_are_intersecting) {

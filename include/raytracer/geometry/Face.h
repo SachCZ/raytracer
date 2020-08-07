@@ -13,7 +13,7 @@ namespace raytracer {
      * @{
      */
 
-    class Mesh;
+    class MfemMesh;
 
     class Element;
 

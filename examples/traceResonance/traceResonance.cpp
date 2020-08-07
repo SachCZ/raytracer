@@ -11,16 +11,24 @@
 
 using namespace raytracer;
 
+const double scale = 5e11;
+
 double densityFunction(const mfem::Vector &x) {
-    return 1e26 * x(0) + 6.44713e+20;
+    //return 1e26 * x(0) + 6.44713e+20;
+    //return x(0) > 0 && x(1) > 0 ? 1e22 : 1e6;
+    return 6e19  * ((std::atan(x(0)*scale)) - (std::atan(-6e-6*scale)))*((std::atan(x(1)*scale)) - (std::atan(-6e-6*scale)));
 }
 
-double temperatureFunction(const mfem::Vector &) {
-    return 2000;
+double temperatureFunction(const mfem::Vector &x) {
+    //return 2000;
+    return 2000  * ((std::atan(x(0)*scale)) - (std::atan(-6e-6*scale)))*((std::atan(x(1)*scale)) - (std::atan(-6e-6*scale)));
+    return x(0) > 0 && x(1) > 0 ? 2000 : 0.03;
 }
 
-double ionizationFunction(const mfem::Vector &) {
-    return 22;
+double ionizationFunction(const mfem::Vector &x) {
+    //return 22;
+    return 22  * ((std::atan(x(0)*scale)) - (std::atan(-6e-6*scale)))*((std::atan(x(1)*scale)) - (std::atan(-6e-6*scale)));
+    //return x(0) > 0 && x(1) > 0 > 0 ? 22 : 0;
 }
 
 int main(int, char *[]) {
@@ -35,7 +43,7 @@ int main(int, char *[]) {
     mfem::GridFunction absorbedEnergyGridFunction(&l2FiniteElementSpace);
     absorbedEnergyGridFunction = 0;
 
-    Mesh mesh(mfemMesh.get());
+    MfemMesh mesh(mfemMesh.get());
 
     mfem::GridFunction densityGridFunction(&l2FiniteElementSpace);
     mfem::FunctionCoefficient densityFunctionCoefficient(densityFunction);
@@ -54,8 +62,10 @@ int main(int, char *[]) {
 
     MfemMeshFunction absorbedEnergyMeshFunction(absorbedEnergyGridFunction, l2FiniteElementSpace);
 
-    LeastSquare leastSquareGradient(mesh, densityMeshFunction);
+    //LeastSquare leastSquareGradient(mesh, densityMeshFunction);
     //NormalGradient normalGradient(densityMeshFunction);
+    Householder householderGradient(mesh, densityMeshFunction, 1e-5);
+    householderGradient.update(true);
     SpitzerFrequency spitzerFrequency;
 
     Marker reflectedMarker;
@@ -63,28 +73,30 @@ int main(int, char *[]) {
             densityMeshFunction,
             temperatureMeshFunction,
             ionizationMeshFunction,
-            leastSquareGradient,
+            householderGradient,
             spitzerFrequency,
             &reflectedMarker
     );
 
     Laser laser(
             Length{1315e-7},
-            [](const Point) { return Vector(1, 0.7); },
+            [](const Point) { return Vector(1, 1); },
             Gaussian(0.3e-5),
-            Point(-0.51e-5, -0.3e-5),
-            Point(-0.51e-5, -0.5e-5)
+            Point(-1.5e-5, -1e-5),
+            Point(-0.5e-5, -1e-5)
     );
 
-    laser.generateRays(100);
+    laser.generateRays(20);
     laser.generateIntersections(mesh, snellsLaw, intersectStraight, DontStop());
 
     AbsorptionController absorber;
-    Resonance resonance(leastSquareGradient, reflectedMarker);
+    Resonance resonance(householderGradient, reflectedMarker);
     absorber.addModel(&resonance);
     absorber.absorb(laser, absorbedEnergyMeshFunction);
 
     laser.saveRaysToJson("data/rays.json");
     std::ofstream absorbedResult("data/absorbed_energy.txt");
     absorbedEnergyGridFunction.Save(absorbedResult);
+    std::ofstream densityResult("data/density.txt");
+    densityGridFunction.Save(densityResult);
 }

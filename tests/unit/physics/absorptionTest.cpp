@@ -52,7 +52,7 @@ public:
         side.length = 1;
         side.segmentCount = 1;
         mfemMesh = constructMfemMesh(side, side);
-        mesh = std::make_unique<Mesh>(mfemMesh.get());
+        mesh = std::make_unique<MfemMesh>(mfemMesh.get());
         laser.generateRays(1);
         laser.generateIntersections(
                 *mesh,
@@ -73,7 +73,7 @@ public:
             Point(-0.9, -1.1)
     };
     std::unique_ptr<mfem::Mesh> mfemMesh;
-    std::unique_ptr<Mesh> mesh;
+    std::unique_ptr<MfemMesh> mesh;
 };
 
 TEST_F(absorption, controller_does_absorb_energy_according_to_model) {

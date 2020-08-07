@@ -45,10 +45,10 @@ namespace raytracer {
         /**
          * Construct the gaussian using FWHM, value at maxim (also the value of the integral) and the center point
          * @param FWHM
-         * @param maximum or also the intgral value
+         * @param normalization or also the intgral value
          * @param center point
          */
-        explicit Gaussian(double FWHM, double maximum = 1, double center = 0);
+        explicit Gaussian(double FWHM, double normalization = 1, double center = 0);
 
         /**
          * Value of the gaussian at given point x
@@ -59,7 +59,7 @@ namespace raytracer {
 
     private:
         double FWHM;
-        double maximum;
+        double normalization;
         double center;
     };
     

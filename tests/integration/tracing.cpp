@@ -32,7 +32,7 @@ TEST(tracing, throught_mesh_should_work_as_expected_for_dummy_mesh) {
     mfem::L2_FECollection l2FiniteElementCollection(0, 2);
     mfem::FiniteElementSpace l2FiniteElementSpace(mfemMesh.get(), &l2FiniteElementCollection);
 
-    Mesh mesh(mfemMesh.get());
+    MfemMesh mesh(mfemMesh.get());
 
     mfem::GridFunction densityGridFunction(&l2FiniteElementSpace);
     mfem::FunctionCoefficient densityFunctionCoefficient(densityFunction);

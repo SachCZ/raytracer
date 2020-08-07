@@ -59,6 +59,7 @@ namespace raytracer {
         auto dir_norm = dir.getNorm();
         if(dir_norm == 0) return 0;
         auto grad_norm = grad.getNorm();
+        if (grad_norm == 0) return 0;
         auto lamb = laserRay.wavelength.asDouble;
         auto ne_crit = laserRay.getCriticalDensity().asDouble;
         auto sin2phi = 1 - std::pow(grad * dir / grad_norm / dir_norm, 2);

@@ -19,7 +19,7 @@ class gradient_calculators : public Test {
 
 public:
     void SetUp() override {
-        mesh = std::make_unique<Mesh>(mfemMesh.get());
+        mesh = std::make_unique<MfemMesh>(mfemMesh.get());
         l2FiniteElementSpace = std::make_unique<mfem::FiniteElementSpace>(mfemMesh.get(), &l2FiniteElementCollection);
         h1FiniteElementSpace = std::make_unique<mfem::FiniteElementSpace>(mfemMesh.get(), &h1FiniteElementCollection);
 
@@ -28,6 +28,9 @@ public:
         densityGridFunction = std::make_unique<mfem::GridFunction>(l2FiniteElementSpace.get());
         mfem::FunctionCoefficient densityFunctionCoefficient(gradient_calculators::density);
         densityGridFunction->ProjectCoefficient(densityFunctionCoefficient);
+        densityMeshFunction = std::make_unique<MfemMeshFunction>(*densityGridFunction, *l2FiniteElementSpace);
+        householderGradient = std::make_unique<Householder>(*mesh, *densityMeshFunction, 10);
+        householderGradient->update();
     }
 
     ConstantGradient constantGradientCalculator{Vector(1.2, -0.3)};
@@ -40,9 +43,12 @@ public:
     std::unique_ptr<mfem::FiniteElementSpace> l2FiniteElementSpace;
     std::unique_ptr<mfem::FiniteElementSpace> h1FiniteElementSpace;
     std::unique_ptr<mfem::GridFunction> densityGridFunction;
+    std::unique_ptr<MeshFunction> densityMeshFunction;
+
 
     std::unique_ptr<H1Gradient> h1GradientCalculator;
-    std::unique_ptr<Mesh> mesh;
+    std::unique_ptr<Householder> householderGradient;
+    std::unique_ptr<MfemMesh> mesh;
 };
 
 TEST_F(gradient_calculators, constant_gradient_calculator_returns_constant_vector_any_time) {
@@ -82,6 +88,34 @@ TEST_F(gradient_calculators, h1_returns_correct_result_for_linear_density) {
     //Pretty far
     EXPECT_THAT(result.x, DoubleNear(12, 0.2));
     EXPECT_THAT(result.y, DoubleNear(-7, 0.2));
+}
+
+TEST_F(gradient_calculators, hauseholder_returns_correct_result_for_linear_density) {
+    Laser laser(
+            Length{1315e-7},
+            [](const Point) { return Vector(1, 0.3); },
+            Gaussian(0.1),
+            Point(-1.1, 49),
+            Point(-1.1, 51)
+    );
+
+    laser.generateRays(1);
+    laser.generateIntersections(
+            *mesh,
+            ContinueStraight(),
+            intersectStraight,
+            DontStop());
+    auto ray = laser.getRays()[0];
+    auto intersection = ray.intersections[5];
+
+    auto result = householderGradient->get(
+            intersection.pointOnFace,
+            *intersection.previousElement,
+            *intersection.nextElement
+    );
+
+    EXPECT_THAT(result.x, DoubleEq(12));
+    EXPECT_THAT(result.y, DoubleEq(-7));
 }
 
 TEST_F(gradient_calculators, h1_returns_correct_result_at_the_border) {

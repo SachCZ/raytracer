@@ -4,8 +4,8 @@
 #include <raytracer/physics/Magnitudes.h>
 #include <mfem.hpp>
 #include <raytracer/physics/Propagation.h>
-#include "Refraction.h"
-#include "Termination.h"
+#include <raytracer/physics/Refraction.h>
+#include <raytracer/physics/Termination.h>
 
 using namespace testing;
 using namespace raytracer;
@@ -18,7 +18,7 @@ public:
         side.segmentCount = 15;
         side.length = 1;
         mfemMesh = constructMfemMesh(side, side, mfem::Element::Type::QUADRILATERAL);
-        mesh = std::make_unique<Mesh>(mfemMesh.get());
+        mesh = std::make_unique<MfemMesh>(mfemMesh.get());
     }
 
     Laser laser{Length{1315e-7},
@@ -28,7 +28,7 @@ public:
                 Point(-1, 0.9)
     };
     std::unique_ptr<mfem::Mesh> mfemMesh;
-    std::unique_ptr<Mesh> mesh;
+    std::unique_ptr<MfemMesh> mesh;
 };
 
 TEST_F(initialized_laser, can_generateproper_rays) {

@@ -7,17 +7,21 @@ namespace raytracer {
     intersectStraight(
             const PointOnFace &entryPointOnFace,
             const Vector &entryDirection,
-            const Element &element,
-            const LaserRay &
+            const Element &element
     ) {
+        const auto &faces = element.getFaces();
+        std::vector<Face *> facesToSearch;
+        std::copy_if(faces.begin(), faces.end(), std::back_inserter(facesToSearch),
+                     [&entryPointOnFace](const auto &face) {
+                         return entryPointOnFace.face != face;
+                     });
         auto newPointOnFace = findClosestIntersection(
                 {entryPointOnFace.point, entryDirection},
-                element.getFaces(),
-                entryPointOnFace.face
+                facesToSearch
         );
         if (!newPointOnFace) throw std::logic_error("No intersection found, but it should definitely exist!");
         return *newPointOnFace;
     }
-    
+
 }
 

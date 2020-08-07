@@ -11,24 +11,26 @@
 
 double densityFunction(const mfem::Vector &x) {
     //return 1e26 * x(0) + 6.44713e+20;
-    //return x(0) > 0 ? 1e28 : 1e6;
-    return 1e22  * (std::atan(x(0)*1e15)) - 1e22  * (std::atan(-5e-6*1e15));
+    return x(0) > 0 && x(1) > 0 ? 1e22 : 1e6;
+    //return 1e22  * (std::atan(x(0)*1e15)) - 1e22  * (std::atan(-5e-6*1e15));
 }
 
 double temperatureFunction(const mfem::Vector &x) {
-    return 2000;
+    //return 2000;
     //return 2000 * (M_PI + std::atan(-x(0)*1e9));
+    return x(0) > 0 && x(1) > 0 ? 2000 : 0.03;
 }
 
-double ionizationFunction(const mfem::Vector &) {
-    return 22;
+double ionizationFunction(const mfem::Vector &x) {
+    //return 22;
+    return x(0) > 0 && x(1) > 0 > 0 ? 22 : 0;
 }
 
 int main(int, char *[]) {
     using namespace raytracer;
 
     auto mfemMesh = std::make_unique<mfem::Mesh>("data/mesh.vtk", 1, 0);
-    Mesh mesh(mfemMesh.get());
+    MfemMesh mesh(mfemMesh.get());
     mfem::L2_FECollection l2FiniteElementCollection(0, 2);
     mfem::FiniteElementSpace l2FiniteElementSpace(mfemMesh.get(), &l2FiniteElementCollection);
 
@@ -57,6 +59,9 @@ int main(int, char *[]) {
     H1Gradient h1Gradient(l2FiniteElementSpace, h1FiniteElementSpace);
     h1Gradient.updateDensity(densityGridFunction);
     //LeastSquare leastSquareGradient(mesh, densityMeshFunction);
+    //Householder householder(mesh, densityMeshFunction, 1);
+    //householder.update(false);
+
     //NormalGradient normalGradient(densityMeshFunction);
     SpitzerFrequency spitzerFrequency;
 
@@ -72,11 +77,11 @@ int main(int, char *[]) {
             Length{1315e-7},
             [](const Point) { return Vector(1, 0.7); },
             Gaussian(0.3e-5, 1, 0),
-            Point(-0.51e-5, -0.3e-5),
+            Point(-0.51e-5, -0.2e-5),
             Point(-0.51e-5, -0.5e-5)
     );
 
-    laser.generateRays(1000);
+    laser.generateRays(2000);
     laser.generateIntersections(mesh, snellsLaw, intersectStraight, DontStop());
 
     AbsorptionController absorber;

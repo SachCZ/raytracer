@@ -15,10 +15,10 @@ public:
         DiscreteLine sideA{1.0, 2};
         DiscreteLine sideB{1.0, 2};
         mfemMesh = std::move(constructMfemMesh(sideA, sideB, mfem::Element::Type::QUADRILATERAL));
-        mesh = std::make_unique<Mesh>(mfemMesh.get());
+        mesh = std::make_unique<MfemMesh>(mfemMesh.get());
     }
     std::unique_ptr<mfem::Mesh> mfemMesh;
-    std::unique_ptr<Mesh> mesh;
+    std::unique_ptr<MfemMesh> mesh;
 };
 
 

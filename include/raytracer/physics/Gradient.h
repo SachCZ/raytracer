@@ -1,6 +1,7 @@
 #ifndef RAYTRACER_GRADIENT_H
 #define RAYTRACER_GRADIENT_H
 
+#include "QRDecomposition.h"
 #include "Matrix2D.h"
 #include "Vector.h"
 #include "Intersection.h"
@@ -8,6 +9,7 @@
 #include "Point.h"
 #include "MeshFunction.h"
 #include "Mesh.h"
+#include "FreeFunctions.h"
 
 namespace raytracer {
     /**
@@ -114,7 +116,7 @@ namespace raytracer {
     class NormalGradient : public Gradient {
     public:
 
-        explicit NormalGradient(const MeshFunction& density): density(density) {}
+        explicit NormalGradient(const MeshFunction &density) : density(density) {}
 
         /**
          * Return the value of gradient at the intersection point.
@@ -131,7 +133,7 @@ namespace raytracer {
         ) const override;
 
     private:
-        const MeshFunction& density;
+        const MeshFunction &density;
     };
 
     /**
@@ -175,6 +177,44 @@ namespace raytracer {
         double getCoeffB(const Element &element, const std::vector<Element *> &neighbours, uint axis) const;
 
         static Vector solve(Matrix2D A, Vector b);
+    };
+
+    class Householder : public Gradient {
+    public:
+        Householder(const Mesh &mesh, const MeshFunction &density, double smoothingFWHM) :
+                mesh(mesh), density(density), gaussian(smoothingFWHM) {}
+
+        Vector get(
+                const PointOnFace &pointOnFace,
+                const Element &previousElement,
+                const Element &nextElement
+        ) const override;
+
+        std::map<Point *, Vector> getSmoothedGradientAtPoints();
+
+        void update(bool smoothing = true);
+
+    private:
+        const Mesh &mesh;
+        const MeshFunction &density;
+        std::map<Point *, Vector> gradientAtPoints;
+        Gaussian gaussian;
+
+        std::map<Point *, Vector> getGradientAtPoints() const;
+
+        Vector getGradientAtPoint(const Point *point) const;
+
+        static Vector solveOverdetermined(rosetta::Matrix &A, rosetta::Matrix &b);
+
+        static Vector getCentroid(const Element &element);
+
+        static Vector linearInterpolate(
+                const Point &a,
+                const Point &b,
+                const Point &x,
+                const Vector &valueA,
+                const Vector &valueB);
+
     };
 
     /**

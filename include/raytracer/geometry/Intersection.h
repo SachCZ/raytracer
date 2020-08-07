@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <limits>
 
 #include "Point.h"
 #include "Face.h"
@@ -48,7 +49,12 @@ namespace raytracer {
 
         double getParamT(const HalfLine &halfLine, const std::vector<Point *> &points);
 
-        bool isIntersecting(double k, double t);
+        bool isIntersecting(double k, double t, bool includePoint);
+
+        std::unique_ptr<PointOnFace> getClosest(
+                std::vector<std::unique_ptr<PointOnFace>> &intersections,
+                const Point &point
+        );
     }
 
     /**
@@ -57,7 +63,8 @@ namespace raytracer {
      * @param face to be intersected
      * @return PointOnFace or nullptr if no intersection exists.
      */
-    std::unique_ptr<PointOnFace> findIntersection(const HalfLine &halfLine, const Face *face);
+    std::unique_ptr<PointOnFace>
+    findIntersection(const HalfLine &halfLine, const Face *face, bool includePoint = false);
 
     /**
      * For a given set of faces use findIntersection() and return the one that is closest to the
@@ -68,10 +75,7 @@ namespace raytracer {
      * @param omitFace faces address to omit when searching for intersection
      * @return PointOnFace or nullptr if no intersection exists
      */
-    std::unique_ptr<PointOnFace> findClosestIntersection(
-            const HalfLine &halfLine,
-            const std::vector<Face *> &faces,
-            const Face *omitFace = nullptr);
+    std::unique_ptr<PointOnFace> findClosestIntersection(const HalfLine &halfLine, const std::vector<Face *> &faces);
 
 }
 

@@ -14,20 +14,6 @@ double in[][3] = {
         {  2,   0,   3},
 };
 
-raytracer::Vector solveOverdetermined(rosetta::Matrix& A, rosetta::Matrix& b){
-    Matrix Q, R;
-    householder(A, R, Q);
-    Q.trim_columns(3);
-    R.trim_rows(3);
-
-    Q.transpose();
-    Matrix Qtb;
-    Qtb.mult(Q, b);
-    Matrix x;
-    x.forward_substitute(R, Qtb);
-    return {x(0, 0), x(1, 0)};
-}
-
 TEST(householder_algorithm, gives_correct_result) {
     Matrix A(in);
     Matrix Q, R;

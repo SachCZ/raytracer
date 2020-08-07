@@ -82,6 +82,18 @@ def main():
     save_error(x, y, grad_y, analytic_grad_y, "images/h1_error_y.png",
                "$H1$ (grad($\\rho$))$_y$ of $\\rho(x, y) = sin(2 \\pi x) + sin(2 \\pi y)$ error")
 
+    grad_x = np.genfromtxt("data/householder_x.csv", delimiter=",")
+    save_compare_gradients(x, y, grad_x, analytic_grad_x, "images/householder_grad_x_compare.png",
+                           "$HH$ (grad($\\rho$))$_x$ of $\\rho(x, y) = sin(2 \\pi x) + sin(2 \\pi y)$")
+    save_error(x, y, grad_x, analytic_grad_x, "images/householder_error_x.png",
+               "$HH$ (grad($\\rho$))$_x$ of $\\rho(x, y) = sin(2 \\pi x) + sin(2 \\pi y)$ error")
+
+    grad_y = np.genfromtxt("data/householder_y.csv", delimiter=",")
+    save_compare_gradients(x, y, grad_y, analytic_grad_y, "images/householder_y_compare.png",
+                           "$HH$ (grad($\\rho$))$_y$ of $\\rho(x, y) = sin(2 \\pi x) + sin(2 \\pi y)$")
+    save_error(x, y, grad_y, analytic_grad_y, "images/householder_error_y.png",
+               "$HH$ (grad($\\rho$))$_y$ of $\\rho(x, y) = sin(2 \\pi x) + sin(2 \\pi y)$ error")
+
 
 if __name__ == "__main__":
     main()
