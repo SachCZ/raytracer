@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include "../matchers.h"
 #include <raytracer/geometry/Vector.h>
 
 using namespace testing;
@@ -20,14 +21,12 @@ TEST_F(initialized_vector, has_y) {
 
 TEST_F(initialized_vector, can_be_multiplied_by_number) {
     Vector result = 2 * vector;
-    EXPECT_THAT(result.x, DoubleEq(6));
-    ASSERT_THAT(result.y, DoubleEq(8));
+    ASSERT_THAT(result, IsSameVector(Vector(6, 8)));
 }
 
 TEST_F(initialized_vector, number_multiplication_order_does_not_matter) {
     Vector result = vector * 2;
-    EXPECT_THAT(result.x, DoubleEq(6));
-    ASSERT_THAT(result.y, DoubleEq(8));
+    ASSERT_THAT(result, IsSameVector(Vector(6, 8)));
 }
 
 TEST_F(initialized_vector, has_correct_norm) {
@@ -42,14 +41,14 @@ public:
 
 TEST_F(two_vectors, could_be_added) {
     Vector result = a + b;
-    EXPECT_THAT(result.x, DoubleEq(-3));
-    ASSERT_THAT(result.y, DoubleEq(7.2));
+    ASSERT_THAT(result, IsSameVector(Vector(-3, 7.2)));
+
 }
 
 TEST_F(two_vectors, could_be_subtracted) {
     Vector result = a - b;
-    EXPECT_THAT(result.x, DoubleEq(7));
-    ASSERT_THAT(result.y, DoubleEq(2.8));
+    ASSERT_THAT(result, IsSameVector(Vector(7, 2.8)));
+
 }
 
 TEST_F(two_vectors, support_dot_product) {

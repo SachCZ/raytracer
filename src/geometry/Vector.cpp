@@ -1,5 +1,5 @@
 #include <cmath>
-
+#include <iostream>
 #include "Vector.h"
 
 namespace raytracer {
@@ -23,6 +23,11 @@ namespace raytracer {
 
     double operator*(Vector a, Vector b) {
         return a.x * b.x + a.y * b.y;
+    }
+
+    std::ostream &operator<<(std::ostream &os, const Vector &vector) {
+        os << "(" <<vector.x << ", " << vector.y << ')';
+        return os;
     }
 
     double Vector::getNorm() const {

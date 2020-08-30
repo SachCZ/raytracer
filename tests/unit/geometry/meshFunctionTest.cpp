@@ -9,12 +9,12 @@ using namespace testing;
 using namespace raytracer;
 
 
-class mesh_function : public Test {
+class mfem_mesh_function : public Test {
     static double density(const mfem::Vector &x) {
         return 12.8e20 * x(0);
     }
 public:
-    mesh_function() {
+    mfem_mesh_function() {
         DiscreteLine sideA{1.0, 2};
         DiscreteLine sideB{1.0, 2};
         mfemMesh = std::move(constructMfemMesh(sideA, sideB, mfem::Element::Type::QUADRILATERAL));
@@ -24,7 +24,7 @@ public:
         finiteElementSpace = std::make_unique<mfem::FiniteElementSpace>(mfemMesh.get(), &finiteElementCollection);
         densityGridFunction = std::make_unique<mfem::GridFunction>(finiteElementSpace.get());
 
-        mfem::FunctionCoefficient densityFunctionCoefficient{mesh_function::density};
+        mfem::FunctionCoefficient densityFunctionCoefficient{mfem_mesh_function::density};
         densityGridFunction->ProjectCoefficient(densityFunctionCoefficient);
         meshFunction = std::make_unique<MfemMeshFunction>(*densityGridFunction, *finiteElementSpace);
     }
@@ -39,7 +39,7 @@ public:
     std::unique_ptr<MfemMeshFunction> meshFunction;
 };
 
-TEST_F(mesh_function, value_can_be_retrieved_given_an_element) {
+TEST_F(mfem_mesh_function, value_can_be_retrieved_given_an_element) {
     auto boundary = mesh->getBoundary();
     auto element = mesh->getFaceAdjacentElement(boundary[0], Vector(0, 1));
 
@@ -47,7 +47,7 @@ TEST_F(mesh_function, value_can_be_retrieved_given_an_element) {
     ASSERT_THAT(value, DoubleEq(12.8e20 / 4));
 }
 
-TEST_F(mesh_function, value_can_be_set_given_an_element) {
+TEST_F(mfem_mesh_function, value_can_be_set_given_an_element) {
     auto boundary = mesh->getBoundary();
     auto element = mesh->getFaceAdjacentElement(boundary[0], Vector(0, 1));
 

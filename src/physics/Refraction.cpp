@@ -25,8 +25,10 @@ namespace raytracer {
             const Element &nextElement,
             const LaserRay &laserRay
     ) {
-        const auto gradient = gradientCalculator.get(pointOnFace, previousElement, nextElement);
-        if (gradient.getNorm() == 0) return previousDirection;
+        auto gradient = gradientCalculator.get(pointOnFace, previousElement, nextElement);
+        if (gradient.getNorm() <= 1e7) {
+            gradient = laserRay.direction; //If the gradient is way to small, use the initial direction of the laser ray
+        }
 
         const auto rho1 = Density{density.getValue(previousElement)};
         const auto rho2 = Density{density.getValue(nextElement)};
@@ -46,6 +48,7 @@ namespace raytracer {
         const double n2 = laserRay.getRefractiveIndex(rho2, nu_ei_2);
 
         const auto l = 1 / previousDirection.getNorm() * previousDirection;
+
         auto n = 1 / gradient.getNorm() * gradient;
         auto c = (-1) * n * l;
         if (c < 0) {

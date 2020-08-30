@@ -2,6 +2,7 @@
 #define RAYTRACER_POINT_H
 
 #include "Vector.h"
+#include <iostream>
 
 namespace raytracer {
 
@@ -63,6 +64,8 @@ namespace raytracer {
      * @return
      */
     const Point operator+(Vector b, Point A);
+
+    std::ostream& operator<<(std::ostream& os, const Point& point);
 
     /**
      * @}

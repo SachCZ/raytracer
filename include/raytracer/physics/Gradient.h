@@ -107,7 +107,7 @@ namespace raytracer {
 
         Vector getGradientAt(const Element &element, const Point &point) const;
 
-        mfem::GridFunction projectL2toH1(const mfem::GridFunction &function);
+        mfem::GridFunction projectL2toH1(mfem::GridFunction &function);
     };
 
     /** Gradient model computes the gradient as a unit vector normal to the face and pointing int the direction

@@ -66,7 +66,7 @@ namespace raytracer {
         return {result[0], result[1]};
     }
 
-    mfem::GridFunction H1Gradient::projectL2toH1(const mfem::GridFunction &function) {
+    mfem::GridFunction H1Gradient::projectL2toH1(mfem::GridFunction &function) {
         /**
         mfem::GridFunction continuousInterpolant(&h1Space);
         mfem::DiscreteLinearOperator discreteLinearOperator(&l2Space, &h1Space);
@@ -78,23 +78,34 @@ namespace raytracer {
         return continuousInterpolant;
 
         **/
-        mfem::BilinearForm A(&h1Space);
-        A.AddDomainIntegrator(new mfem::MassIntegrator);
-        A.Assemble();
-        A.Finalize();
+
+        mfem::GridFunctionCoefficient densityFunctionCoefficient(&function);
+        mfem::GridFunction result(&h1Space);
+        result = 0;
+        // result.ProjectBdrCoefficient(densityFunctionCoefficient, ...);
+        // pocet atributy
+        //mesh.bdr_.max
+        //... = array of attr
 
         mfem::MixedBilinearForm B(&l2Space, &h1Space);
         B.AddDomainIntegrator(new mfem::MixedScalarMassIntegrator);
         B.Assemble();
         B.Finalize();
-
         mfem::LinearForm b(&h1Space);
         B.Mult(function, b);
 
+        mfem::BilinearForm A(&h1Space);
+        A.AddDomainIntegrator(new mfem::MassIntegrator);
+        A.Assemble();
+        //A.EliminateEssentialBC(..., function, b);
+        A.Finalize();
+
+
+
+
+
         mfem::GSSmoother smoother(A.SpMat());
 
-        mfem::GridFunction result(&h1Space);
-        result = 0;
         mfem::PCG(A, smoother, b, result);
 
         return result;

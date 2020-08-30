@@ -6,7 +6,7 @@ import matplotlib.ticker as ticker
 
 if __name__ == "__main__":
     _, axis = plt.subplots()
-    rayvis.plot_rays(axis, rayvis.read_rays("data/rays.json"))
+    rayvis.plot_rays(axis, rayvis.read_rays("data/rays.json"), color="black", alpha=0.9, linewidth=0.1)
 
     nodes, elements = rayvis.read_vtk("data/mesh.vtk")
     rayvis.plot_vtk_mesh(axis, nodes, elements)
@@ -20,7 +20,8 @@ if __name__ == "__main__":
     axis.set_ylabel("$y$ [cm]")
 
     plt.axis('equal')
-    plt.savefig("images/bremsstrahlung_rays.svg", format='svg', dpi=1200)
+    #plt.savefig("images/bremsstrahlung_rays.svg", format='svg', dpi=1200)
+    plt.show()
     plt.clf()
 
     fig, axis = plt.subplots()

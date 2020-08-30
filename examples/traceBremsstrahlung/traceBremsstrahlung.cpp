@@ -11,7 +11,7 @@
 
 double densityFunction(const mfem::Vector &x) {
     //return 1e26 * x(0) + 6.44713e+20;
-    return x(0) > 0 && x(1) > 0 ? 1e22 : 1e6;
+    return x(0) > 0 && x(1) > 0 ? 1e28 : 1e6;
     //return 1e22  * (std::atan(x(0)*1e15)) - 1e22  * (std::atan(-5e-6*1e15));
 }
 
@@ -23,7 +23,7 @@ double temperatureFunction(const mfem::Vector &x) {
 
 double ionizationFunction(const mfem::Vector &x) {
     //return 22;
-    return x(0) > 0 && x(1) > 0 > 0 ? 22 : 0;
+    return x(0) > 0 && x(1) > 0 ? 22 : 0;
 }
 
 int main(int, char *[]) {
@@ -56,11 +56,11 @@ int main(int, char *[]) {
     ionizationGridFunction.ProjectCoefficient(ionizationFunctionCoefficient);
     MfemMeshFunction ionizationMeshFunction(ionizationGridFunction, l2FiniteElementSpace);
 
-    H1Gradient h1Gradient(l2FiniteElementSpace, h1FiniteElementSpace);
-    h1Gradient.updateDensity(densityGridFunction);
+    //H1Gradient h1Gradient(l2FiniteElementSpace, h1FiniteElementSpace);
+    //h1Gradient.updateDensity(densityGridFunction);
     //LeastSquare leastSquareGradient(mesh, densityMeshFunction);
-    //Householder householder(mesh, densityMeshFunction, 1);
-    //householder.update(false);
+    Householder householder(mesh, densityMeshFunction, 1e-5);
+    householder.update();
 
     //NormalGradient normalGradient(densityMeshFunction);
     SpitzerFrequency spitzerFrequency;
@@ -69,19 +69,19 @@ int main(int, char *[]) {
             densityMeshFunction,
             temperatureMeshFunction,
             ionizationMeshFunction,
-            h1Gradient,
+            householder,
             spitzerFrequency
     );
 
     Laser laser(
             Length{1315e-7},
-            [](const Point) { return Vector(1, 0.7); },
+            [](const Point) { return Vector(1, 0.1); },
             Gaussian(0.3e-5, 1, 0),
-            Point(-0.51e-5, -0.2e-5),
-            Point(-0.51e-5, -0.5e-5)
+            Point(-1.1e-6, 0.5e-6),
+            Point(-1.1e-6, -0.5e-6)
     );
 
-    laser.generateRays(2000);
+    laser.generateRays(1000);
     laser.generateIntersections(mesh, snellsLaw, intersectStraight, DontStop());
 
     AbsorptionController absorber;

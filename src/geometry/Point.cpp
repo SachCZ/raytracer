@@ -16,4 +16,9 @@ namespace raytracer {
     const Point operator+(Vector b, Point A) {
         return A + b;
     }
+
+    std::ostream &operator<<(std::ostream &os, const Point &point) {
+        os << "(" <<point.x << ", " << point.y << ')';
+        return os;
+    }
 }

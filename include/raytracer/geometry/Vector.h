@@ -1,6 +1,8 @@
 #ifndef RAYTRACER_VECTOR_H
 #define RAYTRACER_VECTOR_H
 
+#include <iostream>
+
 namespace raytracer {
     /**
      * \addtogroup api
@@ -87,6 +89,8 @@ namespace raytracer {
      * @return
      */
     const Vector operator-(Vector a, Vector b);
+
+    std::ostream &operator<<(std::ostream &os, const Vector &vector);
 
     /**
      * @}
