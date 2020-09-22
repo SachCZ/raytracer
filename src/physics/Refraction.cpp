@@ -26,10 +26,6 @@ namespace raytracer {
             const LaserRay &laserRay
     ) {
         auto gradient = gradientCalculator.get(pointOnFace, previousElement, nextElement);
-        if (gradient.getNorm() <= 1e7) {
-            gradient = laserRay.direction; //If the gradient is way to small, use the initial direction of the laser ray
-        }
-
         const auto rho1 = Density{density.getValue(previousElement)};
         const auto rho2 = Density{density.getValue(nextElement)};
 
@@ -58,16 +54,21 @@ namespace raytracer {
         const double r = n1 / n2;
 
         auto root = 1 - r * r * (1 - c * c);
+        Vector result{};
         if (root > 0) {
-            return r * l + (r * c - sqrt(root)) * n;
+            result = r * l + (r * c - sqrt(root)) * n;
         } else {//Reflection
             if (gradient*previousDirection < 0){//Against gradient
-                return previousDirection;
+                result =  previousDirection;
             }
             else {
                 if(reflectedMarker) reflectedMarker->mark(previousElement, laserRay);
-                return l + 2 * c * n;
+                result = l + 2 * c * n;
             }
         }
+        if (std::isnan(result.x) || std::isnan(result.y)){
+            throw std::logic_error("Snell's law generated nan direction, something is wrong!");
+        }
+        return result;
     }
 }

@@ -1,0 +1,87 @@
+\hypertarget{classraytracer_1_1geometry_1_1Mesh}{}\section{raytracer\+:\+:geometry\+:\+:Mesh Class Reference}
+\label{classraytracer_1_1geometry_1_1Mesh}\index{raytracer\+::geometry\+::\+Mesh@{raytracer\+::geometry\+::\+Mesh}}
+
+
+Class representing a mesh.  
+
+
+
+
+{\ttfamily \#include $<$Mesh.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Mesh_a653770f6c079e9be27480039deb758eb}\label{classraytracer_1_1geometry_1_1Mesh_a653770f6c079e9be27480039deb758eb}} 
+\hyperlink{classraytracer_1_1geometry_1_1Mesh_a653770f6c079e9be27480039deb758eb}{Mesh} (mfem\+::\+Mesh $\ast$mesh)
+\begin{DoxyCompactList}\small\item\em Create a rectangular mesh given. \end{DoxyCompactList}\item 
+\hyperlink{classraytracer_1_1geometry_1_1Element}{Element} $\ast$ \hyperlink{classraytracer_1_1geometry_1_1Mesh_abc14a8ac714460926e8f2bcacdf49cbd}{get\+Adjacent\+Element} (const \hyperlink{classraytracer_1_1geometry_1_1Face}{Face} $\ast$face, const \hyperlink{structraytracer_1_1geometry_1_1HalfLine}{Half\+Line} \&orientation) const
+\begin{DoxyCompactList}\small\item\em Given a face return the adjacent element to this face in given direction. \end{DoxyCompactList}\item 
+std\+::vector$<$ \hyperlink{classraytracer_1_1geometry_1_1Face}{Face} $\ast$ $>$ \hyperlink{classraytracer_1_1geometry_1_1Mesh_a3f7cc92317844c16e350469f7a2222af}{get\+Boundary} () const
+\begin{DoxyCompactList}\small\item\em Return a sequence of faces that are on the mesh boundary. \end{DoxyCompactList}\item 
+std\+::vector$<$ \hyperlink{classraytracer_1_1geometry_1_1Element}{Element} $\ast$ $>$ \hyperlink{classraytracer_1_1geometry_1_1Mesh_a0fcef1d3e48815807ea6b498d3c45b1b}{get\+Adjacent\+Elements} (const \hyperlink{classraytracer_1_1geometry_1_1Point}{Point} $\ast$point) const
+\begin{DoxyCompactList}\small\item\em Return the elements adjacent to given point. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class representing a mesh. 
+
+For now it is a mesh of quadrilaterals. It encapsulates the class mfem\+::\+Mesh and provides some convenience methods. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Mesh_abc14a8ac714460926e8f2bcacdf49cbd}\label{classraytracer_1_1geometry_1_1Mesh_abc14a8ac714460926e8f2bcacdf49cbd}} 
+\index{raytracer\+::geometry\+::\+Mesh@{raytracer\+::geometry\+::\+Mesh}!get\+Adjacent\+Element@{get\+Adjacent\+Element}}
+\index{get\+Adjacent\+Element@{get\+Adjacent\+Element}!raytracer\+::geometry\+::\+Mesh@{raytracer\+::geometry\+::\+Mesh}}
+\subsubsection{\texorpdfstring{get\+Adjacent\+Element()}{getAdjacentElement()}}
+{\footnotesize\ttfamily \hyperlink{classraytracer_1_1geometry_1_1Element}{Element}$\ast$ raytracer\+::geometry\+::\+Mesh\+::get\+Adjacent\+Element (\begin{DoxyParamCaption}\item[{const \hyperlink{classraytracer_1_1geometry_1_1Face}{Face} $\ast$}]{face,  }\item[{const \hyperlink{structraytracer_1_1geometry_1_1HalfLine}{Half\+Line} \&}]{orientation }\end{DoxyParamCaption}) const}
+
+
+
+Given a face return the adjacent element to this face in given direction. 
+
+It is expected that there are two or less elements adjacent to the face. If there is no element adjacent in given direction, nullptr is returned. If the orientation point is exactly in the face corner point a special check is made to find a possibly diagonal element. 
+\begin{DoxyParams}{Parameters}
+{\em face} & whose adjacent elements are to be found. \\
+\hline
+{\em orientation} & in which to search for elements. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The element pointer if found or nullptr if not. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Mesh_a0fcef1d3e48815807ea6b498d3c45b1b}\label{classraytracer_1_1geometry_1_1Mesh_a0fcef1d3e48815807ea6b498d3c45b1b}} 
+\index{raytracer\+::geometry\+::\+Mesh@{raytracer\+::geometry\+::\+Mesh}!get\+Adjacent\+Elements@{get\+Adjacent\+Elements}}
+\index{get\+Adjacent\+Elements@{get\+Adjacent\+Elements}!raytracer\+::geometry\+::\+Mesh@{raytracer\+::geometry\+::\+Mesh}}
+\subsubsection{\texorpdfstring{get\+Adjacent\+Elements()}{getAdjacentElements()}}
+{\footnotesize\ttfamily std\+::vector$<$\hyperlink{classraytracer_1_1geometry_1_1Element}{Element} $\ast$$>$ raytracer\+::geometry\+::\+Mesh\+::get\+Adjacent\+Elements (\begin{DoxyParamCaption}\item[{const \hyperlink{classraytracer_1_1geometry_1_1Point}{Point} $\ast$}]{point }\end{DoxyParamCaption}) const}
+
+
+
+Return the elements adjacent to given point. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em point} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Mesh_a3f7cc92317844c16e350469f7a2222af}\label{classraytracer_1_1geometry_1_1Mesh_a3f7cc92317844c16e350469f7a2222af}} 
+\index{raytracer\+::geometry\+::\+Mesh@{raytracer\+::geometry\+::\+Mesh}!get\+Boundary@{get\+Boundary}}
+\index{get\+Boundary@{get\+Boundary}!raytracer\+::geometry\+::\+Mesh@{raytracer\+::geometry\+::\+Mesh}}
+\subsubsection{\texorpdfstring{get\+Boundary()}{getBoundary()}}
+{\footnotesize\ttfamily std\+::vector$<$\hyperlink{classraytracer_1_1geometry_1_1Face}{Face} $\ast$$>$ raytracer\+::geometry\+::\+Mesh\+::get\+Boundary (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return a sequence of faces that are on the mesh boundary. 
+
+\begin{DoxyReturn}{Returns}
+sequence of faces. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/raytracer/geometry/Mesh.\+h\end{DoxyCompactItemize}

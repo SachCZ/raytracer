@@ -18,6 +18,9 @@ namespace raytracer {
         auto permittivity = this->getPermittivity(density, collisionFrequency);
         if (permittivity.real() < 0) return 0;
         auto root = std::sqrt(permittivity);
+        if (std::isnan(root.real())){
+            throw std::logic_error("Nan index of refraction!");
+        }
         return root.real();
     }
 

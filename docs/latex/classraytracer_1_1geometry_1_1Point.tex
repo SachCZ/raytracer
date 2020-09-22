@@ -1,0 +1,88 @@
+\hypertarget{classraytracer_1_1geometry_1_1Point}{}\section{raytracer\+:\+:geometry\+:\+:Point Class Reference}
+\label{classraytracer_1_1geometry_1_1Point}\index{raytracer\+::geometry\+::\+Point@{raytracer\+::geometry\+::\+Point}}
+
+
+Class representing a point A point is given by two coordinates x and y.  
+
+
+
+
+{\ttfamily \#include $<$Point.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classraytracer_1_1geometry_1_1Point_ad05a2dc2f77d1a2720a6dd19a6b1c5ed}{Point} (double \hyperlink{classraytracer_1_1geometry_1_1Point_a1408a40033e6273f93e539875dfe09b3}{x}, double \hyperlink{classraytracer_1_1geometry_1_1Point_a7fcd0651b22e64147a33dded20b72fd1}{y})
+\begin{DoxyCompactList}\small\item\em Construct the edge fiven x and y. \end{DoxyCompactList}\item 
+\hyperlink{classraytracer_1_1geometry_1_1Point_ac8c3dcaf9edb06b36bf3301348eb946a}{Point} ()=default
+\begin{DoxyCompactList}\small\item\em Default contructor. \end{DoxyCompactList}\item 
+bool \hyperlink{classraytracer_1_1geometry_1_1Point_ae363ee68a65544c87142d64433d790e0}{operator==} (const \hyperlink{classraytracer_1_1geometry_1_1Point}{Point} \&another\+Point) const
+\begin{DoxyCompactList}\small\item\em Equality operator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Point_a1408a40033e6273f93e539875dfe09b3}\label{classraytracer_1_1geometry_1_1Point_a1408a40033e6273f93e539875dfe09b3}} 
+double \hyperlink{classraytracer_1_1geometry_1_1Point_a1408a40033e6273f93e539875dfe09b3}{x}
+\begin{DoxyCompactList}\small\item\em x coordinate \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Point_a7fcd0651b22e64147a33dded20b72fd1}\label{classraytracer_1_1geometry_1_1Point_a7fcd0651b22e64147a33dded20b72fd1}} 
+double \hyperlink{classraytracer_1_1geometry_1_1Point_a7fcd0651b22e64147a33dded20b72fd1}{y}
+\begin{DoxyCompactList}\small\item\em y coordinate \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class representing a point A point is given by two coordinates x and y. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Point_ad05a2dc2f77d1a2720a6dd19a6b1c5ed}\label{classraytracer_1_1geometry_1_1Point_ad05a2dc2f77d1a2720a6dd19a6b1c5ed}} 
+\index{raytracer\+::geometry\+::\+Point@{raytracer\+::geometry\+::\+Point}!Point@{Point}}
+\index{Point@{Point}!raytracer\+::geometry\+::\+Point@{raytracer\+::geometry\+::\+Point}}
+\subsubsection{\texorpdfstring{Point()}{Point()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily raytracer\+::geometry\+::\+Point\+::\+Point (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})}
+
+
+
+Construct the edge fiven x and y. 
+
+Note that x goes first, be sure not to mix this up. 
+\begin{DoxyParams}{Parameters}
+{\em x} & coordinate \\
+\hline
+{\em y} & coordinate \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Point_ac8c3dcaf9edb06b36bf3301348eb946a}\label{classraytracer_1_1geometry_1_1Point_ac8c3dcaf9edb06b36bf3301348eb946a}} 
+\index{raytracer\+::geometry\+::\+Point@{raytracer\+::geometry\+::\+Point}!Point@{Point}}
+\index{Point@{Point}!raytracer\+::geometry\+::\+Point@{raytracer\+::geometry\+::\+Point}}
+\subsubsection{\texorpdfstring{Point()}{Point()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily raytracer\+::geometry\+::\+Point\+::\+Point (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+Default contructor. 
+
+Default contructed point has both x and y equal to 0 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Point_ae363ee68a65544c87142d64433d790e0}\label{classraytracer_1_1geometry_1_1Point_ae363ee68a65544c87142d64433d790e0}} 
+\index{raytracer\+::geometry\+::\+Point@{raytracer\+::geometry\+::\+Point}!operator==@{operator==}}
+\index{operator==@{operator==}!raytracer\+::geometry\+::\+Point@{raytracer\+::geometry\+::\+Point}}
+\subsubsection{\texorpdfstring{operator==()}{operator==()}}
+{\footnotesize\ttfamily bool raytracer\+::geometry\+::\+Point\+::operator== (\begin{DoxyParamCaption}\item[{const \hyperlink{classraytracer_1_1geometry_1_1Point}{Point} \&}]{another\+Point }\end{DoxyParamCaption}) const}
+
+
+
+Equality operator. 
+
+Two points are equal if their coordinates difference is less than given project wide epsilon (defined in constants) 
+\begin{DoxyParams}{Parameters}
+{\em another\+Point} & to comapre with \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if they almost equal 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/raytracer/geometry/Point.\+h\end{DoxyCompactItemize}

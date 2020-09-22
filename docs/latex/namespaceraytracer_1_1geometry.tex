@@ -1,0 +1,292 @@
+\hypertarget{namespaceraytracer_1_1geometry}{}\section{raytracer\+:\+:geometry Namespace Reference}
+\label{namespaceraytracer_1_1geometry}\index{raytracer\+::geometry@{raytracer\+::geometry}}
+
+
+Namespace encapsulating all the abstractions related to geometry.  
+
+
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \hyperlink{namespaceraytracer_1_1geometry_1_1constants}{constants}
+\begin{DoxyCompactList}\small\item\em Namespace encapsulating geometry constants. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structraytracer_1_1geometry_1_1DiscreteLine}{Discrete\+Line}
+\begin{DoxyCompactList}\small\item\em Structure representing a discretisation of a distance. \end{DoxyCompactList}\item 
+class \hyperlink{classraytracer_1_1geometry_1_1Element}{Element}
+\begin{DoxyCompactList}\small\item\em Class representing a single volume element in mesh. \end{DoxyCompactList}\item 
+class \hyperlink{classraytracer_1_1geometry_1_1Face}{Face}
+\begin{DoxyCompactList}\small\item\em Class representing a face in mesh (edge in 2D, surface face in 3D). \end{DoxyCompactList}\item 
+struct \hyperlink{structraytracer_1_1geometry_1_1HalfLine}{Half\+Line}
+\begin{DoxyCompactList}\small\item\em Structure representing a half line. \end{DoxyCompactList}\item 
+struct \hyperlink{structraytracer_1_1geometry_1_1Intersection}{Intersection}
+\begin{DoxyCompactList}\small\item\em Structure representing a single intersection of \hyperlink{structraytracer_1_1geometry_1_1HalfLine}{Half\+Line} with a mesh. \end{DoxyCompactList}\item 
+class \hyperlink{classraytracer_1_1geometry_1_1Mesh}{Mesh}
+\begin{DoxyCompactList}\small\item\em Class representing a mesh. \end{DoxyCompactList}\item 
+class \hyperlink{classraytracer_1_1geometry_1_1MeshFunction}{Mesh\+Function}
+\begin{DoxyCompactList}\small\item\em Abstract interface. \end{DoxyCompactList}\item 
+class \hyperlink{classraytracer_1_1geometry_1_1MfemMeshFunction}{Mfem\+Mesh\+Function}
+\begin{DoxyCompactList}\small\item\em Wrapper class around mfem\+::\+Grid\+Function. \end{DoxyCompactList}\item 
+class \hyperlink{classraytracer_1_1geometry_1_1Point}{Point}
+\begin{DoxyCompactList}\small\item\em Class representing a point A point is given by two coordinates x and y. \end{DoxyCompactList}\item 
+class \hyperlink{classraytracer_1_1geometry_1_1Ray}{Ray}
+\begin{DoxyCompactList}\small\item\em Class representing a ray propagating through mesh. \end{DoxyCompactList}\item 
+class \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector}
+\begin{DoxyCompactList}\small\item\em Class representing a physical vector. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::unique\+\_\+ptr$<$ \hyperlink{structraytracer_1_1geometry_1_1Intersection}{Intersection} $>$ \hyperlink{namespaceraytracer_1_1geometry_aef0f9f1bd82ffb69b8d6343a57106234}{find\+Intersection} (const \hyperlink{structraytracer_1_1geometry_1_1HalfLine}{Half\+Line} \&half\+Line, const \hyperlink{classraytracer_1_1geometry_1_1Face}{Face} $\ast$face)
+\begin{DoxyCompactList}\small\item\em Find an intersection of \hyperlink{structraytracer_1_1geometry_1_1HalfLine}{Half\+Line} with a face. \end{DoxyCompactList}\item 
+std\+::unique\+\_\+ptr$<$ \hyperlink{structraytracer_1_1geometry_1_1Intersection}{Intersection} $>$ \hyperlink{namespaceraytracer_1_1geometry_ae05eacb910ded12afa671c5563e91b11}{find\+Closest\+Intersection} (const \hyperlink{structraytracer_1_1geometry_1_1HalfLine}{Half\+Line} \&half\+Line, const std\+::vector$<$ \hyperlink{classraytracer_1_1geometry_1_1Face}{Face} $\ast$$>$ \&faces, const \hyperlink{classraytracer_1_1geometry_1_1Face}{Face} $\ast$omit\+Face=nullptr)
+\begin{DoxyCompactList}\small\item\em For a given set of faces find all its intersections with a \hyperlink{structraytracer_1_1geometry_1_1HalfLine}{Half\+Line} and return the one that is closest to the origin of the \hyperlink{structraytracer_1_1geometry_1_1HalfLine}{Half\+Line}. \end{DoxyCompactList}\item 
+std\+::unique\+\_\+ptr$<$ mfem\+::\+Mesh $>$ \hyperlink{namespaceraytracer_1_1geometry_a8d4b7f6d4fec35e4deeb09ec86b3d140}{construct\+Rectangle\+Mesh} (\hyperlink{structraytracer_1_1geometry_1_1DiscreteLine}{Discrete\+Line} sideA, \hyperlink{structraytracer_1_1geometry_1_1DiscreteLine}{Discrete\+Line} sideB)
+\begin{DoxyCompactList}\small\item\em Construct a mfem\+::\+Mesh given two discrete lines (the sides of the rectangle). \end{DoxyCompactList}\item 
+const \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} \hyperlink{namespaceraytracer_1_1geometry_a019177298d61bc227f55b0d51a83f60e}{operator-\/} (\hyperlink{classraytracer_1_1geometry_1_1Point}{Point} A, \hyperlink{classraytracer_1_1geometry_1_1Point}{Point} B)
+\begin{DoxyCompactList}\small\item\em Two Points can be subtracted to get a \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector}. \end{DoxyCompactList}\item 
+const \hyperlink{classraytracer_1_1geometry_1_1Point}{Point} \hyperlink{namespaceraytracer_1_1geometry_aa576460b4f567015830e98247c12f3ce}{operator+} (\hyperlink{classraytracer_1_1geometry_1_1Point}{Point} A, \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} b)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} and point can be added get another point. \end{DoxyCompactList}\item 
+const \hyperlink{classraytracer_1_1geometry_1_1Point}{Point} \hyperlink{namespaceraytracer_1_1geometry_aaf48be2ee020c2f48557c6361dfd64d1}{operator+} (\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} b, \hyperlink{classraytracer_1_1geometry_1_1Point}{Point} A)
+\begin{DoxyCompactList}\small\item\em Convenience wrapper around A + b. \end{DoxyCompactList}\item 
+const \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} \hyperlink{namespaceraytracer_1_1geometry_ada5477612107be5f59456de8524caa97}{operator$\ast$} (double k, \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} a)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} can be multiplied by number k$\ast$a. \end{DoxyCompactList}\item 
+const \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} \hyperlink{namespaceraytracer_1_1geometry_a3030b86be5d83356f089b60e3465ee12}{operator$\ast$} (\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} a, double k)
+\begin{DoxyCompactList}\small\item\em Convenience wrapper around k$\ast$a. \end{DoxyCompactList}\item 
+double \hyperlink{namespaceraytracer_1_1geometry_a11b9e4ba4dc8bcc091387d4a7934ab7e}{operator$\ast$} (\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} a, \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} b)
+\begin{DoxyCompactList}\small\item\em his is the dot product of two vectors a, b \end{DoxyCompactList}\item 
+const \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} \hyperlink{namespaceraytracer_1_1geometry_a43e318baa7b3ea626fcf42c80f2e86c4}{operator+} (\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} a, \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} b)
+\begin{DoxyCompactList}\small\item\em Two vectors a, b can be added. \end{DoxyCompactList}\item 
+const \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} \hyperlink{namespaceraytracer_1_1geometry_ab04e4d69ac25203a75381e41d6877493}{operator-\/} (\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} a, \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} b)
+\begin{DoxyCompactList}\small\item\em Two vectors a, b can be subtracted. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Namespace encapsulating all the abstractions related to geometry. 
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceraytracer_1_1geometry_a8d4b7f6d4fec35e4deeb09ec86b3d140}\label{namespaceraytracer_1_1geometry_a8d4b7f6d4fec35e4deeb09ec86b3d140}} 
+\index{raytracer\+::geometry@{raytracer\+::geometry}!construct\+Rectangle\+Mesh@{construct\+Rectangle\+Mesh}}
+\index{construct\+Rectangle\+Mesh@{construct\+Rectangle\+Mesh}!raytracer\+::geometry@{raytracer\+::geometry}}
+\subsubsection{\texorpdfstring{construct\+Rectangle\+Mesh()}{constructRectangleMesh()}}
+{\footnotesize\ttfamily std\+::unique\+\_\+ptr$<$mfem\+::\+Mesh$>$ raytracer\+::geometry\+::construct\+Rectangle\+Mesh (\begin{DoxyParamCaption}\item[{\hyperlink{structraytracer_1_1geometry_1_1DiscreteLine}{Discrete\+Line}}]{sideA,  }\item[{\hyperlink{structraytracer_1_1geometry_1_1DiscreteLine}{Discrete\+Line}}]{sideB }\end{DoxyParamCaption})}
+
+
+
+Construct a mfem\+::\+Mesh given two discrete lines (the sides of the rectangle). 
+
+The mesh will be a rectangular equidistant grid.
+
+
+\begin{DoxyParams}{Parameters}
+{\em sideA} & of the mesh \\
+\hline
+{\em sideB} & of the mesh \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the unique pointer to the mesh 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespaceraytracer_1_1geometry_ae05eacb910ded12afa671c5563e91b11}\label{namespaceraytracer_1_1geometry_ae05eacb910ded12afa671c5563e91b11}} 
+\index{raytracer\+::geometry@{raytracer\+::geometry}!find\+Closest\+Intersection@{find\+Closest\+Intersection}}
+\index{find\+Closest\+Intersection@{find\+Closest\+Intersection}!raytracer\+::geometry@{raytracer\+::geometry}}
+\subsubsection{\texorpdfstring{find\+Closest\+Intersection()}{findClosestIntersection()}}
+{\footnotesize\ttfamily std\+::unique\+\_\+ptr$<$\hyperlink{structraytracer_1_1geometry_1_1Intersection}{Intersection}$>$ raytracer\+::geometry\+::find\+Closest\+Intersection (\begin{DoxyParamCaption}\item[{const \hyperlink{structraytracer_1_1geometry_1_1HalfLine}{Half\+Line} \&}]{half\+Line,  }\item[{const std\+::vector$<$ \hyperlink{classraytracer_1_1geometry_1_1Face}{Face} $\ast$$>$ \&}]{faces,  }\item[{const \hyperlink{classraytracer_1_1geometry_1_1Face}{Face} $\ast$}]{omit\+Face = {\ttfamily nullptr} }\end{DoxyParamCaption})}
+
+
+
+For a given set of faces find all its intersections with a \hyperlink{structraytracer_1_1geometry_1_1HalfLine}{Half\+Line} and return the one that is closest to the origin of the \hyperlink{structraytracer_1_1geometry_1_1HalfLine}{Half\+Line}. 
+
+You can optionally specify a Face$\ast$ to face you wish to exclude from search. 
+\begin{DoxyParams}{Parameters}
+{\em half\+Line} & \\
+\hline
+{\em faces} & sequence of faces to be checked \\
+\hline
+{\em omit\+Face} & faces to omit when searching for intersection \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+an intersection structure pointer or nullptr if no intersection exists. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespaceraytracer_1_1geometry_aef0f9f1bd82ffb69b8d6343a57106234}\label{namespaceraytracer_1_1geometry_aef0f9f1bd82ffb69b8d6343a57106234}} 
+\index{raytracer\+::geometry@{raytracer\+::geometry}!find\+Intersection@{find\+Intersection}}
+\index{find\+Intersection@{find\+Intersection}!raytracer\+::geometry@{raytracer\+::geometry}}
+\subsubsection{\texorpdfstring{find\+Intersection()}{findIntersection()}}
+{\footnotesize\ttfamily std\+::unique\+\_\+ptr$<$\hyperlink{structraytracer_1_1geometry_1_1Intersection}{Intersection}$>$ raytracer\+::geometry\+::find\+Intersection (\begin{DoxyParamCaption}\item[{const \hyperlink{structraytracer_1_1geometry_1_1HalfLine}{Half\+Line} \&}]{half\+Line,  }\item[{const \hyperlink{classraytracer_1_1geometry_1_1Face}{Face} $\ast$}]{face }\end{DoxyParamCaption})}
+
+
+
+Find an intersection of \hyperlink{structraytracer_1_1geometry_1_1HalfLine}{Half\+Line} with a face. 
+
+If there is no intersection a nullptr is returned. 
+\begin{DoxyParams}{Parameters}
+{\em half\+Line} & \\
+\hline
+{\em face} & to be intersected \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+an intersection structure pointer or nullptr if no intersection exists. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespaceraytracer_1_1geometry_ada5477612107be5f59456de8524caa97}\label{namespaceraytracer_1_1geometry_ada5477612107be5f59456de8524caa97}} 
+\index{raytracer\+::geometry@{raytracer\+::geometry}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!raytracer\+::geometry@{raytracer\+::geometry}}
+\subsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily const \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} raytracer\+::geometry\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{double}]{k,  }\item[{\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector}}]{a }\end{DoxyParamCaption})}
+
+
+
+\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} can be multiplied by number k$\ast$a. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em k} & \\
+\hline
+{\em a} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+scaled vector 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespaceraytracer_1_1geometry_a3030b86be5d83356f089b60e3465ee12}\label{namespaceraytracer_1_1geometry_a3030b86be5d83356f089b60e3465ee12}} 
+\index{raytracer\+::geometry@{raytracer\+::geometry}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!raytracer\+::geometry@{raytracer\+::geometry}}
+\subsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily const \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} raytracer\+::geometry\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector}}]{a,  }\item[{double}]{k }\end{DoxyParamCaption})}
+
+
+
+Convenience wrapper around k$\ast$a. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & \\
+\hline
+{\em k} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespaceraytracer_1_1geometry_a11b9e4ba4dc8bcc091387d4a7934ab7e}\label{namespaceraytracer_1_1geometry_a11b9e4ba4dc8bcc091387d4a7934ab7e}} 
+\index{raytracer\+::geometry@{raytracer\+::geometry}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!raytracer\+::geometry@{raytracer\+::geometry}}
+\subsubsection{\texorpdfstring{operator$\ast$()}{operator*()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily double raytracer\+::geometry\+::operator$\ast$ (\begin{DoxyParamCaption}\item[{\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector}}]{a,  }\item[{\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector}}]{b }\end{DoxyParamCaption})}
+
+
+
+his is the dot product of two vectors a, b 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & \\
+\hline
+{\em b} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+dot product 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespaceraytracer_1_1geometry_aa576460b4f567015830e98247c12f3ce}\label{namespaceraytracer_1_1geometry_aa576460b4f567015830e98247c12f3ce}} 
+\index{raytracer\+::geometry@{raytracer\+::geometry}!operator+@{operator+}}
+\index{operator+@{operator+}!raytracer\+::geometry@{raytracer\+::geometry}}
+\subsubsection{\texorpdfstring{operator+()}{operator+()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily const \hyperlink{classraytracer_1_1geometry_1_1Point}{Point} raytracer\+::geometry\+::operator+ (\begin{DoxyParamCaption}\item[{\hyperlink{classraytracer_1_1geometry_1_1Point}{Point}}]{A,  }\item[{\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector}}]{b }\end{DoxyParamCaption})}
+
+
+
+\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} and point can be added get another point. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em A} & point \\
+\hline
+{\em b} & vector \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\hyperlink{classraytracer_1_1geometry_1_1Point}{Point} given by vector added to point A 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespaceraytracer_1_1geometry_aaf48be2ee020c2f48557c6361dfd64d1}\label{namespaceraytracer_1_1geometry_aaf48be2ee020c2f48557c6361dfd64d1}} 
+\index{raytracer\+::geometry@{raytracer\+::geometry}!operator+@{operator+}}
+\index{operator+@{operator+}!raytracer\+::geometry@{raytracer\+::geometry}}
+\subsubsection{\texorpdfstring{operator+()}{operator+()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily const \hyperlink{classraytracer_1_1geometry_1_1Point}{Point} raytracer\+::geometry\+::operator+ (\begin{DoxyParamCaption}\item[{\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector}}]{b,  }\item[{\hyperlink{classraytracer_1_1geometry_1_1Point}{Point}}]{A }\end{DoxyParamCaption})}
+
+
+
+Convenience wrapper around A + b. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em b} & \\
+\hline
+{\em A} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespaceraytracer_1_1geometry_a43e318baa7b3ea626fcf42c80f2e86c4}\label{namespaceraytracer_1_1geometry_a43e318baa7b3ea626fcf42c80f2e86c4}} 
+\index{raytracer\+::geometry@{raytracer\+::geometry}!operator+@{operator+}}
+\index{operator+@{operator+}!raytracer\+::geometry@{raytracer\+::geometry}}
+\subsubsection{\texorpdfstring{operator+()}{operator+()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily const \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} raytracer\+::geometry\+::operator+ (\begin{DoxyParamCaption}\item[{\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector}}]{a,  }\item[{\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector}}]{b }\end{DoxyParamCaption})}
+
+
+
+Two vectors a, b can be added. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & \\
+\hline
+{\em b} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespaceraytracer_1_1geometry_a019177298d61bc227f55b0d51a83f60e}\label{namespaceraytracer_1_1geometry_a019177298d61bc227f55b0d51a83f60e}} 
+\index{raytracer\+::geometry@{raytracer\+::geometry}!operator-\/@{operator-\/}}
+\index{operator-\/@{operator-\/}!raytracer\+::geometry@{raytracer\+::geometry}}
+\subsubsection{\texorpdfstring{operator-\/()}{operator-()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily const \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} raytracer\+::geometry\+::operator-\/ (\begin{DoxyParamCaption}\item[{\hyperlink{classraytracer_1_1geometry_1_1Point}{Point}}]{A,  }\item[{\hyperlink{classraytracer_1_1geometry_1_1Point}{Point}}]{B }\end{DoxyParamCaption})}
+
+
+
+Two Points can be subtracted to get a \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em A} & point \\
+\hline
+{\em B} & point \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+vector given by points difference 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespaceraytracer_1_1geometry_ab04e4d69ac25203a75381e41d6877493}\label{namespaceraytracer_1_1geometry_ab04e4d69ac25203a75381e41d6877493}} 
+\index{raytracer\+::geometry@{raytracer\+::geometry}!operator-\/@{operator-\/}}
+\index{operator-\/@{operator-\/}!raytracer\+::geometry@{raytracer\+::geometry}}
+\subsubsection{\texorpdfstring{operator-\/()}{operator-()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily const \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} raytracer\+::geometry\+::operator-\/ (\begin{DoxyParamCaption}\item[{\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector}}]{a,  }\item[{\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector}}]{b }\end{DoxyParamCaption})}
+
+
+
+Two vectors a, b can be subtracted. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & \\
+\hline
+{\em b} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}

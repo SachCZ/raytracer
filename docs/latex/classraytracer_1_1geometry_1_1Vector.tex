@@ -1,0 +1,89 @@
+\hypertarget{classraytracer_1_1geometry_1_1Vector}{}\section{raytracer\+:\+:geometry\+:\+:Vector Class Reference}
+\label{classraytracer_1_1geometry_1_1Vector}\index{raytracer\+::geometry\+::\+Vector@{raytracer\+::geometry\+::\+Vector}}
+
+
+Class representing a physical vector.  
+
+
+
+
+{\ttfamily \#include $<$Vector.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classraytracer_1_1geometry_1_1Vector_acd5cb78949603529e271310395459440}{Vector} (double \hyperlink{classraytracer_1_1geometry_1_1Vector_a954a5ffca3169512b63cf6d2530d957f}{x}, double \hyperlink{classraytracer_1_1geometry_1_1Vector_a6f94f809967bec250380eb2fa91492c2}{y})
+\begin{DoxyCompactList}\small\item\em Construct the vector using its coordinates. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Vector_a2934dbfb44caa33bf0ac822f97fcd0b6}\label{classraytracer_1_1geometry_1_1Vector_a2934dbfb44caa33bf0ac822f97fcd0b6}} 
+\hyperlink{classraytracer_1_1geometry_1_1Vector_a2934dbfb44caa33bf0ac822f97fcd0b6}{Vector} ()=default
+\begin{DoxyCompactList}\small\item\em Default constructor initializes a (0, 0) vector. \end{DoxyCompactList}\item 
+double \hyperlink{classraytracer_1_1geometry_1_1Vector_ac16dbbd95d3e439c6d4b81bf249d1e83}{get\+Norm} () const
+\begin{DoxyCompactList}\small\item\em Return the Euclidean norm of the vector (square root of sum of coordinates squared) \end{DoxyCompactList}\item 
+\hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} \hyperlink{classraytracer_1_1geometry_1_1Vector_a49b341cfda70b916ed0c200feb8bad50}{get\+Normal} () const
+\begin{DoxyCompactList}\small\item\em Return the normal to the vector using the convention (y, -\/x) \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Vector_a954a5ffca3169512b63cf6d2530d957f}\label{classraytracer_1_1geometry_1_1Vector_a954a5ffca3169512b63cf6d2530d957f}} 
+double \hyperlink{classraytracer_1_1geometry_1_1Vector_a954a5ffca3169512b63cf6d2530d957f}{x}
+\begin{DoxyCompactList}\small\item\em x coordinate \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Vector_a6f94f809967bec250380eb2fa91492c2}\label{classraytracer_1_1geometry_1_1Vector_a6f94f809967bec250380eb2fa91492c2}} 
+double \hyperlink{classraytracer_1_1geometry_1_1Vector_a6f94f809967bec250380eb2fa91492c2}{y}
+\begin{DoxyCompactList}\small\item\em y coordinate \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class representing a physical vector. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Vector_acd5cb78949603529e271310395459440}\label{classraytracer_1_1geometry_1_1Vector_acd5cb78949603529e271310395459440}} 
+\index{raytracer\+::geometry\+::\+Vector@{raytracer\+::geometry\+::\+Vector}!Vector@{Vector}}
+\index{Vector@{Vector}!raytracer\+::geometry\+::\+Vector@{raytracer\+::geometry\+::\+Vector}}
+\subsubsection{\texorpdfstring{Vector()}{Vector()}}
+{\footnotesize\ttfamily raytracer\+::geometry\+::\+Vector\+::\+Vector (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})}
+
+
+
+Construct the vector using its coordinates. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & coordinate \\
+\hline
+{\em y} & coordinate \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Vector_ac16dbbd95d3e439c6d4b81bf249d1e83}\label{classraytracer_1_1geometry_1_1Vector_ac16dbbd95d3e439c6d4b81bf249d1e83}} 
+\index{raytracer\+::geometry\+::\+Vector@{raytracer\+::geometry\+::\+Vector}!get\+Norm@{get\+Norm}}
+\index{get\+Norm@{get\+Norm}!raytracer\+::geometry\+::\+Vector@{raytracer\+::geometry\+::\+Vector}}
+\subsubsection{\texorpdfstring{get\+Norm()}{getNorm()}}
+{\footnotesize\ttfamily double raytracer\+::geometry\+::\+Vector\+::get\+Norm (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Return the Euclidean norm of the vector (square root of sum of coordinates squared) 
+
+\begin{DoxyReturn}{Returns}
+size of the vector 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classraytracer_1_1geometry_1_1Vector_a49b341cfda70b916ed0c200feb8bad50}\label{classraytracer_1_1geometry_1_1Vector_a49b341cfda70b916ed0c200feb8bad50}} 
+\index{raytracer\+::geometry\+::\+Vector@{raytracer\+::geometry\+::\+Vector}!get\+Normal@{get\+Normal}}
+\index{get\+Normal@{get\+Normal}!raytracer\+::geometry\+::\+Vector@{raytracer\+::geometry\+::\+Vector}}
+\subsubsection{\texorpdfstring{get\+Normal()}{getNormal()}}
+{\footnotesize\ttfamily \hyperlink{classraytracer_1_1geometry_1_1Vector}{Vector} raytracer\+::geometry\+::\+Vector\+::get\+Normal (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Return the normal to the vector using the convention (y, -\/x) 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/raytracer/geometry/Vector.\+h\end{DoxyCompactItemize}

@@ -63,20 +63,51 @@ TEST(single_ray, throught_mesh_should_work_as_expected_for_dummy_mesh) {
     );
 
 
-    Laser laser(
+    Laser laser1(
             Length{1315e-7},
-            [](const Point) { return Vector(1, 0.1); },
+            [](const Point) { return Vector(1, std::tan(0.1)); },
             Gaussian(0.1),
-            Point(-1.1, 0.2),
-            Point(-1.1, 0.2)
+            Point(-1.1, 0.01),
+            Point(-1.1, 0.01)
     );
 
-    laser.generateRays(1);
-    laser.generateIntersections(mesh, snellsLaw, intersectStraight,DontStop());
+    Laser laser2(
+            Length{1315e-7},
+            [](const Point) { return Vector(1, std::tan(0.2)); },
+            Gaussian(0.1),
+            Point(-1.1, 0.01),
+            Point(-1.1, 0.01)
+    );
 
-    //Randomly assert the number of intersections
-    auto rays = laser.getRays();
-    laser.saveRaysToJson("data/ray.json");
+    Laser laser3(
+            Length{1315e-7},
+            [](const Point) { return Vector(1, tan(0.25)); },
+            Gaussian(0.1),
+            Point(-1.1, 0.01),
+            Point(-1.1, 0.01)
+    );
+
+    Laser laser4(
+            Length{1315e-7},
+            [](const Point) { return Vector(1, tan(0.5)); },
+            Gaussian(0.1),
+            Point(-1.1, 0.01),
+            Point(-1.1, 0.01)
+    );
+
+    laser1.generateRays(1);
+    laser1.generateIntersections(mesh, snellsLaw, intersectStraight,DontStop());
+    laser2.generateRays(1);
+    laser2.generateIntersections(mesh, snellsLaw, intersectStraight,DontStop());
+    laser3.generateRays(1);
+    laser3.generateIntersections(mesh, snellsLaw, intersectStraight,DontStop());
+    laser4.generateRays(1);
+    laser4.generateIntersections(mesh, snellsLaw, intersectStraight,DontStop());
+
+    laser1.saveRaysToJson("data/ray1.json");
+    laser2.saveRaysToJson("data/ray2.json");
+    laser3.saveRaysToJson("data/ray3.json");
+    laser4.saveRaysToJson("data/ray4.json");
     std::ofstream densityResult("data/density.txt");
     densityGridFunction.Save(densityResult);
 }

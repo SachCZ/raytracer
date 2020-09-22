@@ -255,7 +255,7 @@ namespace raytracer {
         rosetta::Matrix A(elements.size(), 3);
         rosetta::Matrix b(elements.size(), 1);
         for (const auto &element : elements) {
-            auto centroid = getCentroid(*element);
+            auto centroid = getPolygonCentroid(*element);
             auto dx = centroid.x - point->x;
             auto dy = centroid.y - point->y;
             auto d = dx * dx + dy * dy;
@@ -288,16 +288,6 @@ namespace raytracer {
         rosetta::Matrix x(3, 1);
         x.forward_substitute(R, Qtb);
         return {x(1, 0), x(2, 0)};
-    }
-
-    Vector Householder::getCentroid(const Element &element) {
-        //TODO Horribly terrible just for triangles
-
-        auto points = element.getPoints();
-        if (points.size() != 3) throw std::logic_error("Centroid only available for triangles.");
-
-        return {(points[0]->x + points[1]->x + points[2]->x) / 3.0,
-                (points[0]->y + points[1]->y + points[2]->y) / 3.0};
     }
 
     std::map<Point *, Vector> Householder::getGradientAtPoints() const {

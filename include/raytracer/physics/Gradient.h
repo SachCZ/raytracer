@@ -206,8 +206,6 @@ namespace raytracer {
 
         static Vector solveOverdetermined(rosetta::Matrix &A, rosetta::Matrix &b);
 
-        static Vector getCentroid(const Element &element);
-
         static Vector linearInterpolate(
                 const Point &a,
                 const Point &b,

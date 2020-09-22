@@ -36,6 +36,8 @@ namespace raytracer {
                 const Energy &currentEnergy,
                 const LaserRay &laserRay
         ) const = 0;
+
+        virtual std::string getName() const = 0;
     };
 
     /**
@@ -65,6 +67,10 @@ namespace raytracer {
                 const Energy &currentEnergy,
                 const LaserRay &laserRay
         ) const override;
+
+        std::string getName() const override {
+            return "Resonance";
+        }
 
     private:
         const Gradient &gradientCalculator;
@@ -110,6 +116,10 @@ namespace raytracer {
                 const LaserRay &laserRay
         ) const override;
 
+        std::string getName() const override {
+            return "Bremsstrahlung";
+        }
+
     private:
         const MeshFunction &_density;
         const MeshFunction &_temperature;
@@ -146,12 +156,12 @@ namespace raytracer {
          * @param laser
          * @param absorbedEnergy
          */
-        void absorb(const Laser &laser, MeshFunction &absorbedEnergy);
+        std::map<const AbsorptionModel *, Energy> absorb(const Laser &laser, MeshFunction &absorbedEnergy);
 
     private:
         std::vector<const AbsorptionModel *> models{};
 
-        void absorbLaserRay(const LaserRay &laserRay, MeshFunction &absorbedEnergy);
+        std::map<const AbsorptionModel *, Energy> absorbLaserRay(const LaserRay &laserRay, MeshFunction &absorbedEnergy);
     };
     /**
      * @}

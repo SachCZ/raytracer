@@ -2,3 +2,5 @@ cmake-build-debug
 cmake-build-release
 cmake-build-profile
 .idea
+examples/**/data/*
+examples/**/images/*

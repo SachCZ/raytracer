@@ -1,0 +1,73 @@
+\hypertarget{structraytracer_1_1physics_1_1SnellsLaw}{}\section{raytracer\+:\+:physics\+:\+:Snells\+Law Struct Reference}
+\label{structraytracer_1_1physics_1_1SnellsLaw}\index{raytracer\+::physics\+::\+Snells\+Law@{raytracer\+::physics\+::\+Snells\+Law}}
+
+
+Functor that given an intersection finds next intersection base on the Snells\textquotesingle{}s law.  
+
+
+
+
+{\ttfamily \#include $<$Laser\+Propagation.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structraytracer_1_1physics_1_1SnellsLaw_a43fd9b6200b38980cee85d3451ef125a}{Snells\+Law} (const \hyperlink{classraytracer_1_1geometry_1_1MeshFunction}{geometry\+::\+Mesh\+Function} \&density, const \hyperlink{classraytracer_1_1geometry_1_1MeshFunction}{geometry\+::\+Mesh\+Function} \&temperature, const \hyperlink{classraytracer_1_1geometry_1_1MeshFunction}{geometry\+::\+Mesh\+Function} \&ionization, const \hyperlink{classraytracer_1_1physics_1_1GradientCalculator}{Gradient\+Calculator} \&gradient\+Calculator, const \hyperlink{classraytracer_1_1physics_1_1CollisionalFrequencyCalculator}{Collisional\+Frequency\+Calculator} \&collisional\+Frequency\+Calculator)
+\begin{DoxyCompactList}\small\item\em Construct the \hyperlink{structraytracer_1_1physics_1_1SnellsLaw}{Snells\+Law} using the density and temperature function reference. \end{DoxyCompactList}\item 
+std\+::unique\+\_\+ptr$<$ \hyperlink{structraytracer_1_1geometry_1_1Intersection}{geometry\+::\+Intersection} $>$ \hyperlink{structraytracer_1_1physics_1_1SnellsLaw_a7e46909c41385ab586a800dd6f8c0b28}{operator()} (const \hyperlink{structraytracer_1_1geometry_1_1Intersection}{geometry\+::\+Intersection} \&intersection, const \hyperlink{structraytracer_1_1physics_1_1LaserRay}{Laser\+Ray} \&laser\+Ray)
+\begin{DoxyCompactList}\small\item\em Tries to find another intersection based on Snells law, density (provides an index of rarefaction) and gradient (provides edge direction). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Functor that given an intersection finds next intersection base on the Snells\textquotesingle{}s law. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{structraytracer_1_1physics_1_1SnellsLaw_a43fd9b6200b38980cee85d3451ef125a}\label{structraytracer_1_1physics_1_1SnellsLaw_a43fd9b6200b38980cee85d3451ef125a}} 
+\index{raytracer\+::physics\+::\+Snells\+Law@{raytracer\+::physics\+::\+Snells\+Law}!Snells\+Law@{Snells\+Law}}
+\index{Snells\+Law@{Snells\+Law}!raytracer\+::physics\+::\+Snells\+Law@{raytracer\+::physics\+::\+Snells\+Law}}
+\subsubsection{\texorpdfstring{Snells\+Law()}{SnellsLaw()}}
+{\footnotesize\ttfamily raytracer\+::physics\+::\+Snells\+Law\+::\+Snells\+Law (\begin{DoxyParamCaption}\item[{const \hyperlink{classraytracer_1_1geometry_1_1MeshFunction}{geometry\+::\+Mesh\+Function} \&}]{density,  }\item[{const \hyperlink{classraytracer_1_1geometry_1_1MeshFunction}{geometry\+::\+Mesh\+Function} \&}]{temperature,  }\item[{const \hyperlink{classraytracer_1_1geometry_1_1MeshFunction}{geometry\+::\+Mesh\+Function} \&}]{ionization,  }\item[{const \hyperlink{classraytracer_1_1physics_1_1GradientCalculator}{Gradient\+Calculator} \&}]{gradient\+Calculator,  }\item[{const \hyperlink{classraytracer_1_1physics_1_1CollisionalFrequencyCalculator}{Collisional\+Frequency\+Calculator} \&}]{collisional\+Frequency\+Calculator }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Construct the \hyperlink{structraytracer_1_1physics_1_1SnellsLaw}{Snells\+Law} using the density and temperature function reference. 
+
+Provide gradient\+Calculator to calculate the plane of rarefaction. Provide collisional\+Frequency\+Calculator to evaluate the index of rarefaction. \hyperlink{structraytracer_1_1physics_1_1Density}{Density} and temperature values are expected to change. 
+\begin{DoxyParams}{Parameters}
+{\em density} & \\
+\hline
+{\em temperature} & \\
+\hline
+{\em gradient\+Calculator} & \\
+\hline
+{\em collisional\+Frequency\+Calculator} & \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{structraytracer_1_1physics_1_1SnellsLaw_a7e46909c41385ab586a800dd6f8c0b28}\label{structraytracer_1_1physics_1_1SnellsLaw_a7e46909c41385ab586a800dd6f8c0b28}} 
+\index{raytracer\+::physics\+::\+Snells\+Law@{raytracer\+::physics\+::\+Snells\+Law}!operator()@{operator()}}
+\index{operator()@{operator()}!raytracer\+::physics\+::\+Snells\+Law@{raytracer\+::physics\+::\+Snells\+Law}}
+\subsubsection{\texorpdfstring{operator()()}{operator()()}}
+{\footnotesize\ttfamily std\+::unique\+\_\+ptr$<$\hyperlink{structraytracer_1_1geometry_1_1Intersection}{geometry\+::\+Intersection}$>$ raytracer\+::physics\+::\+Snells\+Law\+::operator() (\begin{DoxyParamCaption}\item[{const \hyperlink{structraytracer_1_1geometry_1_1Intersection}{geometry\+::\+Intersection} \&}]{intersection,  }\item[{const \hyperlink{structraytracer_1_1physics_1_1LaserRay}{Laser\+Ray} \&}]{laser\+Ray }\end{DoxyParamCaption})}
+
+
+
+Tries to find another intersection based on Snells law, density (provides an index of rarefaction) and gradient (provides edge direction). 
+
+Could throw error no intersection found! 
+\begin{DoxyParams}{Parameters}
+{\em intersection} & \\
+\hline
+{\em laser\+Ray} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+found intersection or throw 
+\end{DoxyReturn}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/raytracer/physics/Laser\+Propagation.\+h\end{DoxyCompactItemize}

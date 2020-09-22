@@ -1,0 +1,140 @@
+\hypertarget{classraytracer_1_1physics_1_1Laser}{}\section{raytracer\+:\+:physics\+:\+:Laser Class Reference}
+\label{classraytracer_1_1physics_1_1Laser}\index{raytracer\+::physics\+::\+Laser@{raytracer\+::physics\+::\+Laser}}
+
+
+Class representing a real physical laser.  
+
+
+
+
+{\ttfamily \#include $<$Laser.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classraytracer_1_1physics_1_1Laser_aaac32df0c929962080aa6c6e0acdff17}{Laser} (\hyperlink{structraytracer_1_1physics_1_1Length}{Length} wavelength, Direction\+Fun direction\+Function, Energy\+Fun energy\+Function, \hyperlink{classraytracer_1_1geometry_1_1Point}{geometry\+::\+Point} start\+Point, \hyperlink{classraytracer_1_1geometry_1_1Point}{geometry\+::\+Point} end\+Point)
+\begin{DoxyCompactList}\small\item\em Construct it using the wavelength in cm, direction\+Function, energy\+Function and two points in space between which the laser originates. \end{DoxyCompactList}\item 
+void \hyperlink{classraytracer_1_1physics_1_1Laser_a5f2620bcf974198ccc541ea60a7ed6a9}{generate\+Rays} (size\+\_\+t count)
+\begin{DoxyCompactList}\small\item\em Generate a set of equidistant Laser\+Rays given by the parameters of the whole laser. \end{DoxyCompactList}\item 
+const std\+::vector$<$ \hyperlink{structraytracer_1_1physics_1_1LaserRay}{Laser\+Ray} $>$ \& \hyperlink{classraytracer_1_1physics_1_1Laser_af35cc781f5f6b39bfa9e25369a63a856}{get\+Rays} () const
+\begin{DoxyCompactList}\small\item\em Get all the rays in that are in the current state of \hyperlink{classraytracer_1_1physics_1_1Laser}{Laser}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Inters\+Func , typename Stop\+Condition $>$ }\\void \hyperlink{classraytracer_1_1physics_1_1Laser_a6e8478566acd96cb5a752f236cd070f3}{generate\+Intersections} (const \hyperlink{classraytracer_1_1geometry_1_1Mesh}{geometry\+::\+Mesh} \&mesh, Inters\+Func find\+Inters, Stop\+Condition stop\+Condition)
+\begin{DoxyCompactList}\small\item\em If there are any rays in \hyperlink{classraytracer_1_1physics_1_1Laser}{Laser} theit intersections with given mesh will be found. \end{DoxyCompactList}\item 
+void \hyperlink{classraytracer_1_1physics_1_1Laser_adfb22ae48261bdc37db1f36fca20065f}{save\+Rays\+To\+Json} (const std\+::string \&filename)
+\begin{DoxyCompactList}\small\item\em Save all the rays to a file in J\+S\+ON format. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class representing a real physical laser. 
+
+It is given by its origin, and energy. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classraytracer_1_1physics_1_1Laser_aaac32df0c929962080aa6c6e0acdff17}\label{classraytracer_1_1physics_1_1Laser_aaac32df0c929962080aa6c6e0acdff17}} 
+\index{raytracer\+::physics\+::\+Laser@{raytracer\+::physics\+::\+Laser}!Laser@{Laser}}
+\index{Laser@{Laser}!raytracer\+::physics\+::\+Laser@{raytracer\+::physics\+::\+Laser}}
+\subsubsection{\texorpdfstring{Laser()}{Laser()}}
+{\footnotesize\ttfamily raytracer\+::physics\+::\+Laser\+::\+Laser (\begin{DoxyParamCaption}\item[{\hyperlink{structraytracer_1_1physics_1_1Length}{Length}}]{wavelength,  }\item[{Direction\+Fun}]{direction\+Function,  }\item[{Energy\+Fun}]{energy\+Function,  }\item[{\hyperlink{classraytracer_1_1geometry_1_1Point}{geometry\+::\+Point}}]{start\+Point,  }\item[{\hyperlink{classraytracer_1_1geometry_1_1Point}{geometry\+::\+Point}}]{end\+Point }\end{DoxyParamCaption})}
+
+
+
+Construct it using the wavelength in cm, direction\+Function, energy\+Function and two points in space between which the laser originates. 
+
+The direction\+Function should return the direction of the laser given an arbitrary point in space. The energy function should return the energy of the laser base on the parameter x. X is expected to be meassured from the center of the laser.
+
+
+\begin{DoxyParams}{Parameters}
+{\em wavelength} & of the laser in cm \\
+\hline
+{\em direction\+Function} & function with signature (const Point\& point) -\/$>$ Vector \\
+\hline
+{\em energy\+Function} & function with signature (double x) -\/$>$ double. \\
+\hline
+{\em start\+Point} & from which to start the generation of the rays \\
+\hline
+{\em end\+Point} & where to end the generation of the points \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classraytracer_1_1physics_1_1Laser_a6e8478566acd96cb5a752f236cd070f3}\label{classraytracer_1_1physics_1_1Laser_a6e8478566acd96cb5a752f236cd070f3}} 
+\index{raytracer\+::physics\+::\+Laser@{raytracer\+::physics\+::\+Laser}!generate\+Intersections@{generate\+Intersections}}
+\index{generate\+Intersections@{generate\+Intersections}!raytracer\+::physics\+::\+Laser@{raytracer\+::physics\+::\+Laser}}
+\subsubsection{\texorpdfstring{generate\+Intersections()}{generateIntersections()}}
+{\footnotesize\ttfamily template$<$typename Inters\+Func , typename Stop\+Condition $>$ \\
+void raytracer\+::physics\+::\+Laser\+::generate\+Intersections (\begin{DoxyParamCaption}\item[{const \hyperlink{classraytracer_1_1geometry_1_1Mesh}{geometry\+::\+Mesh} \&}]{mesh,  }\item[{Inters\+Func}]{find\+Inters,  }\item[{Stop\+Condition}]{stop\+Condition }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+If there are any rays in \hyperlink{classraytracer_1_1physics_1_1Laser}{Laser} theit intersections with given mesh will be found. 
+
+This just calls \hyperlink{structraytracer_1_1physics_1_1LaserRay_ab54b08958f38711dfd46d49bb2ef583d}{Laser\+Ray\+::generate\+Intersections} for each of the rays. 
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Inters\+Func} & function with signature (Intersection, \hyperlink{structraytracer_1_1physics_1_1LaserRay}{Laser\+Ray}) -\/$>$ std\+::unique\+\_\+ptr$<$\+Intersection$>$ \\
+\hline
+{\em Stop\+Condition} & function with signature (Intersection, \hyperlink{structraytracer_1_1physics_1_1LaserRay}{Laser\+Ray}) -\/$>$ bool \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em mesh} & to be intersected \\
+\hline
+{\em find\+Inters} & is propagated to \hyperlink{structraytracer_1_1physics_1_1LaserRay_ab54b08958f38711dfd46d49bb2ef583d}{Laser\+Ray\+::generate\+Intersections} with additional parameter being the laser\+Ray \\
+\hline
+{\em stop\+Condition} & is propagated to \hyperlink{structraytracer_1_1physics_1_1LaserRay_ab54b08958f38711dfd46d49bb2ef583d}{Laser\+Ray\+::generate\+Intersections} with additional parameter being the laser\+Ray \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classraytracer_1_1physics_1_1Laser_a5f2620bcf974198ccc541ea60a7ed6a9}\label{classraytracer_1_1physics_1_1Laser_a5f2620bcf974198ccc541ea60a7ed6a9}} 
+\index{raytracer\+::physics\+::\+Laser@{raytracer\+::physics\+::\+Laser}!generate\+Rays@{generate\+Rays}}
+\index{generate\+Rays@{generate\+Rays}!raytracer\+::physics\+::\+Laser@{raytracer\+::physics\+::\+Laser}}
+\subsubsection{\texorpdfstring{generate\+Rays()}{generateRays()}}
+{\footnotesize\ttfamily void raytracer\+::physics\+::\+Laser\+::generate\+Rays (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{count }\end{DoxyParamCaption})}
+
+
+
+Generate a set of equidistant Laser\+Rays given by the parameters of the whole laser. 
+
+The rays are generated originating from an edge between a start and end points of the laser. These will be set to the this \hyperlink{classraytracer_1_1physics_1_1Laser}{Laser} state.
+
+
+\begin{DoxyParams}{Parameters}
+{\em count} & number of rays to be generated \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+a sequence of rays 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classraytracer_1_1physics_1_1Laser_af35cc781f5f6b39bfa9e25369a63a856}\label{classraytracer_1_1physics_1_1Laser_af35cc781f5f6b39bfa9e25369a63a856}} 
+\index{raytracer\+::physics\+::\+Laser@{raytracer\+::physics\+::\+Laser}!get\+Rays@{get\+Rays}}
+\index{get\+Rays@{get\+Rays}!raytracer\+::physics\+::\+Laser@{raytracer\+::physics\+::\+Laser}}
+\subsubsection{\texorpdfstring{get\+Rays()}{getRays()}}
+{\footnotesize\ttfamily const std\+::vector$<$\hyperlink{structraytracer_1_1physics_1_1LaserRay}{Laser\+Ray}$>$\& raytracer\+::physics\+::\+Laser\+::get\+Rays (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get all the rays in that are in the current state of \hyperlink{classraytracer_1_1physics_1_1Laser}{Laser}. 
+
+\begin{DoxyReturn}{Returns}
+all rays 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classraytracer_1_1physics_1_1Laser_adfb22ae48261bdc37db1f36fca20065f}\label{classraytracer_1_1physics_1_1Laser_adfb22ae48261bdc37db1f36fca20065f}} 
+\index{raytracer\+::physics\+::\+Laser@{raytracer\+::physics\+::\+Laser}!save\+Rays\+To\+Json@{save\+Rays\+To\+Json}}
+\index{save\+Rays\+To\+Json@{save\+Rays\+To\+Json}!raytracer\+::physics\+::\+Laser@{raytracer\+::physics\+::\+Laser}}
+\subsubsection{\texorpdfstring{save\+Rays\+To\+Json()}{saveRaysToJson()}}
+{\footnotesize\ttfamily void raytracer\+::physics\+::\+Laser\+::save\+Rays\+To\+Json (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{filename }\end{DoxyParamCaption})}
+
+
+
+Save all the rays to a file in J\+S\+ON format. 
+
+There will be one object called rays. It is an array of rays each beeing a sequence of points eg. \mbox{[}0, 1\mbox{]} 
+\begin{DoxyParams}{Parameters}
+{\em filename} & name of the json file including extension \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/raytracer/physics/Laser.\+h\end{DoxyCompactItemize}

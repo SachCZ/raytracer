@@ -20,8 +20,7 @@ if __name__ == "__main__":
     axis.set_ylabel("$y$ [cm]")
 
     plt.axis('equal')
-    #plt.savefig("images/bremsstrahlung_rays.svg", format='svg', dpi=1200)
-    plt.show()
+    plt.savefig("images/bremsstrahlung_rays.svg", format='svg', dpi=1200)
     plt.clf()
 
     fig, axis = plt.subplots()

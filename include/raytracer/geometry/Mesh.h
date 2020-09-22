@@ -67,14 +67,14 @@ namespace raytracer {
          *
          * @return
          */
-        virtual std::vector<Point*> getInnerPoints() const = 0;
+        virtual std::vector<Point *> getInnerPoints() const = 0;
 
         /**
          * Override this.
          *
          * @return
          */
-        virtual std::vector<Point*> getPoints() const = 0;
+        virtual std::vector<Point *> getPoints() const = 0;
 
         /**
          * Override this.
@@ -82,7 +82,7 @@ namespace raytracer {
          * @param point
          * @return
          */
-        virtual std::vector<Element *> getPointAdjacentElements(const Point* point) const = 0;
+        virtual std::vector<Element *> getPointAdjacentElements(const Point *point) const = 0;
     };
 
     /**
@@ -146,7 +146,7 @@ namespace raytracer {
          */
         std::vector<Point *> getPoints() const override {
             std::vector<Point *> result;
-            std::transform(this->points.begin(), this->points.end(), std::back_inserter(result), [](const auto& point){
+            std::transform(this->points.begin(), this->points.end(), std::back_inserter(result), [](const auto &point) {
                 return point.get();
             });
             return result;
@@ -165,7 +165,7 @@ namespace raytracer {
         std::vector<std::unique_ptr<Element>> elements;
         std::vector<std::unique_ptr<Face>> faces;
         std::vector<std::unique_ptr<Point>> points;
-        std::vector<Point*> innerPoints;
+        std::vector<Point *> innerPoints;
         mutable mfem::Table elementToElementTable;
         std::unique_ptr<mfem::Table> vertexToElementTable;
 

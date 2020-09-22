@@ -2,9 +2,6 @@
 #include <gmock/gmock.h>
 #include "../matchers.h"
 #include "raytracer/geometry/Intersection.h"
-#include "raytracer/geometry/Point.h"
-#include "raytracer/geometry/Vector.h"
-#include "raytracer/geometry/Mesh.h"
 
 using namespace testing;
 using namespace raytracer;

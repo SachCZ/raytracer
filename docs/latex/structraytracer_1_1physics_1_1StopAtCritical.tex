@@ -1,0 +1,67 @@
+\hypertarget{structraytracer_1_1physics_1_1StopAtCritical}{}\section{raytracer\+:\+:physics\+:\+:Stop\+At\+Critical Struct Reference}
+\label{structraytracer_1_1physics_1_1StopAtCritical}\index{raytracer\+::physics\+::\+Stop\+At\+Critical@{raytracer\+::physics\+::\+Stop\+At\+Critical}}
+
+
+Functor for ray propagation termination based on critical density expected to used with lase\+Ray intersection finding procedure.  
+
+
+
+
+{\ttfamily \#include $<$Laser\+Propagation.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structraytracer_1_1physics_1_1StopAtCritical_adf3b3635cbe76fb2f9a079c27e31f430}{Stop\+At\+Critical} (const \hyperlink{classraytracer_1_1geometry_1_1MeshFunction}{geometry\+::\+Mesh\+Function} \&density)
+\begin{DoxyCompactList}\small\item\em Constructor the functor using a density Mesh\+Function. \end{DoxyCompactList}\item 
+bool \hyperlink{structraytracer_1_1physics_1_1StopAtCritical_a54e6eb47a50e7448e997444647a900be}{operator()} (const \hyperlink{structraytracer_1_1geometry_1_1Intersection}{geometry\+::\+Intersection} \&intersection, const \hyperlink{structraytracer_1_1physics_1_1LaserRay}{Laser\+Ray} \&laser\+Ray)
+\begin{DoxyCompactList}\small\item\em Returns true if the density at the laser\+Ray next element to go to is greater than critical\+Density of the laser ray. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Functor for ray propagation termination based on critical density expected to used with lase\+Ray intersection finding procedure. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{structraytracer_1_1physics_1_1StopAtCritical_adf3b3635cbe76fb2f9a079c27e31f430}\label{structraytracer_1_1physics_1_1StopAtCritical_adf3b3635cbe76fb2f9a079c27e31f430}} 
+\index{raytracer\+::physics\+::\+Stop\+At\+Critical@{raytracer\+::physics\+::\+Stop\+At\+Critical}!Stop\+At\+Critical@{Stop\+At\+Critical}}
+\index{Stop\+At\+Critical@{Stop\+At\+Critical}!raytracer\+::physics\+::\+Stop\+At\+Critical@{raytracer\+::physics\+::\+Stop\+At\+Critical}}
+\subsubsection{\texorpdfstring{Stop\+At\+Critical()}{StopAtCritical()}}
+{\footnotesize\ttfamily raytracer\+::physics\+::\+Stop\+At\+Critical\+::\+Stop\+At\+Critical (\begin{DoxyParamCaption}\item[{const \hyperlink{classraytracer_1_1geometry_1_1MeshFunction}{geometry\+::\+Mesh\+Function} \&}]{density }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Constructor the functor using a density Mesh\+Function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em density} & \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{structraytracer_1_1physics_1_1StopAtCritical_a54e6eb47a50e7448e997444647a900be}\label{structraytracer_1_1physics_1_1StopAtCritical_a54e6eb47a50e7448e997444647a900be}} 
+\index{raytracer\+::physics\+::\+Stop\+At\+Critical@{raytracer\+::physics\+::\+Stop\+At\+Critical}!operator()@{operator()}}
+\index{operator()@{operator()}!raytracer\+::physics\+::\+Stop\+At\+Critical@{raytracer\+::physics\+::\+Stop\+At\+Critical}}
+\subsubsection{\texorpdfstring{operator()()}{operator()()}}
+{\footnotesize\ttfamily bool raytracer\+::physics\+::\+Stop\+At\+Critical\+::operator() (\begin{DoxyParamCaption}\item[{const \hyperlink{structraytracer_1_1geometry_1_1Intersection}{geometry\+::\+Intersection} \&}]{intersection,  }\item[{const \hyperlink{structraytracer_1_1physics_1_1LaserRay}{Laser\+Ray} \&}]{laser\+Ray }\end{DoxyParamCaption})}
+
+
+
+Returns true if the density at the laser\+Ray next element to go to is greater than critical\+Density of the laser ray. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em intersection} & current laser\+Ray intersection \\
+\hline
+{\em laser\+Ray} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if current density is grater than critical 
+\end{DoxyReturn}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/raytracer/physics/Laser\+Propagation.\+h\end{DoxyCompactItemize}

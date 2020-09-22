@@ -1,0 +1,45 @@
+\hypertarget{structraytracer_1_1physics_1_1ContinueStraight}{}\section{raytracer\+:\+:physics\+:\+:Continue\+Straight Struct Reference}
+\label{structraytracer_1_1physics_1_1ContinueStraight}\index{raytracer\+::physics\+::\+Continue\+Straight@{raytracer\+::physics\+::\+Continue\+Straight}}
+
+
+Functor that given an intersection finds next intersection in straight line through intersection.\+next\+Element.  
+
+
+
+
+{\ttfamily \#include $<$Laser\+Propagation.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::unique\+\_\+ptr$<$ \hyperlink{structraytracer_1_1geometry_1_1Intersection}{geometry\+::\+Intersection} $>$ \hyperlink{structraytracer_1_1physics_1_1ContinueStraight_a6b39477b6d24789cc4c98044a556e367}{operator()} (const \hyperlink{structraytracer_1_1geometry_1_1Intersection}{geometry\+::\+Intersection} \&intersection, const \hyperlink{structraytracer_1_1physics_1_1LaserRay}{Laser\+Ray} \&)
+\begin{DoxyCompactList}\small\item\em Finds the closest intersection with intersection.\+next\+Element. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Functor that given an intersection finds next intersection in straight line through intersection.\+next\+Element. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{structraytracer_1_1physics_1_1ContinueStraight_a6b39477b6d24789cc4c98044a556e367}\label{structraytracer_1_1physics_1_1ContinueStraight_a6b39477b6d24789cc4c98044a556e367}} 
+\index{raytracer\+::physics\+::\+Continue\+Straight@{raytracer\+::physics\+::\+Continue\+Straight}!operator()@{operator()}}
+\index{operator()@{operator()}!raytracer\+::physics\+::\+Continue\+Straight@{raytracer\+::physics\+::\+Continue\+Straight}}
+\subsubsection{\texorpdfstring{operator()()}{operator()()}}
+{\footnotesize\ttfamily std\+::unique\+\_\+ptr$<$\hyperlink{structraytracer_1_1geometry_1_1Intersection}{geometry\+::\+Intersection}$>$ raytracer\+::physics\+::\+Continue\+Straight\+::operator() (\begin{DoxyParamCaption}\item[{const \hyperlink{structraytracer_1_1geometry_1_1Intersection}{geometry\+::\+Intersection} \&}]{intersection,  }\item[{const \hyperlink{structraytracer_1_1physics_1_1LaserRay}{Laser\+Ray} \&}]{ }\end{DoxyParamCaption})}
+
+
+
+Finds the closest intersection with intersection.\+next\+Element. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em intersection} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+intersection unique pointer if intersection is found, else it returns nullptr 
+\end{DoxyReturn}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/raytracer/physics/Laser\+Propagation.\+h\end{DoxyCompactItemize}

@@ -1,4 +1,6 @@
+#include <stdexcept>
 #include "CollisionalFrequency.h"
+#include <cmath>
 
 namespace raytracer {
     Frequency SpitzerFrequency::get(
@@ -17,8 +19,12 @@ namespace raytracer {
         auto h = constants::reduced_planck_constant;
         auto E_F = h * h / (2 * m_e) * std::pow(3 * M_PI * M_PI * n_e, 2.0 / 3.0);
 
-        return {4.0 / 3.0 * std::sqrt(2 * M_PI) * Z * std::pow(e, 4) * n_e / std::sqrt(m_e) /
+        auto result = Frequency{4.0 / 3.0 * std::sqrt(2 * M_PI) * Z * std::pow(e, 4) * n_e / std::sqrt(m_e) /
                 std::pow(k_b * T_e + E_F, 3.0 / 2.0) * ln_lamb};
+        if (std::isnan(result.asDouble)){
+            throw std::logic_error("Nan collisional frequency!");
+        }
+        return result;
     }
 
     double SpitzerFrequency::getCoulombLogarithm(

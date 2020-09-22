@@ -7,7 +7,6 @@
 #include "Mesh.h"
 #include "Intersection.h"
 
-
 namespace raytracer {
 
     /**

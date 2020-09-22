@@ -15,6 +15,15 @@ namespace raytracer {
      * @{
      */
 
+    struct EnergyAtPoint {
+        const Energy energy;
+        const Point point;
+    };
+
+    struct EnergyDistribution {
+        std::vector<EnergyAtPoint> asArray;
+    };
+
     /**
      * Class representing a real physical laser. It is given by its origin, and energy.
      */
@@ -154,6 +163,14 @@ namespace raytracer {
          */
         void saveRaysToJson(const std::string &filename);
 
+        EnergyDistribution getInitialEnergyDistribution(){
+            if (this->rays.empty()) throw std::logic_error("There are no rays!");
+            EnergyDistribution energyDistribution;
+            for (const auto& ray : this->rays){
+                energyDistribution.asArray.emplace_back(EnergyAtPoint{ray.energy, ray.startPoint});
+            }
+            return energyDistribution;
+        }
     private:
         Length wavelength;
         DirectionFun directionFunction;
