@@ -4,3 +4,4 @@ cmake-build-profile
 .idea
 examples/**/data/*
 examples/**/images/*
+!examples/**/data/mesh.mesh
