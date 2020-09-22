@@ -5,3 +5,4 @@ cmake-build-profile
 examples/**/data/*
 examples/**/images/*
 !examples/**/data/mesh.mesh
+!examples/**/data/*.csv
