@@ -67,7 +67,7 @@ public:
                 Point(-0.1, oneAndHalfSegment),
                 Point(-0.1, sideYLength + halfSegment)
         );
-        laser.generateRays(gridSize);
+        laser.generateInitialRays(<#initializer#>, gridSize);
         laser.generateIntersections(*mesh, ContinueStraight(), intersectStraight, DontStop());
 
         if (axis == "x"){
@@ -128,8 +128,8 @@ int main(int argc, char *argv[]) {
     MfemMeshFunction densityMeshFunction(densityGridFunction, l2FiniteElementSpace);
 
     LeastSquare leastSquareGradient(*gradientSampler.getMesh(), densityMeshFunction);
-    Householder householder(*gradientSampler.getMesh(), densityMeshFunction, 0.3);
-    householder.update(false);
+    LinearInterpolation householder(*gradientSampler.getMesh(), densityMeshFunction, 0.3);
+    householder.setGradient(false);
     H1Gradient h1Gradient(l2FiniteElementSpace, h1FiniteElementSpace);
     h1Gradient.updateDensity(densityGridFunction);
 

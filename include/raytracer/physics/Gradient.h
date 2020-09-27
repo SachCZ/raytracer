@@ -136,53 +136,9 @@ namespace raytracer {
         const MeshFunction &density;
     };
 
-    /**
-     * Gradient model computes the gradient by fitting a plane to neighbour cells by means of lest squares.
-     * The method is described in Kucharik's article.
-     */
-    class LeastSquare : public Gradient {
+    class LinearInterpolation : public Gradient {
     public:
-        /**
-         * LeastSquare requires the Mesh to be able to retrieve neighbours of cell
-         * and of course the density MeshFunction.
-         * @param mesh
-         * @param density
-         */
-        explicit LeastSquare(const Mesh &mesh, const MeshFunction &density);
-
-        /**
-         * Return a norm weighted average of gradients computed using least squares method at previous and next element.
-         * @param previousElement
-         * @param nextElement
-         * @return
-         */
-        Vector get(const PointOnFace &, const Element &previousElement, const Element &nextElement) const override;
-
-    private:
-        const Mesh &mesh;
-        const MeshFunction &density;
-
-        static Vector normWeightedAverage(const std::vector<Vector> &vectors);
-
-        static std::array<double, 2> getCentroid(const Element &element);
-
-        Vector getValueAt(const Element &element, const std::vector<Element *> &neighbours) const;
-
-        static double getCoeffA(
-                const Element &element,
-                const std::vector<Element *> &neighbours,
-                uint firstAxis, uint secondAxis
-        );
-
-        double getCoeffB(const Element &element, const std::vector<Element *> &neighbours, uint axis) const;
-
-        static Vector solve(Matrix2D A, Vector b);
-    };
-
-    class Householder : public Gradient {
-    public:
-        Householder(const Mesh &mesh, const MeshFunction &density, double smoothingFWHM) :
-                mesh(mesh), density(density), gaussian(smoothingFWHM) {}
+        LinearInterpolation(const std::map<Point *, Vector> gradientAtPoints): gradientAtPoints(std::move(gradientAtPoints)) {}
 
         Vector get(
                 const PointOnFace &pointOnFace,
@@ -190,22 +146,8 @@ namespace raytracer {
                 const Element &nextElement
         ) const override;
 
-        std::map<Point *, Vector> getSmoothedGradientAtPoints();
-
-        void update(bool smoothing = true);
-
     private:
-        const Mesh &mesh;
-        const MeshFunction &density;
         std::map<Point *, Vector> gradientAtPoints;
-        Gaussian gaussian;
-
-        std::map<Point *, Vector> getGradientAtPoints() const;
-
-        Vector getGradientAtPoint(const Point *point) const;
-
-        static Vector solveOverdetermined(rosetta::Matrix &A, rosetta::Matrix &b);
-
         static Vector linearInterpolate(
                 const Point &a,
                 const Point &b,
@@ -215,9 +157,16 @@ namespace raytracer {
 
     };
 
+    std::map<Point *, Vector> getHouseholderGradientAtPoints(const Mesh &mesh, const MeshFunction& meshFunction);
+
     /**
      * @}
      */
+
+    namespace impl {
+        Vector getGradientAtPoint(const Mesh& mesh, const MeshFunction& meshFunction, const Point *point);
+        Vector solveOverdetermined(rosetta::Matrix &A, rosetta::Matrix &b);
+    }
 }
 
 

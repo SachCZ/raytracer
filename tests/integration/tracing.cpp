@@ -69,7 +69,7 @@ TEST(tracing, should_work_as_expected) {
             Point(-1.1, 0)
     );
 
-    laser.generateRays(1000);
+    laser.generateInitialRays(<#initializer#>, 1000);
     laser.generateIntersections(mesh, snellsLaw, intersectStraight,DontStop());
 
     //Randomly assert the number of intersections

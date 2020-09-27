@@ -64,8 +64,8 @@ int main(int, char *[]) {
 
     //LeastSquare leastSquareGradient(mesh, densityMeshFunction);
     //NormalGradient normalGradient(densityMeshFunction);
-    Householder householderGradient(mesh, densityMeshFunction, 1e-5);
-    householderGradient.update(true);
+    LinearInterpolation householderGradient(mesh, densityMeshFunction, 1e-5);
+    householderGradient.setGradient(true);
     SpitzerFrequency spitzerFrequency;
 
     Marker reflectedMarker;
@@ -86,7 +86,7 @@ int main(int, char *[]) {
             Point(-0.5e-5, -1e-5)
     );
 
-    laser.generateRays(20);
+    laser.generateInitialRays(<#initializer#>, 20);
     laser.generateIntersections(mesh, snellsLaw, intersectStraight, DontStop());
 
     AbsorptionController absorber;

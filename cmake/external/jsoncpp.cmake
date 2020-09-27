@@ -3,7 +3,7 @@ project(jsoncpp-download NONE)
 
 include(ExternalProject)
 ExternalProject_Add(
-        googletest
+        jsoncpp
         GIT_REPOSITORY https://github.com/open-source-parsers/jsoncpp
         GIT_TAG master
         SOURCE_DIR "${EXTERNAL_BINARY_DIR}/jsoncpp-src"

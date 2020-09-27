@@ -38,6 +38,8 @@ namespace raytracer {
          * Pointer to the face the point is at.
          */
         const Face *face;
+
+        int id;
     };
 
     /**
@@ -76,7 +78,6 @@ namespace raytracer {
      * @return PointOnFace or nullptr if no intersection exists
      */
     std::unique_ptr<PointOnFace> findClosestIntersection(const HalfLine &halfLine, const std::vector<Face *> &faces);
-
 }
 
 #endif //RAYTRACER_FREE_FUNCTIONS_H

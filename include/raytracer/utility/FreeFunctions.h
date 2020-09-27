@@ -2,8 +2,6 @@
 #define RAYTRACER_FREE_FUNCTIONS_H
 
 #include <vector>
-#include "../geometry/Vector.h"
-#include "../geometry/Element.h"
 
 namespace raytracer {
     /**
@@ -64,9 +62,6 @@ namespace raytracer {
         double normalization;
         double center;
     };
-
-    Point getPolygonCentroid(const Element &element);
-    
 }
 
 #endif //RAYTRACER_FREE_FUNCTIONS_H

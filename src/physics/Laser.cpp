@@ -1,55 +1,42 @@
 #include "Laser.h"
 #include <fstream>
 #include <json/json.h>
+#include <msgpack.hpp>
 
 namespace raytracer {
     Laser::Laser(Length wavelength,
                  Laser::DirectionFun directionFunction,
                  Laser::EnergyFun energyFunction,
-                 Point startPoint, Point endPoint) :
+                 Point startPoint, Point endPoint, int raysCount) :
             wavelength(wavelength),
             directionFunction(std::move(directionFunction)),
             energyFunction(std::move(energyFunction)),
             startPoint(startPoint),
-            endPoint(endPoint) {}
+            endPoint(endPoint),
+            raysCount(raysCount) {}
 
-    void Laser::generateRays(size_t count) {
-        this->rays.clear();
-        this->rays.reserve(count);
-        auto x = linspace(this->startPoint.x, this->endPoint.x, count);
-        auto y = linspace(this->startPoint.y, this->endPoint.y, count);
+    using Directions = std::vector<HalfLine>;
+    Directions generateInitialDirections(const Laser &laser) {
+        Directions result;
+        result.reserve(laser.raysCount);
+        auto x = linspace(laser.startPoint.x, laser.endPoint.x, laser.raysCount);
+        auto y = linspace(laser.startPoint.y, laser.endPoint.y, laser.raysCount);
 
-        double sourceWidth = (this->startPoint - this->endPoint).getNorm();
-        double parameter = -sourceWidth / 2;
-        double deltaParameter = sourceWidth / count;
-        parameter -= deltaParameter / 2; //Integrate with ray in the middle
-
-        for (size_t i = 0; i < count; ++i) {
-            LaserRay laserRay{};
-            laserRay.direction = directionFunction(Point(x[i], y[i]));
-            laserRay.energy = Energy{integrateTrapz(energyFunction, parameter, deltaParameter)};
-            laserRay.wavelength = this->wavelength;
-            laserRay.startPoint = Point(x[i], y[i]);
-            laserRay.id = i;
-
-            this->rays.emplace_back(laserRay);
-
-            parameter += deltaParameter;
+        for (int i = 0; i < laser.raysCount; ++i) {
+            Point point(x[i], y[i]);
+            result.emplace_back(HalfLine{point, laser.directionFunction(point)});
         }
+        return result;
     }
 
-    const std::vector<LaserRay> &Laser::getRays() const {
-        return this->rays;
-    }
-
-    void Laser::saveRaysToJson(const std::string &filename) {
+    std::string stringifyRaysToJson(const IntersectionSet& intersectionSet) {
         Json::Value root;
 
         root["rays"] = Json::Value(Json::arrayValue);
-        for (const auto &ray : this->getRays()) {
+        for (const auto &intersections : intersectionSet) {
             Json::Value rayJson = Json::Value(Json::arrayValue);
 
-            for (const auto &intersection : ray.intersections) {
+            for (const auto &intersection : intersections) {
                 Json::Value pointJson;
                 pointJson[0] = intersection.pointOnFace.point.x;
                 pointJson[1] = intersection.pointOnFace.point.y;
@@ -59,8 +46,42 @@ namespace raytracer {
 
             root["rays"].append(rayJson);
         }
-        std::ofstream file(filename);
-        file << root;
+        std::stringstream result;
+        result << root;
+        return result.str();
+    }
+
+    std::string stringifyRaysToMsgpack(const IntersectionSet& intersectionSet) {
+        std::vector<std::map<std::string, std::vector<double>>> raysSerialization;
+        for (const auto &intersections : intersectionSet) {
+            std::vector<double> x;
+            std::vector<double> y;
+            for (const auto &intersection : intersections) {
+                x.emplace_back(intersection.pointOnFace.point.x);
+                y.emplace_back(intersection.pointOnFace.point.y);
+            }
+            std::map<std::string, std::vector<double>> raySerialization;
+            raySerialization["x"] = x;
+            raySerialization["y"] = y;
+            raysSerialization.emplace_back(raySerialization);
+        }
+        std::stringstream result;
+        msgpack::pack(result, raysSerialization);
+        return result.str();
+    }
+
+    EnergiesSet generateInitialEnergies(const Laser &laser) {
+        EnergiesSet result;
+        double sourceWidth = (laser.startPoint - laser.endPoint).getNorm();
+        double parameter = -sourceWidth / 2;
+        double deltaParameter = sourceWidth / laser.raysCount;
+        parameter -= deltaParameter / 2; //Integrate with ray in the middle
+
+        for (int i = 0; i < laser.raysCount; ++i) {
+            result.emplace_back(Energy{integrateTrapz(laser.energyFunction, parameter, deltaParameter)});
+            parameter += deltaParameter;
+        }
+        return result;
     }
 }
 

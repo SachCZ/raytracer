@@ -4,7 +4,6 @@
 #include "Ray.h"
 #include "MeshFunction.h"
 #include "Magnitudes.h"
-#include "LaserRay.h"
 #include "Laser.h"
 #include "CollisionalFrequency.h"
 #include "Gradient.h"
@@ -30,14 +29,24 @@ namespace raytracer {
          * @param laserRay
          * @return
          */
-        virtual Energy getEnergyChange(
-                const Intersection &previousIntersection,
-                const Intersection &currentIntersection,
-                const Energy &currentEnergy,
-                const LaserRay &laserRay
-        ) const = 0;
+        virtual Energy
+        getEnergyChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
+                        const Energy &currentEnergy) const = 0;
 
         virtual std::string getName() const = 0;
+    };
+
+    struct XRayGain : public raytracer::AbsorptionModel {
+        explicit XRayGain(const raytracer::MeshFunction& gain);
+
+        raytracer::Energy getEnergyChange(const raytracer::Intersection &previousIntersection,
+                                          const raytracer::Intersection &currentIntersection,
+                                          const raytracer::Energy &currentEnergy) const override;
+
+        std::string getName() const override;
+
+    private:
+        const raytracer::MeshFunction& gain;
     };
 
     /**
@@ -51,7 +60,12 @@ namespace raytracer {
          * @param gradientCalculator
          * @param reflectedMarker
          */
-        Resonance(const Gradient &gradientCalculator, const Marker &reflectedMarker);
+        Resonance(
+                const Gradient &gradientCalculator,
+                const CriticalDensity &criticalDensity,
+                const Length &wavelength,
+                const Marker &reflectedMarker
+        );
 
         /**
          * Get the energy absorbed into the single element based on resonance absorption model from Velechovsky thesis.
@@ -61,12 +75,8 @@ namespace raytracer {
          * @param laserRay
          * @return
          */
-        Energy getEnergyChange(
-                const Intersection &previousIntersection,
-                const Intersection &currentIntersection,
-                const Energy &currentEnergy,
-                const LaserRay &laserRay
-        ) const override;
+        Energy getEnergyChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
+                               const Energy &currentEnergy) const override;
 
         std::string getName() const override {
             return "Resonance";
@@ -74,11 +84,13 @@ namespace raytracer {
 
     private:
         const Gradient &gradientCalculator;
+        const CriticalDensity& criticalDensity;
+        const Length &wavelength;
         const Marker &reflectedMarker;
 
-        bool isResonating(const Element &element, const LaserRay& laserRay) const;
+        bool isResonating(const Element &element, const PointOnFace &pointOnFace) const;
 
-        static double getQ(const LaserRay &laserRay, Vector dir, Vector grad);
+        double getQ(Vector dir, Vector grad) const;
     };
 
     /**
@@ -98,7 +110,9 @@ namespace raytracer {
                 const MeshFunction &density,
                 const MeshFunction &temperature,
                 const MeshFunction &ionization,
-                const CollisionalFrequency &collisionalFrequency
+                const CollisionalFrequency &collisionalFrequency,
+                const BremsstrahlungCoeff &bremsstrahlungCoeff,
+                const Length &wavelength
         );
 
         /**
@@ -112,8 +126,7 @@ namespace raytracer {
         Energy getEnergyChange(
                 const Intersection &previousIntersection,
                 const Intersection &currentIntersection,
-                const Energy &currentEnergy,
-                const LaserRay &laserRay
+                const Energy &currentEnergy
         ) const override;
 
         std::string getName() const override {
@@ -125,6 +138,8 @@ namespace raytracer {
         const MeshFunction &_temperature;
         const MeshFunction &_ionization;
         const CollisionalFrequency &collisionalFrequency;
+        const BremsstrahlungCoeff &bremsstrahlungCoeff;
+        const Length wavelength;
     };
 
     /**
@@ -135,6 +150,12 @@ namespace raytracer {
      * \addtogroup api
      * @{
      */
+
+    typedef std::map<const AbsorptionModel *, Energy> ModelEnergies;
+    struct AbsorptionSummary {
+        ModelEnergies modelEnergies{};
+        Energy initialEnergy;
+    };
 
     /**
      * Class aggregating all instances of AbsorptionModel used to update absorbedEnergy meshFunction.
@@ -153,16 +174,24 @@ namespace raytracer {
          * MeshFunction.
          *
          * @warning For this to work properly, Laser::generateIntersections() must be called first.
-         * @param laser
+         * @param rays
          * @param absorbedEnergy
          */
-        std::map<const AbsorptionModel *, Energy> absorb(const Laser &laser, MeshFunction &absorbedEnergy);
+        AbsorptionSummary absorb(
+                const IntersectionSet &intersectionSet,
+                const EnergiesSet &energiesSet,
+                MeshFunction &absorbedEnergy
+        );
 
     private:
         std::vector<const AbsorptionModel *> models{};
 
-        std::map<const AbsorptionModel *, Energy> absorbLaserRay(const LaserRay &laserRay, MeshFunction &absorbedEnergy);
+        ModelEnergies absorbLaserRay(const Intersections &intersections, const Energy &initialEnergy,
+                                     MeshFunction &absorbedEnergy);
     };
+
+    std::string stringifyAbsorptionSummary(const AbsorptionSummary &summary);
+
     /**
      * @}
      */

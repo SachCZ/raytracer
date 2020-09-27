@@ -1,3 +1,4 @@
+#include <Laser.h>
 #include "Propagation.h"
 #include "Refraction.h"
 
@@ -8,6 +9,8 @@ namespace raytracer {
             const MeshFunction &ionization,
             const Gradient &gradientCalculator,
             const CollisionalFrequency &collisionalFrequencyCalculator,
+            const RefractiveIndex& refractiveIndexCalculator,
+            const Length& wavelength,
             Marker* reflectedMarker
     ) :
             density(density),
@@ -15,6 +18,8 @@ namespace raytracer {
             ionization(ionization),
             gradientCalculator(gradientCalculator),
             collisionalFrequencyCalculator(collisionalFrequencyCalculator),
+            refractiveIndexCalculator(refractiveIndexCalculator),
+            wavelength(wavelength),
             reflectedMarker(reflectedMarker)
     {}
 
@@ -22,8 +27,7 @@ namespace raytracer {
             const PointOnFace &pointOnFace,
             const Vector &previousDirection,
             const Element &previousElement,
-            const Element &nextElement,
-            const LaserRay &laserRay
+            const Element &nextElement
     ) {
         auto gradient = gradientCalculator.get(pointOnFace, previousElement, nextElement);
         const auto rho1 = Density{density.getValue(previousElement)};
@@ -35,13 +39,11 @@ namespace raytracer {
         const auto Z1 = ionization.getValue(previousElement);
         const auto Z2 = ionization.getValue(nextElement);
 
-        const auto nu_ei_1 = collisionalFrequencyCalculator.get(rho1, T1, laserRay.wavelength,
-                                                                Z1);
-        const auto nu_ei_2 = collisionalFrequencyCalculator.get(rho2, T2, laserRay.wavelength,
-                                                                Z2);
+        const auto nu_ei_1 = collisionalFrequencyCalculator.get(rho1, T1, wavelength, Z1);
+        const auto nu_ei_2 = collisionalFrequencyCalculator.get(rho2, T2, wavelength, Z2);
 
-        const double n1 = laserRay.getRefractiveIndex(rho1, nu_ei_1);
-        const double n2 = laserRay.getRefractiveIndex(rho2, nu_ei_2);
+        const double n1 = refractiveIndexCalculator.getRefractiveIndex(rho1, nu_ei_1, wavelength);
+        const double n2 = refractiveIndexCalculator.getRefractiveIndex(rho2, nu_ei_2, wavelength);
 
         const auto l = 1 / previousDirection.getNorm() * previousDirection;
 
@@ -62,7 +64,7 @@ namespace raytracer {
                 result =  previousDirection;
             }
             else {
-                if(reflectedMarker) reflectedMarker->mark(previousElement, laserRay);
+                if(reflectedMarker) reflectedMarker->mark(previousElement, pointOnFace);
                 result = l + 2 * c * n;
             }
         }

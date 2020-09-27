@@ -51,8 +51,8 @@ int main(int, char *[]) {
     mfem::GridFunction ionizationGridFunction(mfemMesh.get(), ionizationFile);
     MfemMeshFunction ionizationMeshFunction(ionizationGridFunction, l2FiniteElementSpace);
 
-    Householder householder(mesh, densityMeshFunction, 30);
-    householder.update(false);
+    LinearInterpolation householder(mesh, densityMeshFunction, 30);
+    householder.setGradient(false);
 
     SpitzerFrequency spitzerFrequency;
 
@@ -72,7 +72,7 @@ int main(int, char *[]) {
             Point(140 * 1e-4, 2e-4),
             Point(140 * 1e-4, 12e-4)
     );
-    laser1.generateRays(1000);
+    laser1.generateInitialRays(<#initializer#>, 1000);
     laser1.generateIntersections(mesh, snellsLaw, intersectStraight, DontStop());
 
     double initialEnergy = 0;
@@ -87,7 +87,7 @@ int main(int, char *[]) {
             Point(140 * 1e-4, 20e-4),
             Point(140 * 1e-4, 30e-4)
     );
-    laser2.generateRays(1000);
+    laser2.generateInitialRays(<#initializer#>, 1000);
     laser2.generateIntersections(mesh, snellsLaw, intersectStraight, DontStop());
 
     Laser laser3(
@@ -97,7 +97,7 @@ int main(int, char *[]) {
             Point(140 * 1e-4, 40e-4),
             Point(140 * 1e-4, 50e-4)
     );
-    laser3.generateRays(1000);
+    laser3.generateInitialRays(<#initializer#>, 1000);
     laser3.generateIntersections(mesh, snellsLaw, intersectStraight, DontStop());
 
     Laser laser5(
@@ -107,7 +107,7 @@ int main(int, char *[]) {
             Point(140 * 1e-4, 60e-4),
             Point(140 * 1e-4, 70e-4)
     );
-    laser5.generateRays(1000);
+    laser5.generateInitialRays(<#initializer#>, 1000);
     laser5.generateIntersections(mesh, snellsLaw, intersectStraight, DontStop());
 
     Resonance resonance(householder, reflected);

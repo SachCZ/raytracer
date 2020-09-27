@@ -28,13 +28,6 @@ void summarize_results(
            << total / initialEnergy.asDouble * 100 << "%" << std::endl;
 }
 
-void saveDistributionToCSV(const std::string& filename, const raytracer::EnergyDistribution& energyDistribution){
-    std::ofstream file(filename);
-    for (const auto& energyAtPoint : energyDistribution.asArray){
-        file << energyAtPoint.point.x << "," << energyAtPoint.point.y << "," << energyAtPoint.energy.asDouble << std::endl;
-    }
-}
-
 struct FocusedBeamDirection {
     explicit FocusedBeamDirection(
             const raytracer::Point &focus) :
@@ -47,27 +40,6 @@ struct FocusedBeamDirection {
 
 private:
     const raytracer::Point &focus;
-};
-
-struct XRayGain : public raytracer::AbsorptionModel {
-    explicit XRayGain(const raytracer::MeshFunction& gain): gain(gain) {}
-
-    raytracer::Energy getEnergyChange(const raytracer::Intersection &previousIntersection,
-                                      const raytracer::Intersection &currentIntersection,
-                                      const raytracer::Energy &currentEnergy,
-                                      const raytracer::LaserRay &laserRay) const override {
-        auto distance = (currentIntersection.pointOnFace.point - previousIntersection.pointOnFace.point).getNorm();
-        auto element = currentIntersection.previousElement;
-        auto gainCoeff = gain.getValue(*element);
-        return raytracer::Energy{currentEnergy.asDouble * (1 - std::exp(gainCoeff*distance))};
-    }
-
-    std::string getName() const override {
-        return "X-ray gain";
-    }
-
-private:
-    const raytracer::MeshFunction& gain;
 };
 
 class CSVReader {
@@ -174,8 +146,8 @@ int main(int, char *[]) {
     std::ofstream gainFile("data/gain.txt");
     gainGridFunction.Save(gainFile);
 
-    Householder householder(mesh, densityMeshFunction, 30);
-    householder.update(false);
+    LinearInterpolation householder(mesh, densityMeshFunction, 30);
+    householder.setGradient(false);
 
     SpitzerFrequency spitzerFrequency;
 
@@ -200,7 +172,7 @@ int main(int, char *[]) {
             Point(10*1e-4, -1*1e-4),
             Point(50*1e-4, -1*1e-4)
     );
-    laser.generateRays(10000);
+    laser.generateInitialRays(<#initializer#>, 10000);
     saveDistributionToCSV("data/initial_distribution.csv", laser.getInitialEnergyDistribution());
 
     double sum = 0;

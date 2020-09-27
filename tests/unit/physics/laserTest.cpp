@@ -32,7 +32,7 @@ public:
 };
 
 TEST_F(initialized_laser, can_generateproper_rays) {
-    laser.generateRays(51);
+    laser.generateInitialRays(<#initializer#>, 51);
     auto rays = laser.getRays();
     EXPECT_THAT(rays, SizeIs(51));
     EXPECT_THAT(rays[25].startPoint.y, DoubleEq(0.5));
@@ -41,7 +41,7 @@ TEST_F(initialized_laser, can_generateproper_rays) {
 }
 
 TEST_F(initialized_laser, can_generate_intersections) {
-    laser.generateRays(51);
+    laser.generateInitialRays(<#initializer#>, 51);
     laser.generateIntersections(
             *mesh,
             ContinueStraight(),

@@ -55,8 +55,8 @@ TEST(tracing, throught_mesh_should_work_as_expected_for_dummy_mesh) {
     absorbedEnergyGridFunction = 0;
     MfemMeshFunction absorbedEnergyMeshFunction(absorbedEnergyGridFunction, l2FiniteElementSpace);
 
-    Householder gradient(mesh, densityMeshFunction, 0.2);
-    gradient.update();
+    LinearInterpolation gradient(mesh, densityMeshFunction, 0.2);
+    gradient.setGradient();
 
     SpitzerFrequency spitzerFrequencyCalculator;
     Marker reflectionMarker;
@@ -78,7 +78,7 @@ TEST(tracing, throught_mesh_should_work_as_expected_for_dummy_mesh) {
             Point(-1.1, 0.3)
     );
 
-    laser.generateRays(1000);
+    laser.generateInitialRays(<#initializer#>, 1000);
     laser.generateIntersections(mesh, snellsLaw, intersectStraight,DontStop());
 
     AbsorptionController absorber;

@@ -34,6 +34,7 @@ namespace raytracer {
 
     std::unique_ptr<PointOnFace>
     impl::getClosest(std::vector<std::unique_ptr<PointOnFace>> &intersections, const Point &point) {
+        static int currentId = 0;
         std::unique_ptr<PointOnFace> result = nullptr;
         auto distance = std::numeric_limits<double>::infinity();
         for (auto &pointOnFace : intersections) {
@@ -45,6 +46,7 @@ namespace raytracer {
                 }
             }
         }
+        result->id = currentId++;
         return result;
     }
 

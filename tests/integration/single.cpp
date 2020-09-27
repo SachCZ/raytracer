@@ -50,8 +50,8 @@ TEST(single_ray, throught_mesh_should_work_as_expected_for_dummy_mesh) {
     ionizationGridFunction.ProjectCoefficient(ionizationFunctionCoefficient);
     MfemMeshFunction ionizationMeshFunction(ionizationGridFunction, l2FiniteElementSpace);
 
-    Householder gradient(mesh, densityMeshFunction, 0.2);
-    gradient.update();
+    LinearInterpolation gradient(mesh, densityMeshFunction, 0.2);
+    gradient.setGradient();
 
     SpitzerFrequency spitzerFrequencyCalculator;
     SnellsLaw snellsLaw(
@@ -95,13 +95,13 @@ TEST(single_ray, throught_mesh_should_work_as_expected_for_dummy_mesh) {
             Point(-1.1, 0.01)
     );
 
-    laser1.generateRays(1);
+    laser1.generateInitialRays(<#initializer#>, 1);
     laser1.generateIntersections(mesh, snellsLaw, intersectStraight,DontStop());
-    laser2.generateRays(1);
+    laser2.generateInitialRays(<#initializer#>, 1);
     laser2.generateIntersections(mesh, snellsLaw, intersectStraight,DontStop());
-    laser3.generateRays(1);
+    laser3.generateInitialRays(<#initializer#>, 1);
     laser3.generateIntersections(mesh, snellsLaw, intersectStraight,DontStop());
-    laser4.generateRays(1);
+    laser4.generateInitialRays(<#initializer#>, 1);
     laser4.generateIntersections(mesh, snellsLaw, intersectStraight,DontStop());
 
     laser1.saveRaysToJson("data/ray1.json");

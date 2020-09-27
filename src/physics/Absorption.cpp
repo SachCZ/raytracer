@@ -5,35 +5,41 @@ namespace raytracer {
         models.emplace_back(model);
     }
 
-    std::map<const AbsorptionModel *, Energy> AbsorptionController::absorb(
-            const Laser &laser,
+
+    AbsorptionSummary AbsorptionController::absorb(
+            const IntersectionSet &intersectionSet,
+            const EnergiesSet &energiesSet,
             MeshFunction &absorbedEnergy
     ) {
-        std::map<const AbsorptionModel *, Energy> result;
-        for (const auto &laserRay : laser.getRays()) {
-            auto modelsEnergies = this->absorbLaserRay(laserRay, absorbedEnergy);
+        ModelEnergies modelEnergies;
+        Energy initialEnergy{0};
+        for (size_t i = 0; i < intersectionSet.size(); i++) {
+            initialEnergy.asDouble += energiesSet[i].asDouble;
+            auto modelsEnergies = this->absorbLaserRay(intersectionSet[i], energiesSet[i], absorbedEnergy);
             for (auto const &modelEnergy : modelsEnergies) {
                 const auto &model = modelEnergy.first;
                 const auto &energy = modelEnergy.second;
 
-                if (result.find(model) != result.end()) {
-                    result[model] = Energy{energy.asDouble + result[model].asDouble};
+                if (modelEnergies.find(model) != modelEnergies.end()) {
+                    modelEnergies[model] = Energy{energy.asDouble + modelEnergies[model].asDouble};
                 } else {
-                    result[model] = energy;
+                    modelEnergies[model] = energy;
                 }
             }
 
         }
-        return result;
+        return {modelEnergies, initialEnergy};
     }
 
-    std::map<const AbsorptionModel *, Energy> AbsorptionController::absorbLaserRay(const LaserRay &laserRay,
-                                                                                   MeshFunction &absorbedEnergy) {
-        const auto &intersections = laserRay.intersections;
+    ModelEnergies AbsorptionController::absorbLaserRay(
+            const Intersections &intersections,
+            const Energy &initialEnergy,
+            MeshFunction &absorbedEnergy
+    ) {
         auto intersectionIt = std::next(std::begin(intersections));
         auto previousIntersectionIt = std::begin(intersections);
 
-        auto currentEnergy = laserRay.energy.asDouble;
+        auto currentEnergy = initialEnergy.asDouble;
 
         std::map<const AbsorptionModel *, Energy> result;
 
@@ -42,9 +48,7 @@ namespace raytracer {
                 auto absorbed = model->getEnergyChange(
                         *previousIntersectionIt,
                         *intersectionIt,
-                        Energy{currentEnergy},
-                        laserRay
-                ).asDouble;
+                        Energy{currentEnergy}).asDouble;
                 currentEnergy -= absorbed;
                 if (result.find(model) != result.end()) {
                     result[model] = Energy{absorbed + result[model].asDouble};
@@ -57,13 +61,10 @@ namespace raytracer {
         return result;
     }
 
-    Energy Resonance::getEnergyChange(
-            const Intersection &previousIntersection,
-            const Intersection &currentIntersection,
-            const Energy &currentEnergy,
-            const LaserRay &laserRay
-    ) const {
-        if (!Resonance::isResonating(*currentIntersection.previousElement, laserRay)) return Energy{0};
+    Energy Resonance::getEnergyChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
+                                      const Energy &currentEnergy) const {
+        if (!Resonance::isResonating(*currentIntersection.previousElement, currentIntersection.pointOnFace))
+            return Energy{0};
 
         auto grad = gradientCalculator.get(
                 currentIntersection.pointOnFace,
@@ -71,42 +72,55 @@ namespace raytracer {
                 *currentIntersection.nextElement
         );
         auto dir = (currentIntersection.pointOnFace.point - previousIntersection.pointOnFace.point);
-        auto q = Resonance::getQ(laserRay, dir, grad);
+        auto q = Resonance::getQ(dir, grad);
         auto term = q * std::exp(-4.0 / 3.0 * std::pow(q, 3.0 / 2.0)) / (q + 0.48) * M_PI / 2.0;
         return Energy{currentEnergy.asDouble * term};
     }
 
-    bool Resonance::isResonating(const Element &element, const LaserRay &laserRay) const {
-        return reflectedMarker.isMarked(element, laserRay);
+    bool Resonance::isResonating(const Element &element, const PointOnFace &pointOnFace) const {
+        return reflectedMarker.isMarked(element, pointOnFace);
     }
 
-    double Resonance::getQ(const LaserRay &laserRay, Vector dir, Vector grad) {
+    double Resonance::getQ(Vector dir, Vector grad) const {
         auto dir_norm = dir.getNorm();
         if (dir_norm == 0) return 0;
         auto grad_norm = grad.getNorm();
         if (grad_norm == 0) return 0;
-        auto lamb = laserRay.wavelength.asDouble;
-        auto ne_crit = laserRay.getCriticalDensity().asDouble;
+        auto lamb = wavelength.asDouble;
+        auto ne_crit = criticalDensity.getCriticalDensity(wavelength).asDouble;
         auto sin2phi = 1 - std::pow(grad * dir / grad_norm / dir_norm, 2);
         if (sin2phi <= 0) return 0;
         return std::pow(2 * M_PI / lamb * ne_crit / grad_norm, 2.0 / 3.0) * sin2phi;
     }
 
-    Resonance::Resonance(const Gradient &gradientCalculator, const Marker &reflectedMarker) :
-            gradientCalculator(gradientCalculator), reflectedMarker(reflectedMarker) {}
+    Resonance::Resonance(
+            const Gradient &gradientCalculator,
+            const CriticalDensity& criticalDensity,
+            const Length& wavelength,
+            const Marker &reflectedMarker) :
+            gradientCalculator(gradientCalculator),
+            criticalDensity(criticalDensity),
+            wavelength(wavelength),
+            reflectedMarker(reflectedMarker) {}
 
-    Bremsstrahlung::Bremsstrahlung(const MeshFunction &density, const MeshFunction &temperature,
-                                   const MeshFunction &ionization, const CollisionalFrequency &collisionalFrequency) :
+    Bremsstrahlung::Bremsstrahlung(
+            const MeshFunction &density,
+            const MeshFunction &temperature,
+            const MeshFunction &ionization,
+            const CollisionalFrequency &collisionalFrequency,
+            const BremsstrahlungCoeff &bremsstrahlungCoeff,
+            const Length &wavelength) :
             _density(density),
             _temperature(temperature),
             _ionization(ionization),
-            collisionalFrequency(collisionalFrequency) {}
+            collisionalFrequency(collisionalFrequency),
+            bremsstrahlungCoeff(bremsstrahlungCoeff),
+            wavelength(wavelength) {}
 
     Energy Bremsstrahlung::getEnergyChange(
             const Intersection &previousIntersection,
             const Intersection &currentIntersection,
-            const Energy &currentEnergy,
-            const LaserRay &laserRay
+            const Energy &currentEnergy
     ) const {
         const auto &element = currentIntersection.previousElement;
         if (!element) return Energy{0};
@@ -118,12 +132,45 @@ namespace raytracer {
         const auto temperature = Temperature{this->_temperature.getValue(*element)};
         const auto ionization = this->_ionization.getValue(*element);
 
-        auto frequency = collisionalFrequency.get(density, temperature, laserRay.wavelength, ionization);
-        auto coeff = laserRay.getInverseBremsstrahlungCoeff(density, frequency);
+        auto frequency = collisionalFrequency.get(density, temperature, this->wavelength, ionization);
+        auto coeff = bremsstrahlungCoeff.getInverseBremsstrahlungCoeff(density, frequency, this->wavelength);
         const auto exponent = -coeff * distance;
 
         auto newEnergy = currentEnergy.asDouble * std::exp(exponent);
         return Energy{currentEnergy.asDouble - newEnergy};
+    }
+
+    std::string stringifyAbsorptionSummary(const AbsorptionSummary &summary) {
+        std::stringstream stream;
+        double total = 0;
+        const auto &modelsEnergies = summary.modelEnergies;
+        const auto initialEnergy = summary.initialEnergy;
+        for (auto const &modelEnergy : modelsEnergies) {
+            const auto &model = modelEnergy.first;
+            const auto &energy = modelEnergy.second;
+
+            total += energy.asDouble;
+            stream << model->getName() << ": " << energy.asDouble << " ... "
+                   << energy.asDouble / initialEnergy.asDouble * 100 << "%" << std::endl;
+        }
+        stream << "Total: " << total << " ... "
+               << total / initialEnergy.asDouble * 100 << "%" << std::endl;
+        return stream.str();
+    }
+
+    XRayGain::XRayGain(const MeshFunction &gain) : gain(gain) {}
+
+    raytracer::Energy
+    XRayGain::getEnergyChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
+                              const Energy &currentEnergy) const {
+        auto distance = (currentIntersection.pointOnFace.point - previousIntersection.pointOnFace.point).getNorm();
+        auto element = currentIntersection.previousElement;
+        auto gainCoeff = gain.getValue(*element);
+        return raytracer::Energy{currentEnergy.asDouble * (1 - std::exp(gainCoeff*distance))};
+    }
+
+    std::string XRayGain::getName() const {
+        return "X-ray gain";
     }
 }
 

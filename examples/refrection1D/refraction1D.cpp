@@ -9,173 +9,121 @@
 #include <raytracer/physics/Absorption.h>
 #include "mfem.hpp"
 
-void summarize_results(
-        const std::map<const raytracer::AbsorptionModel *, raytracer::Energy> &modelsEnergies,
-        raytracer::Energy initialEnergy,
-        std::ostream &stream
-) {
-    double total = 0;
-    for (auto const &modelEnergy : modelsEnergies) {
-        const auto &model = modelEnergy.first;
-        const auto &energy = modelEnergy.second;
-
-        total += energy.asDouble;
-        stream << model->getName() << ": " << energy.asDouble << " ... "
-               << energy.asDouble / initialEnergy.asDouble * 100 << "%" << std::endl;
-    }
-    stream << "Total: " << total << " ... "
-           << total / initialEnergy.asDouble * 100 << "%" << std::endl;
-}
-
-struct FocusedBeamDirection {
-    explicit FocusedBeamDirection(
-            const raytracer::Point &focus) :
-            focus(focus){}
-
-    raytracer::Vector operator()(const raytracer::Point &point) {
-        using namespace std;
-        return focus - point;
-    }
-
-private:
-    const raytracer::Point &focus;
-};
-
-class CSVReader {
-public:
-    CSVReader(const std::string& filename) {
-        std::ifstream file(filename);
-        std::string line;
-        while (std::getline(file, line)) {
-            std::stringstream ss(line);
-            std::string positionString, valueString;
-            std::getline(ss, positionString,',');
-            std::getline(ss, valueString, ',');
-            auto position = std::stod(positionString);
-            auto value = std::stod(valueString);
-            positions.emplace_back(position);
-            values.emplace_back(value);
-        }
-    }
-
-    double atPositition(double currentPosition){
-        for (int i = 0; i < positions.size(); i++){
-            if (positions[i] > currentPosition * 1e4){
-                return values[i];
-            }
-        }
-        throw std::logic_error("No value found!");
-    }
-
-private:
-    std::vector<double> positions;
-    std::vector<double> values;
-};
-
-
-double densityFunction(const mfem::Vector &x) {
-    static CSVReader densityReader("data/cell_density.csv");
-    auto density = densityReader.atPositition(x(0));
-    static CSVReader ionizationReader("data/cell_ionization.csv");
-    auto ionization = ionizationReader.atPositition(x(0));
-    auto massUnit = 1.6605e-24;
-    auto A = 55.845;
-    return ionization * density / A / massUnit;
-}
-
-double temperatureFunction(const mfem::Vector &x) {
-    static CSVReader temperatureReader("data/cell_temperature.csv");
-    return temperatureReader.atPositition(x(0));
-}
-
-double ionizationFunction(const mfem::Vector &x) {
-    static CSVReader ionizationReader("data/cell_ionization.csv");
-    return ionizationReader.atPositition(x(0));
-}
-
 int main(int, char *[]) {
     using namespace raytracer;
 
-    auto mfemMesh = std::make_unique<mfem::Mesh>("data/mesh.mesh", 1, 1, false);
+    std::string meshFilename = "input/mesh.mesh";
+    std::string densityFilename = "input/density.gf";
+    std::string temperatureFilename = "input/temperature.gf";
+    std::string ionizationFilename = "input/ionization.gf";
+    Length laserWavelength{800e-7};
+    Vector laserDirection{-1, std::tan(30.0 / 180.0 * M_PI)};
+    double laserSpatialFWHM = 1e-4;
+    Energy laserEnergy{1};
+    Point laserStartPoint(140 * 1e-4, -50e-4);
+    Point laserEndPoint(140 * 1e-4, -10 * 1e-4);
+    int raysCount = 1000;
+    bool estimateBremsstrahlung = true;
+    bool estimateResonance = true;
+    bool estimateGain = false;
+    std::string gainFilename;
+    if (estimateGain) {
+        gainFilename = "input/gain.gf";
+    }
+    std::string raysOutputFilename = "output/rays.msgpack";
+    std::string absorbedEnergyFilename = "output/absorbed_energy.gf";
+
+    auto mfemMesh = std::make_unique<mfem::Mesh>(meshFilename.c_str(), 1, 1, false);
     MfemMesh mesh(mfemMesh.get());
     mfem::L2_FECollection l2FiniteElementCollection(0, 2);
     mfem::FiniteElementSpace l2FiniteElementSpace(mfemMesh.get(), &l2FiniteElementCollection);
-
-    mfem::H1_FECollection h1FiniteElementCollection(1, 2);
-    mfem::FiniteElementSpace h1FiniteElementSpace(mfemMesh.get(), &h1FiniteElementCollection);
 
     mfem::GridFunction absorbedEnergyGridFunction(&l2FiniteElementSpace);
     absorbedEnergyGridFunction = 0;
     MfemMeshFunction absorbedEnergyMeshFunction(absorbedEnergyGridFunction, l2FiniteElementSpace);
 
-    mfem::GridFunction densityGridFunction(&l2FiniteElementSpace);
-    mfem::FunctionCoefficient densityFunctionCoefficient(densityFunction);
-    densityGridFunction.ProjectCoefficient(densityFunctionCoefficient);
+    std::ifstream densityFile(densityFilename);
+    mfem::GridFunction densityGridFunction(mfemMesh.get(), densityFile);
     MfemMeshFunction densityMeshFunction(densityGridFunction, l2FiniteElementSpace);
 
-    std::ofstream densityFile("data/density.txt");
-    densityGridFunction.Save(densityFile);
-
-    mfem::GridFunction temperatureGridFunction(&l2FiniteElementSpace);
-    mfem::FunctionCoefficient temperatureFunctionCoefficient(temperatureFunction);
-    temperatureGridFunction.ProjectCoefficient(temperatureFunctionCoefficient);
+    std::ifstream temperatureFile(temperatureFilename);
+    mfem::GridFunction temperatureGridFunction(mfemMesh.get(), temperatureFile);
     MfemMeshFunction temperatureMeshFunction(temperatureGridFunction, l2FiniteElementSpace);
 
-    std::ofstream temperatureFile("data/temperature.txt");
-    temperatureGridFunction.Save(temperatureFile);
-
-    mfem::GridFunction ionizationGridFunction(&l2FiniteElementSpace);
-    mfem::FunctionCoefficient ionizationFunctionCoefficient(ionizationFunction);
-    ionizationGridFunction.ProjectCoefficient(ionizationFunctionCoefficient);
+    std::ifstream ionizationFile(ionizationFilename);
+    mfem::GridFunction ionizationGridFunction(mfemMesh.get(), ionizationFile);
     MfemMeshFunction ionizationMeshFunction(ionizationGridFunction, l2FiniteElementSpace);
 
-    std::ofstream ionizationFile("data/ionization.txt");
-    ionizationGridFunction.Save(ionizationFile);
+    Laser laser(
+            laserWavelength,
+            [&laserDirection](const Point &) { return laserDirection; },
+            Gaussian(laserSpatialFWHM, laserEnergy.asDouble, 0),
+            laserStartPoint,
+            laserEndPoint,
+            raysCount
+    );
 
-    Householder householder(mesh, densityMeshFunction, 30);
-    householder.update(false);
+    LinearInterpolation householderLinearInterpolation(getHouseholderGradientAtPoints(mesh, densityMeshFunction));
 
     SpitzerFrequency spitzerFrequency;
+    ColdPlasma coldPlasma;
 
     Marker reflected;
     SnellsLaw snellsLaw(
             densityMeshFunction,
             temperatureMeshFunction,
             ionizationMeshFunction,
-            householder,
+            householderLinearInterpolation,
             spitzerFrequency,
+            coldPlasma,
+            laser.wavelength,
             &reflected
     );
 
-    Laser laser(
-            Length{800e-7},
-            [](const Point&){return Vector{-1, std::tan(30.0/180.0 * M_PI)};},
-            //FocusedBeamDirection({-100*1e-4, 80*1e-4}),
-            Gaussian(10e-4, 1, 0),
-            Point(140*1e-4, -50e-4),
-            Point(140*1e-4, -10*1e-4)
+
+    auto initialDirections = generateInitialDirections(laser);
+    auto intersections = generateIntersections(
+            mesh,
+            initialDirections,
+            snellsLaw,
+            intersectStraight,
+            DontStop()
     );
 
-    laser.generateRays(10000);
-    laser.generateIntersections(mesh, snellsLaw, intersectStraight, DontStop());
-    double initialEnergy = 0;
-    for (const auto &ray : laser.getRays()) {
-        initialEnergy += ray.energy.asDouble;
+    AbsorptionController absorber;
+
+    if (estimateBremsstrahlung){
+        auto bremsstrahlungModel = std::make_unique<Bremsstrahlung>(
+                densityMeshFunction,
+                temperatureMeshFunction,
+                ionizationMeshFunction,
+                spitzerFrequency,
+                coldPlasma,
+                laser.wavelength
+        );
+        absorber.addModel(bremsstrahlungModel.get());
     }
 
-    Resonance resonance(householder, reflected);
-    AbsorptionController absorber;
-    Bremsstrahlung bremsstrahlungModel(
-            densityMeshFunction,
-            temperatureMeshFunction,
-            ionizationMeshFunction,
-            spitzerFrequency
-    );
-    absorber.addModel(&bremsstrahlungModel);
-    absorber.addModel(&resonance);
-    summarize_results(absorber.absorb(laser, absorbedEnergyMeshFunction), Energy{initialEnergy}, std::cout);
+    if (estimateResonance){
+        ClassicCriticalDensity classicCriticalDensity;
+        auto resonance = std::make_unique<Resonance>(householderLinearInterpolation, classicCriticalDensity, laser.wavelength, reflected);
+        absorber.addModel(resonance.get());
+    }
 
-    laser.saveRaysToJson("data/rays.json");
-    std::ofstream absorbedResult("data/absorbed_energy.txt");
-    absorbedEnergyGridFunction.Save(absorbedResult);
+    if (estimateGain){
+        std::ifstream gainFile(gainFilename);
+        mfem::GridFunction gainGridFunction(mfemMesh.get(), gainFile);
+        MfemMeshFunction gainMeshFunction(gainGridFunction, l2FiniteElementSpace);
+        auto gain = std::make_unique<XRayGain>(gainMeshFunction);
+        absorber.addModel(gain.get());
+    }
+
+    std::cout << stringifyAbsorptionSummary(
+            absorber.absorb(intersections, generateInitialEnergies(laser), absorbedEnergyMeshFunction)
+    );
+
+    std::ofstream raysFile(raysOutputFilename);
+    raysFile << stringifyRaysToMsgpack(intersections);
+    std::ofstream absorbedResult(absorbedEnergyFilename);
+    absorbedResult << absorbedEnergyMeshFunction;
 }

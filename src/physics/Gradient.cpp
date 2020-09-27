@@ -111,78 +111,6 @@ namespace raytracer {
         return result;
     }
 
-    LeastSquare::LeastSquare(const Mesh &mesh, const MeshFunction &density) : mesh(mesh), density(density) {}
-
-    Vector LeastSquare::get(const PointOnFace &, const Element &previousElement, const Element &nextElement) const {
-        auto previousGradient = this->getValueAt(previousElement, mesh.getElementAdjacentElements(previousElement));
-        auto nextGradient = this->getValueAt(nextElement, mesh.getElementAdjacentElements(nextElement));
-        return normWeightedAverage({previousGradient, nextGradient});
-    }
-
-    Vector LeastSquare::normWeightedAverage(const std::vector<Vector> &vectors) {
-        Vector numerator{};
-        double denominator = 0;
-        for (const auto &vector : vectors) {
-            if (vector.getNorm() == 0) continue;
-            numerator = numerator + vector.getNorm() * vector;
-            denominator += vector.getNorm();
-        }
-        return denominator == 0 ? Vector(0, 0) : 1.0 / denominator * numerator;
-    }
-
-    std::array<double, 2> LeastSquare::getCentroid(const Element &element) {
-        //TODO Horribly terrible just for triangles
-
-        auto points = element.getPoints();
-        if (points.size() != 3) throw std::logic_error("Centroid only available for triangles.");
-
-        return {(points[0]->x + points[1]->x + points[2]->x) / 3.0, (points[0]->y + points[1]->y + points[2]->y) / 3.0};
-    }
-
-    Vector LeastSquare::getValueAt(const Element &element, const std::vector<Element *> &neighbours) const {
-        Matrix2D A{};
-        A.xx = getCoeffA(element, neighbours, 0, 0);
-        A.xy = getCoeffA(element, neighbours, 0, 1);
-        A.yx = getCoeffA(element, neighbours, 1, 0);
-        A.yy = getCoeffA(element, neighbours, 1, 1);
-
-        Vector b{};
-        b.x = getCoeffB(element, neighbours, 0);
-        b.y = getCoeffB(element, neighbours, 1);
-        return solve(A, b);
-    }
-
-    double LeastSquare::getCoeffA(const Element &element, const std::vector<Element *> &neighbours, uint firstAxis,
-                                  uint secondAxis) {
-        double sum = 0;
-        auto eleCenter = getCentroid(element);
-        for (const auto &neighbour : neighbours) {
-            auto neighbourCenter = getCentroid(*neighbour);
-            sum += (eleCenter[firstAxis] - neighbourCenter[firstAxis]) *
-                   (eleCenter[secondAxis] - neighbourCenter[secondAxis]);
-        }
-        return 2 * sum;
-    }
-
-    double LeastSquare::getCoeffB(const Element &element, const std::vector<Element *> &neighbours, uint axis) const {
-        double sum = 0;
-        auto eleCenter = getCentroid(element);
-        for (const auto &neighbour : neighbours) {
-            auto neighbourCenter = getCentroid(*neighbour);
-            sum += (eleCenter[axis] - neighbourCenter[axis]) *
-                   (density.getValue(element) - density.getValue(*neighbour));
-        }
-        return 2 * sum;
-    }
-
-    Vector LeastSquare::solve(Matrix2D A, Vector b) { //Crammer
-        auto det = A.yy * A.xx - A.xy * A.yx;
-        if (det == 0) return {0, 0};
-        auto x = (b.x * A.yy - A.xy * b.y) / det;
-        auto y = (A.xx * b.y - b.x * A.yx) / det;
-        return {x, y};
-    }
-
     Vector NormalGradient::get(const PointOnFace &pointOnFace, const Element &previousElement,
                                const Element &nextElement) const {
         auto previousDensity = this->density.getValue(previousElement);
@@ -192,7 +120,7 @@ namespace raytracer {
         return factor / normal.getNorm() * normal;
     }
 
-    Vector Householder::get(
+    Vector LinearInterpolation::get(
             const PointOnFace &pointOnFace,
             const Element &,
             const Element &) const {
@@ -208,38 +136,7 @@ namespace raytracer {
         }
     }
 
-    std::map<Point *, Vector> Householder::getSmoothedGradientAtPoints() {
-        std::map<Point *, Vector> result;
-        for (auto &pair : this->gradientAtPoints) {
-            auto point = pair.first;
-            Vector gradient{};
-
-            std::set<Point *> adjacentPoints;
-            for (auto element : mesh.getPointAdjacentElements(point)) {
-                for (auto adjacentPoint : element->getPoints()) {
-                    adjacentPoints.insert(adjacentPoint);
-                }
-            }
-
-            double scale = 0;
-            for (auto adjacentPoint : adjacentPoints) {
-                auto it = this->gradientAtPoints.find(adjacentPoint);
-                if (it != this->gradientAtPoints.end()) {
-                    const auto &adjacentGradient = it->second;
-                    auto distance = (*point - *adjacentPoint).getNorm();
-                    auto gauss = gaussian(distance);
-                    gradient =  gradient + gauss * adjacentGradient;
-                    scale += gauss;
-                }
-            }
-            gradient = 1/scale * gradient;
-
-            result.insert({point, gradient});
-        }
-        return result;
-    }
-
-    Vector Householder::getGradientAtPoint(const Point *point) const {
+    Vector impl::getGradientAtPoint(const Mesh& mesh, const MeshFunction& meshFunction, const Point *point) {
         int index = 0;
         auto elements = mesh.getPointAdjacentElements(point);
         if (elements.size() < 3){
@@ -255,7 +152,7 @@ namespace raytracer {
         rosetta::Matrix A(elements.size(), 3);
         rosetta::Matrix b(elements.size(), 1);
         for (const auto &element : elements) {
-            auto centroid = getPolygonCentroid(*element);
+            auto centroid = getElementCentroid(*element);
             auto dx = centroid.x - point->x;
             auto dy = centroid.y - point->y;
             auto d = dx * dx + dy * dy;
@@ -263,20 +160,20 @@ namespace raytracer {
             A(index, 0) = weight;
             A(index, 1) = weight * dx;
             A(index, 2) = weight * dy;
-            b(index, 0) = weight * density.getValue(*element);
+            b(index, 0) = weight * meshFunction.getValue(*element);
             ++index;
         }
-        return solveOverdetermined(A, b);
+        return impl::solveOverdetermined(A, b);
     }
 
-    Vector Householder::linearInterpolate(const Point &a, const Point &b, const Point &x, const Vector &valueA,
-                                          const Vector &valueB) {
+    Vector LinearInterpolation::linearInterpolate(const Point &a, const Point &b, const Point &x, const Vector &valueA,
+                                                  const Vector &valueB) {
         auto norm = (b - a).getNorm();
         auto xDistFromA = (x - a).getNorm();
         return valueA + (xDistFromA) / (norm) * (valueB - valueA);
     }
 
-    Vector Householder::solveOverdetermined(rosetta::Matrix &A, rosetta::Matrix &b) {
+    Vector impl::solveOverdetermined(rosetta::Matrix &A, rosetta::Matrix &b) {
         rosetta::Matrix Q, R;
         householder(A, R, Q);
         Q.trim_columns(3);
@@ -290,19 +187,12 @@ namespace raytracer {
         return {x(1, 0), x(2, 0)};
     }
 
-    std::map<Point *, Vector> Householder::getGradientAtPoints() const {
+    std::map<Point *, Vector> getHouseholderGradientAtPoints(const Mesh &mesh, const MeshFunction& meshFunction) {
         std::map<Point *, Vector> result;
         for (const auto &point : mesh.getPoints()) {
-            result.insert({point, getGradientAtPoint(point)});
+            result.insert({point, impl::getGradientAtPoint(mesh, meshFunction, point)});
         }
         return result;
-    }
-
-    void Householder::update(bool smoothing) {
-        this->gradientAtPoints = this->getGradientAtPoints();
-        if (smoothing){
-            this->gradientAtPoints = this->getSmoothedGradientAtPoints();
-        }
     }
 }
 

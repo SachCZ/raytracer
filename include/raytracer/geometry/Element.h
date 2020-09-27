@@ -56,6 +56,8 @@ namespace raytracer {
         std::vector<Point *> points;
     };
 
+    Point getElementCentroid(const Element &element);
+
     /**
      * @}
      */

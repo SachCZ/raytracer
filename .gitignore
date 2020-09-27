@@ -4,5 +4,5 @@ cmake-build-profile
 .idea
 examples/**/data/*
 examples/**/images/*
-!examples/**/data/mesh.mesh
+!examples/refrection1D/input/mesh.mesh
 !examples/**/data/*.csv

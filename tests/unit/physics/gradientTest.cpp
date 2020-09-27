@@ -29,14 +29,12 @@ public:
         mfem::FunctionCoefficient densityFunctionCoefficient(gradient_calculators::density);
         densityGridFunction->ProjectCoefficient(densityFunctionCoefficient);
         densityMeshFunction = std::make_unique<MfemMeshFunction>(*densityGridFunction, *l2FiniteElementSpace);
-        householderGradient = std::make_unique<Householder>(*mesh, *densityMeshFunction, 10);
-        householderGradient->update();
     }
 
     ConstantGradient constantGradientCalculator{Vector(1.2, -0.3)};
 
     DiscreteLine side{100, 10};
-    std::unique_ptr<mfem::Mesh> mfemMesh = constructMfemMesh(side, side);
+    std::unique_ptr<mfem::Mesh> mfemMesh = constructMfemMesh(side, side, mfem::Element::TRIANGLE);
 
     mfem::L2_FECollection l2FiniteElementCollection{0, 2};
     mfem::H1_FECollection h1FiniteElementCollection{1, 2};
@@ -47,7 +45,7 @@ public:
 
 
     std::unique_ptr<H1Gradient> h1GradientCalculator;
-    std::unique_ptr<Householder> householderGradient;
+    std::unique_ptr<LinearInterpolation> householderGradient;
     std::unique_ptr<MfemMesh> mesh;
 };
 
@@ -70,7 +68,7 @@ TEST_F(gradient_calculators, h1_returns_correct_result_for_linear_density) {
             Point(-1.1, 51)
     );
 
-    laser.generateRays(1);
+    laser.generateInitialRays(<#initializer#>, 1);
     laser.generateIntersections(
             *mesh,
             ContinueStraight(),
@@ -91,29 +89,8 @@ TEST_F(gradient_calculators, h1_returns_correct_result_for_linear_density) {
 }
 
 TEST_F(gradient_calculators, hauseholder_returns_correct_result_for_linear_density) {
-    Laser laser(
-            Length{1315e-7},
-            [](const Point) { return Vector(1, 0.3); },
-            Gaussian(0.1),
-            Point(-1.1, 49),
-            Point(-1.1, 51)
-    );
-
-    laser.generateRays(1);
-    laser.generateIntersections(
-            *mesh,
-            ContinueStraight(),
-            intersectStraight,
-            DontStop());
-    auto ray = laser.getRays()[0];
-    auto intersection = ray.intersections[5];
-
-    auto result = householderGradient->get(
-            intersection.pointOnFace,
-            *intersection.previousElement,
-            *intersection.nextElement
-    );
-
+    auto gradientAtPoints = getHouseholderGradientAtPoints(*mesh, *densityMeshFunction);
+    auto result = gradientAtPoints[mesh->getPoints()[25]];
     EXPECT_THAT(result.x, DoubleEq(12));
     EXPECT_THAT(result.y, DoubleEq(-7));
 }
@@ -127,7 +104,7 @@ TEST_F(gradient_calculators, h1_returns_correct_result_at_the_border) {
             Point(-1.1, 51)
     );
 
-    laser.generateRays(1);
+    laser.generateInitialRays(<#initializer#>, 1);
     laser.generateIntersections(
             *mesh,
             ContinueStraight(),

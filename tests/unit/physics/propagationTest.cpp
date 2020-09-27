@@ -38,7 +38,7 @@ public:
     MeshFunctionMock density;
     Element element{0, {}};
 
-    StopAtCritical stopAtCritical{density};
+    StopAtDensity stopAtCritical{density};
     DontStop dontStop;
 };
 

@@ -97,8 +97,8 @@ int main(int, char *[]) {
     //H1Gradient h1Gradient(l2FiniteElementSpace, h1FiniteElementSpace);
     //h1Gradient.updateDensity(densityGridFunction);
     //LeastSquare leastSquareGradient(mesh, densityMeshFunction);
-    Householder householder(mesh, densityMeshFunction, 1e-5);
-    householder.update();
+    LinearInterpolation householder(mesh, densityMeshFunction, 1e-5);
+    householder.setGradient();
 
     //NormalGradient normalGradient(densityMeshFunction);
     SpitzerFrequency spitzerFrequency;
@@ -121,7 +121,7 @@ int main(int, char *[]) {
             b
     );
 
-    laser.generateRays(100);
+    laser.generateInitialRays(<#initializer#>, 100);
     laser.generateIntersections(mesh, snellsLaw, intersectStraight, DontStop());
 
     AbsorptionController absorber;

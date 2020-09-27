@@ -73,12 +73,16 @@ namespace raytracer {
          */
         void addValue(const Element &element, double value) override;
 
+        friend std::ostream& operator<<(std::ostream& os, const MfemMeshFunction& meshFunction);
+
     private:
         mfem::GridFunction &gridFunction;
         const mfem::FiniteElementSpace &finiteElementSpace;
 
         double &get(const Element &element);
     };
+
+    std::ostream &operator<<(std::ostream &os, const MfemMeshFunction &meshFunction);
 
     /**
      * @}

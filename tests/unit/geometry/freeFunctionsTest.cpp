@@ -21,7 +21,7 @@ TEST_F(find_intersection, returns_the_intersection_if_line_and_face_are_intersec
 TEST_F(find_intersection, returns_null_if_line_and_edge_are_not_intersecting) {
     HalfLine halfLine{Point(0.5, -1), Vector(2, 1)};
     auto intersection = findIntersection(halfLine, &face);
-    EXPECT_THAT(intersection, IsNull());
+    ASSERT_THAT(intersection, IsNull());
 }
 
 TEST_F(find_intersection, returns_intersection_if_border_point_is_intersected) {

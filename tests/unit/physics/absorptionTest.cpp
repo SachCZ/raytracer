@@ -20,8 +20,12 @@ public:
 
 class MockModel : public AbsorptionModel {
 public:
+    std::string getName() const override {
+        return "Mock model";
+    }
+
     Energy getEnergyChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
-                           const Energy &currentEnergy, const LaserRay &laserRay) const override {
+                           const Energy &currentEnergy) const override {
         return {11.2};
     }
 };
@@ -53,7 +57,7 @@ public:
         side.segmentCount = 1;
         mfemMesh = constructMfemMesh(side, side);
         mesh = std::make_unique<MfemMesh>(mfemMesh.get());
-        laser.generateRays(1);
+        laser.generateInitialRays(<#initializer#>, 1);
         laser.generateIntersections(
                 *mesh,
                 ContinueStraight(),

@@ -2,16 +2,15 @@
 
 namespace raytracer {
 
-    StopAtCritical::StopAtCritical(const MeshFunction &density) :
-            density(density) {}
+    StopAtDensity::StopAtDensity(const MeshFunction &density, double stopAt) :
+            density(density), stopAt(stopAt) {}
 
-    bool StopAtCritical::operator()(const Element &element, const LaserRay &laserRay) {
+    bool StopAtDensity::operator()(const Element &element) {
         auto currentDensity = density.getValue(element);
-        auto criticalDensity = laserRay.getCriticalDensity();
-        return currentDensity > criticalDensity.asDouble;
+        return currentDensity > stopAt;
     }
 
-    bool DontStop::operator()(const Element &, const LaserRay &) {
+    bool DontStop::operator()(const Element &) {
         return false;
     }
     

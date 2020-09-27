@@ -9,13 +9,20 @@ foreach(file ${files})
     execute_process(COMMAND "${CMAKE_COMMAND}" --build . WORKING_DIRECTORY "${EXTERNAL_BINARY_DIR}/${filename}-download")
 endforeach()
 
+add_library(boost INTERFACE)
+target_include_directories(boost INTERFACE "${EXTERNAL_BINARY_DIR}/boost-src")
+
+add_library(msgpack INTERFACE)
+target_include_directories(msgpack INTERFACE "${EXTERNAL_BINARY_DIR}/msgpack-src/include")
+target_link_libraries(msgpack INTERFACE boost)
+
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 add_subdirectory("${EXTERNAL_BINARY_DIR}/gtest-src" "${EXTERNAL_BINARY_DIR}/gtest-build")
 
 add_library(jsoncpp STATIC IMPORTED)
 set_target_properties(
         jsoncpp PROPERTIES
-        "IMPORTED_LOCATION" "${EXTERNAL_BINARY_DIR}/jsoncpp-build/lib/libjsoncpp.a"
+        "IMPORTED_LOCATION" "${EXTERNAL_BINARY_DIR}/jsoncpp-build/lib/libjsoncpp_static.a"
         "INTERFACE_INCLUDE_DIRECTORIES" "${EXTERNAL_BINARY_DIR}/jsoncpp-src/include/"
 )
 

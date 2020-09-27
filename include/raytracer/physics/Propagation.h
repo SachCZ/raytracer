@@ -2,7 +2,6 @@
 #define RAYTRACER_PROPAGATION_H
 
 #include "MeshFunction.h"
-#include "LaserRay.h"
 #include "Gradient.h"
 #include "CollisionalFrequency.h"
 
