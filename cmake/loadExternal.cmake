@@ -26,13 +26,6 @@ set_target_properties(
         "INTERFACE_INCLUDE_DIRECTORIES" "${EXTERNAL_BINARY_DIR}/jsoncpp-src/include/"
 )
 
-add_library(yamlcpp STATIC IMPORTED)
-set_target_properties(
-        yamlcpp PROPERTIES
-        "IMPORTED_LOCATION" "${EXTERNAL_BINARY_DIR}/yamlcpp-build/libyaml-cpp.a"
-        "INTERFACE_INCLUDE_DIRECTORIES" "${EXTERNAL_BINARY_DIR}/yamlcpp-src/include"
-)
-
 add_library(mfem STATIC IMPORTED)
 set_target_properties(
         mfem PROPERTIES
