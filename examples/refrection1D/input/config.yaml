@@ -12,10 +12,10 @@ laser:
   start_point:
     x: 140e-4
     y: -50e-4
-  endPoint:
+  end_point:
     x: 140e-4
     y: -10e-4
-  rays_count: 1000
+  rays_count: 100
 estimate_bremsstrahlung: true
 estimate_resonance: true
 estimate_gain: false

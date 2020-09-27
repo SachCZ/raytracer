@@ -8,28 +8,35 @@
 #include <raytracer/physics/Termination.h>
 #include <raytracer/physics/Absorption.h>
 #include "mfem.hpp"
+#include "yaml-cpp/yaml.h"
+
+raytracer::Vector parseVector(const YAML::Node& node){
+    return {node["x"].as<double>(), node["y"].as<double>()};
+}
+
+raytracer::Point parsePoint(const YAML::Node& node){
+    return {node["x"].as<double>(), node["y"].as<double>()};
+}
 
 int main(int, char *[]) {
     using namespace raytracer;
 
-    std::string meshFilename = "input/mesh.mesh";
-    std::string densityFilename = "input/density.gf";
-    std::string temperatureFilename = "input/temperature.gf";
-    std::string ionizationFilename = "input/ionization.gf";
-    Length laserWavelength{800e-7};
-    Vector laserDirection{-1, std::tan(30.0 / 180.0 * M_PI)};
-    double laserSpatialFWHM = 1e-4;
-    Energy laserEnergy{1};
-    Point laserStartPoint(140 * 1e-4, -50e-4);
-    Point laserEndPoint(140 * 1e-4, -10 * 1e-4);
-    int raysCount = 1000;
-    bool estimateBremsstrahlung = true;
-    bool estimateResonance = true;
-    bool estimateGain = false;
-    std::string gainFilename;
-    if (estimateGain) {
-        gainFilename = "input/gain.gf";
-    }
+    YAML::Node config = YAML::LoadFile("input/config.yaml");
+
+    std::string meshFilename = config["mesh_file"].as<std::string>();
+    std::string densityFilename = config["density_file"].as<std::string>();
+    std::string temperatureFilename = config["temperature_file"].as<std::string>();
+    std::string ionizationFilename = config["ionization_file"].as<std::string>();
+    Length laserWavelength{config["laser"]["wavelength"].as<double>()};
+    auto laserDirection{parseVector(config["laser"]["direction"])};
+    auto laserSpatialFWHM = config["laser"]["spatial_FWHM"].as<double>();
+    Energy laserEnergy{config["laser"]["energy"].as<double>()};
+    Point laserStartPoint(parsePoint(config["laser"]["start_point"]));
+    Point laserEndPoint(parsePoint(config["laser"]["end_point"]));
+    auto raysCount = config["laser"]["rays_count"].as<int>();
+    auto estimateBremsstrahlung = config["estimate_bremsstrahlung"].as<bool>();
+    bool estimateResonance = config["estimate_resonance"].as<bool>();
+    bool estimateGain = config["estimate_gain"].as<bool>();
     std::string raysOutputFilename = "output/rays.msgpack";
     std::string absorbedEnergyFilename = "output/absorbed_energy.gf";
 
@@ -92,8 +99,9 @@ int main(int, char *[]) {
 
     AbsorptionController absorber;
 
+    std::unique_ptr<Bremsstrahlung> bremsstrahlungModel;
     if (estimateBremsstrahlung){
-        auto bremsstrahlungModel = std::make_unique<Bremsstrahlung>(
+        bremsstrahlungModel = std::make_unique<Bremsstrahlung>(
                 densityMeshFunction,
                 temperatureMeshFunction,
                 ionizationMeshFunction,
@@ -104,17 +112,19 @@ int main(int, char *[]) {
         absorber.addModel(bremsstrahlungModel.get());
     }
 
+    std::unique_ptr<Resonance> resonance;
+    ClassicCriticalDensity classicCriticalDensity;
     if (estimateResonance){
-        ClassicCriticalDensity classicCriticalDensity;
-        auto resonance = std::make_unique<Resonance>(householderLinearInterpolation, classicCriticalDensity, laser.wavelength, reflected);
+        resonance = std::make_unique<Resonance>(householderLinearInterpolation, classicCriticalDensity, laser.wavelength, reflected);
         absorber.addModel(resonance.get());
     }
 
+    std::unique_ptr<XRayGain> gain;
     if (estimateGain){
-        std::ifstream gainFile(gainFilename);
+        std::ifstream gainFile(config["gain_file"].as<std::string>());
         mfem::GridFunction gainGridFunction(mfemMesh.get(), gainFile);
         MfemMeshFunction gainMeshFunction(gainGridFunction, l2FiniteElementSpace);
-        auto gain = std::make_unique<XRayGain>(gainMeshFunction);
+        gain = std::make_unique<XRayGain>(gainMeshFunction);
         absorber.addModel(gain.get());
     }
 
