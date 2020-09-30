@@ -1,2 +1,0 @@
-add_executable(TraceBremsstrahlung traceBremsstrahlung.cpp)
-target_link_libraries(TraceBremsstrahlung PRIVATE raytracer)

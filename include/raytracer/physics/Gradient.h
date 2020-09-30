@@ -1,6 +1,8 @@
 #ifndef RAYTRACER_GRADIENT_H
 #define RAYTRACER_GRADIENT_H
 
+#include <utility>
+
 #include "QRDecomposition.h"
 #include "Matrix2D.h"
 #include "Vector.h"
@@ -74,10 +76,7 @@ namespace raytracer {
          * @param l2Space
          * @param h1Space
          */
-        H1Gradient(
-                mfem::FiniteElementSpace &l2Space,
-                mfem::FiniteElementSpace &h1Space
-        );
+        explicit H1Gradient(mfem::GridFunction& h1Function, mfem::Mesh& mesh);
 
         /**
          * Return the value of gradient at the intersection point.
@@ -93,22 +92,18 @@ namespace raytracer {
                 const Element &nextElement
         ) const override;
 
-
-        /**
-         * Update the density from which the gradient is calculated. The density should be a function in L2 space.
-         * @param density defined over L2
-         */
-        void updateDensity(mfem::GridFunction &density);
-
     private:
-        mfem::FiniteElementSpace &l2Space;
-        mfem::FiniteElementSpace &h1Space;
-        mfem::GridFunction _density;
+        mfem::GridFunction h1Function;
+        mfem::Mesh& mesh;
 
         Vector getGradientAt(const Element &element, const Point &point) const;
-
-        mfem::GridFunction projectL2toH1(mfem::GridFunction &function);
     };
+
+    mfem::GridFunction projectL2toH1(
+            mfem::GridFunction &l2Function,
+            mfem::FiniteElementSpace &l2Space,
+            mfem::FiniteElementSpace &h1Space
+    );
 
     /** Gradient model computes the gradient as a unit vector normal to the face and pointing int the direction
      * of more dense element
@@ -138,7 +133,8 @@ namespace raytracer {
 
     class LinearInterpolation : public Gradient {
     public:
-        LinearInterpolation(const std::map<Point *, Vector> gradientAtPoints): gradientAtPoints(std::move(gradientAtPoints)) {}
+        explicit LinearInterpolation(std::map<Point *, Vector> gradientAtPoints) : gradientAtPoints(
+                std::move(gradientAtPoints)) {}
 
         Vector get(
                 const PointOnFace &pointOnFace,
@@ -148,6 +144,7 @@ namespace raytracer {
 
     private:
         std::map<Point *, Vector> gradientAtPoints;
+
         static Vector linearInterpolate(
                 const Point &a,
                 const Point &b,
@@ -157,14 +154,15 @@ namespace raytracer {
 
     };
 
-    std::map<Point *, Vector> getHouseholderGradientAtPoints(const Mesh &mesh, const MeshFunction& meshFunction);
+    std::map<Point *, Vector> getHouseholderGradientAtPoints(const Mesh &mesh, const MeshFunction &meshFunction);
 
     /**
      * @}
      */
 
     namespace impl {
-        Vector getGradientAtPoint(const Mesh& mesh, const MeshFunction& meshFunction, const Point *point);
+        Vector getGradientAtPoint(const Mesh &mesh, const MeshFunction &meshFunction, const Point *point);
+
         Vector solveOverdetermined(rosetta::Matrix &A, rosetta::Matrix &b);
     }
 }

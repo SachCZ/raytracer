@@ -12,11 +12,8 @@ namespace raytracer {
         return this->gradient;
     }
 
-    H1Gradient::H1Gradient(
-            mfem::FiniteElementSpace &l2Space,
-            mfem::FiniteElementSpace &h1Space
-    ) :
-            l2Space(l2Space), h1Space(h1Space), _density(&h1Space) {}
+    H1Gradient::H1Gradient(mfem::GridFunction &h1Function, mfem::Mesh &mesh) :
+            h1Function(h1Function), mesh(mesh) {}
 
     Vector H1Gradient::get(
             const PointOnFace &pointOnFace,
@@ -29,86 +26,50 @@ namespace raytracer {
         return 0.5 * (previousGradient + nextGradient); //TODO look into this
     }
 
-    void H1Gradient::updateDensity(mfem::GridFunction &density) {
-        this->_density = this->projectL2toH1(density);
-
-        char vishost[] = "localhost";
-        int visport = 19916;
-        mfem::socketstream sol_sock(vishost, visport);
-        mfem::socketstream sol_sock2(vishost, visport);
-        sol_sock.precision(8);
-        sol_sock2.precision(8);
-        sol_sock << "solution\n" << *this->h1Space.GetMesh() << this->_density << std::flush;
-        sol_sock2 << "solution\n" << *this->l2Space.GetMesh() << density << std::flush;
-    }
-
-    Vector
-    H1Gradient::getGradientAt(const Element &element, const Point &point) const {
-        /**
+    Vector H1Gradient::getGradientAt(const Element &element, const Point &point) const {
         mfem::Vector result(2);
         mfem::IntegrationPoint integrationPoint{};
         integrationPoint.Set2(point.x, point.y);
 
-        //auto transformation = this->h1Space.GetElementTransformation(element.getId());
-        //transformation->SetIntPoint(&integrationPoint);
-        this->_density.GetVectorValue(element.getId(), integrationPoint, result);
-
-        return {result[0], result[1]};
-        **/
-        mfem::Vector result(2);
-        mfem::IntegrationPoint integrationPoint{};
-        integrationPoint.Set2(point.x, point.y);
-
-        auto transformation = this->h1Space.GetElementTransformation(element.getId());
+        auto transformation = this->mesh.GetElementTransformation(element.getId());
         transformation->SetIntPoint(&integrationPoint);
-        this->_density.GetGradient(*transformation, result);
+        this->h1Function.GetGradient(*transformation, result);
 
         return {result[0], result[1]};
     }
 
-    mfem::GridFunction H1Gradient::projectL2toH1(mfem::GridFunction &function) {
-        /**
-        mfem::GridFunction continuousInterpolant(&h1Space);
-        mfem::DiscreteLinearOperator discreteLinearOperator(&l2Space, &h1Space);
-        discreteLinearOperator.AddDomainInterpolator(new mfem::IdentityInterpolator());
-        discreteLinearOperator.Assemble();
-        discreteLinearOperator.Finalize();
-        discreteLinearOperator.Mult(function, continuousInterpolant);
+    mfem::GridFunction projectL2toH1(
+            mfem::GridFunction &l2Function,
+            mfem::FiniteElementSpace &l2Space,
+            mfem::FiniteElementSpace &h1Space
+    ) {
+        mfem::Array<int> attr(2);
+        attr[0] = 1;
+        attr[1] = 3;
 
-        return continuousInterpolant;
-
-        **/
-
-        mfem::GridFunctionCoefficient densityFunctionCoefficient(&function);
-        mfem::GridFunction result(&h1Space);
-        result = 0;
-        // result.ProjectBdrCoefficient(densityFunctionCoefficient, ...);
-        // pocet atributy
-        //mesh.bdr_.max
-        //... = array of attr
+        mfem::GridFunctionCoefficient l2FunctionCoefficient(&l2Function);
+        mfem::GridFunction h1Function(&h1Space);
+        h1Function = 0;
+        h1Function.ProjectCoefficient(l2FunctionCoefficient);
 
         mfem::MixedBilinearForm B(&l2Space, &h1Space);
         B.AddDomainIntegrator(new mfem::MixedScalarMassIntegrator);
         B.Assemble();
         B.Finalize();
         mfem::LinearForm b(&h1Space);
-        B.Mult(function, b);
+        B.Mult(l2Function, b);
 
         mfem::BilinearForm A(&h1Space);
         A.AddDomainIntegrator(new mfem::MassIntegrator);
         A.Assemble();
-        //A.EliminateEssentialBC(..., function, b);
+        A.EliminateEssentialBC(attr, h1Function, b);
         A.Finalize();
-
-
-
-
 
         mfem::GSSmoother smoother(A.SpMat());
 
-        mfem::PCG(A, smoother, b, result);
+        mfem::PCG(A, smoother, b, h1Function);
 
-        return result;
+        return h1Function;
     }
 
     Vector NormalGradient::get(const PointOnFace &pointOnFace, const Element &previousElement,
@@ -127,7 +88,7 @@ namespace raytracer {
         auto points = pointOnFace.face->getPoints();
         auto it0 = this->gradientAtPoints.find(points[0]);
         auto it1 = this->gradientAtPoints.find(points[1]);
-        if (it0 != this->gradientAtPoints.end() && it1 != this->gradientAtPoints.end()){
+        if (it0 != this->gradientAtPoints.end() && it1 != this->gradientAtPoints.end()) {
             auto gradient0 = it0->second;
             auto gradient1 = it1->second;
             return linearInterpolate(*points[0], *points[1], pointOnFace.point, gradient0, gradient1);
@@ -136,14 +97,14 @@ namespace raytracer {
         }
     }
 
-    Vector impl::getGradientAtPoint(const Mesh& mesh, const MeshFunction& meshFunction, const Point *point) {
+    Vector impl::getGradientAtPoint(const Mesh &mesh, const MeshFunction &meshFunction, const Point *point) {
         int index = 0;
         auto elements = mesh.getPointAdjacentElements(point);
-        if (elements.size() < 3){
+        if (elements.size() < 3) {
             elements = {elements[0]};
             auto adjacent = mesh.getElementAdjacentElements(*elements[0]);
             elements.insert(elements.end(), adjacent.begin(), adjacent.end());
-            if (elements.size() < 3){
+            if (elements.size() < 3) {
                 elements = {elements[1]};
                 adjacent = mesh.getElementAdjacentElements(*elements[1]);
                 elements.insert(elements.end(), adjacent.begin(), adjacent.end());
@@ -187,7 +148,7 @@ namespace raytracer {
         return {x(1, 0), x(2, 0)};
     }
 
-    std::map<Point *, Vector> getHouseholderGradientAtPoints(const Mesh &mesh, const MeshFunction& meshFunction) {
+    std::map<Point *, Vector> getHouseholderGradientAtPoints(const Mesh &mesh, const MeshFunction &meshFunction) {
         std::map<Point *, Vector> result;
         for (const auto &point : mesh.getPoints()) {
             result.insert({point, impl::getGradientAtPoint(mesh, meshFunction, point)});

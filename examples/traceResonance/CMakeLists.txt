@@ -1,2 +1,0 @@
-add_executable(TraceResonance traceResonance.cpp)
-target_link_libraries(TraceResonance PRIVATE raytracer)
