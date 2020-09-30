@@ -46,7 +46,9 @@ namespace raytracer {
                 }
             }
         }
-        result->id = currentId++;
+        if (result){
+            result->id = currentId++;
+        }
         return result;
     }
 
