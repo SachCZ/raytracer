@@ -43,9 +43,11 @@ namespace raytracer {
             mfem::FiniteElementSpace &l2Space,
             mfem::FiniteElementSpace &h1Space
     ) {
-        mfem::Array<int> attr(2);
-        attr[0] = 1;
-        attr[1] = 3;
+        mfem::Array<int> attr(4);
+        attr[0] = 1; //attr 1
+        attr[1] = 0;
+        attr[2] = 1;
+        attr[3] = 0;
 
         mfem::GridFunctionCoefficient l2FunctionCoefficient(&l2Function);
         mfem::GridFunction h1Function(&h1Space);

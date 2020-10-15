@@ -3,7 +3,7 @@
 #include <cmath>
 
 double densityFunction(const mfem::Vector &x) {
-    return x(0) > 1 && x(0) < 4 && x(1) > 1 && x(1) < 4 ? 1 : 0;
+    return x(0);
 }
 
 int main(int argc, char *argv[]) {
