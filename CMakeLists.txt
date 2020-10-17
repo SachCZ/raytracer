@@ -3,6 +3,7 @@ project(RayTracer)
 
 #setup external libs-----------------------------
 include(cmake/loadExternal.cmake)
+include(GoogleTest)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -11,6 +12,8 @@ add_subdirectory(src/utility)
 add_subdirectory(src/physics)
 
 option(BUILD_TESTS "Build unit tests" OFF)
+
+enable_testing()
 
 if(BUILD_TESTS)
     add_subdirectory(tests/unit)

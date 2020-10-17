@@ -6,16 +6,21 @@ namespace raytracer {
         return this->boundaryFaces;
     }
 
-    MfemMesh::MfemMesh(mfem::Mesh *mesh) :
-    mesh(mesh),
-    elementToElementTable(mesh->ElementToElementTable()),
-    vertexToElementTable(mesh->GetVertexToElementTable()) {
-        this->points = this->genPoints();
-        this->faces = this->genFaces();
-        this->elements = this->genElements();
-        this->boundaryFaces = this->genBoundaryFaces();
-        this->innerPoints = this->genInnerPoints();
-    }
+    MfemMesh::MfemMesh(mfem::Mesh *mesh) : mesh(mesh) { this->init(); }
+
+    MfemMesh::MfemMesh(
+            DiscreteLine sideA,
+            DiscreteLine sideB,
+            mfem::Element::Type elementType
+    ) : mfemMesh(std::make_unique<mfem::Mesh>(
+            sideA.segmentCount,
+            sideB.segmentCount,
+            elementType,
+            true,
+            sideA.length,
+            sideB.length,
+            true)),
+        mesh(mfemMesh.get()) { this->init(); }
 
     std::unique_ptr<Element> MfemMesh::createElementFromId(int id) const {
         if (id == -1) return nullptr;
@@ -140,15 +145,15 @@ namespace raytracer {
     }
 
     std::vector<Point *> MfemMesh::genInnerPoints() {
-        std::vector<Point*> result;
-        std::set<Point*> boundaryPoints;
-        for (const auto & face : this->boundaryFaces){
-            for (const auto& point : face->getPoints()){
+        std::vector<Point *> result;
+        std::set<Point *> boundaryPoints;
+        for (const auto &face : this->boundaryFaces) {
+            for (const auto &point : face->getPoints()) {
                 boundaryPoints.insert(point);
             }
         }
-        for (const auto& point : this->points){
-            if (boundaryPoints.find(point.get()) == boundaryPoints.end()){
+        for (const auto &point : this->points) {
+            if (boundaryPoints.find(point.get()) == boundaryPoints.end()) {
                 result.emplace_back(point.get());
             }
         }
@@ -159,7 +164,7 @@ namespace raytracer {
         return this->innerPoints;
     }
 
-    std::vector<Element *> MfemMesh::getPointAdjacentElements(const Point* point) const {
+    std::vector<Element *> MfemMesh::getPointAdjacentElements(const Point *point) const {
         //TODO precalculate this
         int pointId = -1;
         for (uint i = 0; i < this->points.size(); i++) {
@@ -173,9 +178,9 @@ namespace raytracer {
                 this->vertexToElementTable->GetRow(pointId),
                 this->vertexToElementTable->RowSize(pointId)
         );
-        std::vector<Element*> result;
+        std::vector<Element *> result;
         result.reserve(elementIds.Size());
-        for (auto id : elementIds){
+        for (auto id : elementIds) {
             result.emplace_back(this->getElementFromId(id));
         }
         return result;
@@ -189,18 +194,18 @@ namespace raytracer {
         return result;
     }
 
-    std::unique_ptr<mfem::Mesh> constructMfemMesh(
-            DiscreteLine sideA,
-            DiscreteLine sideB,
-            mfem::Element::Type elementType
-    ) {
-        return std::make_unique<mfem::Mesh>(
-                sideA.segmentCount,
-                sideB.segmentCount,
-                elementType,
-                true,
-                sideA.length,
-                sideB.length,
-                true);
+    mfem::Mesh *MfemMesh::getMfemMesh() {
+        return this->mesh;
+    }
+
+    std::vector<Element *> MfemMesh::getElements() const {
+        std::vector<Element *> result;
+        std::transform(
+                this->elements.begin(), this->elements.end(), std::back_inserter(result),
+                [](const auto &element) {
+                    return element.get();
+                }
+        );
+        return result;
     }
 }

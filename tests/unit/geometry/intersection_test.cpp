@@ -9,18 +9,10 @@ using namespace testing;
 using namespace raytracer;
 
 class IntersectionTest : public Test {
-protected:
-    void SetUp() override {
-        DiscreteLine sideA{10.0, 5};
-        mfemMesh = std::move(constructMfemMesh(sideA, sideA));
-        mesh = std::make_unique<MfemMesh>(mfemMesh.get());
-    }
-
 public:
     Point a{0, 0}, b{1, 0};
     Face face{0, {&a, &b}};
-    std::unique_ptr <mfem::Mesh> mfemMesh{};
-    std::unique_ptr <MfemMesh> mesh;
+    MfemMesh mesh{DiscreteLine{10.0, 5}, DiscreteLine{10.0, 5}};
 };
 
 TEST_F(IntersectionTest, findIntersection_returns_the_intersection_if_line_and_face_are_intersecting) {
@@ -51,7 +43,7 @@ TEST_F(IntersectionTest, findClosestIntersection_returns_closest_intersection_if
 
 TEST_F(IntersectionTest, trace_through_steps_throught_mesh_according_to_find_intersection) {
     auto intersections = findIntersections(
-            *mesh,
+            mesh,
             HalfLine{Point(-1, 4.5), Vector(1, 0)},
             ContinueStraight{},
             intersectStraight,
@@ -64,7 +56,7 @@ TEST_F(IntersectionTest, intersecting_can_deal_with_diagonal_case) {
     HalfLine diagonalHalfLine{Point(-1, 9), Vector(1, -1)};
 
     auto intersections = findIntersections(
-            *mesh,
+            mesh,
             diagonalHalfLine,
             ContinueStraight{},
             intersectStraight,

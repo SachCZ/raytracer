@@ -3,7 +3,9 @@
 
 #include <mfem.hpp>
 #include <set>
+#include <functional>
 #include "geometry_primitives.h"
+#include "mesh.h"
 
 namespace raytracer {
     /**
@@ -48,9 +50,11 @@ namespace raytracer {
          * @param gridFunction a mutable reference will be kept.
          * @param finiteElementSpace const reference will be kept - caution: L2 space is expected!
          */
-        explicit MfemMeshFunction(
+        MfemMeshFunction(
                 mfem::GridFunction &gridFunction,
                 const mfem::FiniteElementSpace &finiteElementSpace);
+
+        explicit MfemMeshFunction(mfem::FiniteElementSpace &finiteElementSpace);
 
         /**
          * Get a value at Element.
@@ -75,11 +79,20 @@ namespace raytracer {
 
         friend std::ostream& operator<<(std::ostream& os, const MfemMeshFunction& meshFunction);
 
+        void setUsingFunction(const Mesh& mesh, const std::function<double(Point)>& func){
+            for (const auto& element : mesh.getElements()){
+                this->setValue(*element, func(getElementCentroid(*element)));
+            }
+        }
+
     private:
+        mfem::GridFunction mfemGridFunction;
         mfem::GridFunction &gridFunction;
         const mfem::FiniteElementSpace &finiteElementSpace;
 
         double &get(const Element &element);
+
+        void init();
     };
 
     std::ostream &operator<<(std::ostream &os, const MfemMeshFunction &meshFunction);

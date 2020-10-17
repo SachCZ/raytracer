@@ -10,14 +10,6 @@ using namespace raytracer;
 class LaserTest : public Test {
 
 public:
-    LaserTest() {
-        DiscreteLine side{};
-        side.segmentCount = 15;
-        side.length = 1;
-        mfemMesh = constructMfemMesh(side, side, mfem::Element::Type::QUADRILATERAL);
-        mesh = std::make_unique<MfemMesh>(mfemMesh.get());
-    }
-
     Laser laser{Length{1315e-7},
                 [](const Point &point) { return Vector(1, 0); },
                 [](double x) { return 1.2; },
@@ -25,8 +17,7 @@ public:
                 Point(-1, 0.9),
                 51
     };
-    std::unique_ptr<mfem::Mesh> mfemMesh;
-    std::unique_ptr<MfemMesh> mesh;
+    MfemMesh mesh{DiscreteLine{1.0, 15}, DiscreteLine{1.0, 15}, mfem::Element::Type::QUADRILATERAL};
 };
 
 TEST_F(LaserTest, initial_directions_can_be_generated_from_laser) {
@@ -44,7 +35,7 @@ TEST_F(LaserTest, initial_energies_can_be_generated_from_laser) {
 
 TEST_F(LaserTest, can_generate_intersections) {
     auto intersections = generateIntersections(
-            *mesh,
+            mesh,
             generateInitialDirections(laser),
             ContinueStraight(),
             intersectStraight,

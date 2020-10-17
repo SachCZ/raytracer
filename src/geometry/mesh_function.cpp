@@ -24,11 +24,23 @@ namespace raytracer {
                                        const mfem::FiniteElementSpace &finiteElementSpace) :
             gridFunction(gridFunction),
             finiteElementSpace(finiteElementSpace) {
-        gridFunction.SetTrueVector();
+        init();
     }
 
     std::ostream &operator<<(std::ostream &os, const MfemMeshFunction &meshFunction) {
         meshFunction.gridFunction.Save(os);
         return os;
+    }
+
+    MfemMeshFunction::MfemMeshFunction(mfem::FiniteElementSpace &finiteElementSpace) :
+            mfemGridFunction(mfem::GridFunction(&finiteElementSpace)),
+            gridFunction(mfemGridFunction),
+            finiteElementSpace(finiteElementSpace)
+    {
+        init();
+    }
+
+    void MfemMeshFunction::init() {
+        gridFunction.SetTrueVector();
     }
 }

@@ -1,5 +1,5 @@
-add_executable(TestRunner
-        testRunner.cpp
+add_executable(unit_tests
+        test_runner.cpp
         geometry/point_test.cpp
         geometry/vector_test.cpp
         geometry/mesh_test.cpp
@@ -14,5 +14,6 @@ add_executable(TestRunner
         utility/qr_decomposition_test.cpp
         physics/absorption_test.cpp
         mocks.cpp mocks.h)
-target_link_libraries(TestRunner PRIVATE gtest gtest gmock geometry physics utility)
-configure_file(geometry/mesh.vtk ${CMAKE_CURRENT_BINARY_DIR}/geometry/mesh.vtk COPYONLY)
+target_link_libraries(unit_tests PRIVATE gtest gtest gmock geometry physics utility)
+
+gtest_add_tests(TARGET unit_tests)

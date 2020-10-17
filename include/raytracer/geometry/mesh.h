@@ -64,6 +64,8 @@ namespace raytracer {
          */
         virtual std::vector<Point *> getPoints() const = 0;
 
+        virtual std::vector<Element*> getElements() const = 0;
+
         /**
          * Override this.
          *
@@ -72,21 +74,6 @@ namespace raytracer {
          */
         virtual std::vector<Element *> getPointAdjacentElements(const Point *point) const = 0;
     };
-
-    /**
-     * Construct a mfem::Mesh given two discrete lines (the sides of the rectangle).
-     * The mesh will be a rectangular equidistant grid beginning at (0, 0).
-     *
-     * @param sideA of the mesh
-     * @param sideB of the mesh
-     * @return the unique pointer to the mfem::Mesh
-     */
-    std::unique_ptr<mfem::Mesh>
-    constructMfemMesh(
-            DiscreteLine sideA,
-            DiscreteLine sideB,
-            mfem::Element::Type elementType = mfem::Element::Type::TRIANGLE
-    );
 
     /**
      * Class representing a mesh (2D for now).
@@ -98,6 +85,17 @@ namespace raytracer {
          * Create a rectangular mesh given
          */
         explicit MfemMesh(mfem::Mesh *mesh);
+
+        /**
+         * Construct a mfem::Mesh given two discrete lines (the sides of the rectangle).
+         * The mesh will be a rectangular equidistant grid beginning at (0, 0).
+         *
+         * @param sideA of the mesh
+         * @param sideB of the mesh
+         */
+        MfemMesh(DiscreteLine sideA,
+                 DiscreteLine sideB,
+                 mfem::Element::Type elementType = mfem::Element::Type::TRIANGLE);
 
         /** Given a Face return the adjacent Element to this face in given direction.
          *  It is expected that there are two or less elements adjacent to the face. If there is no
@@ -134,6 +132,8 @@ namespace raytracer {
          */
         std::vector<Point *> getPoints() const override;
 
+        std::vector<Element*> getElements() const override;
+
         /**
          * Return elements that do share a point
          * @param point
@@ -141,7 +141,10 @@ namespace raytracer {
          */
         std::vector<Element *> getPointAdjacentElements(const Point *point) const override;
 
+        mfem::Mesh *getMfemMesh();
+
     private:
+        std::unique_ptr<mfem::Mesh> mfemMesh;
         mfem::Mesh *mesh;
         std::vector<Face *> boundaryFaces;
         std::vector<std::unique_ptr<Element>> elements;
@@ -173,6 +176,16 @@ namespace raytracer {
         std::vector<Face *> genBoundaryFaces();
 
         std::vector<Point *> genInnerPoints();
+
+        void init() {
+            this->elementToElementTable = mesh->ElementToElementTable();
+            this->vertexToElementTable = std::unique_ptr<mfem::Table>(mesh->GetVertexToElementTable());
+            this->points = this->genPoints();
+            this->faces = this->genFaces();
+            this->elements = this->genElements();
+            this->boundaryFaces = this->genBoundaryFaces();
+            this->innerPoints = this->genInnerPoints();
+        }
     };
 }
 

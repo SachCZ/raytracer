@@ -24,13 +24,8 @@ class AbsorptionTest : public Test {
 
 public:
     void SetUp() override {
-        DiscreteLine side{};
-        side.length = 1;
-        side.segmentCount = 1;
-        mfemMesh = constructMfemMesh(side, side);
-        mesh = std::make_unique<MfemMesh>(mfemMesh.get());
         intersections = generateIntersections(
-                *mesh,
+                mesh,
                 generateInitialDirections(laser),
                 ContinueStraight(),
                 intersectStraight,
@@ -50,8 +45,7 @@ public:
             Point(-0.9, -1.1),
             1
     };
-    std::unique_ptr<mfem::Mesh> mfemMesh;
-    std::unique_ptr<MfemMesh> mesh;
+    MfemMesh mesh{DiscreteLine{1.0, 1}, DiscreteLine{1.0, 1}};
     IntersectionSet intersections;
     EnergiesSet initialEnergies;
 };
