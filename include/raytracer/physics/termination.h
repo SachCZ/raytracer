@@ -1,7 +1,7 @@
 #ifndef RAYTRACER_TERMINATION_H
 #define RAYTRACER_TERMINATION_H
 
-#include "mesh_function.h"
+#include <geometry.h>
 #include "gradient.h"
 #include "collisional_frequency.h"
 

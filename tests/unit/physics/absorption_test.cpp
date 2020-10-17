@@ -1,10 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <raytracer/physics/absorption.h>
-#include <raytracer/physics/magnitudes.h>
-#include <raytracer/physics/refraction.h>
-#include <raytracer/physics/propagation.h>
-#include <raytracer/physics/termination.h>
+#include <physics.h>
 #include "../mocks.h"
 
 

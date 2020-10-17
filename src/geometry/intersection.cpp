@@ -1,6 +1,6 @@
 #include <limits>
 #include <algorithm>
-#include "Intersection.h"
+#include "intersection.h"
 
 namespace raytracer {
 

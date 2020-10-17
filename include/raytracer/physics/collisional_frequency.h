@@ -1,8 +1,7 @@
-#ifndef RAYTRACER_COLLISIONALFREQUENCY_H
-#define RAYTRACER_COLLISIONALFREQUENCY_H
+#ifndef RAYTRACER_COLLISIONAL_FREQUENCY_H
+#define RAYTRACER_COLLISIONAL_FREQUENCY_H
 
-#include "Magnitudes.h"
-#include "Constants.h"
+#include "magnitudes.h"
 #include <cmath>
 #include <algorithm>
 
@@ -79,4 +78,4 @@ namespace raytracer {
 }
 
 
-#endif //RAYTRACER_COLLISIONALFREQUENCY_H
+#endif //RAYTRACER_COLLISIONAL_FREQUENCY_H

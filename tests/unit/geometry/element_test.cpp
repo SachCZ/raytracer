@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <raytracer/geometry/geometry_primitives.h>
+#include <geometry.h>
 #include "../matchers.h"
 
 using namespace raytracer;

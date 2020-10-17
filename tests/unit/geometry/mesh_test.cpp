@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <raytracer/geometry/mesh.h>
-#include <raytracer/geometry/geometry_primitives.h>
+#include <geometry.h>
 
 using namespace testing;
 using namespace raytracer;

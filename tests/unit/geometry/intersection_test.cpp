@@ -1,11 +1,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <raytracer/geometry/mesh.h>
-#include <raytracer/physics/refraction.h>
-#include <raytracer/physics/propagation.h>
-#include <raytracer/physics/termination.h>
+#include <geometry.h>
+#include <physics.h> //TODO Includes physics just because of continue straight... resolve this
 #include "../matchers.h"
-#include "raytracer/geometry/intersection.h"
+
 
 using namespace testing;
 using namespace raytracer;

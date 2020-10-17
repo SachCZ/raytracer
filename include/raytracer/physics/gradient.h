@@ -3,12 +3,8 @@
 
 #include <utility>
 
-#include "intersection.h"
 #include "mfem.hpp"
-#include "mesh_function.h"
-#include "mesh.h"
-#include "FreeFunctions.h"
-#include "geometry_primitives.h"
+#include <geometry.h>
 
 namespace raytracer {
     /**

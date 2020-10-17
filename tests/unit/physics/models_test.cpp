@@ -1,8 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <raytracer/geometry/geometry_primitives.h>
-#include <raytracer/physics/magnitudes.h>
-#include <raytracer/physics/refraction.h>
+#include <physics.h>
 
 using namespace testing;
 using namespace raytracer;

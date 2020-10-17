@@ -1,7 +1,9 @@
-#include "Laser.h"
+#include "laser.h"
 #include <fstream>
 #include <json/json.h>
 #include <msgpack.hpp>
+#include <utility.h>
+
 
 namespace raytracer {
     Laser::Laser(Length wavelength,

@@ -1,5 +1,5 @@
-#ifndef RAYTRACER_MESH_PRIMITIVES_H
-#define RAYTRACER_MESH_PRIMITIVES_H
+#ifndef RAYTRACER_GEOMETRY_PRIMITIVES_H
+#define RAYTRACER_GEOMETRY_PRIMITIVES_H
 
 #include <vector>
 #include <ostream>
@@ -253,4 +253,4 @@ namespace raytracer {
      */
 }
 
-#endif //RAYTRACER_MESH_PRIMITIVES_H
+#endif //RAYTRACER_GEOMETRY_PRIMITIVES_H

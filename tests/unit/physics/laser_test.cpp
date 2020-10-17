@@ -1,11 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <raytracer/physics/laser.h>
-#include <raytracer/physics/magnitudes.h>
+#include <physics.h>
 #include <mfem.hpp>
-#include <raytracer/physics/propagation.h>
-#include <raytracer/physics/refraction.h>
-#include <raytracer/physics/termination.h>
+
 
 using namespace testing;
 using namespace raytracer;

@@ -1,6 +1,10 @@
 #ifndef RAYTRACER_RAYTRACER_H
 #define RAYTRACER_RAYTRACER_H
 
+#include "geometry.h"
+#include "physics.h"
+#include "utility.h"
+
 /**
  * @defgroup api Raytracer laser API
  * This is the user API, refer to to this module or its submodules if you are a user of Raytracer.

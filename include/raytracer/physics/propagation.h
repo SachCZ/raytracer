@@ -1,9 +1,7 @@
 #ifndef RAYTRACER_PROPAGATION_H
 #define RAYTRACER_PROPAGATION_H
 
-#include "mesh_function.h"
-#include "gradient.h"
-#include "collisional_frequency.h"
+#include <geometry.h>
 
 namespace raytracer {
     /**

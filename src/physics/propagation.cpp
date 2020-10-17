@@ -1,6 +1,6 @@
-#include "Propagation.h"
-#include "Refraction.h"
-#include "Termination.h"
+#include "propagation.h"
+#include "refraction.h"
+#include "termination.h"
 
 namespace raytracer {
     PointOnFace

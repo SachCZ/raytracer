@@ -1,16 +1,16 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <mfem.hpp>
-#include <raytracer/geometry/Mesh.h>
-#include <raytracer/geometry/MeshFunction.h>
-#include <raytracer/physics/Gradient.h>
-#include <raytracer/physics/CollisionalFrequency.h>
-#include <raytracer/physics/Propagation.h>
-#include <raytracer/physics/Laser.h>
-#include <raytracer/utility/FreeFunctions.h>
-#include <raytracer/physics/Absorption.h>
-#include "Refraction.h"
-#include "Termination.h"
+#include <raytracer/geometry/mesh.h>
+#include <raytracer/geometry/mesh_function.h>
+#include <raytracer/physics/gradient.h>
+#include <raytracer/physics/collisional_frequency.h>
+#include <raytracer/physics/propagation.h>
+#include <raytracer/physics/laser.h>
+#include <raytracer/utility/numeric.h>
+#include <raytracer/physics/absorption.h>
+#include "refraction.h"
+#include "termination.h"
 
 double initialDensityFunction(const mfem::Vector &x) {
     double critical = 6.4471308354624448e+20;

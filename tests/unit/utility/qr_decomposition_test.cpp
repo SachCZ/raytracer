@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <raytracer/utility/qr_decomposition.h>
-#include <raytracer/geometry/geometry_primitives.h>
+#include <utility.h>
 
 using namespace testing;
 using namespace rosetta;

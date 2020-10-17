@@ -1,12 +1,11 @@
 #ifndef RAYTRACER_ABSORPTION_H
 #define RAYTRACER_ABSORPTION_H
 
-#include "mesh_function.h"
-#include "Magnitudes.h"
-#include "Laser.h"
-#include "CollisionalFrequency.h"
-#include "Gradient.h"
-#include "Refraction.h"
+#include <geometry.h>
+#include "magnitudes.h"
+#include "gradient.h"
+#include "refraction.h"
+#include "laser.h"
 
 namespace raytracer {
     /**

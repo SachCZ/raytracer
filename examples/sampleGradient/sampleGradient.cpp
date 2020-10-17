@@ -1,5 +1,5 @@
-#include <raytracer/geometry/Mesh.h>
-#include <raytracer/physics/Refraction.h>
+#include <raytracer/geometry/mesh.h>
+#include <raytracer/physics/refraction.h>
 #include <cmath>
 
 double densityFunction(const mfem::Vector &x) {

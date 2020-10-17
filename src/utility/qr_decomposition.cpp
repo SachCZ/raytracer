@@ -1,4 +1,4 @@
-#include "QRDecomposition.h"
+#include "qr_decomposition.h"
 
 namespace rosetta {
     Matrix::Matrix() : m(0), n(0), data(nullptr) {}

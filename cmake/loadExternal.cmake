@@ -22,7 +22,7 @@ add_subdirectory("${EXTERNAL_BINARY_DIR}/gtest-src" "${EXTERNAL_BINARY_DIR}/gtes
 add_library(jsoncpp STATIC IMPORTED)
 set_target_properties(
         jsoncpp PROPERTIES
-        "IMPORTED_LOCATION" "${EXTERNAL_BINARY_DIR}/jsoncpp-build/lib/libjsoncpp_static.a"
+        "IMPORTED_LOCATION" "${EXTERNAL_BINARY_DIR}/jsoncpp-build/lib/libjsoncpp.a"
         "INTERFACE_INCLUDE_DIRECTORIES" "${EXTERNAL_BINARY_DIR}/jsoncpp-src/include/"
 )
 

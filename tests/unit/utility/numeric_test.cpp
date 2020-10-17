@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <raytracer/utility/numeric.h>
+#include <utility.h>
 
 using namespace testing;
 using namespace raytracer;

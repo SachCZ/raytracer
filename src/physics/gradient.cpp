@@ -1,5 +1,5 @@
-#include <QRDecomposition.h>
-#include "Gradient.h"
+#include <qr_decomposition.h>
+#include "gradient.h"
 
 namespace raytracer {
     namespace impl {

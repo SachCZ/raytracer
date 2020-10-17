@@ -1,14 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-
-#include <raytracer/geometry/mesh.h>
-#include <raytracer/physics/propagation.h>
-#include <raytracer/physics/laser.h>
-#include "raytracer/physics/gradient.h"
-#include "raytracer/utility/numeric.h"
+#include <physics.h>
 #include "../matchers.h"
-#include "refraction.h"
-#include "termination.h"
 
 using namespace testing;
 using namespace raytracer;

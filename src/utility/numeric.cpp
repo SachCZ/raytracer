@@ -1,4 +1,4 @@
-#include "FreeFunctions.h"
+#include "numeric.h"
 #include <cmath>
 
 namespace raytracer {

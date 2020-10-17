@@ -1,6 +1,7 @@
 #include <stdexcept>
-#include "CollisionalFrequency.h"
+#include "collisional_frequency.h"
 #include <cmath>
+#include "constants.h"
 
 namespace raytracer {
     Frequency SpitzerFrequency::get(

@@ -3,11 +3,9 @@
 
 #include <vector>
 #include <functional>
-#include <intersection.h>
-#include "FreeFunctions.h"
-#include "Magnitudes.h"
+#include "magnitudes.h"
 #include <utility>
-#include "geometry_primitives.h"
+#include <geometry.h>
 
 namespace raytracer {
 

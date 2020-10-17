@@ -1,9 +1,10 @@
 #ifndef RAYTRACER_REFRACTION_H
 #define RAYTRACER_REFRACTION_H
 
-#include "mesh_function.h"
+#include <geometry.h>
 #include "gradient.h"
 #include "collisional_frequency.h"
+
 
 namespace raytracer {
 
@@ -32,15 +33,7 @@ namespace raytracer {
 
     class ClassicCriticalDensity : public CriticalDensity {
     public:
-        Density getCriticalDensity(const Length& wavelength) const override {
-            auto m_e = constants::electron_mass;
-            auto c = constants::speed_of_light;
-            auto e = constants::electron_charge;
-
-            auto constant = m_e * M_PI * std::pow(c, 2) / std::pow(e, 2);
-
-            return {constant * std::pow(wavelength.asDouble, -2)};
-        }
+        Density getCriticalDensity(const Length& wavelength) const override;
     };
 
     class ColdPlasma : public RefractiveIndex, public BremsstrahlungCoeff {
@@ -55,42 +48,19 @@ namespace raytracer {
                 const Density &density,
                 const Frequency &collisionFrequency,
                 const Length &wavelength
-        ) const override {
-            auto permittivity = getPermittivity(density, collisionFrequency, wavelength);
-            if (permittivity.real() < 0) return 0;
-            auto root = std::sqrt(permittivity);
-            if (std::isnan(root.real())) {
-                throw std::logic_error("Nan index of refraction!");
-            }
-            return root.real();
-        }
+        ) const override;
 
         static std::complex<double> getPermittivity(
                 const Density &density,
                 const Frequency &collisionFrequency,
-                const Length wavelength
-        ) {
-            using namespace std::complex_literals;
-
-            auto nu_ei = collisionFrequency.asDouble;
-            auto n_e = density.asDouble;
-            auto m_e = constants::electron_mass;
-            auto e = constants::electron_charge;
-            auto omega = 2 * M_PI * constants::speed_of_light / wavelength.asDouble;
-            auto omega_p2 = 4 * M_PI * e * e * n_e / m_e;
-
-            auto term = omega_p2 / (omega * omega + nu_ei * nu_ei);
-            return 1 - term + 1i * nu_ei / omega * term;
-        }
+                const Length &wavelength
+        );
 
         double getInverseBremsstrahlungCoeff(
                 const Density &density,
                 const Frequency &collisionFrequency,
                 const Length &wavelength
-        ) const override {
-            auto eps = getPermittivity(density, collisionFrequency, wavelength);
-            return 4 * M_PI / wavelength.asDouble * std::sqrt(eps).imag();
-        }
+        ) const override;
     };
 
     /**
@@ -102,26 +72,20 @@ namespace raytracer {
          * Mark an Element.
          * @param element
          */
-        void mark(const Element &element, const PointOnFace &pointOnFace) {
-            marked.insert(std::make_pair(element.getId(), pointOnFace.id));
-        }
+        void mark(const Element &element, const PointOnFace &pointOnFace);
 
         /**
          * Unmark an Element
          * @param element
          */
-        void unmark(const Element &element, const PointOnFace &pointOnFace) {
-            marked.erase(std::make_pair(element.getId(), pointOnFace.id));
-        }
+        void unmark(const Element &element, const PointOnFace &pointOnFace);
 
         /**
          * Check whether an Element is marked by this marker.
          * @param element
          * @return
          */
-        bool isMarked(const Element &element, const PointOnFace &pointOnFace) const {
-            return marked.find(std::make_pair(element.getId(), pointOnFace.id)) != marked.end();
-        }
+        bool isMarked(const Element &element, const PointOnFace &pointOnFace) const;
 
     private:
         std::set<std::pair<int, int>> marked;
@@ -147,9 +111,7 @@ namespace raytracer {
                 const Vector &previousDirection,
                 const Element &,
                 const Element &
-        ) {
-            return previousDirection;
-        }
+        );
     };
 
 /**

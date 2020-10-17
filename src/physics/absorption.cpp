@@ -1,4 +1,4 @@
-#include "Absorption.h"
+#include "absorption.h"
 
 namespace raytracer {
     void AbsorptionController::addModel(const AbsorptionModel *model) {

@@ -1,5 +1,5 @@
-#include <raytracer/physics/CollisionalFrequency.h>
-#include <raytracer/utility/FreeFunctions.h>
+#include <raytracer/physics/collisional_frequency.h>
+#include <raytracer/utility/numeric.h>
 #include <fstream>
 #include <json/json.h>
 #include <raytracer/physics/LaserRay.h>

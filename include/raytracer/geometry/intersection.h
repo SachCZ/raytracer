@@ -2,7 +2,7 @@
 #define RAYTRACER_GEOMETRY_FUNCTIONS_H
 
 
-#include "Mesh.h"
+#include "mesh.h"
 
 namespace raytracer {
 

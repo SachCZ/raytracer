@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "../matchers.h"
-#include <raytracer/geometry/geometry_primitives.h>
+#include <geometry.h>
 
 using namespace testing;
 using Vector = raytracer::Vector;

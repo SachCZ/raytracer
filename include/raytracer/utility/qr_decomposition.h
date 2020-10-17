@@ -1,5 +1,5 @@
-#ifndef RAYTRACER_QRDECOMPOSITION_H
-#define RAYTRACER_QRDECOMPOSITION_H
+#ifndef RAYTRACER_QR_DECOMPOSITION_H
+#define RAYTRACER_QR_DECOMPOSITION_H
 
 #include <cstdio>
 #include <cstdlib>
@@ -141,4 +141,4 @@ namespace rosetta {
                      Matrix &Q);
 }
 
-#endif //RAYTRACER_QRDECOMPOSITION_H
+#endif //RAYTRACER_QR_DECOMPOSITION_H

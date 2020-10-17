@@ -1,4 +1,4 @@
-#include "Termination.h"
+#include "termination.h"
 
 namespace raytracer {
 

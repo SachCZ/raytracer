@@ -1,4 +1,4 @@
-#include "MeshFunction.h"
+#include "mesh_function.h"
 
 namespace raytracer {
     double MfemMeshFunction::getValue(const Element &element) const {
