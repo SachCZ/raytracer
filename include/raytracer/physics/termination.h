@@ -6,29 +6,24 @@
 #include "collisional_frequency.h"
 
 namespace raytracer {
-    /**
-     * \addtogroup stopConditions
-     * @{
-     */
 
     /**
-    * Functor for ray propagation termination based on critical density expected to used with laseRay
-    * intersection finding procedure
+    * Functor that returns true of a density condition is met
     */
     struct StopAtDensity {
+
         /**
-         * Constructor the functor using a density MeshFunction
-         * @param density
+         * Declare the density at which h to stop
+         * @param density density to compare with threshold
+         * @param stopAt threshold
          */
         explicit StopAtDensity(const MeshFunction &density, Density stopAt);
 
         /**
-         * Returns true if the density at element to go to is greater than criticalDensity of
-         * the LaserRay.
+         * Returns true if the density at element to go to is greater than stopAt defined in constructor
          *
          * @param element
-         * @param laserRay
-         * @return true if current density is grater than critical
+         * @return true if current density is grater than stopAt
          */
         bool operator()(const Element & element);
 
@@ -38,20 +33,15 @@ namespace raytracer {
     };
 
     /**
-     * Functor for ray propagation that returns false in any case. Convenience struct to keep the call similar to
-     * eg. StopAtCritical.
+     * Functor for ray propagation that returns false in any case.
      */
     struct DontStop {
         /**
-         * Just returns false.
+         * Return false.
          * @return false.
          */
         bool operator()(const Element &);
     };
-
-    /**
-     * @}
-     */
 }
 
 #endif //RAYTRACER_TERMINATION_H

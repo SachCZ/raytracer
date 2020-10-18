@@ -38,7 +38,7 @@ namespace raytracer {
     }
 
     /**
-     * Class representing a 1D gaussian with given parametrs
+     * Class representing a 1D gaussian with given parameters
      */
     class Gaussian {
     public:

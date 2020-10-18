@@ -84,12 +84,25 @@ namespace raytracer {
                 const Length &wavelength
         ) const override;
 
+        /**
+         * Calculate permittivity of the plasma
+         * @param density
+         * @param collisionFrequency
+         * @param wavelength
+         * @return permittivity
+         */
         static std::complex<double> getPermittivity(
                 const Density &density,
                 const Frequency &collisionFrequency,
                 const Length &wavelength
         );
-
+        /**
+         * Calculate bremsstrahlung coeff of the plasma
+         * @param density
+         * @param collisionFrequency
+         * @param wavelength
+         * @return bremsstrahlung coeff
+         */
         double getInverseBremsstrahlungCoeff(
                 const Density &density,
                 const Frequency &collisionFrequency,
@@ -126,17 +139,11 @@ namespace raytracer {
     };
 
     /**
-     * \addtogroup directionFinders
-     * @{
-     */
-
-    /**
      * Functor that returns always the previousDirection.
      */
     struct ContinueStraight {
         /**
-         * Function to be used in Laser::generateIntersections() as findDirection. It returns the previousDirection
-         * given, effectively continuing in a straight line.
+         * Return previousDirection
          * @param previousDirection
          * @return previousDirection
          */
@@ -148,23 +155,24 @@ namespace raytracer {
         );
     };
 
-/**
- * Functor that finds new direction base on the Snells's law.
- */
+    /**
+     * Functor that finds new direction base on the Snells's law.
+     */
     struct SnellsLaw {
         /**
-         * Construct the SnellsLaw using the density, temperature and ionization function references.
-         * Provide gradientCalculator calculate the plane of rarefaction. Provide collisionalFrequencyCalculator
-         * to evaluate the index of rarefaction.
-         * Density, temperature and ionization values are expected to change.
+         * To calculate refraction based on Snell's law, denisty, temperature, ionization,
+         * gradient, collisional frequency, refractive index and wavelength is need. Provide reflected marker,
+         * to mark reflection.
          * @param density
          * @param temperature
          * @param ionization
          * @param gradientCalculator
          * @param collisionalFrequencyCalculator
-         * @param reflectedMarker Marker where after using SnellsLaw all Element where the ray was reflected will
-         * will be marked - optional parameter
+         * @param refractiveIndexCalculator
+         * @param wavelength
+         * @param reflectedMarker
          */
+        //TODO read this doc, this is stupid only refractive index and gradient should be required
         explicit SnellsLaw(
                 const MeshFunction &density,
                 const MeshFunction &temperature,
@@ -178,15 +186,12 @@ namespace raytracer {
 
 
         /**
-         * Function to be used in Laser::generateIntersections() as findDirection.
-         * Finds new direction based on Snells law between the two Element, density (provides an index of rarefaction)
-         * and gradient (provides edge direction). Could throw error no intersection found!
+         * Apply Snells law using the values calculated at previous and next elements
          *
          * @param pointOnFace
          * @param previousDirection
          * @param previousElement
          * @param nextElement
-         * @param laserRay
          * @return new direction based on Snells law.
          */
         Vector operator()(
@@ -206,10 +211,6 @@ namespace raytracer {
         Length wavelength;
         Marker *reflectedMarker;
     };
-
-    /**
-     * @}
-     */
 }
 
 #endif //RAYTRACER_REFRACTION_H

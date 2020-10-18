@@ -16,10 +16,6 @@ namespace raytracer {
             const Vector &entryDirection,
             const Element &element
     );
-
-    /**
-     * @}
-     */
 }
 
 

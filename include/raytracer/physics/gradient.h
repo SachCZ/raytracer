@@ -106,7 +106,7 @@ namespace raytracer {
         gradientAtPoints(std::move(gradientAtPoints)) {}
 
         /**
-         * Calculate the gradient in point of a face by linear interpolation of gradient at nodes
+         * Calculate the gradient in a point on a face by linear interpolation of gradient at nodes
          *
          * @param pointOnFace
          * @param previousElement
@@ -138,10 +138,6 @@ namespace raytracer {
      * @return gradients at points
      */
     std::map<Point *, Vector> getHouseholderGradientAtPoints(const Mesh &mesh, const MeshFunction &meshFunction);
-
-    /**
-     * @}
-     */
 }
 
 
