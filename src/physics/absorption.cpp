@@ -1,7 +1,7 @@
 #include "absorption.h"
 
 namespace raytracer {
-    void AbsorptionController::addModel(const AbsorptionModel *model) {
+    void AbsorptionController::addModel(const EnergyExchangeModel *model) {
         models.emplace_back(model);
     }
 
@@ -41,7 +41,7 @@ namespace raytracer {
 
         auto currentEnergy = initialEnergy.asDouble;
 
-        std::map<const AbsorptionModel *, Energy> result;
+        std::map<const EnergyExchangeModel *, Energy> result;
 
         for (; intersectionIt != std::end(intersections); ++intersectionIt, ++previousIntersectionIt) {
             for (const auto &model : this->models) {
@@ -103,6 +103,10 @@ namespace raytracer {
             wavelength(wavelength),
             reflectedMarker(reflectedMarker) {}
 
+    std::string Resonance::getName() const {
+        return "Resonance";
+    }
+
     Bremsstrahlung::Bremsstrahlung(
             const MeshFunction &density,
             const MeshFunction &temperature,
@@ -138,6 +142,10 @@ namespace raytracer {
 
         auto newEnergy = currentEnergy.asDouble * std::exp(exponent);
         return Energy{currentEnergy.asDouble - newEnergy};
+    }
+
+    std::string Bremsstrahlung::getName() const {
+        return "Bremsstrahlung";
     }
 
     std::string stringifyAbsorptionSummary(const AbsorptionSummary &summary) {

@@ -17,7 +17,7 @@ public:
                 Point(-1, 0.9),
                 51
     };
-    MfemMesh mesh{DiscreteLine{1.0, 15}, DiscreteLine{1.0, 15}, mfem::Element::Type::QUADRILATERAL};
+    MfemMesh mesh{SegmentedLine{1.0, 15}, SegmentedLine{1.0, 15}, mfem::Element::Type::QUADRILATERAL};
 };
 
 TEST_F(LaserTest, initial_directions_can_be_generated_from_laser) {
@@ -34,7 +34,7 @@ TEST_F(LaserTest, initial_energies_can_be_generated_from_laser) {
 }
 
 TEST_F(LaserTest, can_generate_intersections) {
-    auto intersections = generateIntersections(
+    auto intersections = findIntersections(
             mesh,
             generateInitialDirections(laser),
             ContinueStraight(),

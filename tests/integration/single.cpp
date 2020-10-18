@@ -50,7 +50,7 @@ TEST(single_ray, throught_mesh_should_work_as_expected_for_dummy_mesh) {
     ionizationGridFunction.ProjectCoefficient(ionizationFunctionCoefficient);
     MfemMeshFunction ionizationMeshFunction(ionizationGridFunction, l2FiniteElementSpace);
 
-    LinearInterpolation gradient(mesh, densityMeshFunction, 0.2);
+    LinearInterGrad gradient(mesh, densityMeshFunction, 0.2);
     gradient.setGradient();
 
     SpitzerFrequency spitzerFrequencyCalculator;

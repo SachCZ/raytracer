@@ -9,15 +9,14 @@
 
 namespace raytracer {
     /**
- * Structure representing a discretization of a distance.
- * That is how many same size segments are on the line with given width.
- */
-    struct DiscreteLine {
+     * Line divided into same size segments
+     */
+    struct SegmentedLine {
         /**How long is the line.*/
         double length;
+
         /**
-         * Number of segments on the line.
-         * Eg. DiscreteLine split by two points has three segments.
+         * Number of line segments
          */
         size_t segmentCount;
     };
@@ -82,19 +81,18 @@ namespace raytracer {
     class MfemMesh : public Mesh {
     public:
         /**
-         * Create a rectangular mesh given
+         * Encapsulate an mfem mesh while not owning it
          */
         explicit MfemMesh(mfem::Mesh *mesh);
 
         /**
-         * Construct a mfem::Mesh given two discrete lines (the sides of the rectangle).
-         * The mesh will be a rectangular equidistant grid beginning at (0, 0).
+         * Construct a new mfem::Mesh given two sides and element type. Owns the mfem mesh.
          *
          * @param sideA of the mesh
          * @param sideB of the mesh
          */
-        MfemMesh(DiscreteLine sideA,
-                 DiscreteLine sideB,
+        MfemMesh(SegmentedLine sideA,
+                 SegmentedLine sideB,
                  mfem::Element::Type elementType = mfem::Element::Type::TRIANGLE);
 
         /** Given a Face return the adjacent Element to this face in given direction.
@@ -115,8 +113,8 @@ namespace raytracer {
         std::vector<Element *> getElementAdjacentElements(const Element &element) const override;
 
         /**
-         * Return a sequence of faces that are on the mesh boundary.
-         * @return sequence of faces.
+         * Return faces that are on the mesh boundary.
+         * @return vector of faces.
          */
         std::vector<Face *> getBoundary() const override;
 
@@ -132,6 +130,10 @@ namespace raytracer {
          */
         std::vector<Point *> getPoints() const override;
 
+        /**
+         * Return all mesh elements
+         * @return
+         */
         std::vector<Element*> getElements() const override;
 
         /**
@@ -141,6 +143,10 @@ namespace raytracer {
          */
         std::vector<Element *> getPointAdjacentElements(const Point *point) const override;
 
+        /**
+         * Get pointer to the underlying mfem::Mesh
+         * @return
+         */
         mfem::Mesh *getMfemMesh();
 
     private:
@@ -177,15 +183,7 @@ namespace raytracer {
 
         std::vector<Point *> genInnerPoints();
 
-        void init() {
-            this->elementToElementTable = mesh->ElementToElementTable();
-            this->vertexToElementTable = std::unique_ptr<mfem::Table>(mesh->GetVertexToElementTable());
-            this->points = this->genPoints();
-            this->faces = this->genFaces();
-            this->elements = this->genElements();
-            this->boundaryFaces = this->genBoundaryFaces();
-            this->innerPoints = this->genInnerPoints();
-        }
+        void init();
     };
 }
 

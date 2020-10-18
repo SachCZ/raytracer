@@ -5,13 +5,7 @@
 
 namespace raytracer {
     /**
-     * \addtogroup intersectionFinders
-     * @{
-     */
-
-    /**
-     * Function to be used in Laser::generateIntersections() as findIntersection.
-     * It intersects the element in straight line.
+     * Given an element and entry ray calculate how the element is intersected and return the resulting point
      * @param entryPointOnFace
      * @param entryDirection
      * @param element

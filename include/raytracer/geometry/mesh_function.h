@@ -9,11 +9,6 @@
 
 namespace raytracer {
     /**
-     * \addtogroup api
-     * @{
-     */
-
-    /**
      * Abstract interface. To obey this MeshFunction interface getValue, setValue and addValue methods must be
      * implemented.
      */
@@ -46,7 +41,7 @@ namespace raytracer {
     public:
 
         /**
-         * Create the MeshFunction from a mfem::GridFunction and mfem::FiniteElementSpace.
+         * Create the MfemMeshFunction from a mfem::GridFunction and mfem::FiniteElementSpace. Does not own the GridFunction
          * @param gridFunction a mutable reference will be kept.
          * @param finiteElementSpace const reference will be kept - caution: L2 space is expected!
          */
@@ -54,6 +49,11 @@ namespace raytracer {
                 mfem::GridFunction &gridFunction,
                 const mfem::FiniteElementSpace &finiteElementSpace);
 
+        /**
+         * Create the MfemMeshFunction using an element space via new GridFunction initialization.
+         * It owns the GridFunction.
+         * @param finiteElementSpace
+         */
         explicit MfemMeshFunction(mfem::FiniteElementSpace &finiteElementSpace);
 
         /**
@@ -77,8 +77,19 @@ namespace raytracer {
          */
         void addValue(const Element &element, double value) override;
 
+        /**
+         * Output a string representation of MfemMeshFunction
+         * @param os
+         * @param meshFunction
+         * @return
+         */
         friend std::ostream& operator<<(std::ostream& os, const MfemMeshFunction& meshFunction);
 
+        /**
+         * Sample an analytic function at element centroid and return the value
+         * @param mesh
+         * @param func
+         */
         void setUsingFunction(const Mesh& mesh, const std::function<double(Point)>& func){
             for (const auto& element : mesh.getElements()){
                 this->setValue(*element, func(getElementCentroid(*element)));
@@ -96,10 +107,6 @@ namespace raytracer {
     };
 
     std::ostream &operator<<(std::ostream &os, const MfemMeshFunction &meshFunction);
-
-    /**
-     * @}
-     */
 }
 
 

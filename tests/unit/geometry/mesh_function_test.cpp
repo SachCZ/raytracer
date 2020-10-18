@@ -14,7 +14,7 @@ protected:
     }
 
 public:
-    MfemMesh mesh{DiscreteLine{1.0, 2}, DiscreteLine{1.0, 2}, mfem::Element::Type::QUADRILATERAL};
+    MfemMesh mesh{SegmentedLine{1.0, 2}, SegmentedLine{1.0, 2}, mfem::Element::Type::QUADRILATERAL};
     mfem::L2_FECollection finiteElementCollection{0, 2};
     mfem::FiniteElementSpace finiteElementSpace{mesh.getMfemMesh(), &finiteElementCollection};
     MfemMeshFunction meshFunction{finiteElementSpace};

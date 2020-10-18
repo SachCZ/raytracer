@@ -8,12 +8,6 @@
  * Namespace of the whole library.
  */
 namespace raytracer {
-
-    /**
-     * \addtogroup api
-     * @{
-     */
-
     /**
      * Class representing a point
      * A point is given by two coordinates x and y
@@ -79,7 +73,7 @@ namespace raytracer {
 
         /**
          * Return the normal to the vector using the convention (y, -x)
-         * @return
+         * @return the normal
          */
         Vector getNormal() const {
             return {this->y, -this->x};
@@ -103,17 +97,17 @@ namespace raytracer {
     const Point operator+(Point A, Vector b);
 
     /**
-     * Convenience wrapper around A + b
+     * Same as A + b
      * @param b
      * @param A
      * @return
      */
     const Point operator+(Vector b, Point A);
 
-    std::ostream& operator<<(std::ostream& os, const Point& point);
+    std::ostream &operator<<(std::ostream &os, const Point &point);
 
     /**
-     * Vector can be multiplied by number k*a
+     * Number times vector
      * @param k
      * @param a
      * @return scaled vector
@@ -121,7 +115,7 @@ namespace raytracer {
     const Vector operator*(double k, Vector a);
 
     /**
-     * Convenience wrapper around k*a
+     * Vector times number
      * @param a
      * @param k
      * @return
@@ -129,7 +123,7 @@ namespace raytracer {
     const Vector operator*(Vector a, double k);
 
     /**
-     * his is the dot product of two vectors a, b
+     * Dot product a*b
      * @param a
      * @param b
      * @return dot product
@@ -137,7 +131,7 @@ namespace raytracer {
     double operator*(Vector a, Vector b);
 
     /**
-     * Two vectors a, b can be added
+     * Add vectors a + b
      * @param a
      * @param b
      * @return
@@ -145,7 +139,7 @@ namespace raytracer {
     const Vector operator+(Vector a, Vector b);
 
     /**
-     * Two vectors a, b can be subtracted
+     * Subtract vectors a - b
      * @param a
      * @param b
      * @return
@@ -156,16 +150,14 @@ namespace raytracer {
 
 
     /**
-     * Class representing a polygonal face in mesh (edge in 2D, surface polygon face in 3D).
-     * @warning
-     * Do not construct this manually unless you know what you are doing.
+     * Face is a collection of points
      */
     class Face {
     public:
         /**
          *  Calculate a normal to the face (edge in 2D).
-         *  By convention in 2D, the normal is outward for points
-         *  in clockwise order forming a polygon.
+         *  The normal is outward for points
+         *  in clockwise order forming a 2D polygon.
          *  @return the normal vector.
          */
         Vector getNormal() const;
@@ -178,19 +170,15 @@ namespace raytracer {
         const std::vector<Point *> &getPoints() const;
 
         /**
-         * Construct the face using an id and std::vector of points that the face consist of.
-         *
-         * @warning
-         * It is users responsibility for the id to be unique. It is thus advised to not construct instance of Face
-         * manually.
+         * Construct the face using an id and points.
          *
          * @param id unique identification
-         * @param points the face consists of
+         * @param points
          */
         explicit Face(int id, std::vector<Point *> points);
 
         /**
-         * Get the id of the face.
+         * Get the id
          * @return id
          */
         int getId() const;
@@ -201,56 +189,81 @@ namespace raytracer {
     };
 
 
+    /**
+     * Element is a collection of faces
+     */
+    class Element {
+    public:
         /**
-         * Class representing a single polygonal element in mesh. Could be 2D/3D given by set of faces (edges, surfaces).
+         * Get the faces.
+         * @return the faces
          */
-        class Element {
-        public:
-            /**
-             * Get the faces of the Element.
-             * Edges in 2D, surfaces in 3D.
-             * @return the faces
-             */
-            const std::vector<Face *> &getFaces() const;
+        const std::vector<Face *> &getFaces() const;
 
-            /**
-             * Get the points of the Element.
-             * @return the points
-             */
-            const std::vector<Point *> &getPoints() const {
-                return this->points;
-            };
-
-            /**
-             * Constructor taking an id and std::vector of faces of the element.
-             * @warning
-             * It is users responsibility for the id to be unique. It is thus advised to not construct instance of Element
-             * manually.
-             *
-             * Clockwise order of faces is preferred in 2D.
-             * @param id unique identification
-             * @param faces of the element
-             */
-            explicit Element(int id, std::vector<Face *> faces);
-
-            /**
-             * Retrieve the id of element.
-             * @return id
-             */
-            int getId() const;
-
-        private:
-            int id;
-            std::vector<Face *> faces;
-            std::vector<Point *> points;
+        /**
+         * Get the points of the faces.
+         * @return the points
+         */
+        const std::vector<Point *> &getPoints() const {
+            return this->points;
         };
 
-        Point getElementCentroid(const Element &element);
+        /**
+         * Construct the element using an id and faces
+         *
+         * @param id unique identification
+         * @param faces
+         */
+        explicit Element(int id, std::vector<Face *> faces);
 
+        /**
+         * Retrieve the id
+         * @return id
+         */
+        int getId() const;
+
+    private:
+        int id;
+        std::vector<Face *> faces;
+        std::vector<Point *> points;
+    };
 
     /**
-     * @}
+    * Part of a line that has a fixed starting point but no end point
+    */
+    struct Ray {
+        /**
+         * Starting point
+         */
+        Point origin;
+        /**
+         * Direction
+         */
+        Vector direction;
+    };
+
+    /**
+     * Point and a face with unique id
      */
+    struct PointOnFace {
+        /**
+         * The point.
+         */
+        Point point;
+        /**
+         * Pointer to the face the point is at.
+         */
+        const Face *face;
+
+        int id;
+    };
+
+    /**
+     * Given an element, calculate and return its centroid
+     * @param element
+     * @return centroid
+     */
+    Point getElementCentroid(const Element &element);
 }
 
 #endif //RAYTRACER_GEOMETRY_PRIMITIVES_H

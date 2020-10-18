@@ -9,23 +9,12 @@
 
 namespace raytracer {
 
+    using DirectionFun = std::function<Vector(Point)>;
+    using EnergyFun = std::function<double(double)>;
     /**
      * Class representing a real physical laser. It is given by its origin, and energy.
      */
-    class Laser {
-        using DirectionFun = std::function<Vector(Point)>;
-        using EnergyFun = std::function<double(double)>;
-
-    public:
-        Laser(
-                Length wavelength,
-                DirectionFun directionFunction,
-                EnergyFun energyFunction,
-                Point startPoint,
-                Point endPoint,
-                int raysCount
-        );
-
+    struct Laser {
         Length wavelength;
         DirectionFun directionFunction;
         EnergyFun energyFunction;
@@ -34,21 +23,34 @@ namespace raytracer {
         int raysCount;
     };
 
-    /** Generate a set of equidistant LaserRays given by the parameters of the whole laser.
-         * The rays are generated originating from an edge between a start and end points of the laser.
-         * These will be set to the this Laser state.
-         *
-         * @param count number of rays to be generated
-         * @return a sequence of rays
-         */
-
-    std::vector<HalfLine> generateInitialDirections(const Laser &laser);
+    /**
+     * Take a laser and generate initial rays of the laser
+     * @param laser
+     * @return rays
+     */
+    std::vector<Ray> generateInitialDirections(const Laser &laser);
 
     using EnergiesSet = std::vector<Energy>;
+
+    /**
+     * Take a laser and generate initial energies corresponding to initial rays
+     * @param laser
+     * @return
+     */
     EnergiesSet generateInitialEnergies(const Laser &laser);
 
+    /**
+     * Take intersections and dump them to JSON string
+     * @param intersectionSet
+     * @return
+     */
     std::string stringifyRaysToJson(const IntersectionSet& intersectionSet);
 
+    /**
+     * Take intersections and dump them to msgpack binary format string
+     * @param intersectionSet
+     * @return
+     */
     std::string stringifyRaysToMsgpack(const IntersectionSet& intersectionSet);
 }
 

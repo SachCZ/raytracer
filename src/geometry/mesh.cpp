@@ -9,8 +9,8 @@ namespace raytracer {
     MfemMesh::MfemMesh(mfem::Mesh *mesh) : mesh(mesh) { this->init(); }
 
     MfemMesh::MfemMesh(
-            DiscreteLine sideA,
-            DiscreteLine sideB,
+            SegmentedLine sideA,
+            SegmentedLine sideB,
             mfem::Element::Type elementType
     ) : mfemMesh(std::make_unique<mfem::Mesh>(
             sideA.segmentCount,
@@ -207,5 +207,15 @@ namespace raytracer {
                 }
         );
         return result;
+    }
+
+    void MfemMesh::init() {
+        this->elementToElementTable = mesh->ElementToElementTable();
+        this->vertexToElementTable = std::unique_ptr<mfem::Table>(mesh->GetVertexToElementTable());
+        this->points = this->genPoints();
+        this->faces = this->genFaces();
+        this->elements = this->genElements();
+        this->boundaryFaces = this->genBoundaryFaces();
+        this->innerPoints = this->genInnerPoints();
     }
 }

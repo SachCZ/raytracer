@@ -17,7 +17,7 @@ namespace raytracer {
             endPoint(endPoint),
             raysCount(raysCount) {}
 
-    using Directions = std::vector<HalfLine>;
+    using Directions = std::vector<Ray>;
     Directions generateInitialDirections(const Laser &laser) {
         Directions result;
         result.reserve(laser.raysCount);
@@ -26,7 +26,7 @@ namespace raytracer {
 
         for (int i = 0; i < laser.raysCount; ++i) {
             Point point(x[i], y[i]);
-            result.emplace_back(HalfLine{point, laser.directionFunction(point)});
+            result.emplace_back(Ray{point, laser.directionFunction(point)});
         }
         return result;
     }

@@ -15,7 +15,4 @@ add_executable(unit_tests
         physics/absorption_test.cpp
         mocks.cpp mocks.h)
 target_link_libraries(unit_tests PRIVATE gtest gtest gmock geometry physics utility)
-target_compile_options(unit_tests PUBLIC --coverage -g -O0)
-target_link_options(unit_tests PUBLIC --coverage)
-
 gtest_add_tests(TARGET unit_tests)

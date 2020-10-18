@@ -55,7 +55,7 @@ TEST(tracing, throught_mesh_should_work_as_expected_for_dummy_mesh) {
     absorbedEnergyGridFunction = 0;
     MfemMeshFunction absorbedEnergyMeshFunction(absorbedEnergyGridFunction, l2FiniteElementSpace);
 
-    LinearInterpolation gradient(mesh, densityMeshFunction, 0.2);
+    LinearInterGrad gradient(mesh, densityMeshFunction, 0.2);
     gradient.setGradient();
 
     SpitzerFrequency spitzerFrequencyCalculator;

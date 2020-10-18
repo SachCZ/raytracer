@@ -121,16 +121,7 @@ namespace raytracer {
         return h1Function;
     }
 
-    Vector NormalGradient::get(const PointOnFace &pointOnFace, const Element &previousElement,
-                               const Element &nextElement) const {
-        auto previousDensity = this->density.getValue(previousElement);
-        auto nextDensity = this->density.getValue(nextElement);
-        double factor = previousDensity > nextDensity ? -1 : 1;
-        auto normal = pointOnFace.face->getNormal();
-        return factor / normal.getNorm() * normal;
-    }
-
-    Vector LinearInterpolation::get(
+    Vector LinearInterGrad::get(
             const PointOnFace &pointOnFace,
             const Element &,
             const Element &) const {
@@ -146,7 +137,7 @@ namespace raytracer {
         }
     }
 
-    Vector LinearInterpolation::linearInterpolate(const Point &a, const Point &b, const Point &x, const Vector &valueA,
+    Vector LinearInterGrad::linearInterpolate(const Point &a, const Point &b, const Point &x, const Vector &valueA,
                                                   const Vector &valueB) {
         auto norm = (b - a).getNorm();
         auto xDistFromA = (x - a).getNorm();

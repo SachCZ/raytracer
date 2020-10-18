@@ -8,8 +8,18 @@
 
 namespace raytracer {
 
+    /**
+     * Rule how a refractive index is calculated
+     */
     class RefractiveIndex {
     public:
+        /**
+         * Override this
+         * @param density
+         * @param collisionFrequency
+         * @param wavelength
+         * @return
+         */
         virtual double getRefractiveIndex(
                 const Density &density,
                 const Frequency &collisionFrequency,
@@ -17,8 +27,18 @@ namespace raytracer {
         ) const = 0;
     };
 
+    /**
+     * Rule how a bremsstrahlung coeff is calculated
+     */
     class BremsstrahlungCoeff {
     public:
+        /**
+         * Override this
+         * @param density
+         * @param collisionFrequency
+         * @param wavelength
+         * @return
+         */
         virtual double getInverseBremsstrahlungCoeff(
                 const Density &density,
                 const Frequency &collisionFrequency,
@@ -26,16 +46,30 @@ namespace raytracer {
         ) const = 0;
     };
 
+    /**
+     * Rule how critical density is calculated
+     */
     class CriticalDensity {
     public:
+        /**
+         * Override this
+         * @param wavelength
+         * @return
+         */
         virtual Density getCriticalDensity(const Length& wavelength) const = 0;
     };
 
+    /**
+     * The classic formula to calculate critical density
+     */
     class ClassicCriticalDensity : public CriticalDensity {
     public:
         Density getCriticalDensity(const Length& wavelength) const override;
     };
 
+    /**
+     * ColdPlasma approximation provides both RefractiveIndex and BremsstrahlungCoeff
+     */
     class ColdPlasma : public RefractiveIndex, public BremsstrahlungCoeff {
     public:
         /**

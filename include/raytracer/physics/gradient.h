@@ -8,11 +8,6 @@
 
 namespace raytracer {
     /**
-     * \addtogroup gradients
-     * @{
-     */
-
-    /**
      * Abstract interface to provide a GradientCalculator. To obey this interface implement the
      * get method.
      */
@@ -55,24 +50,21 @@ namespace raytracer {
     };
 
     /**
-     * GradientCalculator that stores a density grid function defined in H1 space obtained from function given
-     * if L2. When get is called the gradient of this function is calculated at given point.
-     *
-     * @warning
-     * Please note that updateDensity() must be called before calling get().
-     */
+     * Gradient calculator that stores a grid function defined in H1 space and calculates its gradient.
+     * */
     class H1Gradient : public Gradient {
     public:
+
         /**
-         * Constructor that expects the l2 and h1 spaces. L2 is the space in which density is usually defined
-         * and H1 is the space into which the density is transformed to be able to evaluate gradient.
-         * @param l2Space
-         * @param h1Space
+         * Construct using a GridFunction defined in H1 on a given mesh
+
+         * @param h1Function
+         * @param mesh
          */
         explicit H1Gradient(mfem::GridFunction& h1Function, mfem::Mesh& mesh);
 
         /**
-         * Return the value of gradient at the intersection point.
+         * Return the value of gradient at pointOnFace
          *
          * @param pointOnFace
          * @param previousElement
@@ -92,43 +84,35 @@ namespace raytracer {
         Vector getGradientAt(const Element &element, const Point &point) const;
     };
 
+    /**
+     * Take L2 GridFunction and project it on new H1 GridFunction
+     * @param l2Function
+     * @param l2Space
+     * @param h1Space
+     * @return
+     */
     mfem::GridFunction projectL2toH1(
             mfem::GridFunction &l2Function,
             mfem::FiniteElementSpace &l2Space,
             mfem::FiniteElementSpace &h1Space
     );
 
-    /** Gradient model computes the gradient as a unit vector normal to the face and pointing int the direction
-     * of more dense element
+    /**
+     * GradientCalculator using gradient defined at nodal values to calculate gradient at face
      */
-    class NormalGradient : public Gradient {
+    class LinearInterGrad : public Gradient {
     public:
-
-        explicit NormalGradient(const MeshFunction &density) : density(density) {}
+        explicit LinearInterGrad(std::map<Point *, Vector> gradientAtPoints) :
+        gradientAtPoints(std::move(gradientAtPoints)) {}
 
         /**
-         * Return the value of gradient at the intersection point.
+         * Calculate the gradient in point of a face by linear interpolation of gradient at nodes
          *
          * @param pointOnFace
          * @param previousElement
          * @param nextElement
-         * @return gradient at given point
+         * @return
          */
-        Vector get(
-                const PointOnFace &pointOnFace,
-                const Element &previousElement,
-                const Element &nextElement
-        ) const override;
-
-    private:
-        const MeshFunction &density;
-    };
-
-    class LinearInterpolation : public Gradient {
-    public:
-        explicit LinearInterpolation(std::map<Point *, Vector> gradientAtPoints) : gradientAtPoints(
-                std::move(gradientAtPoints)) {}
-
         Vector get(
                 const PointOnFace &pointOnFace,
                 const Element &previousElement,
@@ -147,6 +131,12 @@ namespace raytracer {
 
     };
 
+    /**
+     * Calculate the gradient at nodes via LS solved by householder factorization
+     * @param mesh
+     * @param meshFunction to be used to calculate gradient
+     * @return gradients at points
+     */
     std::map<Point *, Vector> getHouseholderGradientAtPoints(const Mesh &mesh, const MeshFunction &meshFunction);
 
     /**

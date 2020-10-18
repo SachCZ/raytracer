@@ -4,27 +4,28 @@
 
 namespace raytracer {
 
-    double impl::getParamK(const HalfLine &halfLine,
+
+    double getParamK(const Ray &ray,
                            const std::vector<Point *> &points) {
-        auto normal = halfLine.direction.getNormal();
-        const auto &P = halfLine.origin;
+        auto normal = ray.direction.getNormal();
+        const auto &P = ray.origin;
         const auto &A = *points[0];
         const auto &B = *points[1];
         return (normal * (P - A)) / (normal * (B - A));
     }
 
-    double impl::getParamT(const HalfLine &halfLine,
+    double getParamT(const Ray &ray,
                            const std::vector<Point *> &points) {
         const auto &A = *points[0];
         const auto &B = *points[1];
         auto normal = (B - A).getNormal();
-        const auto &d = halfLine.direction;
-        const auto &P = halfLine.origin;
+        const auto &d = ray.direction;
+        const auto &P = ray.origin;
 
         return (normal * (A - P)) / (normal * d);
     }
 
-    bool impl::isIntersecting(double k, double t, bool includePoint) {
+    bool isIntersecting(double k, double t, bool includePoint) {
         if (!includePoint) {
             return k >= 0 && k <= 1 && t > 0;
         } else {
@@ -32,8 +33,7 @@ namespace raytracer {
         }
     }
 
-    PointOnFacePtr
-    impl::getClosest(std::vector<PointOnFacePtr> &intersections, const Point &point) {
+    PointOnFacePtr getClosest(std::vector<PointOnFacePtr> &intersections, const Point &point) {
         static int currentId = 0;
         PointOnFacePtr result = nullptr;
         auto distance = std::numeric_limits<double>::infinity();
@@ -52,14 +52,13 @@ namespace raytracer {
         return result;
     }
 
-    PointOnFacePtr
-    findIntersectionPoint(const HalfLine &halfLine, const Face *face, bool includePoint) {
+    PointOnFacePtr findIntersectionPoint(const Ray &ray, const Face *face, bool includePoint = false) {
         const auto &points = face->getPoints();
         if (points.size() == 2) {
-            double k = impl::getParamK(halfLine, points);
-            double t = impl::getParamT(halfLine, points);
+            double k = getParamK(ray, points);
+            double t = getParamT(ray, points);
 
-            if (impl::isIntersecting(k, t, includePoint)) {
+            if (isIntersecting(k, t, includePoint)) {
                 const auto &A = *points[0];
                 const auto &B = *points[1];
                 auto point = (A + k * (B - A));
@@ -76,17 +75,16 @@ namespace raytracer {
         }
     }
 
-    PointOnFacePtr
-    findClosestIntersectionPoint(const HalfLine &halfLine, const std::vector<Face *> &faces) {
+    PointOnFacePtr findClosestIntersectionPoint(const Ray &ray, const std::vector<Face *> &faces) {
 
         std::vector<PointOnFacePtr> intersections;
         std::transform(
                 faces.begin(),
                 faces.end(),
                 std::back_inserter(intersections),
-                [&halfLine](const auto &face) { return findIntersectionPoint(halfLine, face); }
+                [&ray](const auto &face) { return findIntersectionPoint(ray, face); }
         );
-        auto result = impl::getClosest(intersections, halfLine.origin);
+        auto result = getClosest(intersections, ray.origin);
 
         if (!result) {
             intersections.clear();
@@ -94,9 +92,9 @@ namespace raytracer {
                     faces.begin(),
                     faces.end(),
                     std::back_inserter(intersections),
-                    [&halfLine](const auto &face) { return findIntersectionPoint(halfLine, face, true); }
+                    [&ray](const auto &face) { return findIntersectionPoint(ray, face, true); }
             );
-            result = impl::getClosest(intersections, halfLine.origin);
+            result = getClosest(intersections, ray.origin);
         }
         return result;
     }

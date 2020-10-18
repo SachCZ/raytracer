@@ -8,7 +8,7 @@ using namespace testing;
 using namespace raytracer;
 
 
-class MockModel : public AbsorptionModel {
+class MockModel : public EnergyExchangeModel {
 public:
     std::string getName() const override {
         return "Mock model";
@@ -24,7 +24,7 @@ class AbsorptionTest : public Test {
 
 public:
     void SetUp() override {
-        intersections = generateIntersections(
+        intersections = findIntersections(
                 mesh,
                 generateInitialDirections(laser),
                 ContinueStraight(),
@@ -45,7 +45,7 @@ public:
             Point(-0.9, -1.1),
             1
     };
-    MfemMesh mesh{DiscreteLine{1.0, 1}, DiscreteLine{1.0, 1}};
+    MfemMesh mesh{SegmentedLine{1.0, 1}, SegmentedLine{1.0, 1}};
     IntersectionSet intersections;
     EnergiesSet initialEnergies;
 };
