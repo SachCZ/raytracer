@@ -1,21 +1,21 @@
 #include "absorption.h"
 
 namespace raytracer {
-    void AbsorptionController::addModel(const EnergyExchangeModel *model) {
+    void EnergyExchangeController::addModel(const EnergyExchangeModel *model) {
         models.emplace_back(model);
     }
 
 
-    AbsorptionSummary AbsorptionController::absorb(
+    AbsorptionSummary EnergyExchangeController::absorb(
             const IntersectionSet &intersectionSet,
-            const EnergiesSet &energiesSet,
+            const Energies &initialEnergies,
             MeshFunction &absorbedEnergy
     ) {
         ModelEnergies modelEnergies;
         Energy initialEnergy{0};
         for (size_t i = 0; i < intersectionSet.size(); i++) {
-            initialEnergy.asDouble += energiesSet[i].asDouble;
-            auto modelsEnergies = this->absorbLaserRay(intersectionSet[i], energiesSet[i], absorbedEnergy);
+            initialEnergy.asDouble += initialEnergies[i].asDouble;
+            auto modelsEnergies = this->absorbLaserRay(intersectionSet[i], initialEnergies[i], absorbedEnergy);
             for (auto const &modelEnergy : modelsEnergies) {
                 const auto &model = modelEnergy.first;
                 const auto &energy = modelEnergy.second;
@@ -31,7 +31,7 @@ namespace raytracer {
         return {modelEnergies, initialEnergy};
     }
 
-    ModelEnergies AbsorptionController::absorbLaserRay(
+    ModelEnergies EnergyExchangeController::absorbLaserRay(
             const Intersections &intersections,
             const Energy &initialEnergy,
             MeshFunction &absorbedEnergy

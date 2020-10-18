@@ -1,6 +1,0 @@
-<map id="raytracer::LaserRay" name="raytracer::LaserRay">
-<area shape="rect" id="node2" href="$classraytracer_1_1Point.html" title="Class representing a point A point is given by two coordinates x and y. " alt="" coords="5,5,116,32"/>
-<area shape="rect" id="node3" href="$structraytracer_1_1Energy.html" title="Strong type representing energy in joules. " alt="" coords="141,5,263,32"/>
-<area shape="rect" id="node4" href="$structraytracer_1_1Length.html" title="Strong type representing length in cm. " alt="" coords="287,5,407,32"/>
-<area shape="rect" id="node5" href="$classraytracer_1_1Vector.html" title="Class representing a physical vector. " alt="" coords="432,5,551,32"/>
-</map>

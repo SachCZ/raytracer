@@ -1,4 +1,4 @@
-#include "qr_decomposition.h"
+#include "../../include/raytracer/physics/qr_decomposition.h"
 
 //TODO hide this in physics, no need to show this to the end user
 

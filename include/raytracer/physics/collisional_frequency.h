@@ -56,10 +56,13 @@ namespace raytracer {
         ) const;
     };
 
+    /** CollisionalFrequency realization always retuning a single value*/
     class ConstantFrequency : public CollisionalFrequency {
     public:
+        /** Construct using a single frequency value to be returned*/
         explicit ConstantFrequency(const Frequency& frequency);
 
+        /** @return a value defined in constructro */
         Frequency get(const Density &density, const Temperature &temperature, const Length &laserWavelength,
                       double ionization) const override;
 

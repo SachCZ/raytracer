@@ -81,7 +81,7 @@ TEST(tracing, throught_mesh_should_work_as_expected_for_dummy_mesh) {
     laser.generateInitialRays(<#initializer#>, 1000);
     laser.generateIntersections(mesh, snellsLaw, intersectStraight,DontStop());
 
-    AbsorptionController absorber;
+    EnergyExchangeController absorber;
     Resonance resonance(gradient, reflectionMarker);
     Bremsstrahlung bremsstrahlungModel(
             densityMeshFunction,

@@ -14,12 +14,11 @@ namespace raytracer {
     class EnergyExchangeModel {
     public:
         /**
-         * Based on intersections, calculate how much
+         * Based on the intersections, calculate how much
          * energy was absorbed in this specific element.
          * @param previousIntersection
          * @param currentIntersection
          * @param currentEnergy
-         * @param laserRay
          * @return
          */
         virtual Energy getEnergyChange(
@@ -39,6 +38,8 @@ namespace raytracer {
      * Energy exchange model estimating energy lost due to laser gain
      */
     struct XRayGain : public raytracer::EnergyExchangeModel {
+
+        /** Construct providing the Gain MeshFunction */
         explicit XRayGain(const raytracer::MeshFunction &gain);
 
         /**
@@ -51,6 +52,7 @@ namespace raytracer {
         raytracer::Energy getEnergyChange(const raytracer::Intersection &previousIntersection,
                                           const raytracer::Intersection &currentIntersection,
                                           const raytracer::Energy &currentEnergy) const override;
+
         /**
          * returns "X-ray gain"
          * @return
@@ -68,8 +70,11 @@ namespace raytracer {
     public:
 
         /**
-         * Construct this using a Gradient and Marker that marks elements in which the ray was reflected.
+         * Construct this using a Gradient, a CriticalDensity, a laser wavelength and a
+         * Marker that marks elements in which the ray was reflected.
          * @param gradientCalculator
+         * @param criticalDensity
+         * @param wavelength
          * @param reflectedMarker
          */
         Resonance(
@@ -84,8 +89,7 @@ namespace raytracer {
          * @param previousIntersection
          * @param currentIntersection
          * @param currentEnergy
-         * @param laserRay
-         * @return
+         * @return energy change
          */
         Energy getEnergyChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
                                const Energy &currentEnergy) const override;
@@ -113,12 +117,13 @@ namespace raytracer {
     struct Bremsstrahlung : public EnergyExchangeModel {
 
         /**
-         * To be able to model bremsstrahlung, MeshFunction density, temperature, ionization must be provided.
-         * Besides that a collisional frequency model is needed.
+         * Provide the required functions and models to the Bremsstrahlung model to construct it.
          * @param density
          * @param temperature
          * @param ionization
          * @param collisionalFrequency
+         * @param bremsstrahlungCoeff
+         * @param wavelength
          */
         explicit Bremsstrahlung(
                 const MeshFunction &density,
@@ -134,7 +139,6 @@ namespace raytracer {
          * @param previousIntersection
          * @param currentIntersection
          * @param currentEnergy
-         * @param laserRay
          * @return
          */
         Energy getEnergyChange(
@@ -157,16 +161,19 @@ namespace raytracer {
         const Length wavelength;
     };
 
+    /** Map of EnergyExchangeModel pointers to energies */
     typedef std::map<const EnergyExchangeModel *, Energy> ModelEnergies;
+
+    /** Summary of model-energies map and initialEnergy value. */
     struct AbsorptionSummary {
+        /** Map of models to amount of energy absorbed by the model. */
         ModelEnergies modelEnergies{};
+        /** Total initial energy of the laser obtained as a sum of ray energies.*/
         Energy initialEnergy;
     };
 
-    /**
-     * Class aggregating all instances of AbsorptionModel used to update absorbedEnergy meshFunction.
-     */
-    class AbsorptionController {
+    /** Class aggregating all instances of AbsorptionModel used to update absorbedEnergy meshFunction.*/
+    class EnergyExchangeController {
     public:
 
         /**
@@ -175,25 +182,29 @@ namespace raytracer {
          */
         void addModel(const EnergyExchangeModel *model);
 
+
         /**
-         * Add energy values based on AbsorptionModel applied on the Laser to the absorbedEnergy
-         * MeshFunction and return the absorption summary
-         *
-         * @warning For this to work properly, Laser::generateIntersections() must be called first.
-         * @param rays
+         * Modify the absorbedEnergy MeshFunction based on the intersectionSet and initialEnergies of the rays,
+         * then return a summary.
+         * @param intersectionSet
+         * @param initialEnergies
          * @param absorbedEnergy
+         * @return
          */
         AbsorptionSummary absorb(
                 const IntersectionSet &intersectionSet,
-                const EnergiesSet &energiesSet,
+                const Energies &initialEnergies,
                 MeshFunction &absorbedEnergy
         );
 
     private:
         std::vector<const EnergyExchangeModel *> models{};
 
-        ModelEnergies absorbLaserRay(const Intersections &intersections, const Energy &initialEnergy,
-                                     MeshFunction &absorbedEnergy);
+        ModelEnergies absorbLaserRay(
+                const Intersections &intersections,
+                const Energy &initialEnergy,
+                MeshFunction &absorbedEnergy
+        );
     };
 
     /**

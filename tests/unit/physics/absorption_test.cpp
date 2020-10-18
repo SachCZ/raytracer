@@ -34,7 +34,7 @@ public:
         initialEnergies = generateInitialEnergies(laser);
     }
 
-    AbsorptionController controller;
+    EnergyExchangeController controller;
     MockModel mockModel;
     MeshFunctionMock mockAbsorbedEnergy;
     Laser laser{
@@ -47,7 +47,7 @@ public:
     };
     MfemMesh mesh{SegmentedLine{1.0, 1}, SegmentedLine{1.0, 1}};
     IntersectionSet intersections;
-    EnergiesSet initialEnergies;
+    Energies initialEnergies;
 };
 
 TEST_F(AbsorptionTest, controller_does_absorb_energy_according_to_model) {

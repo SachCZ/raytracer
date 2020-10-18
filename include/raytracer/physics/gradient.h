@@ -102,6 +102,10 @@ namespace raytracer {
      */
     class LinearInterGrad : public Gradient {
     public:
+        /**
+         * To construct this supply a gradient at points
+         * @param gradientAtPoints
+         */
         explicit LinearInterGrad(std::map<Point *, Vector> gradientAtPoints) :
         gradientAtPoints(std::move(gradientAtPoints)) {}
 

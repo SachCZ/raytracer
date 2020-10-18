@@ -1,3 +1,5 @@
+/** @file intersection.h Holds the intersection finding related constructs */
+
 #ifndef RAYTRACER_GEOMETRY_FUNCTIONS_H
 #define RAYTRACER_GEOMETRY_FUNCTIONS_H
 
@@ -33,10 +35,11 @@ namespace raytracer {
         const Element *previousElement{};
     };
 
+    /** Sequence of intersections */
     using Intersections = std::vector<Intersection>;
-
+    /** Unique pointer to PointOnFace */
     using PointOnFacePtr = std::unique_ptr<PointOnFace>;
-
+    /** Sequence of sequences of intersections */
     using IntersectionSet = std::vector<Intersections>;
 
     /**
@@ -59,7 +62,7 @@ namespace raytracer {
             const Element &element)
      * @tparam StopCondition bool(const Element &element)
      * @param mesh
-     * @param initialDirection ray incident on the mesh
+     * @param initialDirections rays incident on the mesh
      * @param findDirection function of type DirectionFunction
      * @param findIntersection function of type IntersectionFunction
      * @param stopCondition function of type StopCondition

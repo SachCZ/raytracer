@@ -104,6 +104,7 @@ namespace raytracer {
      */
     const Point operator+(Vector b, Point A);
 
+    /** Dump the point representation to stream*/
     std::ostream &operator<<(std::ostream &os, const Point &point);
 
     /**
@@ -146,6 +147,7 @@ namespace raytracer {
      */
     const Vector operator-(Vector a, Vector b);
 
+    /** Dump the vector representation to stream*/
     std::ostream &operator<<(std::ostream &os, const Vector &vector);
 
 
@@ -255,6 +257,7 @@ namespace raytracer {
          */
         const Face *face;
 
+        /** Unique identification */
         int id;
     };
 

@@ -6,6 +6,7 @@ add_library(physics
         refraction.cpp
         termination.cpp
         absorption.cpp
+        qr_decomposition.cpp
         )
 target_include_directories(physics PUBLIC ../../include/raytracer/physics)
 target_link_libraries(physics PRIVATE utility jsoncpp msgpack)

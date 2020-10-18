@@ -21,13 +21,14 @@ namespace raytracer {
         size_t segmentCount;
     };
 
-
+    /**
+     * Mesh interface
+     */
     class Mesh {
     public:
 
         /**
          * Override this.
-         *
          * @param face
          * @param direction
          * @return
@@ -36,7 +37,6 @@ namespace raytracer {
 
         /**
          * Override this.
-         *
          * @param element
          * @return
          */
@@ -44,30 +44,30 @@ namespace raytracer {
 
         /**
          * Override this.
-         *
          * @return
          */
         virtual std::vector<Face *> getBoundary() const = 0;
 
         /**
          * Override this.
-         *
          * @return
          */
         virtual std::vector<Point *> getInnerPoints() const = 0;
 
         /**
          * Override this.
-         *
          * @return
          */
         virtual std::vector<Point *> getPoints() const = 0;
 
-        virtual std::vector<Element*> getElements() const = 0;
+        /**
+         * Override this.
+         * @return
+         */
+        virtual std::vector<Element *> getElements() const = 0;
 
         /**
          * Override this.
-         *
          * @param point
          * @return
          */
@@ -87,13 +87,15 @@ namespace raytracer {
 
         /**
          * Construct a new mfem::Mesh given two sides and element type. Owns the mfem mesh.
-         *
-         * @param sideA of the mesh
-         * @param sideB of the mesh
+         * @param sideA
+         * @param sideB
+         * @param elementType (fem::Element::Type::TRIANGLE, fem::Element::Type::QUADRILATERAL)
          */
-        MfemMesh(SegmentedLine sideA,
-                 SegmentedLine sideB,
-                 mfem::Element::Type elementType = mfem::Element::Type::TRIANGLE);
+        MfemMesh(
+                SegmentedLine sideA,
+                SegmentedLine sideB,
+                mfem::Element::Type elementType = mfem::Element::Type::TRIANGLE
+        );
 
         /** Given a Face return the adjacent Element to this face in given direction.
          *  It is expected that there are two or less elements adjacent to the face. If there is no
@@ -134,7 +136,7 @@ namespace raytracer {
          * Return all mesh elements
          * @return
          */
-        std::vector<Element*> getElements() const override;
+        std::vector<Element *> getElements() const override;
 
         /**
          * Return elements that do share a point

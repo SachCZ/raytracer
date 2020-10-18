@@ -6,17 +6,6 @@
 
 
 namespace raytracer {
-    Laser::Laser(Length wavelength,
-                 Laser::DirectionFun directionFunction,
-                 Laser::EnergyFun energyFunction,
-                 Point startPoint, Point endPoint, int raysCount) :
-            wavelength(wavelength),
-            directionFunction(std::move(directionFunction)),
-            energyFunction(std::move(energyFunction)),
-            startPoint(startPoint),
-            endPoint(endPoint),
-            raysCount(raysCount) {}
-
     using Directions = std::vector<Ray>;
     Directions generateInitialDirections(const Laser &laser) {
         Directions result;
@@ -72,8 +61,8 @@ namespace raytracer {
         return result.str();
     }
 
-    EnergiesSet generateInitialEnergies(const Laser &laser) {
-        EnergiesSet result;
+    Energies generateInitialEnergies(const Laser &laser) {
+        Energies result;
         double sourceWidth = (laser.startPoint - laser.endPoint).getNorm();
         double parameter = -sourceWidth / 2;
         double deltaParameter = sourceWidth / laser.raysCount;

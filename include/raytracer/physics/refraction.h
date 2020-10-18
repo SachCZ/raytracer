@@ -73,10 +73,11 @@ namespace raytracer {
     class ColdPlasma : public RefractiveIndex, public BremsstrahlungCoeff {
     public:
         /**
-         * Calculate the index of refraction based on current density, collisional frequency.
-         * @param density at which the refractive index is to be calculated
-         * @param collisionFrequency current collisional frequency
-         * @return refractive index
+         * Calculate the index of refraction based on current density, collisional frequency and wavelength.
+         * @param density
+         * @param collisionFrequency
+         * @param wavelength
+         * @return
          */
         double getRefractiveIndex(
                 const Density &density,
@@ -116,20 +117,23 @@ namespace raytracer {
     class Marker {
     public:
         /**
-         * Mark an Element.
+         * Mark a PointOnFace
          * @param element
+         * @param pointOnFace
          */
         void mark(const Element &element, const PointOnFace &pointOnFace);
 
         /**
-         * Unmark an Element
+         * Remove the mark
          * @param element
+         * @param pointOnFace
          */
         void unmark(const Element &element, const PointOnFace &pointOnFace);
 
         /**
          * Check whether an Element is marked by this marker.
          * @param element
+         * @param pointOnFace
          * @return
          */
         bool isMarked(const Element &element, const PointOnFace &pointOnFace) const;

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <utility.h>
+#include "qr_decomposition.h" //TODO testing this directly, maybe it should be a separate lib included privately
 
 using namespace testing;
 using namespace rosetta;
