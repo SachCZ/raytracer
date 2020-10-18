@@ -1,0 +1,328 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - app.info - include/raytracer/geometry/intersection.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">include/raytracer/geometry</a> - intersection.h<span style="font-size: 80%;"> (source / <a href="intersection.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">app.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">36</td>
+            <td class="headerCovTableEntry">37</td>
+            <td class="headerCovTableEntryHi">97.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-10-18 00:59:10</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #ifndef RAYTRACER_GEOMETRY_FUNCTIONS_H</a>
+<span class="lineNum">       2 </span>            : #define RAYTRACER_GEOMETRY_FUNCTIONS_H
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : #include &quot;mesh.h&quot;
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : namespace raytracer {
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            :     /**
+<span class="lineNum">      10 </span>            :      * Structure representing a half line. It originates from a point and has a direction.
+<span class="lineNum">      11 </span>            :      */
+<span class="lineNum">      12 </span>            :     struct HalfLine {
+<span class="lineNum">      13 </span>            :         /**
+<span class="lineNum">      14 </span>            :          * Origin
+<span class="lineNum">      15 </span>            :          */
+<span class="lineNum">      16 </span>            :         Point origin;
+<span class="lineNum">      17 </span>            :         /**
+<span class="lineNum">      18 </span>            :          * Direction
+<span class="lineNum">      19 </span>            :          */
+<span class="lineNum">      20 </span>            :         Vector direction;
+<span class="lineNum">      21 </span>            :     };
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            :     /**
+<span class="lineNum">      24 </span>            :      * @ingroup api
+<span class="lineNum">      25 </span>            :      * Structure representing a point on a face. This struct is used as return type of findClosestIntersection().
+<span class="lineNum">      26 </span>            :      */
+<span class="lineNum">      27 </span>            :     struct PointOnFace {
+<span class="lineNum">      28 </span>            :         /**
+<span class="lineNum">      29 </span>            :          * The point.
+<span class="lineNum">      30 </span>            :          */
+<span class="lineNum">      31 </span>            :         Point point;
+<span class="lineNum">      32 </span>            :         /**
+<span class="lineNum">      33 </span>            :          * Pointer to the face the point is at.
+<span class="lineNum">      34 </span>            :          */
+<span class="lineNum">      35 </span>            :         const Face *face;
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            :         int id;
+<span class="lineNum">      38 </span>            :     };
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            :     /**
+<span class="lineNum">      41 </span>            :      * Structure representing a single intersection of Ray with a Mesh.
+<span class="lineNum">      42 </span>            :      */
+<span class="lineNum">      43 </span>            :     struct Intersection {
+<span class="lineNum">      44 </span>            :         /**
+<span class="lineNum">      45 </span>            :          * Direction at which the Ray entered Intersection::nextElement.
+<span class="lineNum">      46 </span>            :          */
+<span class="lineNum">      47 </span>            :         Vector direction{};
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            :         /**
+<span class="lineNum">      50 </span>            :          * PointOnFace where the Ray intersected the Face.
+<span class="lineNum">      51 </span>            :          */
+<span class="lineNum">      52 </span>            :         PointOnFace pointOnFace{};
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :         /**
+<span class="lineNum">      55 </span>            :          * Pointer to the next Element that the ray will go to from the Face.
+<span class="lineNum">      56 </span>            :          * Could be null if the ray just left the Mesh.
+<span class="lineNum">      57 </span>            :          */
+<span class="lineNum">      58 </span>            :         const Element *nextElement{};
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            :         /**
+<span class="lineNum">      61 </span>            :          * Pointer to the previous Element that the ray actually came from.
+<span class="lineNum">      62 </span>            :          * Could be null if the ray just entered the Mesh.
+<span class="lineNum">      63 </span>            :          */
+<span class="lineNum">      64 </span>            :         const Element *previousElement{};
+<span class="lineNum">      65 </span>            :     };
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            :     using Intersections = std::vector&lt;Intersection&gt;;
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            :     using PointOnFacePtr = std::unique_ptr&lt;PointOnFace&gt;;
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :     using IntersectionSet = std::vector&lt;Intersections&gt;;
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            :     /**
+<span class="lineNum">      75 </span>            :      * Implementation namespace.
+<span class="lineNum">      76 </span>            :      * This namespace should be ignored by the end user/developer.
+<span class="lineNum">      77 </span>            :      */
+<span class="lineNum">      78 </span>            :     namespace impl {
+<span class="lineNum">      79 </span>            :         double getParamK(const HalfLine &amp;halfLine, const std::vector&lt;Point *&gt; &amp;points);
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            :         double getParamT(const HalfLine &amp;halfLine, const std::vector&lt;Point *&gt; &amp;points);
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            :         bool isIntersecting(double k, double t, bool includePoint);
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            :         PointOnFacePtr getClosest(std::vector&lt;PointOnFacePtr&gt; &amp;intersections, const Point &amp;point);
+<span class="lineNum">      86 </span>            :     }
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            :     /**
+<span class="lineNum">      89 </span>            :      * Find an intersection of HalfLine with a Face. If there is no intersection a nullptr is returned.
+<span class="lineNum">      90 </span>            :      * @param halfLine that is expected to intersect the face
+<span class="lineNum">      91 </span>            :      * @param face to be intersected
+<span class="lineNum">      92 </span>            :      * @param includePoint whether to include the halfLine origin in the search
+<span class="lineNum">      93 </span>            :      * @return PointOnFace or nullptr if no intersection exists.
+<span class="lineNum">      94 </span>            :      */
+<span class="lineNum">      95 </span>            :     PointOnFacePtr findIntersectionPoint(const HalfLine &amp;halfLine, const Face *face, bool includePoint = false);
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            :     /**
+<span class="lineNum">      98 </span>            :      * For a given set of faces use findIntersection() and return the one that is closest to the
+<span class="lineNum">      99 </span>            :      * origin of the HalfLine (euclidean norm).
+<span class="lineNum">     100 </span>            :      * You can optionally specify a Face wish to exclude from search.
+<span class="lineNum">     101 </span>            :      * @param halfLine that is expected to intersect one of the faces
+<span class="lineNum">     102 </span>            :      * @param faces sequence to be checked
+<span class="lineNum">     103 </span>            :      * @param omitFace faces address to omit when searching for intersection
+<span class="lineNum">     104 </span>            :      * @return PointOnFace or nullptr if no intersection exists
+<span class="lineNum">     105 </span>            :      */
+<span class="lineNum">     106 </span>            :     PointOnFacePtr findClosestIntersectionPoint(const HalfLine &amp;halfLine, const std::vector&lt;Face *&gt; &amp;faces);
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            :     /**
+<span class="lineNum">     109 </span>            :      * Find intersections finds all the Intersection with Mesh. There are multiple functional parameters to
+<span class="lineNum">     110 </span>            :      * ensure high variability of this method.
+<span class="lineNum">     111 </span>            :      *
+<span class="lineNum">     112 </span>            :      * @note
+<span class="lineNum">     113 </span>            :      * &lt;b&gt;This is the highly modular main method that does all the calculation.&lt;/b&gt;
+<span class="lineNum">     114 </span>            :      *
+<span class="lineNum">     115 </span>            :      * @tparam DirectionFunction function type
+<span class="lineNum">     116 </span>            :      * @tparam IntersectionFunction function type
+<span class="lineNum">     117 </span>            :      * @tparam StopCondition function type
+<span class="lineNum">     118 </span>            :      * @param mesh to be intersected
+<span class="lineNum">     119 </span>            :      * @param findDirection function that decides new direction every time a Face is encountered.
+<span class="lineNum">     120 </span>            :      * The function must have the following form:
+<span class="lineNum">     121 </span>            :      * @code{.cpp}
+<span class="lineNum">     122 </span>            :         Vector findDirection()(
+<span class="lineNum">     123 </span>            :             const PointOnFace &amp;pointOnFace,
+<span class="lineNum">     124 </span>            :             const Vector &amp;previousDirection,
+<span class="lineNum">     125 </span>            :             const Element &amp;previousElement,
+<span class="lineNum">     126 </span>            :             const Element &amp;nextElement
+<span class="lineNum">     127 </span>            :         ) {
+<span class="lineNum">     128 </span>            :             //x, y = ...
+<span class="lineNum">     129 </span>            :             return Vector(x, y);
+<span class="lineNum">     130 </span>            :         }
+<span class="lineNum">     131 </span>            :      * @endcode
+<span class="lineNum">     132 </span>            :      * It is recommended that you copy and paste this to implement findDirection.
+<span class="lineNum">     133 </span>            :      * @param findIntersection function that finds the path of the Ray through given Element and returns
+<span class="lineNum">     134 </span>            :      * PointOnFace where the Ray escapes the Element.
+<span class="lineNum">     135 </span>            :      * The function mush have the following form:
+<span class="lineNum">     136 </span>            :      * @code{.cpp}
+<span class="lineNum">     137 </span>            :         PointOnFace findIntersection(
+<span class="lineNum">     138 </span>            :             const PointOnFace &amp;entryPointOnFace,
+<span class="lineNum">     139 </span>            :             const Vector &amp;entryDirection,
+<span class="lineNum">     140 </span>            :             const Element &amp;element
+<span class="lineNum">     141 </span>            :         ) {
+<span class="lineNum">     142 </span>            :             //point, face = ...
+<span class="lineNum">     143 </span>            :             PointOnFace pointOnFace{};
+<span class="lineNum">     144 </span>            :             pointOnFace.point = point;
+<span class="lineNum">     145 </span>            :             pointOnFace.face = face;
+<span class="lineNum">     146 </span>            :             return pointOnFace;
+<span class="lineNum">     147 </span>            :         }
+<span class="lineNum">     148 </span>            :      * @endcode
+<span class="lineNum">     149 </span>            :      * It is recommended that you copy and paste this to implement findIntersection.
+<span class="lineNum">     150 </span>            :      * @param stopCondition function that returns true if the Ray should stop propagation.
+<span class="lineNum">     151 </span>            :      * The function mush have the following form:
+<span class="lineNum">     152 </span>            :      * @code{.cpp}
+<span class="lineNum">     153 </span>            :         bool stopCondition(
+<span class="lineNum">     154 </span>            :             const Element &amp;
+<span class="lineNum">     155 </span>            :         ) {
+<span class="lineNum">     156 </span>            :             //shouldStop = ...
+<span class="lineNum">     157 </span>            :             return shouldStop;
+<span class="lineNum">     158 </span>            :         }
+<span class="lineNum">     159 </span>            :      * @endcode
+<span class="lineNum">     160 </span>            :      * It is recommended that you copy and paste this to implement stopCondition.
+<span class="lineNum">     161 </span>            :      * @return
+<a name="162"><span class="lineNum">     162 </span>            :      */</a>
+<span class="lineNum">     163 </span>            :     template&lt;typename DirectionFunction, typename IntersectionFunction, typename StopCondition&gt;
+<span class="lineNum">     164 </span><span class="lineCov">         55 :     Intersections findIntersections(</span>
+<span class="lineNum">     165 </span>            :             const Mesh &amp;mesh,
+<span class="lineNum">     166 </span>            :             const HalfLine&amp; initialDirection,
+<span class="lineNum">     167 </span>            :             DirectionFunction findDirection,
+<span class="lineNum">     168 </span>            :             IntersectionFunction findIntersection,
+<span class="lineNum">     169 </span>            :             StopCondition stopCondition) {
+<span class="lineNum">     170 </span><span class="lineCov">         55 :         Intersections result;</span>
+<span class="lineNum">     171 </span><span class="lineCov">        110 :         PointOnFacePtr initialPointOnFace = findClosestIntersectionPoint(</span>
+<span class="lineNum">     172 </span>            :                 initialDirection,
+<span class="lineNum">     173 </span><span class="lineCov">         55 :                 mesh.getBoundary()</span>
+<span class="lineNum">     174 </span>            :         );
+<span class="lineNum">     175 </span>            : 
+<span class="lineNum">     176 </span><span class="lineCov">         55 :         if (!initialPointOnFace)</span>
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :             throw std::logic_error(&quot;No intersection found! Did you miss the target?&quot;);</span>
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span><span class="lineCov">         55 :         Intersection previousIntersection{};</span>
+<span class="lineNum">     180 </span><span class="lineCov">        110 :         previousIntersection.nextElement = mesh.getFaceAdjacentElement(</span>
+<span class="lineNum">     181 </span><span class="lineCov">         55 :                 initialPointOnFace-&gt;face,</span>
+<span class="lineNum">     182 </span>            :                 initialDirection.direction
+<span class="lineNum">     183 </span>            :         );
+<span class="lineNum">     184 </span><span class="lineCov">         55 :         if (!previousIntersection.nextElement) throw std::logic_error(&quot;Could not find next element at border!&quot;);</span>
+<span class="lineNum">     185 </span><span class="lineCov">         55 :         previousIntersection.previousElement = nullptr;</span>
+<span class="lineNum">     186 </span><span class="lineCov">         55 :         previousIntersection.pointOnFace = *initialPointOnFace;</span>
+<span class="lineNum">     187 </span><span class="lineCov">         55 :         previousIntersection.direction = initialDirection.direction;</span>
+<span class="lineNum">     188 </span>            : 
+<span class="lineNum">     189 </span><span class="lineCov">         55 :         result.emplace_back(previousIntersection);</span>
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span><span class="lineCov">       1645 :         while (result.back().nextElement &amp;&amp; !stopCondition(*(result.back().nextElement))) {</span>
+<span class="lineNum">     192 </span><span class="lineCov">        795 :             PointOnFace nextPointOnFace = findIntersection(</span>
+<span class="lineNum">     193 </span>            :                     previousIntersection.pointOnFace,
+<span class="lineNum">     194 </span>            :                     previousIntersection.direction,
+<span class="lineNum">     195 </span><span class="lineCov">        795 :                     *previousIntersection.nextElement</span>
+<span class="lineNum">     196 </span>            :             );
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span><span class="lineCov">        795 :             auto nextElementForDirection = mesh.getFaceAdjacentElement( //NextElement</span>
+<span class="lineNum">     199 </span>            :                     nextPointOnFace.face,
+<span class="lineNum">     200 </span>            :                     previousIntersection.direction
+<span class="lineNum">     201 </span>            :             );
+<span class="lineNum">     202 </span><span class="lineCov">        795 :             auto direction = previousIntersection.direction;</span>
+<span class="lineNum">     203 </span><span class="lineCov">        795 :             if (nextElementForDirection) {</span>
+<span class="lineNum">     204 </span><span class="lineCov">        740 :                 direction = findDirection(</span>
+<span class="lineNum">     205 </span>            :                         nextPointOnFace, //At which point
+<span class="lineNum">     206 </span>            :                         previousIntersection.direction, //Previous direction
+<span class="lineNum">     207 </span><span class="lineCov">        740 :                         *previousIntersection.nextElement, //Previous element</span>
+<span class="lineNum">     208 </span>            :                         *nextElementForDirection
+<span class="lineNum">     209 </span>            :                 );
+<span class="lineNum">     210 </span>            :             }
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span><span class="lineCov">        795 :             auto nextElementToGo = mesh.getFaceAdjacentElement(</span>
+<span class="lineNum">     213 </span>            :                     nextPointOnFace.face,
+<span class="lineNum">     214 </span>            :                     direction
+<span class="lineNum">     215 </span>            :             );
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span><span class="lineCov">        795 :             Intersection intersection{};</span>
+<span class="lineNum">     218 </span><span class="lineCov">        795 :             intersection.nextElement = nextElementToGo;</span>
+<span class="lineNum">     219 </span><span class="lineCov">        795 :             intersection.previousElement = previousIntersection.nextElement;</span>
+<span class="lineNum">     220 </span><span class="lineCov">        795 :             intersection.pointOnFace = nextPointOnFace;</span>
+<span class="lineNum">     221 </span><span class="lineCov">        795 :             intersection.direction = direction;</span>
+<span class="lineNum">     222 </span>            : 
+<span class="lineNum">     223 </span><span class="lineCov">        795 :             result.emplace_back(intersection);</span>
+<span class="lineNum">     224 </span><span class="lineCov">        795 :             previousIntersection = intersection;</span>
+<span class="lineNum">     225 </span>            :         }
+<span class="lineNum">     226 </span>            : 
+<span class="lineNum">     227 </span><span class="lineCov">        110 :         return result;</span>
+<span class="lineNum">     228 </span>            :     }
+<a name="229"><span class="lineNum">     229 </span>            : </a>
+<span class="lineNum">     230 </span>            :     template&lt;typename DirectionFunction, typename IntersectionFunction, typename StopCondition&gt;
+<span class="lineNum">     231 </span><span class="lineCov">          3 :     IntersectionSet generateIntersections(const Mesh &amp;mesh,</span>
+<span class="lineNum">     232 </span>            :                                           const std::vector&lt;HalfLine&gt; &amp;initialDirections,
+<span class="lineNum">     233 </span>            :                                           DirectionFunction findDirection,
+<span class="lineNum">     234 </span>            :                                           IntersectionFunction findIntersection,
+<span class="lineNum">     235 </span>            :                                           StopCondition stopCondition) {
+<span class="lineNum">     236 </span><span class="lineCov">          3 :         IntersectionSet result;</span>
+<span class="lineNum">     237 </span><span class="lineCov">          3 :         result.reserve(initialDirections.size());</span>
+<span class="lineNum">     238 </span>            : 
+<span class="lineNum">     239 </span><span class="lineCov">         56 :         for (const auto &amp;initialDirection : initialDirections) {</span>
+<span class="lineNum">     240 </span><span class="lineCov">         53 :             result.emplace_back(findIntersections(</span>
+<span class="lineNum">     241 </span>            :                     mesh,
+<span class="lineNum">     242 </span>            :                     initialDirection,
+<span class="lineNum">     243 </span>            :                     findDirection,
+<span class="lineNum">     244 </span>            :                     findIntersection,
+<span class="lineNum">     245 </span>            :                     stopCondition
+<span class="lineNum">     246 </span>            :             ));
+<span class="lineNum">     247 </span>            :         }
+<span class="lineNum">     248 </span><span class="lineCov">          3 :         return result;</span>
+<span class="lineNum">     249 </span>            :     }
+<span class="lineNum">     250 </span>            : }
+<span class="lineNum">     251 </span>            : 
+<span class="lineNum">     252 </span>            : #endif //RAYTRACER_FREE_FUNCTIONS_H
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

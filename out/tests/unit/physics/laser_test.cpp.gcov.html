@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - app.info - tests/unit/physics/laser_test.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">tests/unit/physics</a> - laser_test.cpp<span style="font-size: 80%;"> (source / <a href="laser_test.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">app.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-10-18 00:59:10</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntryHi">94.7 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &lt;gtest/gtest.h&gt;</a>
+<span class="lineNum">       2 </span>            : #include &lt;gmock/gmock.h&gt;
+<span class="lineNum">       3 </span>            : #include &lt;physics.h&gt;
+<span class="lineNum">       4 </span>            : #include &lt;mfem.hpp&gt;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : using namespace testing;
+<a name="8"><span class="lineNum">       8 </span>            : using namespace raytracer;</a>
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span><span class="lineCov">          6 : class LaserTest : public Test {</span>
+<span class="lineNum">      11 </span>            : 
+<a name="12"><span class="lineNum">      12 </span>            : public:</a>
+<a name="13"><span class="lineNum">      13 </span>            :     Laser laser{Length{1315e-7},</a>
+<span class="lineNum">      14 </span><span class="lineCov">        102 :                 [](const Point &amp;point) { return Vector(1, 0); },</span>
+<span class="lineNum">      15 </span><span class="lineCov">        102 :                 [](double x) { return 1.2; },</span>
+<span class="lineNum">      16 </span>            :                 Point(-1, 0.1),
+<span class="lineNum">      17 </span>            :                 Point(-1, 0.9),
+<span class="lineNum">      18 </span>            :                 51
+<span class="lineNum">      19 </span>            :     };
+<span class="lineNum">      20 </span>            :     MfemMesh mesh{DiscreteLine{1.0, 15}, DiscreteLine{1.0, 15}, mfem::Element::Type::QUADRILATERAL};
+<a name="21"><span class="lineNum">      21 </span>            : };</a>
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span><span class="lineCov">          5 : TEST_F(LaserTest, initial_directions_can_be_generated_from_laser) {</span>
+<span class="lineNum">      24 </span><span class="lineCov">          2 :     auto initialDirection = generateInitialDirections(laser);</span>
+<span class="lineNum">      25 </span><span class="lineCov">          1 :     EXPECT_THAT(initialDirection, SizeIs(51));</span>
+<span class="lineNum">      26 </span><span class="lineCov">          1 :     EXPECT_THAT(initialDirection[25].origin.y, DoubleEq(0.5));</span>
+<span class="lineNum">      27 </span><span class="lineCov">          1 :     EXPECT_THAT(initialDirection[10].direction.x, DoubleEq(1));</span>
+<span class="lineNum">      28 </span><span class="lineCov">          1 : }</span>
+<a name="29"><span class="lineNum">      29 </span>            : </a>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineCov">          5 : TEST_F(LaserTest, initial_energies_can_be_generated_from_laser) {</span>
+<span class="lineNum">      32 </span><span class="lineCov">          2 :     auto initialEnergies = generateInitialEnergies(laser);</span>
+<span class="lineNum">      33 </span><span class="lineCov">          1 :     ASSERT_THAT(initialEnergies[5].asDouble, DoubleEq(1.2 / 51 * 0.8));</span>
+<a name="34"><span class="lineNum">      34 </span>            : }</a>
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span><span class="lineCov">          5 : TEST_F(LaserTest, can_generate_intersections) {</span>
+<span class="lineNum">      37 </span>            :     auto intersections = generateIntersections(
+<span class="lineNum">      38 </span>            :             mesh,
+<span class="lineNum">      39 </span><span class="lineCov">          2 :             generateInitialDirections(laser),</span>
+<span class="lineNum">      40 </span><span class="lineCov">          1 :             ContinueStraight(),</span>
+<span class="lineNum">      41 </span>            :             intersectStraight,
+<span class="lineNum">      42 </span><span class="lineCov">          1 :             DontStop()</span>
+<span class="lineNum">      43 </span><span class="lineCov">          2 :     );</span>
+<a name="44"><span class="lineNum">      44 </span>            : </a>
+<span class="lineNum">      45 </span><span class="lineCov">          1 :     ASSERT_THAT(intersections[17], SizeIs(16));</span>
+<span class="lineNum">      46 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
