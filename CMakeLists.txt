@@ -30,3 +30,5 @@ set(CMAKE_CONFIGURATION_TYPES "Coverage" CACHE STRING "" FORCE)
 add_library(raytracer src/raytracer.cpp)
 target_link_libraries(raytracer PUBLIC geometry utility physics)
 target_include_directories(raytracer PUBLIC ./include)
+
+#TODO look at cmake as a whole, come up with better dependency managment

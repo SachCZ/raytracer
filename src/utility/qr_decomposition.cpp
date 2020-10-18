@@ -1,5 +1,7 @@
 #include "qr_decomposition.h"
 
+//TODO hide this in physics, no need to show this to the end user
+
 namespace rosetta {
     Matrix::Matrix() : m(0), n(0), data(nullptr) {}
 
