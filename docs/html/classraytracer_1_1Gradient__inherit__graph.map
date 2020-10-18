@@ -1,0 +1,5 @@
+<map id="raytracer::Gradient" name="raytracer::Gradient">
+<area shape="rect" id="node2" href="$classraytracer_1_1ConstantGradient.html" title="GradientCalculator that returns a constant Vector no matter what. " alt="" coords="5,80,188,107"/>
+<area shape="rect" id="node3" href="$classraytracer_1_1H1Gradient.html" title="Gradient calculator that stores a grid function defined in H1 space and calculates its gradient..." alt="" coords="213,80,359,107"/>
+<area shape="rect" id="node4" href="$classraytracer_1_1LinearInterGrad.html" title="GradientCalculator using gradient defined at nodal values to calculate gradient at face..." alt="" coords="383,80,554,107"/>
+</map>

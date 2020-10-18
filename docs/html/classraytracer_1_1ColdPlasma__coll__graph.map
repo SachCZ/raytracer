@@ -1,0 +1,4 @@
+<map id="raytracer::ColdPlasma" name="raytracer::ColdPlasma">
+<area shape="rect" id="node2" href="$classraytracer_1_1RefractiveIndex.html" title="Rule how a refractive index is calculated. " alt="" coords="5,13,179,39"/>
+<area shape="rect" id="node3" href="$classraytracer_1_1BremsstrahlungCoeff.html" title="Rule how a bremsstrahlung coeff is calculated. " alt="" coords="203,5,375,47"/>
+</map>

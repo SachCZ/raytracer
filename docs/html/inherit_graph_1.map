@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classraytracer_1_1CollisionalFrequency.html" title="Abstract interface. " alt="" coords="5,31,208,57"/>
+<area shape="rect" id="node2" href="$classraytracer_1_1ConstantFrequency.html" title="CollisionalFrequency realization always retuning a single value. " alt="" coords="256,5,451,32"/>
+<area shape="rect" id="node3" href="$classraytracer_1_1SpitzerFrequency.html" title="Class representing a Spitzer&#45;Harm frequency calculator. " alt="" coords="262,56,445,83"/>
+</map>

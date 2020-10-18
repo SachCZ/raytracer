@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classraytracer_1_1EnergyExchangeModel.html" title="Absorption model is something that is capable of estimating energy change based on intersections..." alt="" coords="5,49,185,90"/>
+<area shape="rect" id="node2" href="$structraytracer_1_1Bremsstrahlung.html" title="Absorption model of energy exchange due to bremsstrahlung. " alt="" coords="233,5,405,32"/>
+<area shape="rect" id="node3" href="$classraytracer_1_1Resonance.html" title="Model of energy exchange due to resonance. " alt="" coords="246,56,393,83"/>
+<area shape="rect" id="node4" href="$structraytracer_1_1XRayGain.html" title="Energy exchange model estimating energy lost due to laser gain. " alt="" coords="249,107,390,133"/>
+</map>
