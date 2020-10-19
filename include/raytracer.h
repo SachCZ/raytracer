@@ -1,8 +1,8 @@
 #ifndef RAYTRACER_RAYTRACER_H
 #define RAYTRACER_RAYTRACER_H
 
-#include "geometry.h"
-#include "physics.h"
-#include "utility.h"
+#include "internal/geometry/geometry.h"
+#include "internal/physics/physics.h"
+#include "internal/utility/utility.h"
 
 #endif //RAYTRACER_RAYTRACER_H

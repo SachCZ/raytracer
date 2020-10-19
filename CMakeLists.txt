@@ -1,34 +1,33 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.11)
 project(RayTracer)
 
-#setup external libs-----------------------------
-include(cmake/loadExternal.cmake)
 include(GoogleTest)
+include(FetchContent)
 
 set(CMAKE_CXX_STANDARD 14)
+
+# Setup external targets
+include(cmake/External.cmake)
+
+if(MSVC)
+    add_compile_options(/W4 /WX)
+else()
+    add_compile_options("$<$<CONFIG:DEBUG>:-Wall;-Wextra;-pedantic;-Werror>")
+endif()
 
 add_subdirectory(src/geometry)
 add_subdirectory(src/utility)
 add_subdirectory(src/physics)
 
-option(BUILD_TESTS "Build unit tests" OFF)
-
 enable_testing()
-
-if(BUILD_TESTS)
-    add_subdirectory(tests/unit)
-    add_subdirectory(tests/integration)
-endif(BUILD_TESTS)
-
-if (BUILD_EXAMPLES)
-    add_subdirectory(examples/sampleGradient)
-    add_subdirectory(examples/sampleModels)
-endif(BUILD_EXAMPLES)
-
-set(CMAKE_CONFIGURATION_TYPES "Coverage" CACHE STRING "" FORCE)
+add_subdirectory(tests/unit)
 
 add_library(raytracer src/raytracer.cpp)
 target_link_libraries(raytracer PUBLIC geometry utility physics)
-target_include_directories(raytracer PUBLIC ./include)
+target_include_directories(raytracer PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include/raytracer>)
 
-#TODO look at cmake as a whole, come up with better dependency managment
+message(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+include(cmake/Export.cmake)

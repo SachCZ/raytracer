@@ -108,7 +108,7 @@ namespace raytracer {
         auto omega_p2 = 4 * M_PI * e * e * n_e / m_e;
 
         auto term = omega_p2 / (omega * omega + nu_ei * nu_ei);
-        return 1 - term + 1i * nu_ei / omega * term;
+        return {1 - term, nu_ei / omega * term};
     }
 
     double ColdPlasma::getInverseBremsstrahlungCoeff(const Density &density, const Frequency &collisionFrequency,

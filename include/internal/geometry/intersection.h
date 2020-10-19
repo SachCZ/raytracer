@@ -1,5 +1,3 @@
-/** @file intersection.h Holds the intersection finding related constructs */
-
 #ifndef RAYTRACER_GEOMETRY_FUNCTIONS_H
 #define RAYTRACER_GEOMETRY_FUNCTIONS_H
 

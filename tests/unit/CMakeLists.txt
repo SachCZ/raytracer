@@ -14,5 +14,5 @@ add_executable(unit_tests
         utility/qr_decomposition_test.cpp
         physics/absorption_test.cpp
         mocks.cpp mocks.h)
-target_link_libraries(unit_tests PRIVATE gtest gtest gmock geometry physics utility)
+target_link_libraries(unit_tests PRIVATE gtest gmock geometry physics utility)
 gtest_add_tests(TARGET unit_tests)

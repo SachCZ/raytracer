@@ -1,3 +1,0 @@
-[submodule "external/mfem"]
-	path = external/mfem
-	url = https://github.com/mfem/mfem/

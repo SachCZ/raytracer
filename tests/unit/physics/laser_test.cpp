@@ -11,8 +11,8 @@ class LaserTest : public Test {
 
 public:
     Laser laser{Length{1315e-7},
-                [](const Point &point) { return Vector(1, 0); },
-                [](double x) { return 1.2; },
+                [](const Point &) { return Vector(1, 0); },
+                [](double) { return 1.2; },
                 Point(-1, 0.1),
                 Point(-1, 0.9),
                 51

@@ -8,10 +8,8 @@ add_library(physics
         absorption.cpp
         qr_decomposition.cpp
         )
-target_include_directories(physics PUBLIC ../../include/raytracer/physics)
-target_link_libraries(physics PRIVATE utility jsoncpp msgpack)
+target_include_directories(physics PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/internal/physics>
+        $<INSTALL_INTERFACE:include/raytracer/internal/physics>)
+target_link_libraries(physics PRIVATE utility jsoncpp_static msgpack)
 target_link_libraries(physics PUBLIC geometry)
-target_compile_options(physics PRIVATE $<$<CONFIG:DEBUG>:-Werror -Wall -Wextra>)
-target_compile_options(physics PRIVATE $<$<CONFIG:RELEASE>:-O3>)
-target_compile_options(physics PRIVATE $<$<CONFIG:COVERAGE>:--coverage -g -O0>)
-target_link_options(physics PUBLIC $<$<CONFIG:COVERAGE>:--coverage>)

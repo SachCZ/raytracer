@@ -14,8 +14,8 @@ public:
         return "Mock model";
     }
 
-    Energy getEnergyChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
-                           const Energy &currentEnergy) const override {
+    Energy getEnergyChange(const Intersection &, const Intersection &,
+                           const Energy &) const override {
         return {11.2};
     }
 };

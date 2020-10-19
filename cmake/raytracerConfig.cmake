@@ -1,0 +1,5 @@
+include(CMakeFindDependencyMacro)
+find_dependency(Boost)
+find_dependency(MFEM)
+set_target_properties(mfem PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${MFEM_INCLUDE_DIRS}")
+include(${CMAKE_CURRENT_LIST_DIR}/raytracerTargets.cmake)
