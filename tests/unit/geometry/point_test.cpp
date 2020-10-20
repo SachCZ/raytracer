@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "../matchers.h"
+#include "../../support/matchers.h"
 #include <geometry.h>
 
 using namespace testing;
@@ -26,14 +26,4 @@ TEST_F(PointTest, point_has_y) {
 TEST_F(PointTest, points_support_subtraction){
     Vector result = A - B;
     ASSERT_THAT(result, IsSameVector(Vector(-2, 7.5)));
-}
-
-TEST_F(PointTest, could_be_added){
-    Point result = A + b;
-    ASSERT_THAT(result, IsSamePoint(Point(10, 0)));
-}
-
-TEST_F(PointTest, addition_order_does_not_matter){
-    Point result = b + A;
-    ASSERT_THAT(result, IsSamePoint(Point(10, 0)));
 }

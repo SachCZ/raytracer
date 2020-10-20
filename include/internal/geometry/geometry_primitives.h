@@ -8,24 +8,16 @@
  * Namespace of the whole library.
  */
 namespace raytracer {
+    class Vector;
+
     /**
      * Class representing a point
      * A point is given by two coordinates x and y
      */
     class Point {
     public:
-        /**
-         * Construct the edge given x and y.
-         * Note that x goes first, be sure not to mix this up.
-         * @param x coordinate
-         * @param y coordinate
-         */
+        explicit Point(const Vector& vector);
         Point(double x, double y);
-
-        /**
-         * Default constructor.
-         * Default constructed point has both x and y equal to 0
-         */
         Point() = default;
 
         /**
@@ -45,18 +37,6 @@ namespace raytracer {
     class Vector {
     public:
         /**
-         * Construct the vector using its coordinates.
-         * @param x coordinate
-         * @param y coordinate
-         */
-        Vector(double x, double y);
-
-        /**
-         * Default constructor initializes a (0, 0) vector.
-         */
-        Vector() = default;
-
-        /**
          * x coordinate
          */
         double x;
@@ -64,6 +44,10 @@ namespace raytracer {
          * y coordinate
          */
         double y;
+
+        explicit Vector(const Point &point);
+        Vector(double x, double y);
+        Vector() = default;
 
         /**
          * Return the Euclidean norm of the vector (square root of sum of coordinates squared)
@@ -86,23 +70,7 @@ namespace raytracer {
      * @param B point
      * @return vector given by points difference
      */
-    const Vector operator-(Point A, Point B);
-
-    /**
-     * Vector and point can be added get another point.
-     * @param A point
-     * @param b vector
-     * @return Point given by vector added to point A
-     */
-    const Point operator+(Point A, Vector b);
-
-    /**
-     * Same as A + b
-     * @param b
-     * @param A
-     * @return
-     */
-    const Point operator+(Vector b, Point A);
+    Vector operator-(Point A, Point B);
 
     /** Dump the point representation to stream*/
     std::ostream &operator<<(std::ostream &os, const Point &point);
@@ -113,7 +81,7 @@ namespace raytracer {
      * @param a
      * @return scaled vector
      */
-    const Vector operator*(double k, Vector a);
+    Vector operator*(double k, Vector a);
 
     /**
      * Vector times number
@@ -121,7 +89,7 @@ namespace raytracer {
      * @param k
      * @return
      */
-    const Vector operator*(Vector a, double k);
+    Vector operator*(Vector a, double k);
 
     /**
      * Dot product a*b
@@ -137,7 +105,7 @@ namespace raytracer {
      * @param b
      * @return
      */
-    const Vector operator+(Vector a, Vector b);
+    Vector operator+(Vector a, Vector b);
 
     /**
      * Subtract vectors a - b
@@ -145,7 +113,7 @@ namespace raytracer {
      * @param b
      * @return
      */
-    const Vector operator-(Vector a, Vector b);
+    Vector operator-(Vector a, Vector b);
 
     /** Dump the vector representation to stream*/
     std::ostream &operator<<(std::ostream &os, const Vector &vector);

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "../matchers.h"
+#include "../../support/matchers.h"
 #include <geometry.h>
 
 using namespace testing;

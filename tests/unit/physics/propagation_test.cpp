@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <physics.h>
-#include "../matchers.h"
-#include "../mocks.h"
+#include "../../support/matchers.h"
+#include "../../support/mocks.h"
 
 using namespace testing;
 using namespace raytracer;
@@ -22,8 +22,6 @@ TEST(StopAtDensityTest, returns_true_if_density_at_element_is_bigger_than_given_
 }
 
 TEST(DontStopTest, returns_always_false) {
-    DontStop dontStop;
-
     ASSERT_THAT(dontStop(Element{0, {}}), false);
 }
 

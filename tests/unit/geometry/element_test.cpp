@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <geometry.h>
-#include "../matchers.h"
+#include "../../support/matchers.h"
 
 using namespace raytracer;
 

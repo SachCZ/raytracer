@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <physics.h>
-#include "../mocks.h"
+#include "../../support/mocks.h"
 
 
 using namespace testing;
@@ -29,7 +29,7 @@ public:
                 generateInitialDirections(laser),
                 ContinueStraight(),
                 intersectStraight,
-                DontStop()
+                dontStop
         );
         initialEnergies = generateInitialEnergies(laser);
     }

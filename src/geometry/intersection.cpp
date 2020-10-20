@@ -61,7 +61,7 @@ namespace raytracer {
             if (isIntersecting(k, t, includePoint)) {
                 const auto &A = *points[0];
                 const auto &B = *points[1];
-                auto point = (A + k * (B - A));
+                auto point = Point(Vector(A) + k * (B - A));
                 auto pointOnFace = std::make_unique<PointOnFace>();
                 pointOnFace->point = point;
                 pointOnFace->face = face;

@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 #include <geometry.h>
 #include <physics.h> //TODO Includes physics just because of continue straight... resolve this
-#include "../matchers.h"
+#include "../../support/matchers.h"
 
 
 using namespace testing;
@@ -29,7 +29,7 @@ TEST_F(IntersectionTest, trace_through_steps_throught_mesh_according_to_find_int
             {Ray{Point(-1, 4.5), Vector(1, 0)}},
             ContinueStraight{},
             intersectStraight,
-            DontStop{}
+            dontStop
     );
     ASSERT_THAT(intersections[0], SizeIs(11));
 }
@@ -42,7 +42,7 @@ TEST_F(IntersectionTest, intersecting_can_deal_with_diagonal_case) {
             {diagonalHalfLine},
             ContinueStraight{},
             intersectStraight,
-            DontStop{}
+            dontStop
     );
     ASSERT_THAT(intersections[0], SizeIs(19));
 }

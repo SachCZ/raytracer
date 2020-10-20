@@ -86,6 +86,14 @@ namespace raytracer {
         explicit MfemMesh(mfem::Mesh *mesh);
 
         /**
+         * Load an mfem mesh from file (vtk or mfem native)
+         * @param filename
+         * @param generateEdges - see mfem docs
+         * @param refine - see mfem docs
+         */
+        explicit MfemMesh(const std::string& filename, bool generateEdges = true, bool refine=false);
+
+        /**
          * Construct a new mfem::Mesh given two sides and element type. Owns the mfem mesh.
          * @param sideA
          * @param sideB

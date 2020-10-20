@@ -33,15 +33,11 @@ namespace raytracer {
     };
 
     /**
-     * Functor for ray propagation that returns false in any case.
+     * Return false.
+     * @return false.
      */
-    struct DontStop {
-        /**
-         * Return false.
-         * @return false.
-         */
-        bool operator()(const Element &);
-    };
+    bool dontStop(const Element &);
+
 }
 
 #endif //RAYTRACER_TERMINATION_H

@@ -3,8 +3,7 @@
 #include "termination.h"
 
 namespace raytracer {
-    PointOnFace
-    intersectStraight(
+    PointOnFace intersectStraight(
             const PointOnFace &entryPointOnFace,
             const Vector &entryDirection,
             const Element &element

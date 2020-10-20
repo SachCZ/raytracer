@@ -8,6 +8,12 @@ namespace raytracer {
 
     MfemMesh::MfemMesh(mfem::Mesh *mesh) : mesh(mesh) { this->init(); }
 
+    MfemMesh::MfemMesh(const std::string &filename, bool generateEdges, bool refine) :
+            mfemMesh(std::make_unique<mfem::Mesh>(filename.c_str(), generateEdges, refine)),
+            mesh(mfemMesh.get()) {
+        this->init();
+    }
+
     MfemMesh::MfemMesh(
             SegmentedLine sideA,
             SegmentedLine sideB,

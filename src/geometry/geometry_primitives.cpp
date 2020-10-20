@@ -2,18 +2,16 @@
 #include "geometry_primitives.h"
 
 namespace raytracer {
+    Point::Point(const Vector &vector) : x(vector.x), y(vector.y) {}
+
     Point::Point(double x, double y) : x(x), y(y) {}
 
-    const Vector operator-(Point A, Point B) {
+    Vector operator-(Point A, Point B) {
         return {A.x - B.x, A.y - B.y};
     }
 
-    const Point operator+(Point A, Vector b) {
+    Point operator+(Point A, Vector b) {
         return {A.x + b.x, A.y + b.y};
-    }
-
-    const Point operator+(Vector b, Point A) {
-        return A + b;
     }
 
     std::ostream &operator<<(std::ostream &os, const Point &point) {
@@ -21,21 +19,19 @@ namespace raytracer {
         return os;
     }
 
-    Vector::Vector(double x, double y) : x(x), y(y) {}
-
-    const Vector operator*(double k, Vector a) {
+    Vector operator*(double k, Vector a) {
         return {k * a.x, k * a.y};
     }
 
-    const Vector operator*(Vector a, double k) {
+    Vector operator*(Vector a, double k) {
         return k * a;
     }
 
-    const Vector operator+(Vector a, Vector b) {
+    Vector operator+(Vector a, Vector b) {
         return {a.x + b.x, a.y + b.y};
     }
 
-    const Vector operator-(Vector a, Vector b) {
+    Vector operator-(Vector a, Vector b) {
         return a + (-1.0 * b);
     }
 
@@ -51,6 +47,10 @@ namespace raytracer {
     double Vector::getNorm() const {
         return std::sqrt(x * x + y * y);
     }
+
+    Vector::Vector(const Point &point) : x(point.x), y(point.y) {}
+
+    Vector::Vector(double x, double y) : x(x), y(y) {}
 
     Vector Face::getNormal() const {
         if (this->points.size() == 2) {

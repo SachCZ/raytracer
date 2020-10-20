@@ -39,7 +39,7 @@ TEST_F(LaserTest, can_generate_intersections) {
             generateInitialDirections(laser),
             ContinueStraight(),
             intersectStraight,
-            DontStop()
+            dontStop
     );
 
     ASSERT_THAT(intersections[17], SizeIs(16));

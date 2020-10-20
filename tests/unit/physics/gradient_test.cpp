@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <physics.h>
-#include "../matchers.h"
+#include "../../support/matchers.h"
 
 using namespace testing;
 using namespace raytracer;

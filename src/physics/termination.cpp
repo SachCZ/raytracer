@@ -10,8 +10,5 @@ namespace raytracer {
         return currentDensity > stopAt.asDouble;
     }
 
-    bool DontStop::operator()(const Element &) {
-        return false;
-    }
-    
+    bool dontStop(const Element &) {return false;}
 }

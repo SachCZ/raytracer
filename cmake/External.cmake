@@ -1,15 +1,20 @@
-Set(FETCHCONTENT_QUIET FALSE)
-FetchContent_Declare(
-        googletest
-        GIT_REPOSITORY https://github.com/google/googletest.git
-        GIT_TAG        release-1.8.0
-        GIT_PROGRESS TRUE
-)
+include(FetchContent)
 
-FetchContent_GetProperties(googletest)
-if(NOT googletest_POPULATED)
-    FetchContent_Populate(googletest)
-    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
+Set(FETCHCONTENT_QUIET FALSE)
+
+if (${RAYTRACER_BUILD_TESTS})
+    FetchContent_Declare(
+            googletest
+            GIT_REPOSITORY https://github.com/google/googletest.git
+            GIT_TAG        release-1.8.0
+            GIT_PROGRESS TRUE
+    )
+
+    FetchContent_GetProperties(googletest)
+    if(NOT googletest_POPULATED)
+        FetchContent_Populate(googletest)
+        add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
+    endif()
 endif()
 
 FetchContent_Declare(
