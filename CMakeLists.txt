@@ -8,7 +8,6 @@ option(RAYTRACER_COMPILE_COVERAGE OFF)
 
 # Setup external targets
 include(cmake/External.cmake)
-
 #TODO possibly an anti-pattern, look into this
 set(BUILD_SHARED_LIBS OFF)
 

@@ -1,2 +1,31 @@
-# Cmake config
+# CMake config
 
+RayTracer uses cmake to configure the build and install. In this document
+options intended to be used by a user are listed, overall structure
+of the project is summarized and installed files are listed.
+
+## CMake options
+Options expected to be used by the user of RayTracer are:
+
+- -DCMAKE_BUILD_TYPE=<Debug/Release>
+- -DCMAKE_PREFIX_PATH=<dep_directory>
+- -DCMAKE_INSTALL_PREFIX=<install_dir>
+- -DRAYTRACER_BUILD_TESTS=<ON/OFF>
+- -DRAYTRACER_COMPILE_COVERAGE=<ON/OFF>
+- -DRAYTRACER_BUILD_PROFILE=<ON/OFF>
+
+Make sure to always provide a build type, either _debug_ or _release_. Prefixes set
+the directories searched by cmake and installed to by cmake. RayTracer specific
+options are all `OFF` by default. If `RAYTRACER_BUILD_TESTS` is `ON`,
+tests in directory `tests` are built. Option `RAYTRACER_BUILD_TESTS` globaly
+sets the compiler and linker flags necessary to generate coverage information
+using g++. Option `DRAYTRACER_BUILD_PROFILE` will instruct cmake to configure
+targets in directory `profile`.
+
+## Project structure
+Whole rayTracer project is divided into three libraries: gemometry, physics and utility.
+Moreover it depends on other exteranl libraries.
+
+![Dependency graph](dependencies.png)
+
+ 

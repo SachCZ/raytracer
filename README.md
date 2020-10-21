@@ -53,7 +53,7 @@ Choose a build type, the options are `Debug` and `Release`.
 If mfem and boost are not present at the default locations, point cmake to them using 
 `-DCMAKE_PREFIX_PATH=<dep_directory>`. If you want to install to non standard location
 provide `<install_dir>` otherwise omit this option. To see the full list of options
-see and further info, see [Cmake config](docs/markdown/cmake.md).
+see and further info, see [CMake config](docs/markdown/cmake.md).
 
 Altogether, to download, build the project using cmake and install it, run:
 ```shell
@@ -65,7 +65,7 @@ cmake -DCMAKE_BUILD_TYPE=<build_type> -DCMAKE_PREFIX_PATH=<dep_directory>\
 make install
 ```
 
-##Usage in your project
+## Usage in your project
 To use raytracer library in your cmake project simply call use a CMakeLists.txt
 similar to this:
 ```cmake
@@ -86,6 +86,6 @@ And finaly to write some code using raytracer include the header in your sources
 ...
 ```
 
-##A minimal example
+## A minimal example
 
 Link to [documentation](https://sachcz.github.io/raytracer).

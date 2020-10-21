@@ -1,0 +1,1 @@
+set(GRAPHVIZ_IGNORE_TARGETS "jsoncpp_lib;jsoncpp_object;gtest;gmock;pthread;Boost::headers")
