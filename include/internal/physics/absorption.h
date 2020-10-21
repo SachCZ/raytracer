@@ -79,7 +79,6 @@ namespace raytracer {
          */
         Resonance(
                 const Gradient &gradientCalculator,
-                const CriticalDensity &criticalDensity,
                 const Length &wavelength,
                 const Marker &reflectedMarker
         );
@@ -102,7 +101,6 @@ namespace raytracer {
 
     private:
         const Gradient &gradientCalculator;
-        const CriticalDensity &criticalDensity;
         const Length &wavelength;
         const Marker &reflectedMarker;
 
@@ -118,13 +116,10 @@ namespace raytracer {
 
         /**
          * Provide the required functions and models to the Bremsstrahlung model to construct it.
-         * @param bremsstrahlungCoeff
+         * @param bremssCoeff
          * @param wavelength
          */
-        explicit Bremsstrahlung(
-                const BremsstrahlungCoeff &bremsstrahlungCoeff,
-                const Length &wavelength
-        );
+        explicit Bremsstrahlung(const MeshFunc &bremssCoeff);
 
         /**
          * Returns the energy absorbed into one element between two intersections based on bremsstrahlung model.
@@ -145,8 +140,7 @@ namespace raytracer {
         std::string getName() const override;
 
     private:
-        const BremsstrahlungCoeff &bremsstrahlungCoeff;
-        const Length wavelength;
+        const MeshFunc &bremssCoeff;
     };
 
     /** Map of EnergyExchangeModel pointers to energies */

@@ -30,3 +30,20 @@ TEST_F(MfemMeshFunctionTest, MfemMeshFunction_value_can_be_set_given_an_element)
     auto value = meshFunction.getValue(*element);
     ASSERT_THAT(value,  DoubleEq(12.8e20 / 2));
 }
+
+TEST_F(MfemMeshFunctionTest, MfemMeshFunction_can_be_transformed_into_other_mesh_function){
+    auto boundary = mesh.getBoundary();
+    auto element = mesh.getFaceAdjacentElement(boundary[0], Vector(0, 1));
+
+    auto newMeshFunction= meshFunction.calcTransformed([&](const Element& e){
+        return meshFunction.getValue(e) / 2;
+    });
+    ASSERT_THAT(newMeshFunction->getValue(*element), DoubleEq(12.8e20 / 8));
+}
+
+TEST_F(MfemMeshFunctionTest, MfemMeshFunction_can_be_constructed_using_grid_function){
+    mfem::GridFunction gridFunction(&finiteElementSpace.getSpace());
+    gridFunction = 42;
+    MfemMeshFunction newMeshFunction(finiteElementSpace, gridFunction);
+    ASSERT_THAT(newMeshFunction.getValue(Element{0, {}}), DoubleEq(42));
+}

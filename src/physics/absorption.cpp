@@ -87,7 +87,7 @@ namespace raytracer {
         auto grad_norm = grad.getNorm();
         if (grad_norm == 0) return 0;
         auto lamb = wavelength.asDouble;
-        auto ne_crit = criticalDensity.getCriticalDensity(wavelength).asDouble;
+        auto ne_crit = calcCritDens(wavelength).asDouble;
         auto sin2phi = 1 - std::pow(grad * dir / grad_norm / dir_norm, 2);
         if (sin2phi <= 0) return 0;
         return std::pow(2 * M_PI / lamb * ne_crit / grad_norm, 2.0 / 3.0) * sin2phi;
@@ -95,11 +95,9 @@ namespace raytracer {
 
     Resonance::Resonance(
             const Gradient &gradientCalculator,
-            const CriticalDensity& criticalDensity,
-            const Length& wavelength,
+            const Length &wavelength,
             const Marker &reflectedMarker) :
             gradientCalculator(gradientCalculator),
-            criticalDensity(criticalDensity),
             wavelength(wavelength),
             reflectedMarker(reflectedMarker) {}
 
@@ -107,10 +105,7 @@ namespace raytracer {
         return "Resonance";
     }
 
-    Bremsstrahlung::Bremsstrahlung(const BremsstrahlungCoeff &bremsstrahlungCoeff,
-                                   const Length &wavelength) :
-            bremsstrahlungCoeff(bremsstrahlungCoeff),
-            wavelength(wavelength) {}
+    Bremsstrahlung::Bremsstrahlung(const MeshFunc &bremssCoeff) : bremssCoeff(bremssCoeff) {}
 
     Energy Bremsstrahlung::getEnergyChange(
             const Intersection &previousIntersection,
@@ -123,7 +118,7 @@ namespace raytracer {
         const auto &point = currentIntersection.pointOnFace.point;
 
         const auto distance = (point - previousPoint).getNorm();
-        auto coeff = bremsstrahlungCoeff.getInverseBremsstrahlungCoeff(*element);
+        auto coeff = bremssCoeff.getValue(*element);
         const auto exponent = -coeff * distance;
 
         auto newEnergy = currentEnergy.asDouble * std::exp(exponent);
@@ -160,7 +155,7 @@ namespace raytracer {
         auto distance = (currentIntersection.pointOnFace.point - previousIntersection.pointOnFace.point).getNorm();
         auto element = currentIntersection.previousElement;
         auto gainCoeff = gain.getValue(*element);
-        return raytracer::Energy{currentEnergy.asDouble * (1 - std::exp(gainCoeff*distance))};
+        return raytracer::Energy{currentEnergy.asDouble * (1 - std::exp(gainCoeff * distance))};
     }
 
     std::string XRayGain::getName() const {

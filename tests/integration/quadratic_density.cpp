@@ -14,8 +14,8 @@ TEST(single_ray, throught_mesh_should_work_as_expected_for_dummy_mesh) {
     MfemMeshFunction density(space, [](Point point) {return 6.44e+20 * (1 - point.x * point.x);});
 
     LinInterGrad gradient(calcHousGrad(mesh, density));
-    ColdPlasma coldPlasma{density, Length{1315e-7}};
-    SnellsLaw snellsLaw(gradient, coldPlasma);
+    auto refractIndex = calcRefractiveIndex(density, Length{1315e-7});
+    SnellsLaw snellsLaw(gradient, *refractIndex);
     std::vector<Ray> initDirs = {Ray{{-1.1, 0.01}, Vector{1, 0.1}}};
 
     auto intersectionSet = findIntersections(mesh, initDirs, snellsLaw, intersectStraight, dontStop);

@@ -13,7 +13,7 @@ public:
 
     void addValue(const raytracer::Element &element, double value) override;
 
-    Ptr calcTransformed(const Transform &) const override;
+    Ptr calcTransformed(const Transform & func) const override;
 
 private:
     double defaultValue;

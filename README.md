@@ -52,7 +52,8 @@ to default directory, otherwise provide an `<install_dir>`.
 Choose a build type, the options are `Debug` and `Release`.
 If mfem and boost are not present at the default locations, point cmake to them using 
 `-DCMAKE_PREFIX_PATH=<dep_directory>`. If you want to install to non standard location
-provide `<install_dir>` otherwise omit this option.
+provide `<install_dir>` otherwise omit this option. To see the full list of options
+see and further info, see [Cmake config](docs/markdown/cmake.md).
 
 Altogether, to download, build the project using cmake and install it, run:
 ```shell

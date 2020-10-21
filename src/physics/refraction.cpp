@@ -4,7 +4,7 @@
 #include "refraction.h"
 
 namespace raytracer {
-    SnellsLaw::SnellsLaw(const Gradient &gradCalc, const RefractIndex &refractIndex,
+    SnellsLaw::SnellsLaw(const Gradient &gradCalc, const MeshFunc &refractIndex,
                          Marker *reflectMarker) :
             gradCalc(gradCalc),
             refractIndex(refractIndex),
@@ -18,8 +18,8 @@ namespace raytracer {
     ) {
         auto gradient = gradCalc.get(pointOnFace, previousElement, nextElement);
 
-        const double n1 = refractIndex.getRefractiveIndex(previousElement);
-        const double n2 = refractIndex.getRefractiveIndex(nextElement);
+        const double n1 = refractIndex.getValue(previousElement);
+        const double n2 = refractIndex.getValue(nextElement);
 
         const auto l = 1 / previousDirection.getNorm() * previousDirection;
 
@@ -49,7 +49,7 @@ namespace raytracer {
         return result;
     }
 
-    Density ClassicCriticalDensity::getCriticalDensity(const Length &wavelength) const {
+    Density calcCritDens(const Length &wavelength) {
         auto m_e = constants::electron_mass;
         auto c = constants::speed_of_light;
         auto e = constants::electron_charge;
@@ -59,38 +59,17 @@ namespace raytracer {
         return {constant * std::pow(wavelength.asDouble, -2)};
     }
 
-    double ColdPlasma::getRefractiveIndex(const Element &element) const {
-        auto permittivity = this->getPermittivity(element);
-        if (permittivity.real() < 0) return 0;
-        auto root = std::sqrt(permittivity);
-        if (std::isnan(root.real())) {
-            throw std::logic_error("Nan index of refraction!");
-        }
-        return root.real();
+    MeshFunc::Ptr calcInvBremssCoeff(const MeshFunc &dens, const Length &wavelen, MeshFunc *collFreq) {
+        return dens.calcTransformed([&](const Element& e){
+            return impl::calcInvBremssCoeff(dens.getValue(e), wavelen, collFreq ? collFreq->getValue(e) : 0);
+        });
     }
 
-    std::complex<double>
-    ColdPlasma::getPermittivity(const Element &element) const {
-        using namespace std::complex_literals;
-
-        auto nu_ei = collFreq ? collFreq->getValue(element) : 0;
-        auto n_e = density.getValue(element);
-        auto m_e = constants::electron_mass;
-        auto e = constants::electron_charge;
-        auto omega = 2 * M_PI * constants::speed_of_light / wavelength.asDouble;
-        auto omega_p2 = 4 * M_PI * e * e * n_e / m_e;
-
-        auto term = omega_p2 / (omega * omega + nu_ei * nu_ei);
-        return {1 - term, nu_ei / omega * term};
+    MeshFunc::Ptr calcRefractiveIndex(const MeshFunc &dens, const Length &wavelen, const MeshFunc *collFreq) {
+        return dens.calcTransformed([&](const Element& e){
+            return impl::calcRefractIndex(dens.getValue(e), wavelen, collFreq ? collFreq->getValue(e) : 0);
+        });
     }
-
-    double ColdPlasma::getInverseBremsstrahlungCoeff(const Element &element) const {
-        auto eps = getPermittivity(element);
-        return 4 * M_PI / wavelength.asDouble * std::sqrt(eps).imag();
-    }
-
-    ColdPlasma::ColdPlasma(const MeshFunc &density, const Length &wavelength, const MeshFunc *collFreq) :
-            density(density), collFreq(collFreq), wavelength(wavelength) {}
 
     void Marker::mark(const Element &element, const PointOnFace &pointOnFace) {
         marked.insert(std::make_pair(element.getId(), pointOnFace.id));
@@ -108,5 +87,34 @@ namespace raytracer {
     ContinueStraight::operator()(const PointOnFace &, const Vector &previousDirection, const Element &,
                                  const Element &) {
         return previousDirection;
+    }
+
+    double impl::calcRefractIndex(double density, const Length &wavelength, double collFreq) {
+        auto permittivity = calcPermittivity(density, wavelength, collFreq);
+        if (permittivity.real() < 0) return 0;
+        auto root = std::sqrt(permittivity);
+        if (std::isnan(root.real())) {
+            throw std::logic_error("Nan index of refraction!");
+        }
+        return root.real();
+    }
+
+    std::complex<double> impl::calcPermittivity(double density, const Length &wavelength, double collFreq) {
+        using namespace std::complex_literals;
+
+        auto nu_ei = collFreq;
+        auto n_e = density;
+        auto m_e = constants::electron_mass;
+        auto e = constants::electron_charge;
+        auto omega = 2 * M_PI * constants::speed_of_light / wavelength.asDouble;
+        auto omega_p2 = 4 * M_PI * e * e * n_e / m_e;
+
+        auto term = omega_p2 / (omega * omega + nu_ei * nu_ei);
+        return {1 - term, nu_ei / omega * term};
+    }
+
+    double impl::calcInvBremssCoeff(double density, const Length &wavelength, double collFreq) {
+        auto eps = impl::calcPermittivity(density, wavelength, collFreq);
+        return 4 * M_PI / wavelength.asDouble * std::sqrt(eps).imag();
     }
 }

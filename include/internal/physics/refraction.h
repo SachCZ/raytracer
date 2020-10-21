@@ -4,106 +4,44 @@
 #include <geometry.h>
 #include "gradient.h"
 #include "collisional_frequency.h"
+#include "constants.h"
 
 
 namespace raytracer {
 
     /**
-     * Rule how a refractive index is calculated
-     */
-    class RefractIndex {
-    public:
-        /**
-         * Override this
-         * @param density
-         * @param collisionFrequency
-         * @param wavelength
-         * @return
-         */
-        virtual double getRefractiveIndex(const Element &element) const = 0;
-    };
-
-    /**
-     * Rule how a bremsstrahlung coeff is calculated
-     */
-    class BremsstrahlungCoeff {
-    public:
-        /**
-         * Override this
-         * @param density
-         * @param collisionFrequency
-         * @param wavelength
-         * @return
-         */
-        virtual double getInverseBremsstrahlungCoeff(const Element &element) const = 0;
-    };
-
-    /**
-     * Rule how critical density is calculated
-     */
-    class CriticalDensity {
-    public:
-        /**
-         * Override this
-         * @param wavelength
-         * @return
-         */
-        virtual Density getCriticalDensity(const Length& wavelength) const = 0;
-    };
-
-    /**
      * The classic formula to calculate critical density
+     * @param wavelength
      */
-    class ClassicCriticalDensity : public CriticalDensity {
-    public:
-        Density getCriticalDensity(const Length& wavelength) const override;
-    };
+    Density calcCritDens(const Length& wavelength);
+
 
     /**
-     * ColdPlasma approximation provides both RefractiveIndex and BremsstrahlungCoeff
+     * Calculate the index of refraction based on current density, collisional frequency and wavelength.
+     * @param dens
+     * @param wavelen
+     * @param collFreq
+     * @return
      */
-    class ColdPlasma : public RefractIndex, public BremsstrahlungCoeff {
-    public:
-        /**
-         * To model cold plasma and its properties one needs electron density, collisional frequency and
-         * wavelength of the passing laser
-         * @param density
-         * @param collFreq - model
-         * @param wavelength
-         */
-        ColdPlasma(const MeshFunc &density, const Length &wavelength, const MeshFunc *collFreq = nullptr);
+    MeshFunc::Ptr calcRefractiveIndex(const MeshFunc &dens, const Length &wavelen, const MeshFunc* collFreq = nullptr);
 
-        /**
-         * Calculate the index of refraction based on current density, collisional frequency and wavelength.
-         * @param density
-         * @param collisionFrequency
-         * @param wavelength
-         * @return
-         */
-        double getRefractiveIndex(const Element &element) const override;
+    /**
+     * Calculate bremsstrahlung coeff of the plasma
+     * @param dens
+     * @param wavelen
+     * @param collFreq
+     * @return
+     */
+    MeshFunc::Ptr calcInvBremssCoeff(const MeshFunc &dens, const Length &wavelen, MeshFunc *collFreq);
 
-        /**
-         * Calculate permittivity of the plasma
-         * @param density
-         * @param collisionFrequency
-         * @param wavelength
-         * @return permittivity
-         */
-        std::complex<double> getPermittivity(const Element &element) const;
-        /**
-         * Calculate bremsstrahlung coeff of the plasma
-         * @param density
-         * @param collisionFrequency
-         * @param wavelength
-         * @return bremsstrahlung coeff
-         */
-        double getInverseBremsstrahlungCoeff(const Element &element) const override;
+    namespace impl {
+        double calcRefractIndex(double density, const Length& wavelength, double collFreq);
 
-    private:
-        const MeshFunc& density;
-        const MeshFunc* collFreq;
-        const Length wavelength;
-    };
+        double calcInvBremssCoeff(double density, const Length& wavelength, double collFreq);
+
+        std::complex<double> calcPermittivity(double density, const Length& wavelength, double collFreq);
+    }
+
 
     /**
      * Class used to mark elements that have some property. Actually it is just a set internally.
@@ -164,7 +102,7 @@ namespace raytracer {
          * @param refractIndex - model
          * @param reflectMarker
          */
-        explicit SnellsLaw(const Gradient &gradCalc, const RefractIndex &refractIndex, Marker *reflectMarker = nullptr);
+        explicit SnellsLaw(const Gradient &gradCalc, const MeshFunc &refractIndex, Marker *reflectMarker = nullptr);
 
 
         /**
@@ -185,7 +123,7 @@ namespace raytracer {
 
     private:
         const Gradient &gradCalc;
-        const RefractIndex &refractIndex;
+        const MeshFunc &refractIndex;
         Marker *reflectMarker;
     };
 }

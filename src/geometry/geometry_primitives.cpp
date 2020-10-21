@@ -10,10 +10,6 @@ namespace raytracer {
         return {A.x - B.x, A.y - B.y};
     }
 
-    Point operator+(Point A, Vector b) {
-        return {A.x + b.x, A.y + b.y};
-    }
-
     std::ostream &operator<<(std::ostream &os, const Point &point) {
         os << "(" <<point.x << ", " << point.y << ')';
         return os;

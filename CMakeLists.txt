@@ -4,6 +4,7 @@ project(RayTracer)
 set(CMAKE_CXX_STANDARD 14)
 
 option(RAYTRACER_BUILD_TESTS OFF)
+option(RAYTRACER_COMPILE_COVERAGE OFF)
 
 # Setup external targets
 include(cmake/External.cmake)
@@ -18,6 +19,10 @@ if(MSVC)
 else()
     add_compile_options("$<$<CONFIG:DEBUG>:-g;-Wall;-Wextra;-pedantic;-Werror>")
     add_compile_options("$<$<CONFIG:RELEASE>:-O3;-DNDEBUG>")
+endif()
+if (RAYTRACER_COMPILE_COVERAGE)
+    add_compile_options(--coverage)
+    add_link_options(--coverage)
 endif()
 
 add_subdirectory(src/geometry)

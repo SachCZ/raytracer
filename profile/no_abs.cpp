@@ -15,10 +15,10 @@ int main(int, char* []){
 
     LinInterGrad gradient(calcHousGrad(mesh, density));
     auto frequency = calcSpitzerFreq(density, temperature, ionization, wavelength);
-    ColdPlasma coldPlasma{density, wavelength, frequency.get()};
-    SnellsLaw snellsLaw(gradient, coldPlasma);
+    auto refractIndex = calcRefractiveIndex(density, wavelength, frequency.get());
+    SnellsLaw snellsLaw(gradient, *refractIndex);
 
-    int laserCount = 10000;
+    int laserCount = 100000;
     std::vector<Ray> initDirs;
     initDirs.reserve(laserCount);
     for (int i = 0; i < laserCount; i++){

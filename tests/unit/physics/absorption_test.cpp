@@ -62,8 +62,7 @@ TEST_F(AbsorptionTest, absorption_using_resonance_model_works) {
     ConstantGradient gradient{Vector{6.3e25, 0}};
     Marker reflectedMarker;
     reflectedMarker.mark(*intersections[0][1].previousElement, intersections[0][1].pointOnFace);
-    ClassicCriticalDensity criticalDensity{};
-    Resonance resonance(gradient, criticalDensity, laser.wavelength, reflectedMarker);
+    Resonance resonance(gradient, laser.wavelength, reflectedMarker);
 
     mockAbsorbedEnergy.setValue(Element{0, {}}, 5);
     controller.addModel(&resonance);
@@ -72,4 +71,29 @@ TEST_F(AbsorptionTest, absorption_using_resonance_model_works) {
     ASSERT_THAT(mockAbsorbedEnergy.getValue(Element(0, {})), DoubleNear(5.48133, 1e-5));
 }
 
-//TODO test bremsstrahlung
+TEST(BremssTest, bremsstrahlung_energy_change_is_calculated_properly){
+    MeshFunctionMock bremssCoeff(2.0);
+    Bremsstrahlung bremsstrahlung{bremssCoeff};
+    Intersection prevInters;
+    Intersection currentInters;
+    prevInters.pointOnFace = PointOnFace{Point(0,0), nullptr, 0};
+    currentInters.pointOnFace = PointOnFace{Point(3,0), nullptr, 1};
+    Element element {0, {}};
+    currentInters.previousElement = &element;
+    auto result = bremsstrahlung.getEnergyChange(prevInters, currentInters, Energy{5});
+    ASSERT_THAT(result.asDouble, DoubleEq(5*(1 - std::exp(-2*3))));
+}
+
+//TODO this is actually the same as bremsstrahlung coeff - should be one thing
+TEST(GainTest, gain_energy_change_is_calculated_properly){
+    MeshFunctionMock gainCoeff(2.0);
+    XRayGain gain{gainCoeff};
+    Intersection prevInters;
+    Intersection currentInters;
+    prevInters.pointOnFace = PointOnFace{Point(0,0), nullptr, 0};
+    currentInters.pointOnFace = PointOnFace{Point(3,0), nullptr, 1};
+    Element element {0, {}};
+    currentInters.previousElement = &element;
+    auto result = gain.getEnergyChange(prevInters, currentInters, Energy{5});
+    ASSERT_THAT(result.asDouble, DoubleEq(5*(1 - std::exp(2*3))));
+}

@@ -1,6 +1,5 @@
 cmake-build-debug
 cmake-build-release
-cmake-build-profile
 cmake-build-coverage
 .idea
 examples/**/data/*
