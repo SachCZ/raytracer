@@ -18,7 +18,7 @@ namespace raytracer {
         }
 
 
-        Vector getGradientAtPoint(const Mesh &mesh, const MeshFunction &meshFunction, const Point *point) {
+        Vector getGradientAtPoint(const Mesh &mesh, const MeshFunc &meshFunction, const Point *point) {
             int index = 0;
             auto elements = mesh.getPointAdjacentElements(point);
             if (elements.size() < 3) {
@@ -121,7 +121,7 @@ namespace raytracer {
         return h1Function;
     }
 
-    Vector LinearInterGrad::get(
+    Vector LinInterGrad::get(
             const PointOnFace &pointOnFace,
             const Element &,
             const Element &) const {
@@ -137,14 +137,15 @@ namespace raytracer {
         }
     }
 
-    Vector LinearInterGrad::linearInterpolate(const Point &a, const Point &b, const Point &x, const Vector &valueA,
-                                                  const Vector &valueB) {
-        auto norm = (b - a).getNorm();
-        auto xDistFromA = (x - a).getNorm();
-        return valueA + (xDistFromA) / (norm) * (valueB - valueA);
+    Vector LinInterGrad::linearInterpolate(const Point &a, const Point &b, const Point &x, const Vector &valueA,
+                                           const Vector &valueB) {
+        auto norm2 = (b - a).getNorm2();
+        auto xDistFromA2 = (x - a).getNorm2();
+        auto factor = std::sqrt(xDistFromA2 / norm2);
+        return (1 - factor)*valueA + factor*valueB;
     }
 
-    std::map<Point *, Vector> getHouseholderGradientAtPoints(const Mesh &mesh, const MeshFunction &meshFunction) {
+    std::map<Point *, Vector> calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction) {
         std::map<Point *, Vector> result;
         for (const auto &point : mesh.getPoints()) {
             result.insert({point, impl::getGradientAtPoint(mesh, meshFunction, point)});

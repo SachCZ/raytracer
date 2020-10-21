@@ -100,13 +100,13 @@ namespace raytracer {
     /**
      * GradientCalculator using gradient defined at nodal values to calculate gradient at face
      */
-    class LinearInterGrad : public Gradient {
+    class LinInterGrad : public Gradient {
     public:
         /**
          * To construct this supply a gradient at points
          * @param gradientAtPoints
          */
-        explicit LinearInterGrad(std::map<Point *, Vector> gradientAtPoints) :
+        explicit LinInterGrad(std::map<Point *, Vector> gradientAtPoints) :
         gradientAtPoints(std::move(gradientAtPoints)) {}
 
         /**
@@ -141,7 +141,7 @@ namespace raytracer {
      * @param meshFunction to be used to calculate gradient
      * @return gradients at points
      */
-    std::map<Point *, Vector> getHouseholderGradientAtPoints(const Mesh &mesh, const MeshFunction &meshFunction);
+    std::map<Point *, Vector> calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction);
 }
 
 

@@ -17,7 +17,7 @@ namespace raytracer {
          * @param density density to compare with threshold
          * @param stopAt threshold
          */
-        explicit StopAtDensity(const MeshFunction &density, Density stopAt);
+        explicit StopAtDensity(const MeshFunc &density, Density stopAt);
 
         /**
          * Returns true if the density at element to go to is greater than stopAt defined in constructor
@@ -28,7 +28,7 @@ namespace raytracer {
         bool operator()(const Element & element);
 
     private:
-        const MeshFunction &density;
+        const MeshFunc &density;
         const Density stopAt;
     };
 

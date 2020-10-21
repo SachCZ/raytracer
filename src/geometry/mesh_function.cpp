@@ -14,17 +14,14 @@ namespace raytracer {
     }
 
     double &MfemMeshFunction::get(const Element &element) {
-        mfem::Array<int> vdofs;
-        finiteElementSpace.GetElementInteriorDofs(element.getId(), vdofs);
         auto &trueVector = gridFunction.GetTrueVector();
-        return trueVector[vdofs[0]];
+        return trueVector[eleTrueVecInd[element.getId()]];
     }
 
-    MfemMeshFunction::MfemMeshFunction(mfem::GridFunction &gridFunction,
-                                       const mfem::FiniteElementSpace &finiteElementSpace) :
+    MfemMeshFunction::MfemMeshFunction(MfemSpace &mfemSpace, mfem::GridFunction &gridFunction) :
             gridFunction(gridFunction),
-            finiteElementSpace(finiteElementSpace) {
-        init();
+            mfemSpace(mfemSpace) {
+        this->init();
     }
 
     std::ostream &operator<<(std::ostream &os, const MfemMeshFunction &meshFunction) {
@@ -32,15 +29,58 @@ namespace raytracer {
         return os;
     }
 
-    MfemMeshFunction::MfemMeshFunction(mfem::FiniteElementSpace &finiteElementSpace) :
-            mfemGridFunction(mfem::GridFunction(&finiteElementSpace)),
+    MfemMeshFunction::MfemMeshFunction(MfemSpace &mfemSpace, const std::function<double(Point)> &func) :
+            mfemGridFunction(&mfemSpace.getSpace()),
             gridFunction(mfemGridFunction),
-            finiteElementSpace(finiteElementSpace)
-    {
-        init();
+            mfemSpace(mfemSpace) {
+        this->init();
+        this->setUsingFunction(mfemSpace.getMesh(), func);
     }
 
     void MfemMeshFunction::init() {
         gridFunction.SetTrueVector();
+        eleTrueVecInd = getEleTrueVecInd();
+    }
+
+    MfemMeshFunction::MfemMeshFunction(MfemSpace &mfemSpace, std::istream &is) :
+            mfemGridFunction(mfemSpace.getMesh().getMfemMesh(), is),
+            gridFunction(mfemGridFunction),
+            mfemSpace(mfemSpace) {
+        this->init();
+    }
+
+    MeshFunc::Ptr MfemMeshFunction::calcTransformed(const MeshFunc::Transform & func) const {
+        auto result = std::make_unique<MfemMeshFunction>(this->mfemSpace);
+        for (Element *element : mfemSpace.getMesh().getElements()) {
+            result->setValue(*element, func(*element));
+        }
+        return result;
+    }
+
+    std::vector<int> MfemMeshFunction::getEleTrueVecInd() {
+        std::vector<int> ids;
+        const auto &elements = mfemSpace.getMesh().getElements();
+        ids.reserve(elements.size());
+        std::transform(elements.begin(), elements.end(), std::back_inserter(ids),
+           [](Element *element) {
+               return element->getId();
+           });
+        int resultSize = *std::max_element(ids.begin(), ids.end());
+        std::vector<int> result(resultSize);
+
+        for (Element *element : elements) {
+            mfem::Array<int> vdofs;
+            mfemSpace.getSpace().GetElementInteriorDofs(element->getId(), vdofs);
+            result[element->getId()] = vdofs[0];
+        }
+        return result;
+    }
+
+    mfem::FiniteElementSpace &MfemL20Space::getSpace() {
+        return this->l2FiniteElementSpace;
+    }
+
+    const MfemMesh &MfemL20Space::getMesh() const {
+        return this->mesh;
     }
 }

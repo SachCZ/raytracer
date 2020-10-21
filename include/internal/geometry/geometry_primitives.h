@@ -62,6 +62,12 @@ namespace raytracer {
         Vector getNormal() const {
             return {this->y, -this->x};
         }
+
+        /**
+         * Return norm squared (sometimes its usefull to avoid using sqrt)
+         * @return
+         */
+        double getNorm2() const;
     };
 
     /**

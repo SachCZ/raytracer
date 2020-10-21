@@ -1,7 +1,6 @@
 #ifndef RAYTRACER_GEOMETRY_FUNCTIONS_H
 #define RAYTRACER_GEOMETRY_FUNCTIONS_H
 
-
 #include "mesh.h"
 
 namespace raytracer {

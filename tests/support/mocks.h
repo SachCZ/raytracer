@@ -3,23 +3,20 @@
 
 #include <geometry.h>
 
-class MeshFunctionMock : public raytracer::MeshFunction {
+class MeshFunctionMock : public raytracer::MeshFunc {
 public:
-    double getValue(const raytracer::Element &element) const override {
-        return this->values.at(element.getId());
-    }
+    MeshFunctionMock(double defaultValue = 0);
 
-    void setValue(const raytracer::Element &element, double value) override {
-        values[element.getId()] = value;
-    }
+    double getValue(const raytracer::Element &element) const override;
 
-    void addValue(const raytracer::Element &element, double value) override {
-        auto it = values.find(element.getId());
-        if (it == values.end()) throw std::runtime_error("Element does not exist");
-        it->second += value;
-    }
+    void setValue(const raytracer::Element &element, double value) override;
+
+    void addValue(const raytracer::Element &element, double value) override;
+
+    Ptr calcTransformed(const Transform &) const override;
 
 private:
+    double defaultValue;
     std::map<int, double> values;
 };
 

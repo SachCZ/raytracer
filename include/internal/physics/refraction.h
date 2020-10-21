@@ -11,7 +11,7 @@ namespace raytracer {
     /**
      * Rule how a refractive index is calculated
      */
-    class RefractiveIndex {
+    class RefractIndex {
     public:
         /**
          * Override this
@@ -20,11 +20,7 @@ namespace raytracer {
          * @param wavelength
          * @return
          */
-        virtual double getRefractiveIndex(
-                const Density &density,
-                const Frequency &collisionFrequency,
-                const Length &wavelength
-        ) const = 0;
+        virtual double getRefractiveIndex(const Element &element) const = 0;
     };
 
     /**
@@ -39,11 +35,7 @@ namespace raytracer {
          * @param wavelength
          * @return
          */
-        virtual double getInverseBremsstrahlungCoeff(
-                const Density &density,
-                const Frequency &collisionFrequency,
-                const Length &wavelength
-        ) const = 0;
+        virtual double getInverseBremsstrahlungCoeff(const Element &element) const = 0;
     };
 
     /**
@@ -70,8 +62,17 @@ namespace raytracer {
     /**
      * ColdPlasma approximation provides both RefractiveIndex and BremsstrahlungCoeff
      */
-    class ColdPlasma : public RefractiveIndex, public BremsstrahlungCoeff {
+    class ColdPlasma : public RefractIndex, public BremsstrahlungCoeff {
     public:
+        /**
+         * To model cold plasma and its properties one needs electron density, collisional frequency and
+         * wavelength of the passing laser
+         * @param density
+         * @param collFreq - model
+         * @param wavelength
+         */
+        ColdPlasma(const MeshFunc &density, const Length &wavelength, const MeshFunc *collFreq = nullptr);
+
         /**
          * Calculate the index of refraction based on current density, collisional frequency and wavelength.
          * @param density
@@ -79,11 +80,7 @@ namespace raytracer {
          * @param wavelength
          * @return
          */
-        double getRefractiveIndex(
-                const Density &density,
-                const Frequency &collisionFrequency,
-                const Length &wavelength
-        ) const override;
+        double getRefractiveIndex(const Element &element) const override;
 
         /**
          * Calculate permittivity of the plasma
@@ -92,11 +89,7 @@ namespace raytracer {
          * @param wavelength
          * @return permittivity
          */
-        static std::complex<double> getPermittivity(
-                const Density &density,
-                const Frequency &collisionFrequency,
-                const Length &wavelength
-        );
+        std::complex<double> getPermittivity(const Element &element) const;
         /**
          * Calculate bremsstrahlung coeff of the plasma
          * @param density
@@ -104,11 +97,12 @@ namespace raytracer {
          * @param wavelength
          * @return bremsstrahlung coeff
          */
-        double getInverseBremsstrahlungCoeff(
-                const Density &density,
-                const Frequency &collisionFrequency,
-                const Length &wavelength
-        ) const override;
+        double getInverseBremsstrahlungCoeff(const Element &element) const override;
+
+    private:
+        const MeshFunc& density;
+        const MeshFunc* collFreq;
+        const Length wavelength;
     };
 
     /**
@@ -164,29 +158,13 @@ namespace raytracer {
      */
     struct SnellsLaw {
         /**
-         * To calculate refraction based on Snell's law, denisty, temperature, ionization,
-         * gradient, collisional frequency, refractive index and wavelength is need. Provide reflected marker,
-         * to mark reflection.
-         * @param density
-         * @param temperature
-         * @param ionization
-         * @param gradientCalculator
-         * @param collisionalFrequencyCalculator
-         * @param refractiveIndexCalculator
-         * @param wavelength
-         * @param reflectedMarker
+         * Snell's law needs gradient and refractive index to calculate refraction. It can optionally mark
+         * a PointOnFace at which a reflection occured
+         * @param gradCalc
+         * @param refractIndex - model
+         * @param reflectMarker
          */
-        //TODO read this doc, this is stupid only refractive index and gradient should be required
-        explicit SnellsLaw(
-                const MeshFunction &density,
-                const MeshFunction &temperature,
-                const MeshFunction &ionization,
-                const Gradient &gradientCalculator,
-                const CollisionalFrequency &collisionalFrequencyCalculator,
-                const RefractiveIndex &refractiveIndexCalculator,
-                const Length &wavelength,
-                Marker *reflectedMarker = nullptr
-        );
+        explicit SnellsLaw(const Gradient &gradCalc, const RefractIndex &refractIndex, Marker *reflectMarker = nullptr);
 
 
         /**
@@ -206,14 +184,9 @@ namespace raytracer {
         );
 
     private:
-        const MeshFunction &density;
-        const MeshFunction &temperature;
-        const MeshFunction &ionization;
-        const Gradient &gradientCalculator;
-        const CollisionalFrequency &collisionalFrequencyCalculator;
-        const RefractiveIndex &refractiveIndexCalculator;
-        Length wavelength;
-        Marker *reflectedMarker;
+        const Gradient &gradCalc;
+        const RefractIndex &refractIndex;
+        Marker *reflectMarker;
     };
 }
 

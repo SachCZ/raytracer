@@ -8,16 +8,10 @@ using namespace raytracer;
 
 
 class MfemMeshFunctionTest : public Test {
-protected:
-    void SetUp() override {
-        meshFunction.setUsingFunction(mesh, [](const Point& point){return 12.8e20 * point.x;});
-    }
-
 public:
     MfemMesh mesh{SegmentedLine{1.0, 2}, SegmentedLine{1.0, 2}, mfem::Element::Type::QUADRILATERAL};
-    mfem::L2_FECollection finiteElementCollection{0, 2};
-    mfem::FiniteElementSpace finiteElementSpace{mesh.getMfemMesh(), &finiteElementCollection};
-    MfemMeshFunction meshFunction{finiteElementSpace};
+    MfemL20Space finiteElementSpace{mesh};
+    MfemMeshFunction meshFunction{finiteElementSpace, [](const Point& point){return 12.8e20 * point.x;}};
 };
 
 TEST_F(MfemMeshFunctionTest, MfemMeshFunction_value_can_be_retrieved_given_an_element) {

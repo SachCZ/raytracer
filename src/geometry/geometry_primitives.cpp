@@ -45,7 +45,11 @@ namespace raytracer {
     }
 
     double Vector::getNorm() const {
-        return std::sqrt(x * x + y * y);
+        return std::sqrt(this->getNorm2());
+    }
+
+    double Vector::getNorm2() const {
+        return x*x + y*y;
     }
 
     Vector::Vector(const Point &point) : x(point.x), y(point.y) {}

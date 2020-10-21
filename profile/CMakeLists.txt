@@ -1,0 +1,2 @@
+add_executable(no_abs_profile no_abs.cpp)
+target_link_libraries(no_abs_profile PRIVATE raytracer)

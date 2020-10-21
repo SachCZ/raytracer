@@ -170,8 +170,7 @@ namespace raytracer {
         return this->innerPoints;
     }
 
-    std::vector<Element *> MfemMesh::getPointAdjacentElements(const Point *point) const {
-        //TODO precalculate this
+    std::vector<Element *> MfemMesh::precalcPointAdjacentElements(const Point *point) const {
         int pointId = -1;
         for (uint i = 0; i < this->points.size(); i++) {
             if (point == this->points[i].get()) {
@@ -200,7 +199,7 @@ namespace raytracer {
         return result;
     }
 
-    mfem::Mesh *MfemMesh::getMfemMesh() {
+    mfem::Mesh *MfemMesh::getMfemMesh() const {
         return this->mesh;
     }
 
@@ -223,5 +222,18 @@ namespace raytracer {
         this->elements = this->genElements();
         this->boundaryFaces = this->genBoundaryFaces();
         this->innerPoints = this->genInnerPoints();
+        this->pointsAdjacentElements = this->genPointsAdjacentElements();
+    }
+
+    std::map<const Point *, std::vector<Element *>> MfemMesh::genPointsAdjacentElements() const {
+        std::map<const Point*, std::vector<Element *>> result;
+        for (const Point* point: this->getPoints()){
+            result[point] = precalcPointAdjacentElements(point);
+        }
+        return result;
+    }
+
+    std::vector<Element *> MfemMesh::getPointAdjacentElements(const Point *point) const {
+        return pointsAdjacentElements.at(point);
     }
 }

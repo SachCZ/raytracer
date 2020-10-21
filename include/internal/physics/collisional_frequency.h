@@ -4,71 +4,20 @@
 #include "magnitudes.h"
 #include <cmath>
 #include <algorithm>
+#include <geometry.h>
 
 namespace raytracer {
-    /**
-     * Abstract interface. To obey this interface a method get returning the collisional frequency must be implemented.
-     */
-    class CollisionalFrequency {
-    public:
-        /**
-         * Override this.
-         * @param density
-         * @param temperature
-         * @param laserWavelength
-         * @param ionization
-         * @return collisional frequency given state variables
-         */
-        virtual Frequency get(
-                const Density &density,
-                const Temperature &temperature,
-                const Length &laserWavelength,
-                double ionization
-        ) const = 0;
-    };
+    MeshFunc::Ptr calcSpitzerFreq(
+            const MeshFunc &dens,
+            const MeshFunc &temp,
+            const MeshFunc &ioni,
+            const Length &wavelen
+    );
 
-    /**
-     * Class representing a Spitzer-Harm frequency calculator.
-     */
-    class SpitzerFrequency : public CollisionalFrequency {
-    public:
-        /**
-         * Based on the state variables return the Spitzer Harm frequency obtained according to Velechovsky thesis.
-         * @param density
-         * @param temperature
-         * @param laserWavelength
-         * @param ionization
-         * @return the collisional frequency
-         */
-        Frequency get(
-                const Density &density,
-                const Temperature &temperature,
-                const Length &laserWavelength,
-                double ionization
-        ) const override;
-
-    private:
-        double getCoulombLogarithm(
-                const Density &density,
-                const Temperature &temperature,
-                const Length &laserWavelength,
-                double ionization
-        ) const;
-    };
-
-    /** CollisionalFrequency realization always retuning a single value*/
-    class ConstantFrequency : public CollisionalFrequency {
-    public:
-        /** Construct using a single frequency value to be returned*/
-        explicit ConstantFrequency(const Frequency& frequency);
-
-        /** @return a value defined in constructro */
-        Frequency get(const Density &density, const Temperature &temperature, const Length &laserWavelength,
-                      double ionization) const override;
-
-    private:
-        Frequency frequency;
-    };
+    namespace impl {
+        double calcSpitzerFreq(double dens, double temp, double ioni, Length wavelen);
+        double calcCoulombLog(double dens, double temp, double ioni, Length wavelen);
+    }
 }
 
 

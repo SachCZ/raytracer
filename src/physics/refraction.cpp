@@ -4,25 +4,11 @@
 #include "refraction.h"
 
 namespace raytracer {
-    SnellsLaw::SnellsLaw(
-            const MeshFunction &density,
-            const MeshFunction &temperature,
-            const MeshFunction &ionization,
-            const Gradient &gradientCalculator,
-            const CollisionalFrequency &collisionalFrequencyCalculator,
-            const RefractiveIndex& refractiveIndexCalculator,
-            const Length& wavelength,
-            Marker* reflectedMarker
-    ) :
-            density(density),
-            temperature(temperature),
-            ionization(ionization),
-            gradientCalculator(gradientCalculator),
-            collisionalFrequencyCalculator(collisionalFrequencyCalculator),
-            refractiveIndexCalculator(refractiveIndexCalculator),
-            wavelength(wavelength),
-            reflectedMarker(reflectedMarker)
-    {}
+    SnellsLaw::SnellsLaw(const Gradient &gradCalc, const RefractIndex &refractIndex,
+                         Marker *reflectMarker) :
+            gradCalc(gradCalc),
+            refractIndex(refractIndex),
+            reflectMarker(reflectMarker) {}
 
     Vector SnellsLaw::operator()(
             const PointOnFace &pointOnFace,
@@ -30,21 +16,10 @@ namespace raytracer {
             const Element &previousElement,
             const Element &nextElement
     ) {
-        auto gradient = gradientCalculator.get(pointOnFace, previousElement, nextElement);
-        const auto rho1 = Density{density.getValue(previousElement)};
-        const auto rho2 = Density{density.getValue(nextElement)};
+        auto gradient = gradCalc.get(pointOnFace, previousElement, nextElement);
 
-        const auto T1 = Temperature{temperature.getValue(previousElement)};
-        const auto T2 = Temperature{temperature.getValue(nextElement)};
-
-        const auto Z1 = ionization.getValue(previousElement);
-        const auto Z2 = ionization.getValue(nextElement);
-
-        const auto nu_ei_1 = collisionalFrequencyCalculator.get(rho1, T1, wavelength, Z1);
-        const auto nu_ei_2 = collisionalFrequencyCalculator.get(rho2, T2, wavelength, Z2);
-
-        const double n1 = refractiveIndexCalculator.getRefractiveIndex(rho1, nu_ei_1, wavelength);
-        const double n2 = refractiveIndexCalculator.getRefractiveIndex(rho2, nu_ei_2, wavelength);
+        const double n1 = refractIndex.getRefractiveIndex(previousElement);
+        const double n2 = refractIndex.getRefractiveIndex(nextElement);
 
         const auto l = 1 / previousDirection.getNorm() * previousDirection;
 
@@ -61,15 +36,14 @@ namespace raytracer {
         if (root > 0) {
             result = r * l + (r * c - sqrt(root)) * n;
         } else {//Reflection
-            if (gradient*previousDirection < 0){//Against gradient
-                result =  previousDirection;
-            }
-            else {
-                if(reflectedMarker) reflectedMarker->mark(previousElement, pointOnFace);
+            if (gradient * previousDirection < 0) {//Against gradient
+                result = previousDirection;
+            } else {
+                if (reflectMarker) reflectMarker->mark(previousElement, pointOnFace);
                 result = l + 2 * c * n;
             }
         }
-        if (std::isnan(result.x) || std::isnan(result.y)){
+        if (std::isnan(result.x) || std::isnan(result.y)) {
             throw std::logic_error("Snell's law generated nan direction, something is wrong!");
         }
         return result;
@@ -85,9 +59,8 @@ namespace raytracer {
         return {constant * std::pow(wavelength.asDouble, -2)};
     }
 
-    double ColdPlasma::getRefractiveIndex(const Density &density, const Frequency &collisionFrequency,
-                                          const Length &wavelength) const {
-        auto permittivity = getPermittivity(density, collisionFrequency, wavelength);
+    double ColdPlasma::getRefractiveIndex(const Element &element) const {
+        auto permittivity = this->getPermittivity(element);
         if (permittivity.real() < 0) return 0;
         auto root = std::sqrt(permittivity);
         if (std::isnan(root.real())) {
@@ -97,11 +70,11 @@ namespace raytracer {
     }
 
     std::complex<double>
-    ColdPlasma::getPermittivity(const Density &density, const Frequency &collisionFrequency, const Length &wavelength) {
+    ColdPlasma::getPermittivity(const Element &element) const {
         using namespace std::complex_literals;
 
-        auto nu_ei = collisionFrequency.asDouble;
-        auto n_e = density.asDouble;
+        auto nu_ei = collFreq ? collFreq->getValue(element) : 0;
+        auto n_e = density.getValue(element);
         auto m_e = constants::electron_mass;
         auto e = constants::electron_charge;
         auto omega = 2 * M_PI * constants::speed_of_light / wavelength.asDouble;
@@ -111,11 +84,13 @@ namespace raytracer {
         return {1 - term, nu_ei / omega * term};
     }
 
-    double ColdPlasma::getInverseBremsstrahlungCoeff(const Density &density, const Frequency &collisionFrequency,
-                                                     const Length &wavelength) const {
-        auto eps = getPermittivity(density, collisionFrequency, wavelength);
+    double ColdPlasma::getInverseBremsstrahlungCoeff(const Element &element) const {
+        auto eps = getPermittivity(element);
         return 4 * M_PI / wavelength.asDouble * std::sqrt(eps).imag();
     }
+
+    ColdPlasma::ColdPlasma(const MeshFunc &density, const Length &wavelength, const MeshFunc *collFreq) :
+            density(density), collFreq(collFreq), wavelength(wavelength) {}
 
     void Marker::mark(const Element &element, const PointOnFace &pointOnFace) {
         marked.insert(std::make_pair(element.getId(), pointOnFace.id));
@@ -130,7 +105,8 @@ namespace raytracer {
     }
 
     Vector
-    ContinueStraight::operator()(const PointOnFace &, const Vector &previousDirection, const Element &, const Element &) {
+    ContinueStraight::operator()(const PointOnFace &, const Vector &previousDirection, const Element &,
+                                 const Element &) {
         return previousDirection;
     }
 }

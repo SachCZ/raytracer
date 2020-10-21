@@ -1,47 +1,50 @@
 #include <stdexcept>
 #include "collisional_frequency.h"
 #include <cmath>
+#include <geometry_primitives.h>
 #include "constants.h"
+#include <boost/math/special_functions/pow.hpp>
 
 namespace raytracer {
-    Frequency SpitzerFrequency::get(
-            const Density &density,
-            const Temperature &temperature,
-            const Length &laserWavelength,
-            double ionization
-    ) const {
-        auto n_e = density.asDouble;
-        auto T_e = temperature.asDouble;
-        auto Z = ionization;
+    MeshFunc::Ptr calcSpitzerFreq(const MeshFunc &dens, const MeshFunc &temp, const MeshFunc &ioni, const Length &wavelen){
+        return dens.calcTransformed([&](const Element& e){
+            return impl::calcSpitzerFreq(dens.getValue(e), temp.getValue(e), ioni.getValue(e), wavelen);
+        });
+    }
+namespace impl {
+    double calcSpitzerFreq(double dens, double temp, double ioni, Length wavelen) {
+        using namespace boost::math;
+
+        auto n_e = dens;
+        auto T_e = temp;
+        auto Z = ioni;
+
         auto e = constants::electron_charge;
         auto m_e = constants::electron_mass;
         auto k_b = constants::boltzmann_constant;
-        auto ln_lamb = this->getCoulombLogarithm(density, temperature, laserWavelength, ionization);
+        auto ln_lamb = calcCoulombLog(n_e, T_e, Z, wavelen);
         auto h = constants::reduced_planck_constant;
-        auto E_F = h * h / (2 * m_e) * std::pow(3 * M_PI * M_PI * n_e, 2.0 / 3.0);
+        auto E_F = h * h / (2 * m_e) * std::cbrt(pow<2>(3 * M_PI * M_PI * n_e));
 
-        auto result = Frequency{4.0 / 3.0 * std::sqrt(2 * M_PI) * Z * std::pow(e, 4) * n_e / std::sqrt(m_e) /
-                                std::pow(k_b * T_e + E_F, 3.0 / 2.0) * ln_lamb};
-        if (std::isnan(result.asDouble)) {
+        auto result = 4.0 / 3.0 * std::sqrt(2 * M_PI) * Z * pow<4>(e) * n_e / std::sqrt(m_e) /
+                                std::sqrt(pow<3>(k_b * T_e + E_F)) * ln_lamb;
+        if (std::isnan(result)) {
             throw std::logic_error("Nan collisional frequency!");
         }
         return result;
     }
 
-    double SpitzerFrequency::getCoulombLogarithm(
-            const Density &density,
-            const Temperature &temperature,
-            const Length &laserWavelength,
-            double ionization
-    ) const {
+    double calcCoulombLog(double dens, double temp, double ioni, Length wavelen) {
+        auto n_e = dens;
+        auto T_e = temp;
+        auto Z = ioni;
+
         auto e = constants::electron_charge;
         auto m_e = constants::electron_mass;
         auto k_b = constants::boltzmann_constant;
-        auto Z = ionization;
         auto h = constants::reduced_planck_constant;
-        auto n_e = density.asDouble;
-        auto T_e = temperature.asDouble;
-        auto omega = 2 * M_PI * constants::speed_of_light / laserWavelength.asDouble;
+
+        auto omega = 2 * M_PI * constants::speed_of_light / wavelen.asDouble;
         auto omega_p = std::sqrt(4 * M_PI * e * e * n_e / m_e);
 
         auto b_max = std::sqrt(k_b * T_e / m_e) / std::max(omega, omega_p);
@@ -49,10 +52,5 @@ namespace raytracer {
 
         return std::max(2.0, 0.5 * std::log(std::abs(b_max) / std::abs(b_min)));
     }
-
-    ConstantFrequency::ConstantFrequency(const Frequency &frequency) : frequency(frequency) {}
-
-    Frequency ConstantFrequency::get(const Density &, const Temperature &, const Length &, double) const {
-        return frequency;
-    }
+}
 }

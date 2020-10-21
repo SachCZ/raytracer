@@ -8,6 +8,9 @@ option(RAYTRACER_BUILD_TESTS OFF)
 # Setup external targets
 include(cmake/External.cmake)
 
+#TODO possibly an anti-pattern, look into this
+set(BUILD_SHARED_LIBS OFF)
+
 #Explicit is better than implicit
 if(MSVC)
     add_compile_options("$<$<CONFIG:DEBUG>:/MDd;/Zi;/Ob0;/Od;/RTC1;/W4;/WX>")
@@ -23,6 +26,10 @@ add_subdirectory(src/physics)
 
 if (${RAYTRACER_BUILD_TESTS})
     add_subdirectory(tests)
+endif()
+
+if (${RAYTRACER_BUILD_PROFILE})
+    add_subdirectory(profile)
 endif()
 
 add_library(raytracer src/raytracer.cpp)

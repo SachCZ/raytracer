@@ -2,7 +2,7 @@
 
 namespace raytracer {
 
-    StopAtDensity::StopAtDensity(const MeshFunction &density, Density stopAt) :
+    StopAtDensity::StopAtDensity(const MeshFunc &density, Density stopAt) :
             density(density), stopAt(stopAt) {}
 
     bool StopAtDensity::operator()(const Element &element) {

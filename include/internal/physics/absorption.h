@@ -40,7 +40,7 @@ namespace raytracer {
     struct XRayGain : public raytracer::EnergyExchangeModel {
 
         /** Construct providing the Gain MeshFunction */
-        explicit XRayGain(const raytracer::MeshFunction &gain);
+        explicit XRayGain(const raytracer::MeshFunc &gain);
 
         /**
          * Based of gain coefficient estimate the amount of energy exchanged
@@ -60,7 +60,7 @@ namespace raytracer {
         std::string getName() const override;
 
     private:
-        const raytracer::MeshFunction &gain;
+        const raytracer::MeshFunc &gain;
     };
 
     /**
@@ -118,18 +118,10 @@ namespace raytracer {
 
         /**
          * Provide the required functions and models to the Bremsstrahlung model to construct it.
-         * @param density
-         * @param temperature
-         * @param ionization
-         * @param collisionalFrequency
          * @param bremsstrahlungCoeff
          * @param wavelength
          */
         explicit Bremsstrahlung(
-                const MeshFunction &density,
-                const MeshFunction &temperature,
-                const MeshFunction &ionization,
-                const CollisionalFrequency &collisionalFrequency,
                 const BremsstrahlungCoeff &bremsstrahlungCoeff,
                 const Length &wavelength
         );
@@ -153,10 +145,6 @@ namespace raytracer {
         std::string getName() const override;
 
     private:
-        const MeshFunction &_density;
-        const MeshFunction &_temperature;
-        const MeshFunction &_ionization;
-        const CollisionalFrequency &collisionalFrequency;
         const BremsstrahlungCoeff &bremsstrahlungCoeff;
         const Length wavelength;
     };
@@ -194,7 +182,7 @@ namespace raytracer {
         AbsorptionSummary absorb(
                 const IntersectionSet &intersectionSet,
                 const Energies &initialEnergies,
-                MeshFunction &absorbedEnergy
+                MeshFunc &absorbedEnergy
         );
 
     private:
@@ -203,7 +191,7 @@ namespace raytracer {
         ModelEnergies absorbLaserRay(
                 const Intersections &intersections,
                 const Energy &initialEnergy,
-                MeshFunction &absorbedEnergy
+                MeshFunc &absorbedEnergy
         );
     };
 

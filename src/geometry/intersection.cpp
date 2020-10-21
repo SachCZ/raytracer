@@ -36,13 +36,13 @@ namespace raytracer {
     PointOnFacePtr getClosest(std::vector<PointOnFacePtr> &intersections, const Point &point) {
         static int currentId = 0;
         PointOnFacePtr result = nullptr;
-        auto distance = std::numeric_limits<double>::infinity();
+        auto distance2 = std::numeric_limits<double>::infinity();
         for (auto &pointOnFace : intersections) {
             if (pointOnFace) {
-                auto norm = (pointOnFace->point - point).getNorm();
-                if (norm <= distance) {
+                auto norm2 = (pointOnFace->point - point).getNorm2();
+                if (norm2 <= distance2) {
                     result = std::move(pointOnFace);
-                    distance = norm;
+                    distance2 = norm2;
                 }
             }
         }
@@ -78,6 +78,7 @@ namespace raytracer {
     PointOnFacePtr findClosestIntersectionPoint(const Ray &ray, const std::vector<Face *> &faces) {
 
         std::vector<PointOnFacePtr> intersections;
+        intersections.reserve(faces.size());
         std::transform(
                 faces.begin(),
                 faces.end(),

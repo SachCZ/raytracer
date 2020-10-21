@@ -11,5 +11,6 @@ add_library(physics
 target_include_directories(physics PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/internal/physics>
         $<INSTALL_INTERFACE:include/raytracer/internal/physics>)
-target_link_libraries(physics PRIVATE utility jsoncpp_static msgpack)
+target_link_libraries(physics PRIVATE utility jsoncpp_static msgpack Boost::boost)
 target_link_libraries(physics PUBLIC geometry)
+target_compile_options(physics PRIVATE $<$<CONFIG:RELEASE>:-ffast-math>)

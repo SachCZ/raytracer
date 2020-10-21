@@ -9,7 +9,7 @@ namespace raytracer {
     AbsorptionSummary EnergyExchangeController::absorb(
             const IntersectionSet &intersectionSet,
             const Energies &initialEnergies,
-            MeshFunction &absorbedEnergy
+            MeshFunc &absorbedEnergy
     ) {
         ModelEnergies modelEnergies;
         Energy initialEnergy{0};
@@ -34,7 +34,7 @@ namespace raytracer {
     ModelEnergies EnergyExchangeController::absorbLaserRay(
             const Intersections &intersections,
             const Energy &initialEnergy,
-            MeshFunction &absorbedEnergy
+            MeshFunc &absorbedEnergy
     ) {
         auto intersectionIt = std::next(std::begin(intersections));
         auto previousIntersectionIt = std::begin(intersections);
@@ -107,17 +107,8 @@ namespace raytracer {
         return "Resonance";
     }
 
-    Bremsstrahlung::Bremsstrahlung(
-            const MeshFunction &density,
-            const MeshFunction &temperature,
-            const MeshFunction &ionization,
-            const CollisionalFrequency &collisionalFrequency,
-            const BremsstrahlungCoeff &bremsstrahlungCoeff,
-            const Length &wavelength) :
-            _density(density),
-            _temperature(temperature),
-            _ionization(ionization),
-            collisionalFrequency(collisionalFrequency),
+    Bremsstrahlung::Bremsstrahlung(const BremsstrahlungCoeff &bremsstrahlungCoeff,
+                                   const Length &wavelength) :
             bremsstrahlungCoeff(bremsstrahlungCoeff),
             wavelength(wavelength) {}
 
@@ -132,12 +123,7 @@ namespace raytracer {
         const auto &point = currentIntersection.pointOnFace.point;
 
         const auto distance = (point - previousPoint).getNorm();
-        const auto density = Density{this->_density.getValue(*element)};
-        const auto temperature = Temperature{this->_temperature.getValue(*element)};
-        const auto ionization = this->_ionization.getValue(*element);
-
-        auto frequency = collisionalFrequency.get(density, temperature, this->wavelength, ionization);
-        auto coeff = bremsstrahlungCoeff.getInverseBremsstrahlungCoeff(density, frequency, this->wavelength);
+        auto coeff = bremsstrahlungCoeff.getInverseBremsstrahlungCoeff(*element);
         const auto exponent = -coeff * distance;
 
         auto newEnergy = currentEnergy.asDouble * std::exp(exponent);
@@ -166,7 +152,7 @@ namespace raytracer {
         return stream.str();
     }
 
-    XRayGain::XRayGain(const MeshFunction &gain) : gain(gain) {}
+    XRayGain::XRayGain(const MeshFunc &gain) : gain(gain) {}
 
     raytracer::Energy
     XRayGain::getEnergyChange(const Intersection &previousIntersection, const Intersection &currentIntersection,

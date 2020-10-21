@@ -48,18 +48,8 @@ TEST(SnellsLawTest, snells_law_bends_the_ray_as_expected) {
     ionization.setValue(nextElement, 0);
 
     ConstantGradient gradient{Vector{1, 0}};
-    ConstantFrequency frequency{Frequency{0}};
-    ColdPlasma coldPlasma;
-    SnellsLaw snellsLaw{
-        density,
-        temperature,
-        ionization,
-        gradient,
-        frequency,
-        coldPlasma,
-        Length{1315e-7}
-    };
-
+    ColdPlasma coldPlasma{density, Length{1315e-7}};
+    SnellsLaw snellsLaw{gradient, coldPlasma};
     Point pointA{0, 0};
     Point pointD{0, 1};
     Face face{0, {&pointD, &pointA}};

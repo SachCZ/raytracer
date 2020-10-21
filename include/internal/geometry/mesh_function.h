@@ -12,7 +12,7 @@ namespace raytracer {
      * Abstract interface. To obey this MeshFunction interface getValue, setValue and addValue methods must be
      * implemented.
      */
-    class MeshFunction {
+    class MeshFunc {
     public:
         /**
          * Override this.
@@ -31,30 +31,98 @@ namespace raytracer {
          * @param value to be added to current value at element.
          */
         virtual void addValue(const Element &, double value) = 0;
+
+        using Ptr =  std::unique_ptr<MeshFunc>;
+        using Transform = std::function<double(Element)>;
+        virtual Ptr calcTransformed(const Transform & func) const = 0;
+    };
+
+    class MfemSpace {
+    public:
+        /**
+         * Override this
+         * @return
+         */
+        virtual const MfemMesh &getMesh() const = 0;
+
+        /**
+         * Override this
+         * @return
+         */
+        virtual mfem::FiniteElementSpace &getSpace() = 0;
+    };
+
+    /**
+     * Wrapper around mfem L2_FECollection and FiniteElementSpace
+     */
+    class MfemL20Space : public MfemSpace {
+    public:
+        /**
+         * Initialize the space using an mfem mesh
+         * @param mesh
+         */
+        explicit MfemL20Space(const MfemMesh &mesh) :
+                mesh(mesh), l2FiniteElementSpace(mesh.getMfemMesh(), &l2FiniteElementCollection) {}
+
+        /**
+         * Obtain const ref to the mesh
+         * @return
+         */
+        const MfemMesh &getMesh() const override;
+
+        /**
+         * Obtain ref to the space
+         * @return
+         */
+        mfem::FiniteElementSpace &getSpace() override;
+
+    private:
+        mfem::L2_FECollection l2FiniteElementCollection{0, 2};
+        const MfemMesh &mesh;
+        mfem::FiniteElementSpace l2FiniteElementSpace;
     };
 
     /**
      * Discrete function what has constant values at Mesh elements.
      * Provides a way to query the GridFunction given an element.
      */
-    class MfemMeshFunction : public MeshFunction {
+    class MfemMeshFunction : public MeshFunc {
     public:
 
         /**
          * Create the MfemMeshFunction from a mfem::GridFunction and mfem::FiniteElementSpace. Does not own the GridFunction
          * @param gridFunction a mutable reference will be kept.
-         * @param finiteElementSpace const reference will be kept - caution: L2 space is expected!
+         * @param mfemSpace const reference will be kept - caution: L2 space is expected!
          */
-        MfemMeshFunction(
-                mfem::GridFunction &gridFunction,
-                const mfem::FiniteElementSpace &finiteElementSpace);
+        MfemMeshFunction(MfemSpace &mfemSpace, mfem::GridFunction &gridFunction);
 
         /**
-         * Create the MfemMeshFunction using an element space via new GridFunction initialization.
-         * It owns the GridFunction.
-         * @param finiteElementSpace
+         * Sample an analytic function at element centroid and set the internal mfem GridFunction accordingly
+         * @param mfemSpace
+         * @param func
          */
-        explicit MfemMeshFunction(mfem::FiniteElementSpace &finiteElementSpace);
+        explicit MfemMeshFunction(MfemSpace &mfemSpace, const std::function<double(Point)> &func);
+
+        /**
+         * By default initialize to 0
+         * @param mfemSpace
+         */
+        explicit MfemMeshFunction(MfemSpace &mfemSpace):
+                mfemGridFunction(&mfemSpace.getSpace()),
+                gridFunction(mfemGridFunction),
+                mfemSpace(mfemSpace) {
+            this->init();
+            mfemGridFunction = 0;
+        }
+
+        /**
+         * Construct using a serializes mesh function from a given stream
+         * @param mfemSpace
+         * @param is
+         */
+        explicit MfemMeshFunction(MfemSpace &mfemSpace, std::istream &is);
+
+        MeshFunc::Ptr calcTransformed(const MeshFunc::Transform & func) const override;
 
         /**
          * Get a value at Element.
@@ -83,27 +151,26 @@ namespace raytracer {
          * @param meshFunction
          * @return
          */
-        friend std::ostream& operator<<(std::ostream& os, const MfemMeshFunction& meshFunction);
+        friend std::ostream &operator<<(std::ostream &os, const MfemMeshFunction &meshFunction);
 
-        /**
-         * Sample an analytic function at element centroid and return the value
-         * @param mesh
-         * @param func
-         */
-        void setUsingFunction(const Mesh& mesh, const std::function<double(Point)>& func){
-            for (const auto& element : mesh.getElements()){
-                this->setValue(*element, func(getElementCentroid(*element)));
-            }
-        }
 
     private:
         mfem::GridFunction mfemGridFunction;
         mfem::GridFunction &gridFunction;
-        const mfem::FiniteElementSpace &finiteElementSpace;
+        MfemSpace& mfemSpace;
+        std::vector<int> eleTrueVecInd;
 
         double &get(const Element &element);
 
         void init();
+
+        std::vector<int> getEleTrueVecInd();
+
+        void setUsingFunction(const Mesh &mesh, const std::function<double(Point)> &func) {
+            for (const auto &element : mesh.getElements()) {
+                this->setValue(*element, func(getElementCentroid(*element)));
+            }
+        }
     };
 
     std::ostream &operator<<(std::ostream &os, const MfemMeshFunction &meshFunction);

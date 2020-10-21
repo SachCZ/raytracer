@@ -157,7 +157,7 @@ namespace raytracer {
          * Get pointer to the underlying mfem::Mesh
          * @return
          */
-        mfem::Mesh *getMfemMesh();
+        mfem::Mesh *getMfemMesh() const;
 
     private:
         std::unique_ptr<mfem::Mesh> mfemMesh;
@@ -169,6 +169,7 @@ namespace raytracer {
         std::vector<Point *> innerPoints;
         mutable mfem::Table elementToElementTable;
         std::unique_ptr<mfem::Table> vertexToElementTable;
+        std::map<const Point*, std::vector<Element *>> pointsAdjacentElements;
 
         std::unique_ptr<Point> createPointFromId(int id) const;
 
@@ -192,6 +193,10 @@ namespace raytracer {
         std::vector<Face *> genBoundaryFaces();
 
         std::vector<Point *> genInnerPoints();
+
+        std::vector<Element *> precalcPointAdjacentElements(const Point *point) const;
+
+        std::map<const Point*, std::vector<Element *>> genPointsAdjacentElements() const;
 
         void init();
     };
