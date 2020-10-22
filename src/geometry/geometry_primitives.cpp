@@ -1,4 +1,5 @@
 #include <cmath>
+#include <set>
 #include "geometry_primitives.h"
 
 namespace raytracer {
@@ -80,13 +81,24 @@ namespace raytracer {
     Element::Element(int id, std::vector<Face *> faces) :
             id(id),
             faces(std::move(faces)) {
+        //TODO points need to be ordered, this is a horrible solution
+        std::set<Point*> uniquePoints;
         for (const auto& face : this->faces){
-            this->points.emplace_back(face->getPoints()[0]);
+            const auto& facePoints = face->getPoints();
+            if (uniquePoints.find(facePoints[0]) != uniquePoints.end()) {
+                this->points.emplace_back(facePoints[0]);
+            } else {
+                this->points.emplace_back(facePoints[1]);
+            }
         }
     }
 
     const std::vector<Face *> &Element::getFaces() const {
         return this->faces;
+    }
+
+    const std::vector<Point *> &Element::getPoints() const {
+        return this->points;
     }
 
     Point getElementCentroid(const Element &element) {

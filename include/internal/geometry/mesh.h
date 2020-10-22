@@ -102,7 +102,7 @@ namespace raytracer {
         MfemMesh(
                 SegmentedLine sideA,
                 SegmentedLine sideB,
-                mfem::Element::Type elementType = mfem::Element::Type::TRIANGLE
+                mfem::Element::Type elementType = mfem::Element::Type::QUADRILATERAL
         );
 
         /** Given a Face return the adjacent Element to this face in given direction.
@@ -200,6 +200,14 @@ namespace raytracer {
 
         void init();
     };
+
+    /**
+     * Dump the mfem mesh to a stream
+     * @param os
+     * @param dt
+     * @return
+     */
+    std::ostream& operator<<(std::ostream& os, const MfemMesh& mesh);
 }
 
 

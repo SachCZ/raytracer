@@ -6,6 +6,7 @@ set(BUILD_SHARED_LIBS OFF)
 
 option(RAYTRACER_BUILD_TESTS OFF)
 option(RAYTRACER_COMPILE_COVERAGE OFF)
+option(RAYTRACER_BUILD_PROFILE OFF)
 
 set(default_build_type "Release")
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -44,6 +45,10 @@ endif()
 
 if (${RAYTRACER_BUILD_PROFILE})
     add_subdirectory(profile)
+endif()
+
+if (${RAYTRACER_BUILD_PROFILE})
+    add_subdirectory(samples)
 endif()
 
 add_library(raytracer src/raytracer.cpp)

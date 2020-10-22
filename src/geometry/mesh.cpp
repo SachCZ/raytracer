@@ -39,8 +39,6 @@ namespace raytracer {
         } else if (this->mesh->Dimension() == 3) {
             this->mesh->GetElementFaces(id, facesIds, _);
         }
-
-        //Not using make_unique, because Element constructor is private.
         std::unique_ptr<Element> element(new Element(id, this->getFacesFromIds(facesIds)));
         return element;
     }
@@ -235,5 +233,10 @@ namespace raytracer {
 
     std::vector<Element *> MfemMesh::getPointAdjacentElements(const Point *point) const {
         return pointsAdjacentElements.at(point);
+    }
+
+    std::ostream &operator<<(std::ostream &os, const MfemMesh &mesh) {
+        mesh.getMfemMesh()->Print(os);
+        return os;
     }
 }

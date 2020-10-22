@@ -188,9 +188,7 @@ namespace raytracer {
          * Get the points of the faces.
          * @return the points
          */
-        const std::vector<Point *> &getPoints() const {
-            return this->points;
-        };
+        const std::vector<Point *> &getPoints() const;
 
         /**
          * Construct the element using an id and faces
