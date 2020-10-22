@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['bremsstrahlung',['Bremsstrahlung',['../structraytracer_1_1Bremsstrahlung.html#a4ca4dfb56a6616218aae9786c9201a57',1,'raytracer::Bremsstrahlung']]]
+  ['bremsstrahlung',['Bremsstrahlung',['../structraytracer_1_1Bremsstrahlung.html#afb343b23cd34754ce51d7d9dd40f2a24',1,'raytracer::Bremsstrahlung']]]
 ];

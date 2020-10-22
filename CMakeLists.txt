@@ -2,14 +2,24 @@ cmake_minimum_required(VERSION 3.11)
 project(RayTracer)
 
 set(CMAKE_CXX_STANDARD 14)
+set(BUILD_SHARED_LIBS OFF)
 
 option(RAYTRACER_BUILD_TESTS OFF)
 option(RAYTRACER_COMPILE_COVERAGE OFF)
 
+set(default_build_type "Release")
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
+    set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE STRING "Choose the type of build." FORCE)
+    # Set the possible values of build type for cmake-gui
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
+endif()
+
+
 # Setup external targets
 include(cmake/External.cmake)
 #TODO possibly an anti-pattern, look into this
-set(BUILD_SHARED_LIBS OFF)
+
 
 #Explicit is better than implicit
 if(MSVC)

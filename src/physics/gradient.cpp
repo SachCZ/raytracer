@@ -142,7 +142,7 @@ namespace raytracer {
         auto norm2 = (b - a).getNorm2();
         auto xDistFromA2 = (x - a).getNorm2();
         auto factor = std::sqrt(xDistFromA2 / norm2);
-        return (1 - factor)*valueA + factor*valueB;
+        return valueA + factor*(valueB - valueA);
     }
 
     std::map<Point *, Vector> calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction) {

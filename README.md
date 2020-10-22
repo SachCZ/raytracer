@@ -2,7 +2,7 @@
 A c++ code written for a diploma thesis at [FNSPE CTU](https://www.fjfi.cvut.cz/en/).
 The goal is to simulate a laser-plasma interaction using the geometric approximation.
 The main focus is on usage with hydrodynamic simulations. Specifically simulations of plasma
-used as a gain medium for x-ray laser generation. Using RayTracer both the plasma generation
+used as a gain medium for x-ray laser generation. Using RayTracer, both the plasma generation
 using a driving laser and x-ray lasing can be simulated. 
 
 ## Reading the docs
@@ -27,9 +27,7 @@ the user.
 
 The project also depends on **large** libraries, namely:
 [Boost headers](https://www.boost.org/) and
-[mfem](https://mfem.org/).
-
-These must be provided by the user, as they take way too much time to compile,
+[mfem](https://mfem.org/). These must be provided by the user, as they take way too much time to compile,
 meaning they must be installed at the users system in a location known to cmake.
 
 On ubuntu based systems (and similarly on other systems) you can install boost using
@@ -53,9 +51,9 @@ Choose a build type, the options are `Debug` and `Release`.
 If mfem and boost are not present at the default locations, point cmake to them using 
 `-DCMAKE_PREFIX_PATH=<dep_directory>`. If you want to install to non standard location
 provide `<install_dir>` otherwise omit this option. To see the full list of options
-see and further info, see [CMake config](docs/markdown/cmake.md).
+see [CMake config](docs/markdown/cmake.md).
 
-Altogether, to download, build the project using cmake and install it, run:
+Altogether, to download, build and install the project using cmake, run:
 ```shell
 git clone https://github.com/SachCZ/raytracer &&
 mkdir raytracer_build &&
@@ -80,7 +78,7 @@ add_executable(main main.cpp)
 target_link_libraries(main raytracer::raytracer)
 ```
 
-And finaly to write some code using raytracer include the header in your sources:
+And finaly to write some code using raytracer, include the header in your sources:
 ```c++
 #include <raytracer.h>
 ...

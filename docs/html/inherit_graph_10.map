@@ -1,3 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classraytracer_1_1Face.html" title="Face is a collection of points. " alt="" coords="5,5,116,32"/>
+<area shape="rect" id="node1" href="$classraytracer_1_1Gradient.html" title="Abstract interface to provide a GradientCalculator. " alt="" coords="5,56,136,83"/>
+<area shape="rect" id="node2" href="$classraytracer_1_1ConstantGradient.html" title="GradientCalculator that returns a constant Vector no matter what. " alt="" coords="184,5,367,32"/>
+<area shape="rect" id="node3" href="$classraytracer_1_1H1Gradient.html" title="Gradient calculator that stores a grid function defined in H1 space and calculates its gradient..." alt="" coords="202,56,349,83"/>
+<area shape="rect" id="node4" href="$classraytracer_1_1LinInterGrad.html" title="GradientCalculator using gradient defined at nodal values to calculate gradient at face..." alt="" coords="199,107,351,133"/>
 </map>

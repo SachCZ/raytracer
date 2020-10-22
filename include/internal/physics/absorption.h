@@ -70,10 +70,9 @@ namespace raytracer {
     public:
 
         /**
-         * Construct this using a Gradient, a CriticalDensity, a laser wavelength and a
+         * Construct this using a Gradient, a laser wavelength and a
          * Marker that marks elements in which the ray was reflected.
          * @param gradientCalculator
-         * @param criticalDensity
          * @param wavelength
          * @param reflectedMarker
          */
@@ -117,7 +116,6 @@ namespace raytracer {
         /**
          * Provide the required functions and models to the Bremsstrahlung model to construct it.
          * @param bremssCoeff
-         * @param wavelength
          */
         explicit Bremsstrahlung(const MeshFunc &bremssCoeff);
 

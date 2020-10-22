@@ -80,7 +80,7 @@ Inheritance diagram for raytracer::MfemMeshFunction:</div>
 <div class="dyncontent">
 <div class="center"><img src="classraytracer_1_1MfemMeshFunction__inherit__graph.png" border="0" usemap="#raytracer_1_1MfemMeshFunction_inherit__map" alt="Inheritance graph"/></div>
 <map name="raytracer_1_1MfemMeshFunction_inherit__map" id="raytracer_1_1MfemMeshFunction_inherit__map">
-<area shape="rect" id="node2" href="classraytracer_1_1MeshFunction.html" title="Abstract interface. " alt="" coords="22,5,185,32"/>
+<area shape="rect" id="node2" href="classraytracer_1_1MeshFunc.html" title="Abstract interface. " alt="" coords="32,5,175,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
@@ -88,18 +88,27 @@ Collaboration diagram for raytracer::MfemMeshFunction:</div>
 <div class="dyncontent">
 <div class="center"><img src="classraytracer_1_1MfemMeshFunction__coll__graph.png" border="0" usemap="#raytracer_1_1MfemMeshFunction_coll__map" alt="Collaboration graph"/></div>
 <map name="raytracer_1_1MfemMeshFunction_coll__map" id="raytracer_1_1MfemMeshFunction_coll__map">
-<area shape="rect" id="node2" href="classraytracer_1_1MeshFunction.html" title="Abstract interface. " alt="" coords="22,5,185,32"/>
+<area shape="rect" id="node2" href="classraytracer_1_1MeshFunc.html" title="Abstract interface. " alt="" coords="32,5,175,32"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a92a9d86fa4b15e3514e15ad50d534bf6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMeshFunction.html#a92a9d86fa4b15e3514e15ad50d534bf6">MfemMeshFunction</a> (mfem::GridFunction &amp;gridFunction, const mfem::FiniteElementSpace &amp;finiteElementSpace)</td></tr>
-<tr class="memdesc:a92a9d86fa4b15e3514e15ad50d534bf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the <a class="el" href="classraytracer_1_1MfemMeshFunction.html" title="Discrete function what has constant values at Mesh elements. ">MfemMeshFunction</a> from a mfem::GridFunction and mfem::FiniteElementSpace.  <a href="#a92a9d86fa4b15e3514e15ad50d534bf6">More...</a><br /></td></tr>
-<tr class="separator:a92a9d86fa4b15e3514e15ad50d534bf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13940cfb86d0558d75e64e64c0949477"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMeshFunction.html#a13940cfb86d0558d75e64e64c0949477">MfemMeshFunction</a> (mfem::FiniteElementSpace &amp;finiteElementSpace)</td></tr>
-<tr class="memdesc:a13940cfb86d0558d75e64e64c0949477"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the <a class="el" href="classraytracer_1_1MfemMeshFunction.html" title="Discrete function what has constant values at Mesh elements. ">MfemMeshFunction</a> using an element space via new GridFunction initialization.  <a href="#a13940cfb86d0558d75e64e64c0949477">More...</a><br /></td></tr>
-<tr class="separator:a13940cfb86d0558d75e64e64c0949477"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0842ed1a3d34d6a050805a0656541458"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMeshFunction.html#a0842ed1a3d34d6a050805a0656541458">MfemMeshFunction</a> (<a class="el" href="classraytracer_1_1MfemSpace.html">MfemSpace</a> &amp;mfemSpace, mfem::GridFunction &amp;gridFunction)</td></tr>
+<tr class="memdesc:a0842ed1a3d34d6a050805a0656541458"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the <a class="el" href="classraytracer_1_1MfemMeshFunction.html" title="Discrete function what has constant values at Mesh elements. ">MfemMeshFunction</a> from a mfem::GridFunction and mfem::FiniteElementSpace.  <a href="#a0842ed1a3d34d6a050805a0656541458">More...</a><br /></td></tr>
+<tr class="separator:a0842ed1a3d34d6a050805a0656541458"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace8860f6a2d834a227d78f2342488b22"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMeshFunction.html#ace8860f6a2d834a227d78f2342488b22">MfemMeshFunction</a> (<a class="el" href="classraytracer_1_1MfemSpace.html">MfemSpace</a> &amp;mfemSpace, const std::function&lt; double(<a class="el" href="classraytracer_1_1Point.html">Point</a>)&gt; &amp;func)</td></tr>
+<tr class="memdesc:ace8860f6a2d834a227d78f2342488b22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sample an analytic function at element centroid and set the internal mfem GridFunction accordingly.  <a href="#ace8860f6a2d834a227d78f2342488b22">More...</a><br /></td></tr>
+<tr class="separator:ace8860f6a2d834a227d78f2342488b22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2852d0c479c4b1abf8383843f5942b57"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMeshFunction.html#a2852d0c479c4b1abf8383843f5942b57">MfemMeshFunction</a> (<a class="el" href="classraytracer_1_1MfemSpace.html">MfemSpace</a> &amp;mfemSpace)</td></tr>
+<tr class="memdesc:a2852d0c479c4b1abf8383843f5942b57"><td class="mdescLeft">&#160;</td><td class="mdescRight">By default initialize to 0.  <a href="#a2852d0c479c4b1abf8383843f5942b57">More...</a><br /></td></tr>
+<tr class="separator:a2852d0c479c4b1abf8383843f5942b57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae66417c683d2f58fdaad7873167e0c2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMeshFunction.html#aae66417c683d2f58fdaad7873167e0c2">MfemMeshFunction</a> (<a class="el" href="classraytracer_1_1MfemSpace.html">MfemSpace</a> &amp;mfemSpace, std::istream &amp;is)</td></tr>
+<tr class="memdesc:aae66417c683d2f58fdaad7873167e0c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct using a serializes mesh function from a given stream.  <a href="#aae66417c683d2f58fdaad7873167e0c2">More...</a><br /></td></tr>
+<tr class="separator:aae66417c683d2f58fdaad7873167e0c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae14a18daf9dfd097824194678537746d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classraytracer_1_1MeshFunc.html#a4212fb1545742660836ffcbf9d87ba2e">MeshFunc::Ptr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMeshFunction.html#ae14a18daf9dfd097824194678537746d">calcTransformed</a> (const <a class="el" href="classraytracer_1_1MeshFunc.html#a512fb0118917685d7819961f454474d9">MeshFunc::Transform</a> &amp;func) const override</td></tr>
+<tr class="memdesc:ae14a18daf9dfd097824194678537746d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new mesh function based on this.  <a href="#ae14a18daf9dfd097824194678537746d">More...</a><br /></td></tr>
+<tr class="separator:ae14a18daf9dfd097824194678537746d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e7183c2cca55df6115176d1d9030846"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMeshFunction.html#a3e7183c2cca55df6115176d1d9030846">getValue</a> (const <a class="el" href="classraytracer_1_1Element.html">Element</a> &amp;element) const override</td></tr>
 <tr class="memdesc:a3e7183c2cca55df6115176d1d9030846"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a value at <a class="el" href="classraytracer_1_1Element.html" title="Element is a collection of faces. ">Element</a>.  <a href="#a3e7183c2cca55df6115176d1d9030846">More...</a><br /></td></tr>
 <tr class="separator:a3e7183c2cca55df6115176d1d9030846"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -109,22 +118,31 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1c9f0ec943afb1d069ddeb85ee9bb2c8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMeshFunction.html#a1c9f0ec943afb1d069ddeb85ee9bb2c8">addValue</a> (const <a class="el" href="classraytracer_1_1Element.html">Element</a> &amp;element, double value) override</td></tr>
 <tr class="memdesc:a1c9f0ec943afb1d069ddeb85ee9bb2c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a value to existing value at <a class="el" href="classraytracer_1_1Element.html" title="Element is a collection of faces. ">Element</a>.  <a href="#a1c9f0ec943afb1d069ddeb85ee9bb2c8">More...</a><br /></td></tr>
 <tr class="separator:a1c9f0ec943afb1d069ddeb85ee9bb2c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9494441f42ee3c68cc45f08ab215abcd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMeshFunction.html#a9494441f42ee3c68cc45f08ab215abcd">setUsingFunction</a> (const <a class="el" href="classraytracer_1_1Mesh.html">Mesh</a> &amp;mesh, const std::function&lt; double(<a class="el" href="classraytracer_1_1Point.html">Point</a>)&gt; &amp;func)</td></tr>
-<tr class="memdesc:a9494441f42ee3c68cc45f08ab215abcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sample an analytic function at element centroid and return the value.  <a href="#a9494441f42ee3c68cc45f08ab215abcd">More...</a><br /></td></tr>
-<tr class="separator:a9494441f42ee3c68cc45f08ab215abcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
 <tr class="memitem:ad94fba23fe39a2b1680ecfadb548ecf1"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMeshFunction.html#ad94fba23fe39a2b1680ecfadb548ecf1">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="classraytracer_1_1MfemMeshFunction.html">MfemMeshFunction</a> &amp;meshFunction)</td></tr>
 <tr class="memdesc:ad94fba23fe39a2b1680ecfadb548ecf1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output a string representation of <a class="el" href="classraytracer_1_1MfemMeshFunction.html" title="Discrete function what has constant values at Mesh elements. ">MfemMeshFunction</a>.  <a href="#ad94fba23fe39a2b1680ecfadb548ecf1">More...</a><br /></td></tr>
 <tr class="separator:ad94fba23fe39a2b1680ecfadb548ecf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_types_classraytracer_1_1MeshFunc"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classraytracer_1_1MeshFunc')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classraytracer_1_1MeshFunc.html">raytracer::MeshFunc</a></td></tr>
+<tr class="memitem:a4212fb1545742660836ffcbf9d87ba2e inherit pub_types_classraytracer_1_1MeshFunc"><td class="memItemLeft" align="right" valign="top"><a id="a4212fb1545742660836ffcbf9d87ba2e"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MeshFunc.html#a4212fb1545742660836ffcbf9d87ba2e">Ptr</a> = std::unique_ptr&lt; <a class="el" href="classraytracer_1_1MeshFunc.html">MeshFunc</a> &gt;</td></tr>
+<tr class="memdesc:a4212fb1545742660836ffcbf9d87ba2e inherit pub_types_classraytracer_1_1MeshFunc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unique pointer to MeshFunction. <br /></td></tr>
+<tr class="separator:a4212fb1545742660836ffcbf9d87ba2e inherit pub_types_classraytracer_1_1MeshFunc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a512fb0118917685d7819961f454474d9 inherit pub_types_classraytracer_1_1MeshFunc"><td class="memItemLeft" align="right" valign="top"><a id="a512fb0118917685d7819961f454474d9"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MeshFunc.html#a512fb0118917685d7819961f454474d9">Transform</a> = std::function&lt; double(<a class="el" href="classraytracer_1_1Element.html">Element</a>)&gt;</td></tr>
+<tr class="memdesc:a512fb0118917685d7819961f454474d9 inherit pub_types_classraytracer_1_1MeshFunc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function able taking an element and returning a value. <br /></td></tr>
+<tr class="separator:a512fb0118917685d7819961f454474d9 inherit pub_types_classraytracer_1_1MeshFunc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Discrete function what has constant values at <a class="el" href="classraytracer_1_1Mesh.html" title="Mesh interface. ">Mesh</a> elements. </p>
 <p>Provides a way to query the GridFunction given an element. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a92a9d86fa4b15e3514e15ad50d534bf6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a92a9d86fa4b15e3514e15ad50d534bf6">&#9670;&nbsp;</a></span>MfemMeshFunction() <span class="overload">[1/2]</span></h2>
+<a id="a0842ed1a3d34d6a050805a0656541458"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0842ed1a3d34d6a050805a0656541458">&#9670;&nbsp;</a></span>MfemMeshFunction() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -132,14 +150,14 @@ Friends</h2></td></tr>
         <tr>
           <td class="memname">raytracer::MfemMeshFunction::MfemMeshFunction </td>
           <td>(</td>
-          <td class="paramtype">mfem::GridFunction &amp;&#160;</td>
-          <td class="paramname"><em>gridFunction</em>, </td>
+          <td class="paramtype"><a class="el" href="classraytracer_1_1MfemSpace.html">MfemSpace</a> &amp;&#160;</td>
+          <td class="paramname"><em>mfemSpace</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const mfem::FiniteElementSpace &amp;&#160;</td>
-          <td class="paramname"><em>finiteElementSpace</em>&#160;</td>
+          <td class="paramtype">mfem::GridFunction &amp;&#160;</td>
+          <td class="paramname"><em>gridFunction</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -153,15 +171,15 @@ Friends</h2></td></tr>
 <p>Does not own the GridFunction </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">gridFunction</td><td>a mutable reference will be kept. </td></tr>
-    <tr><td class="paramname">finiteElementSpace</td><td>const reference will be kept - caution: L2 space is expected! </td></tr>
+    <tr><td class="paramname">mfemSpace</td><td>const reference will be kept - caution: L2 space is expected! </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a13940cfb86d0558d75e64e64c0949477"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13940cfb86d0558d75e64e64c0949477">&#9670;&nbsp;</a></span>MfemMeshFunction() <span class="overload">[2/2]</span></h2>
+<a id="ace8860f6a2d834a227d78f2342488b22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace8860f6a2d834a227d78f2342488b22">&#9670;&nbsp;</a></span>MfemMeshFunction() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -172,9 +190,19 @@ Friends</h2></td></tr>
         <tr>
           <td class="memname">raytracer::MfemMeshFunction::MfemMeshFunction </td>
           <td>(</td>
-          <td class="paramtype">mfem::FiniteElementSpace &amp;&#160;</td>
-          <td class="paramname"><em>finiteElementSpace</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classraytracer_1_1MfemSpace.html">MfemSpace</a> &amp;&#160;</td>
+          <td class="paramname"><em>mfemSpace</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::function&lt; double(<a class="el" href="classraytracer_1_1Point.html">Point</a>)&gt; &amp;&#160;</td>
+          <td class="paramname"><em>func</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -184,10 +212,90 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Create the <a class="el" href="classraytracer_1_1MfemMeshFunction.html" title="Discrete function what has constant values at Mesh elements. ">MfemMeshFunction</a> using an element space via new GridFunction initialization. </p>
-<p>It owns the GridFunction. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Sample an analytic function at element centroid and set the internal mfem GridFunction accordingly. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">finiteElementSpace</td><td></td></tr>
+    <tr><td class="paramname">mfemSpace</td><td></td></tr>
+    <tr><td class="paramname">func</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a2852d0c479c4b1abf8383843f5942b57"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2852d0c479c4b1abf8383843f5942b57">&#9670;&nbsp;</a></span>MfemMeshFunction() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">raytracer::MfemMeshFunction::MfemMeshFunction </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classraytracer_1_1MfemSpace.html">MfemSpace</a> &amp;&#160;</td>
+          <td class="paramname"><em>mfemSpace</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>By default initialize to 0. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mfemSpace</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aae66417c683d2f58fdaad7873167e0c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae66417c683d2f58fdaad7873167e0c2">&#9670;&nbsp;</a></span>MfemMeshFunction() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">raytracer::MfemMeshFunction::MfemMeshFunction </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classraytracer_1_1MfemSpace.html">MfemSpace</a> &amp;&#160;</td>
+          <td class="paramname"><em>mfemSpace</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::istream &amp;&#160;</td>
+          <td class="paramname"><em>is</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct using a serializes mesh function from a given stream. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mfemSpace</td><td></td></tr>
+    <tr><td class="paramname">is</td><td></td></tr>
   </table>
   </dd>
 </dl>
@@ -238,7 +346,44 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classraytracer_1_1MeshFunction.html#a134b7ca4400d04030a67cadd691ee879">raytracer::MeshFunction</a>.</p>
+<p>Implements <a class="el" href="classraytracer_1_1MeshFunc.html#af3605395d98dc64f27176fb4deeaa9ce">raytracer::MeshFunc</a>.</p>
+
+</div>
+</div>
+<a id="ae14a18daf9dfd097824194678537746d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae14a18daf9dfd097824194678537746d">&#9670;&nbsp;</a></span>calcTransformed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classraytracer_1_1MeshFunc.html#a4212fb1545742660836ffcbf9d87ba2e">MeshFunc::Ptr</a> raytracer::MfemMeshFunction::calcTransformed </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classraytracer_1_1MeshFunc.html#a512fb0118917685d7819961f454474d9">MeshFunc::Transform</a> &amp;&#160;</td>
+          <td class="paramname"><em>func</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Creates a new mesh function based on this. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">func</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p>Implements <a class="el" href="classraytracer_1_1MeshFunc.html#a37a93a6fd76e50fe9de46cce9fc6036b">raytracer::MeshFunc</a>.</p>
 
 </div>
 </div>
@@ -275,52 +420,7 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the value at <a class="el" href="classraytracer_1_1Element.html" title="Element is a collection of faces. ">Element</a> </dd></dl>
 
-<p>Implements <a class="el" href="classraytracer_1_1MeshFunction.html#a49888c1924a473a1d98564a4732edd3a">raytracer::MeshFunction</a>.</p>
-
-</div>
-</div>
-<a id="a9494441f42ee3c68cc45f08ab215abcd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9494441f42ee3c68cc45f08ab215abcd">&#9670;&nbsp;</a></span>setUsingFunction()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void raytracer::MfemMeshFunction::setUsingFunction </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classraytracer_1_1Mesh.html">Mesh</a> &amp;&#160;</td>
-          <td class="paramname"><em>mesh</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::function&lt; double(<a class="el" href="classraytracer_1_1Point.html">Point</a>)&gt; &amp;&#160;</td>
-          <td class="paramname"><em>func</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Sample an analytic function at element centroid and return the value. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">mesh</td><td></td></tr>
-    <tr><td class="paramname">func</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Implements <a class="el" href="classraytracer_1_1MeshFunc.html#aac44683a3337629175bd8126f82ec440">raytracer::MeshFunc</a>.</p>
 
 </div>
 </div>
@@ -367,7 +467,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classraytracer_1_1MeshFunction.html#a0d71fc5b456edd7a89267a071ae6dd81">raytracer::MeshFunction</a>.</p>
+<p>Implements <a class="el" href="classraytracer_1_1MeshFunc.html#ae95a2775a91450cf986cf8e83b660782">raytracer::MeshFunc</a>.</p>
 
 </div>
 </div>
@@ -419,7 +519,7 @@ Friends</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/martin/CLionProjects/raytracer/include/raytracer/geometry/<a class="el" href="mesh__function_8h_source.html">mesh_function.h</a></li>
+<li>/home/martin/CLionProjects/raytracer/include/internal/geometry/<a class="el" href="mesh__function_8h_source.html">mesh_function.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

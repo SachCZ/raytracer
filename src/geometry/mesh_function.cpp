@@ -37,6 +37,14 @@ namespace raytracer {
         this->setUsingFunction(mfemSpace.getMesh(), func);
     }
 
+    MeshFunc::Ptr MfemMeshFunction::calcTransformed(const MeshFunc::Transform & func) const {
+        auto result = std::make_unique<MfemMeshFunction>(this->mfemSpace);
+        for (Element *element : mfemSpace.getMesh().getElements()) {
+            result->setValue(*element, func(*element));
+        }
+        return result;
+    }
+
     void MfemMeshFunction::init() {
         gridFunction.SetTrueVector();
         eleTrueVecInd = getEleTrueVecInd();
@@ -47,14 +55,6 @@ namespace raytracer {
             gridFunction(mfemGridFunction),
             mfemSpace(mfemSpace) {
         this->init();
-    }
-
-    MeshFunc::Ptr MfemMeshFunction::calcTransformed(const MeshFunc::Transform & func) const {
-        auto result = std::make_unique<MfemMeshFunction>(this->mfemSpace);
-        for (Element *element : mfemSpace.getMesh().getElements()) {
-            result->setValue(*element, func(*element));
-        }
-        return result;
     }
 
     std::vector<int> MfemMeshFunction::getEleTrueVecInd() {

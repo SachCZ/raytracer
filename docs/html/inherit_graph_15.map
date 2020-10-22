@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structraytracer_1_1Laser.html" title="Class representing a real physical laser. " alt="" coords="5,5,119,32"/>
+<area shape="rect" id="node1" href="$classraytracer_1_1Mesh.html" title="Mesh interface. " alt="" coords="5,5,119,32"/>
+<area shape="rect" id="node2" href="$classraytracer_1_1MfemMesh.html" title="Class representing a mesh (2D for now). " alt="" coords="167,5,313,32"/>
 </map>

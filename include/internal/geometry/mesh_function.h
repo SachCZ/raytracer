@@ -32,11 +32,23 @@ namespace raytracer {
          */
         virtual void addValue(const Element &, double value) = 0;
 
-        using Ptr =  std::unique_ptr<MeshFunc>;
+        /** Unique pointer to MeshFunction */
+        using Ptr = std::unique_ptr<MeshFunc>;
+
+        /** Function able taking an element and returning a value */
         using Transform = std::function<double(Element)>;
-        virtual Ptr calcTransformed(const Transform & func) const = 0;
+
+        /**
+         * Override this
+         * @param func
+         * @return
+         */
+        virtual Ptr calcTransformed(const Transform &func) const = 0;
     };
 
+    /**
+     * A wrapper aggregating mfem::FiniteElementSpace and MfemMesh
+     */
     class MfemSpace {
     public:
         /**
@@ -107,7 +119,7 @@ namespace raytracer {
          * By default initialize to 0
          * @param mfemSpace
          */
-        explicit MfemMeshFunction(MfemSpace &mfemSpace):
+        explicit MfemMeshFunction(MfemSpace &mfemSpace) :
                 mfemGridFunction(&mfemSpace.getSpace()),
                 gridFunction(mfemGridFunction),
                 mfemSpace(mfemSpace) {
@@ -122,7 +134,12 @@ namespace raytracer {
          */
         explicit MfemMeshFunction(MfemSpace &mfemSpace, std::istream &is);
 
-        MeshFunc::Ptr calcTransformed(const MeshFunc::Transform & func) const override;
+        /**
+         * Creates a new mesh function based on this
+         * @param func
+         * @return
+         */
+        MeshFunc::Ptr calcTransformed(const MeshFunc::Transform &func) const override;
 
         /**
          * Get a value at Element.
@@ -157,7 +174,7 @@ namespace raytracer {
     private:
         mfem::GridFunction mfemGridFunction;
         mfem::GridFunction &gridFunction;
-        MfemSpace& mfemSpace;
+        MfemSpace &mfemSpace;
         std::vector<int> eleTrueVecInd;
 
         double &get(const Element &element);

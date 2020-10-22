@@ -78,17 +78,17 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac5a349e85a1e98c42aa2ee910912843e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1EnergyExchangeController.html#ac5a349e85a1e98c42aa2ee910912843e">addModel</a> (const <a class="el" href="classraytracer_1_1EnergyExchangeModel.html">EnergyExchangeModel</a> *model)</td></tr>
-<tr class="memdesc:ac5a349e85a1e98c42aa2ee910912843e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an AbsorptionModel that will be used when calling <a class="el" href="classraytracer_1_1EnergyExchangeController.html#a39cd651d4fcbb36ec51df9869bc89919" title="Modify the absorbedEnergy MeshFunction based on the intersectionSet and initialEnergies of the rays...">absorb()</a>.  <a href="#ac5a349e85a1e98c42aa2ee910912843e">More...</a><br /></td></tr>
+<tr class="memdesc:ac5a349e85a1e98c42aa2ee910912843e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an AbsorptionModel that will be used when calling <a class="el" href="classraytracer_1_1EnergyExchangeController.html#a47ad1bc94ee8166584ca754d98f877cb" title="Modify the absorbedEnergy MeshFunction based on the intersectionSet and initialEnergies of the rays...">absorb()</a>.  <a href="#ac5a349e85a1e98c42aa2ee910912843e">More...</a><br /></td></tr>
 <tr class="separator:ac5a349e85a1e98c42aa2ee910912843e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39cd651d4fcbb36ec51df9869bc89919"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structraytracer_1_1AbsorptionSummary.html">AbsorptionSummary</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1EnergyExchangeController.html#a39cd651d4fcbb36ec51df9869bc89919">absorb</a> (const <a class="el" href="namespaceraytracer.html#acd45b4b0987105af593830c1d116bf36">IntersectionSet</a> &amp;intersectionSet, const <a class="el" href="namespaceraytracer.html#a48e5d7eb32d255b98ce6dd1504350d6b">Energies</a> &amp;initialEnergies, <a class="el" href="classraytracer_1_1MeshFunction.html">MeshFunction</a> &amp;absorbedEnergy)</td></tr>
-<tr class="memdesc:a39cd651d4fcbb36ec51df9869bc89919"><td class="mdescLeft">&#160;</td><td class="mdescRight">Modify the absorbedEnergy <a class="el" href="classraytracer_1_1MeshFunction.html" title="Abstract interface. ">MeshFunction</a> based on the intersectionSet and initialEnergies of the rays, then return a summary.  <a href="#a39cd651d4fcbb36ec51df9869bc89919">More...</a><br /></td></tr>
-<tr class="separator:a39cd651d4fcbb36ec51df9869bc89919"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47ad1bc94ee8166584ca754d98f877cb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structraytracer_1_1AbsorptionSummary.html">AbsorptionSummary</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1EnergyExchangeController.html#a47ad1bc94ee8166584ca754d98f877cb">absorb</a> (const <a class="el" href="namespaceraytracer.html#acd45b4b0987105af593830c1d116bf36">IntersectionSet</a> &amp;intersectionSet, const <a class="el" href="namespaceraytracer.html#a48e5d7eb32d255b98ce6dd1504350d6b">Energies</a> &amp;initialEnergies, <a class="el" href="classraytracer_1_1MeshFunc.html">MeshFunc</a> &amp;absorbedEnergy)</td></tr>
+<tr class="memdesc:a47ad1bc94ee8166584ca754d98f877cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Modify the absorbedEnergy MeshFunction based on the intersectionSet and initialEnergies of the rays, then return a summary.  <a href="#a47ad1bc94ee8166584ca754d98f877cb">More...</a><br /></td></tr>
+<tr class="separator:a47ad1bc94ee8166584ca754d98f877cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class aggregating all instances of AbsorptionModel used to update absorbedEnergy meshFunction. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a39cd651d4fcbb36ec51df9869bc89919"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a39cd651d4fcbb36ec51df9869bc89919">&#9670;&nbsp;</a></span>absorb()</h2>
+<a id="a47ad1bc94ee8166584ca754d98f877cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47ad1bc94ee8166584ca754d98f877cb">&#9670;&nbsp;</a></span>absorb()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -108,7 +108,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classraytracer_1_1MeshFunction.html">MeshFunction</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classraytracer_1_1MeshFunc.html">MeshFunc</a> &amp;&#160;</td>
           <td class="paramname"><em>absorbedEnergy</em>&#160;</td>
         </tr>
         <tr>
@@ -119,7 +119,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Modify the absorbedEnergy <a class="el" href="classraytracer_1_1MeshFunction.html" title="Abstract interface. ">MeshFunction</a> based on the intersectionSet and initialEnergies of the rays, then return a summary. </p>
+<p>Modify the absorbedEnergy MeshFunction based on the intersectionSet and initialEnergies of the rays, then return a summary. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">intersectionSet</td><td></td></tr>
@@ -148,7 +148,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Add an AbsorptionModel that will be used when calling <a class="el" href="classraytracer_1_1EnergyExchangeController.html#a39cd651d4fcbb36ec51df9869bc89919" title="Modify the absorbedEnergy MeshFunction based on the intersectionSet and initialEnergies of the rays...">absorb()</a>. </p>
+<p>Add an AbsorptionModel that will be used when calling <a class="el" href="classraytracer_1_1EnergyExchangeController.html#a47ad1bc94ee8166584ca754d98f877cb" title="Modify the absorbedEnergy MeshFunction based on the intersectionSet and initialEnergies of the rays...">absorb()</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">model</td><td></td></tr>
@@ -159,7 +159,7 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/martin/CLionProjects/raytracer/include/raytracer/physics/<a class="el" href="absorption_8h_source.html">absorption.h</a></li>
+<li>/home/martin/CLionProjects/raytracer/include/internal/physics/<a class="el" href="absorption_8h_source.html">absorption.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

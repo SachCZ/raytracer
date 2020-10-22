@@ -97,6 +97,9 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMesh.html#ab63beec1017cb3d10006a6fa61bc0b14">MfemMesh</a> (mfem::Mesh *mesh)</td></tr>
 <tr class="memdesc:ab63beec1017cb3d10006a6fa61bc0b14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encapsulate an mfem mesh while not owning it. <br /></td></tr>
 <tr class="separator:ab63beec1017cb3d10006a6fa61bc0b14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afff5f32758c9f661a744b39717835a02"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMesh.html#afff5f32758c9f661a744b39717835a02">MfemMesh</a> (const std::string &amp;filename, bool generateEdges=true, bool refine=false)</td></tr>
+<tr class="memdesc:afff5f32758c9f661a744b39717835a02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load an mfem mesh from file (vtk or mfem native)  <a href="#afff5f32758c9f661a744b39717835a02">More...</a><br /></td></tr>
+<tr class="separator:afff5f32758c9f661a744b39717835a02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a872384d7c47bee708c86118c5954b037"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMesh.html#a872384d7c47bee708c86118c5954b037">MfemMesh</a> (<a class="el" href="structraytracer_1_1SegmentedLine.html">SegmentedLine</a> sideA, <a class="el" href="structraytracer_1_1SegmentedLine.html">SegmentedLine</a> sideB, mfem::Element::Type elementType=mfem::Element::Type::TRIANGLE)</td></tr>
 <tr class="memdesc:a872384d7c47bee708c86118c5954b037"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new mfem::Mesh given two sides and element type.  <a href="#a872384d7c47bee708c86118c5954b037">More...</a><br /></td></tr>
 <tr class="separator:a872384d7c47bee708c86118c5954b037"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -121,16 +124,68 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab3a4ba6550b53fa539543ae9d6f44b68"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classraytracer_1_1Element.html">Element</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMesh.html#ab3a4ba6550b53fa539543ae9d6f44b68">getPointAdjacentElements</a> (const <a class="el" href="classraytracer_1_1Point.html">Point</a> *point) const override</td></tr>
 <tr class="memdesc:ab3a4ba6550b53fa539543ae9d6f44b68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return elements that do share a point.  <a href="#ab3a4ba6550b53fa539543ae9d6f44b68">More...</a><br /></td></tr>
 <tr class="separator:ab3a4ba6550b53fa539543ae9d6f44b68"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ab590808af7e895e4a67d1a750f021c"><td class="memItemLeft" align="right" valign="top">mfem::Mesh *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMesh.html#a6ab590808af7e895e4a67d1a750f021c">getMfemMesh</a> ()</td></tr>
-<tr class="memdesc:a6ab590808af7e895e4a67d1a750f021c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get pointer to the underlying mfem::Mesh.  <a href="#a6ab590808af7e895e4a67d1a750f021c">More...</a><br /></td></tr>
-<tr class="separator:a6ab590808af7e895e4a67d1a750f021c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05d9b6ec9c00d9a7d2db45cd8ad405ab"><td class="memItemLeft" align="right" valign="top">mfem::Mesh *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classraytracer_1_1MfemMesh.html#a05d9b6ec9c00d9a7d2db45cd8ad405ab">getMfemMesh</a> () const</td></tr>
+<tr class="memdesc:a05d9b6ec9c00d9a7d2db45cd8ad405ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get pointer to the underlying mfem::Mesh.  <a href="#a05d9b6ec9c00d9a7d2db45cd8ad405ab">More...</a><br /></td></tr>
+<tr class="separator:a05d9b6ec9c00d9a7d2db45cd8ad405ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class representing a mesh (2D for now). </p>
 <p>It encapsulates the class mfem::Mesh and provides some convenience methods. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="afff5f32758c9f661a744b39717835a02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afff5f32758c9f661a744b39717835a02">&#9670;&nbsp;</a></span>MfemMesh() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">raytracer::MfemMesh::MfemMesh </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>filename</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>generateEdges</em> = <code>true</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>refine</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Load an mfem mesh from file (vtk or mfem native) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filename</td><td></td></tr>
+    <tr><td class="paramname">generateEdges</td><td>- see mfem docs </td></tr>
+    <tr><td class="paramname">refine</td><td>- see mfem docs </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a872384d7c47bee708c86118c5954b037"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a872384d7c47bee708c86118c5954b037">&#9670;&nbsp;</a></span>MfemMesh()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a872384d7c47bee708c86118c5954b037">&#9670;&nbsp;</a></span>MfemMesh() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -350,8 +405,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a6ab590808af7e895e4a67d1a750f021c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6ab590808af7e895e4a67d1a750f021c">&#9670;&nbsp;</a></span>getMfemMesh()</h2>
+<a id="a05d9b6ec9c00d9a7d2db45cd8ad405ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05d9b6ec9c00d9a7d2db45cd8ad405ab">&#9670;&nbsp;</a></span>getMfemMesh()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -360,7 +415,7 @@ Public Member Functions</h2></td></tr>
           <td class="memname">mfem::Mesh* raytracer::MfemMesh::getMfemMesh </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -438,7 +493,7 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/martin/CLionProjects/raytracer/include/raytracer/geometry/<a class="el" href="mesh_8h_source.html">mesh.h</a></li>
+<li>/home/martin/CLionProjects/raytracer/include/internal/geometry/<a class="el" href="mesh_8h_source.html">mesh.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

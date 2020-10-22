@@ -7,6 +7,14 @@
 #include <geometry.h>
 
 namespace raytracer {
+    /**
+     * Calculate the spitzer frequency in each element
+     * @param dens
+     * @param temp
+     * @param ioni
+     * @param wavelen
+     * @return
+     */
     MeshFunc::Ptr calcSpitzerFreq(
             const MeshFunc &dens,
             const MeshFunc &temp,

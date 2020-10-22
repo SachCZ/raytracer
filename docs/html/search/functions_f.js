@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['vector',['Vector',['../classraytracer_1_1Vector.html#a4a257f16b43edb428655be54c640fb69',1,'raytracer::Vector::Vector(double x, double y)'],['../classraytracer_1_1Vector.html#ab6d9a3c5c8d49c49376b11bbfa2d64ae',1,'raytracer::Vector::Vector()=default']]]
+  ['unmark',['unmark',['../classraytracer_1_1Marker.html#af07b64e8d7a5847a98c8ea9b6856562f',1,'raytracer::Marker']]]
 ];

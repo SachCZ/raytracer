@@ -1,8 +1,8 @@
 # CMake config
 
 RayTracer uses cmake to configure the build and install. In this document
-options intended to be used by a user are listed, overall structure
-of the project is summarized and installed files are listed.
+options intended to be used by a user are listed and overall structure
+of the project is summarized.
 
 ## CMake options
 Options expected to be used by the user of RayTracer are:
@@ -23,9 +23,11 @@ using g++. Option `DRAYTRACER_BUILD_PROFILE` will instruct cmake to configure
 targets in directory `profile`.
 
 ## Project structure
-Whole rayTracer project is divided into three libraries: gemometry, physics and utility.
-Moreover it depends on other exteranl libraries.
+Whole RayTracer project is divided into three libraries: gemometry, physics and utility.
+Moreover it depends on other external libraries. Together they are linked to the
+target raytracer, the only thing you as a user need to care about. The three libraries
+further depend on external libraries. All the mentioned dependenscies are summarized
+in the following image:
 
 ![Dependency graph](dependencies.png)
-
  

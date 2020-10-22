@@ -16,8 +16,12 @@ namespace raytracer {
      */
     class Point {
     public:
-        explicit Point(const Vector& vector);
+        /** Vector is convertible to point */
+        explicit Point(const Vector &vector);
+
+        /** Can be constructed from coords */
         Point(double x, double y);
+
         Point() = default;
 
         /**
@@ -45,8 +49,12 @@ namespace raytracer {
          */
         double y;
 
+        /** Point is convertible to vector */
         explicit Vector(const Point &point);
+
+        /** Vector can be constructed from coordinates */
         Vector(double x, double y);
+
         Vector() = default;
 
         /**

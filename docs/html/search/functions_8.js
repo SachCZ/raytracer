@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['linearintergrad',['LinearInterGrad',['../classraytracer_1_1LinearInterGrad.html#a26b3da573e225295fb134ec635f20bbf',1,'raytracer::LinearInterGrad']]],
-  ['linspace',['linspace',['../namespaceraytracer.html#a1d7a4140de13c9075310878bd6caffea',1,'raytracer']]]
+  ['integratetrapz',['integrateTrapz',['../namespaceraytracer.html#a475981755b95ba13b5ac34bf32754659',1,'raytracer']]],
+  ['intersectstraight',['intersectStraight',['../namespaceraytracer.html#a4e3ecd2568ce1f742a50228152f79e45',1,'raytracer']]],
+  ['ismarked',['isMarked',['../classraytracer_1_1Marker.html#a83678e48f0edfacbc63344a25c1fba65',1,'raytracer::Marker']]]
 ];

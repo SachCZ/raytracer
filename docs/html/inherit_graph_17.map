@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classraytracer_1_1Marker.html" title="Class used to mark elements that have some property. " alt="" coords="5,5,127,32"/>
+<area shape="rect" id="node1" href="$classraytracer_1_1MfemSpace.html" title="A wrapper aggregating mfem::FiniteElementSpace and MfemMesh. " alt="" coords="5,5,156,32"/>
+<area shape="rect" id="node2" href="$classraytracer_1_1MfemL20Space.html" title="Wrapper around mfem L2_FECollection and FiniteElementSpace. " alt="" coords="204,5,376,32"/>
 </map>
