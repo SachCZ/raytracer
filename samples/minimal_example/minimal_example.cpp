@@ -5,15 +5,17 @@ int main(int, char *[]) {
 
     MfemMesh mesh(SegmentedLine{1.0, 50}, SegmentedLine{1.0, 10});
     MfemL20Space space{mesh};
+
     Length wavelength{1315e-7};
+
     MfemMeshFunction density(space, [&wavelength](Point point) {
         return calcCritDens(wavelength).asDouble * (1 - std::pow(point.x-1, 2));
     });
-
-    LinInterGrad gradient(calcHousGrad(mesh, density));
     MfemMeshFunction refractIndex(space, [&density, &wavelength](const Element& e){
         return calcRefractIndex(density.getValue(e), wavelength, 0);
     });
+
+    LinInterGrad gradient(calcHousGrad(mesh, density));
     SnellsLaw snellsLaw(gradient, refractIndex);
     auto intersectionSet = findIntersections(
             mesh,
@@ -22,6 +24,7 @@ int main(int, char *[]) {
             intersectStraight,
             dontStop
     );
+    
     std::ofstream trajectoryFile("trajectory.msgpack");
     trajectoryFile << stringifyRaysToMsgpack(intersectionSet);
     std::ofstream meshFile("mesh.mfem");
