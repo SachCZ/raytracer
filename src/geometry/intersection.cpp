@@ -55,8 +55,8 @@ namespace raytracer {
     PointOnFacePtr findIntersectionPoint(const Ray &ray, const Face *face, bool includePoint = false) {
         const auto &points = face->getPoints();
         if (points.size() == 2) {
-            double k = getParamK(ray, points);
-            double t = getParamT(ray, points);
+            const double k = getParamK(ray, points);
+            const double t = getParamT(ray, points);
 
             if (isIntersecting(k, t, includePoint)) {
                 const auto &A = *points[0];

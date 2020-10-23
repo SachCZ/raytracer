@@ -2,6 +2,8 @@
 #include "constants.h"
 #include "propagation.h"
 #include "refraction.h"
+#include <memory>
+#include <utility.h>
 
 namespace raytracer {
     SnellsLaw::SnellsLaw(const Gradient &gradCalc, const MeshFunc &refractIndex,
@@ -30,18 +32,17 @@ namespace raytracer {
             n = (-1) * n;
         }
         const double r = n1 / n2;
-
         auto root = 1 - r * r * (1 - c * c);
         Vector result{};
-        if (root > 0) {
-            result = r * l + (r * c - sqrt(root)) * n;
-        } else {//Reflection
+        if (root < 0) {//Reflection
             if (gradient * previousDirection < 0) {//Against gradient
                 result = previousDirection;
             } else {
                 if (reflectMarker) reflectMarker->mark(previousElement, pointOnFace);
                 result = l + 2 * c * n;
             }
+        } else {
+            result = r * l + (r * c - sqrt(root)) * n;
         }
         if (std::isnan(result.x) || std::isnan(result.y)) {
             throw std::logic_error("Snell's law generated nan direction, something is wrong!");
@@ -57,18 +58,6 @@ namespace raytracer {
         auto constant = m_e * M_PI * std::pow(c, 2) / std::pow(e, 2);
 
         return {constant * std::pow(wavelength.asDouble, -2)};
-    }
-
-    MeshFunc::Ptr calcInvBremssCoeff(const MeshFunc &dens, const Length &wavelen, MeshFunc *collFreq) {
-        return dens.calcTransformed([&](const Element& e){
-            return impl::calcInvBremssCoeff(dens.getValue(e), wavelen, collFreq ? collFreq->getValue(e) : 0);
-        });
-    }
-
-    MeshFunc::Ptr calcRefractiveIndex(const MeshFunc &dens, const Length &wavelen, const MeshFunc *collFreq) {
-        return dens.calcTransformed([&](const Element& e){
-            return impl::calcRefractIndex(dens.getValue(e), wavelen, collFreq ? collFreq->getValue(e) : 0);
-        });
     }
 
     void Marker::mark(const Element &element, const PointOnFace &pointOnFace) {
@@ -89,8 +78,8 @@ namespace raytracer {
         return previousDirection;
     }
 
-    double impl::calcRefractIndex(double density, const Length &wavelength, double collFreq) {
-        auto permittivity = calcPermittivity(density, wavelength, collFreq);
+    double calcRefractIndex(double density, const Length &wavelength, double collFreq) {
+        auto permittivity = impl::calcPermittivity(density, wavelength, collFreq);
         if (permittivity.real() < 0) return 0;
         auto root = std::sqrt(permittivity);
         if (std::isnan(root.real())) {
@@ -113,7 +102,7 @@ namespace raytracer {
         return {1 - term, nu_ei / omega * term};
     }
 
-    double impl::calcInvBremssCoeff(double density, const Length &wavelength, double collFreq) {
+    double calcInvBremssCoeff(double density, const Length &wavelength, double collFreq) {
         auto eps = impl::calcPermittivity(density, wavelength, collFreq);
         return 4 * M_PI / wavelength.asDouble * std::sqrt(eps).imag();
     }

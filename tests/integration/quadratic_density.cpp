@@ -14,11 +14,13 @@ TEST(single_ray, throught_mesh_should_work_as_expected_for_dummy_mesh) {
     MfemMeshFunction density(space, [](Point point) {return 6.44e+20 * (1 - point.x * point.x);});
 
     LinInterGrad gradient(calcHousGrad(mesh, density));
-    auto refractIndex = calcRefractiveIndex(density, Length{1315e-7});
-    SnellsLaw snellsLaw(gradient, *refractIndex);
+    MfemMeshFunction refractIndex(space, [&density](const Element& e){
+        return calcRefractIndex(density.getValue(e), Length{1315e-7}, 0);
+    });
+    SnellsLaw snellsLaw(gradient, refractIndex);
     std::vector<Ray> initDirs = {Ray{{-1.1, 0.01}, Vector{1, 0.1}}};
 
     auto intersectionSet = findIntersections(mesh, initDirs, snellsLaw, intersectStraight, dontStop);
     auto lastIntersection = intersectionSet[0].back().pointOnFace.point;
-    ASSERT_THAT(lastIntersection, IsSamePoint(Point{-1.0, 0.41417462751621098}));
+    ASSERT_THAT(lastIntersection, IsSamePoint(Point{-1.0, 0.41702145969766685}));
 }

@@ -13,35 +13,15 @@ namespace raytracer {
      * The classic formula to calculate critical density
      * @param wavelength
      */
-    Density calcCritDens(const Length& wavelength);
+    Density calcCritDens(const Length &wavelength);
 
+    double calcRefractIndex(double density, const Length &wavelength, double collFreq);
 
-    /**
-     * Calculate the index of refraction based on current density, collisional frequency and wavelength.
-     * @param dens
-     * @param wavelen
-     * @param collFreq
-     * @return
-     */
-    MeshFunc::Ptr calcRefractiveIndex(const MeshFunc &dens, const Length &wavelen, const MeshFunc* collFreq = nullptr);
-
-    /**
-     * Calculate bremsstrahlung coeff of the plasma
-     * @param dens
-     * @param wavelen
-     * @param collFreq
-     * @return
-     */
-    MeshFunc::Ptr calcInvBremssCoeff(const MeshFunc &dens, const Length &wavelen, MeshFunc *collFreq);
+    double calcInvBremssCoeff(double density, const Length &wavelength, double collFreq);
 
     namespace impl {
-        double calcRefractIndex(double density, const Length& wavelength, double collFreq);
-
-        double calcInvBremssCoeff(double density, const Length& wavelength, double collFreq);
-
-        std::complex<double> calcPermittivity(double density, const Length& wavelength, double collFreq);
+        std::complex<double> calcPermittivity(double density, const Length &wavelength, double collFreq);
     }
-
 
     /**
      * Class used to mark elements that have some property. Actually it is just a set internally.

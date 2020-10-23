@@ -37,13 +37,6 @@ namespace raytracer {
 
         /** Function able taking an element and returning a value */
         using Transform = std::function<double(Element)>;
-
-        /**
-         * Override this
-         * @param func
-         * @return
-         */
-        virtual Ptr calcTransformed(const Transform &func) const = 0;
     };
 
     /**
@@ -115,6 +108,8 @@ namespace raytracer {
          */
         explicit MfemMeshFunction(MfemSpace &mfemSpace, const std::function<double(Point)> &func);
 
+        explicit MfemMeshFunction(MfemSpace &mfemSpace, const std::function<double(Element)> &func);
+
         /**
          * By default initialize to 0
          * @param mfemSpace
@@ -133,13 +128,6 @@ namespace raytracer {
          * @param is
          */
         explicit MfemMeshFunction(MfemSpace &mfemSpace, std::istream &is);
-
-        /**
-         * Creates a new mesh function based on this
-         * @param func
-         * @return
-         */
-        MeshFunc::Ptr calcTransformed(const MeshFunc::Transform &func) const override;
 
         /**
          * Get a value at Element.
@@ -182,12 +170,6 @@ namespace raytracer {
         void init();
 
         std::vector<int> getEleTrueVecInd();
-
-        void setUsingFunction(const Mesh &mesh, const std::function<double(Point)> &func) {
-            for (const auto &element : mesh.getElements()) {
-                this->setValue(*element, func(getElementCentroid(*element)));
-            }
-        }
     };
 
     std::ostream &operator<<(std::ostream &os, const MfemMeshFunction &meshFunction);

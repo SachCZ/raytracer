@@ -90,7 +90,7 @@ namespace rosetta {
         if (A.m != A.n || A.m != b.m || b.n != 1) throw std::logic_error("Invalid matrix sizes");
         if (this->m != b.m || this->n != b.n) throw std::logic_error("Result must have same size as b");
 
-        if (A(m-1, m-1) == 0){
+        if (std::abs(A(m-1, m-1)) < std::numeric_limits<double>::epsilon()){
             throw std::logic_error("Not a triangular matrix!");
         }
 

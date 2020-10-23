@@ -196,7 +196,7 @@ namespace raytracer {
          * @param id unique identification
          * @param faces
          */
-        explicit Element(int id, std::vector<Face *> faces);
+        explicit Element(int id, std::vector<Face *> faces, std::vector<Point *> points);
 
         /**
          * Retrieve the id

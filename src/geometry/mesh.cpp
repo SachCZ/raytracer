@@ -33,14 +33,16 @@ namespace raytracer {
 
         mfem::Array<int> facesIds;
         mfem::Array<int> _;
+        mfem::Array<int> verticesIds;
 
         if (this->mesh->Dimension() == 2) {
             this->mesh->GetElementEdges(id, facesIds, _);
         } else if (this->mesh->Dimension() == 3) {
             this->mesh->GetElementFaces(id, facesIds, _);
         }
-        std::unique_ptr<Element> element(new Element(id, this->getFacesFromIds(facesIds)));
-        return element;
+        this->mesh->GetElementVertices(id, verticesIds);
+
+        return std::make_unique<Element>(id, this->getFacesFromIds(facesIds), this->getPointsFromIds(verticesIds));
     }
 
     std::unique_ptr<Point> MfemMesh::createPointFromId(int id) const { //TODO refactor this, dimension specific

@@ -11,8 +11,10 @@ int main(int, char *[]) {
     });
 
     LinInterGrad gradient(calcHousGrad(mesh, density));
-    auto refractIndex = calcRefractiveIndex(density, wavelength);
-    SnellsLaw snellsLaw(gradient, *refractIndex);
+    MfemMeshFunction refractIndex(space, [&density, &wavelength](const Element& e){
+        return calcRefractIndex(density.getValue(e), wavelength, 0);
+    });
+    SnellsLaw snellsLaw(gradient, refractIndex);
     auto intersectionSet = findIntersections(
             mesh,
             {Ray{{-0.1, 0.01}, Vector{1, 0.3}}},
@@ -24,5 +26,6 @@ int main(int, char *[]) {
     trajectoryFile << stringifyRaysToMsgpack(intersectionSet);
     std::ofstream meshFile("mesh.mfem");
     meshFile << mesh;
-    std::cout << "Trajectory written to trajectory.msgpack, mesh writen to mesh.mfem" << std::endl;
+    std::ofstream densityFile("density.gf");
+    densityFile << density;
 }

@@ -1,5 +1,6 @@
 #include "numeric.h"
 #include <cmath>
+#include <limits>
 
 namespace raytracer {
     Gaussian::Gaussian(double FWHM, double normalization, double center) :

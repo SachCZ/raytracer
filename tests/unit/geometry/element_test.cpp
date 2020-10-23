@@ -16,8 +16,8 @@ TEST(ElementTest, centroid_is_calculated_properly){
     Face d(3, {&D, &A});
     Face e(4, {&C, &A});
     Face nullFace(5, {&C, &C});
-    Element triangle(1, {&a, &b, &e});
-    Element degenerateQuad(2, {&a, &b, &nullFace, &e});
+    Element triangle(1, {&a, &b, &e}, {&A, &B, &C});
+    Element degenerateQuad(2, {&a, &b, &nullFace, &e}, {&A, &B, &C, &C});
     Point triangleCentroid = getElementCentroid(triangle);
     Point degenerateQuadCentroid = getElementCentroid(degenerateQuad);
     ASSERT_THAT(triangleCentroid, IsSamePoint(degenerateQuadCentroid));

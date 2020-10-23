@@ -51,11 +51,11 @@ public:
 };
 
 TEST_F(AbsorptionTest, controller_does_absorb_energy_according_to_model) {
-    mockAbsorbedEnergy.setValue(Element{0, {}}, 5);
+    mockAbsorbedEnergy.setValue(Element{0, {}, {}}, 5);
     controller.addModel(&mockModel);
     controller.absorb(intersections, initialEnergies, mockAbsorbedEnergy);
 
-    ASSERT_THAT(mockAbsorbedEnergy.getValue(Element(0, {})), DoubleEq(16.2));
+    ASSERT_THAT(mockAbsorbedEnergy.getValue(Element(0, {}, {})), DoubleEq(16.2));
 }
 
 TEST_F(AbsorptionTest, absorption_using_resonance_model_works) {
@@ -64,11 +64,11 @@ TEST_F(AbsorptionTest, absorption_using_resonance_model_works) {
     reflectedMarker.mark(*intersections[0][1].previousElement, intersections[0][1].pointOnFace);
     Resonance resonance(gradient, laser.wavelength, reflectedMarker);
 
-    mockAbsorbedEnergy.setValue(Element{0, {}}, 5);
+    mockAbsorbedEnergy.setValue(Element{0, {}, {}}, 5);
     controller.addModel(&resonance);
     controller.absorb(intersections, initialEnergies, mockAbsorbedEnergy);
 
-    ASSERT_THAT(mockAbsorbedEnergy.getValue(Element(0, {})), DoubleNear(5.48133, 1e-5));
+    ASSERT_THAT(mockAbsorbedEnergy.getValue(Element(0, {}, {})), DoubleNear(5.48133, 1e-5));
 }
 
 TEST(BremssTest, bremsstrahlung_energy_change_is_calculated_properly){
@@ -78,7 +78,7 @@ TEST(BremssTest, bremsstrahlung_energy_change_is_calculated_properly){
     Intersection currentInters;
     prevInters.pointOnFace = PointOnFace{Point(0,0), nullptr, 0};
     currentInters.pointOnFace = PointOnFace{Point(3,0), nullptr, 1};
-    Element element {0, {}};
+    Element element {0, {}, {}};
     currentInters.previousElement = &element;
     auto result = bremsstrahlung.getEnergyChange(prevInters, currentInters, Energy{5});
     ASSERT_THAT(result.asDouble, DoubleEq(5*(1 - std::exp(-2*3))));
@@ -92,7 +92,7 @@ TEST(GainTest, gain_energy_change_is_calculated_properly){
     Intersection currentInters;
     prevInters.pointOnFace = PointOnFace{Point(0,0), nullptr, 0};
     currentInters.pointOnFace = PointOnFace{Point(3,0), nullptr, 1};
-    Element element {0, {}};
+    Element element {0, {}, {}};
     currentInters.previousElement = &element;
     auto result = gain.getEnergyChange(prevInters, currentInters, Energy{5});
     ASSERT_THAT(result.asDouble, DoubleEq(5*(1 - std::exp(2*3))));

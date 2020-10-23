@@ -1,5 +1,6 @@
 #include <cmath>
 #include <set>
+#include <utility>
 #include "geometry_primitives.h"
 
 namespace raytracer {
@@ -78,20 +79,9 @@ namespace raytracer {
         return this->id;
     }
 
-    Element::Element(int id, std::vector<Face *> faces) :
+    Element::Element(int id, std::vector<Face *> faces, std::vector<Point *> points) :
             id(id),
-            faces(std::move(faces)) {
-        //TODO points need to be ordered, this is a horrible solution
-        std::set<Point*> uniquePoints;
-        for (const auto& face : this->faces){
-            const auto& facePoints = face->getPoints();
-            if (uniquePoints.find(facePoints[0]) != uniquePoints.end()) {
-                this->points.emplace_back(facePoints[0]);
-            } else {
-                this->points.emplace_back(facePoints[1]);
-            }
-        }
-    }
+            faces(std::move(faces)), points(std::move(points)) {}
 
     const std::vector<Face *> &Element::getFaces() const {
         return this->faces;

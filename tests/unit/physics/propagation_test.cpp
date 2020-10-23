@@ -10,7 +10,7 @@ using namespace raytracer;
 
 TEST(StopAtDensityTest, returns_true_if_density_at_element_is_bigger_than_given_density_and_vice_versa) {
     MeshFunctionMock density;
-    Element element{0, {}};
+    Element element{0, {}, {}};
     Density criticalDensity{calcCritDens(Length{1315e-7})};
     StopAtDensity stopAtCritical{density, criticalDensity};
 
@@ -22,28 +22,28 @@ TEST(StopAtDensityTest, returns_true_if_density_at_element_is_bigger_than_given_
 }
 
 TEST(DontStopTest, returns_always_false) {
-    ASSERT_THAT(dontStop(Element{0, {}}), false);
+    ASSERT_THAT(dontStop(Element{0, {}, {}}), false);
 }
 
 TEST(ContinueStraightTest, ContinueStraight_returns_always_the_same_direction) {
     ContinueStraight continueStraight;
-    auto result = continueStraight(PointOnFace{}, Vector{0.3, -2}, Element{0, {}}, Element{1, {}});
+    auto result = continueStraight(PointOnFace{}, Vector{0.3, -2}, Element{0, {}, {}}, Element{1, {}, {}});
 
     ASSERT_THAT(result, IsSameVector(Vector{0.3, -2}));
 }
 
 TEST(SnellsLawTest, snells_law_bends_the_ray_as_expected) {
-    Element previousElement{0, {}};
-    Element nextElement{1, {}};
+    Element previousElement{0, {}, {}};
+    Element nextElement{1, {}, {}};
 
-    MeshFunctionMock density;
-
-    density.setValue(previousElement, 0);
-    density.setValue(nextElement, 3.0 / 4.0 * 6.447e20);
+    MeshFunctionMock refractIndex;
+    Length wavelength{1315e-7};
+    refractIndex.setValue(previousElement, calcRefractIndex(0, wavelength, 0));
+    refractIndex.setValue(nextElement, calcRefractIndex(3.0 / 4.0 * 6.447e20, wavelength, 0));
 
     ConstantGradient gradient{Vector{1, 0}};
-    auto refractiveIndex = calcRefractiveIndex(density, Length{1315e-7});
-    SnellsLaw snellsLaw{gradient, *refractiveIndex};
+
+    SnellsLaw snellsLaw{gradient, refractIndex};
     Point pointA{0, 0};
     Point pointD{0, 1};
     Face face{0, {&pointD, &pointA}};
@@ -61,8 +61,8 @@ TEST(SnellsLawTest, snells_law_bends_the_ray_as_expected) {
 }
 
 TEST(SnellsLawTest, reflects_ray_as_expected) {
-    Element previousElement{0, {}};
-    Element nextElement{1, {}};
+    Element previousElement{0, {}, {}};
+    Element nextElement{1, {}, {}};
 
     MeshFunctionMock refractIndex;
     refractIndex.setValue(previousElement, 1);

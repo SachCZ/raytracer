@@ -34,15 +34,19 @@ namespace raytracer {
             gridFunction(mfemGridFunction),
             mfemSpace(mfemSpace) {
         this->init();
-        this->setUsingFunction(mfemSpace.getMesh(), func);
+        for (const auto &element : mfemSpace.getMesh().getElements()) {
+            this->get(*element) = func(getElementCentroid(*element));
+        }
     }
 
-    MeshFunc::Ptr MfemMeshFunction::calcTransformed(const MeshFunc::Transform & func) const {
-        auto result = std::make_unique<MfemMeshFunction>(this->mfemSpace);
-        for (Element *element : mfemSpace.getMesh().getElements()) {
-            result->setValue(*element, func(*element));
+    MfemMeshFunction::MfemMeshFunction(MfemSpace &mfemSpace, const std::function<double(Element)> &func) :
+            mfemGridFunction(&mfemSpace.getSpace()),
+            gridFunction(mfemGridFunction),
+            mfemSpace(mfemSpace) {
+        this->init();
+        for (const auto &element : mfemSpace.getMesh().getElements()) {
+            this->get(*element) = func(*element);
         }
-        return result;
     }
 
     void MfemMeshFunction::init() {
@@ -58,15 +62,17 @@ namespace raytracer {
     }
 
     std::vector<int> MfemMeshFunction::getEleTrueVecInd() {
-        std::vector<int> ids;
         const auto &elements = mfemSpace.getMesh().getElements();
-        ids.reserve(elements.size());
-        std::transform(elements.begin(), elements.end(), std::back_inserter(ids),
-           [](Element *element) {
-               return element->getId();
-           });
-        int resultSize = *std::max_element(ids.begin(), ids.end());
-        std::vector<int> result(resultSize);
+
+        int resultSize = 0;
+        std::for_each(elements.begin(), elements.end(),
+           [&resultSize](Element *element) {
+            if (element->getId() > resultSize){
+                resultSize = element->getId();
+            }
+        });
+
+        std::vector<int> result(resultSize + 1, -1);
 
         for (Element *element : elements) {
             mfem::Array<int> vdofs;

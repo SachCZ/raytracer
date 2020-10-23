@@ -14,9 +14,13 @@ int main(int, char* []){
     Length wavelength{1315e-7};
 
     LinInterGrad gradient(calcHousGrad(mesh, density));
-    auto frequency = calcSpitzerFreq(density, temperature, ionization, wavelength);
-    auto refractIndex = calcRefractiveIndex(density, wavelength, frequency.get());
-    SnellsLaw snellsLaw(gradient, *refractIndex);
+    MfemMeshFunction frequency (space, [&](const Element& e) {
+        return calcSpitzerFreq(density.getValue(e), temperature.getValue(e), ionization.getValue(e), wavelength);
+    });
+    MfemMeshFunction refractIndex(space, [&density](const Element& e){
+        return calcRefractIndex(density.getValue(e), Length{1315e-7}, 0);
+    });
+    SnellsLaw snellsLaw(gradient, refractIndex);
 
     int laserCount = 100000;
     std::vector<Ray> initDirs;
