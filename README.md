@@ -87,7 +87,11 @@ And finaly to write some code using raytracer, include the header in your source
 ## A minimal example
 Here is a short sample code demonstrating how to use raytracer to trace as single ray in
 media with density profile in x direction:
-![Density equation](docs/markdown/density_eq.svg) 
+
+<p align="center">
+  <img src="docs/markdown/density_eq.svg"  alt="Density profile"/>
+</p>
+
 First lets present the code:
 ```c++
 #include <raytracer.h>
