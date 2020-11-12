@@ -3,12 +3,13 @@
 #include "propagation.h"
 #include "refraction.h"
 #include <memory>
+#include <utility>
 #include <utility.h>
 
 namespace raytracer {
-    SnellsLaw::SnellsLaw(const Gradient &gradCalc, const MeshFunc &refractIndex,
+    SnellsLaw::SnellsLaw(Gradient gradCalc, const MeshFunc &refractIndex,
                          Marker *reflectMarker) :
-            gradCalc(gradCalc),
+            gradCalc(std::move(gradCalc)),
             refractIndex(refractIndex),
             reflectMarker(reflectMarker) {}
 
@@ -18,7 +19,7 @@ namespace raytracer {
             const Element &previousElement,
             const Element &nextElement
     ) {
-        auto gradient = gradCalc.get(pointOnFace, previousElement, nextElement);
+        auto gradient = gradCalc(pointOnFace, previousElement, nextElement);
 
         const double n1 = refractIndex.getValue(previousElement);
         const double n2 = refractIndex.getValue(nextElement);

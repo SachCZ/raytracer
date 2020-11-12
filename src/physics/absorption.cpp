@@ -66,7 +66,7 @@ namespace raytracer {
         if (!Resonance::isResonating(*currentIntersection.previousElement, currentIntersection.pointOnFace))
             return Energy{0};
 
-        auto grad = gradientCalculator.get(
+        auto grad = gradientCalculator(
                 currentIntersection.pointOnFace,
                 *currentIntersection.previousElement,
                 *currentIntersection.nextElement

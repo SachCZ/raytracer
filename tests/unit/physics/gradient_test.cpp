@@ -14,8 +14,13 @@ public:
 };
 
 TEST_F(GradientTest, householder_calculates_gradient_correctly){
-    auto gradientAtPoints = calcHousGrad(mesh, density);
-    ASSERT_THAT(gradientAtPoints[mesh.getPoints()[27]], IsSameVector(Vector{12, -7}));
+    auto gradAtPoints = calcHousGrad(mesh, density);
+    ASSERT_THAT(gradAtPoints[mesh.getPoints()[27]], IsSameVector(Vector{12, -7}));
+}
+
+TEST_F(GradientTest, gradient_can_be_calcualted_using_integral_over_stencil){
+    auto gradAtPoints = calcIntegralGrad(mesh, density);
+    ASSERT_THAT(gradAtPoints[mesh.getPoints()[27]], IsSameVector(Vector{12, -7}));
 }
 
 TEST(LinearInterpolationTest, gradinet_can_be_calculated_by_lineary_interpolating){
@@ -25,6 +30,6 @@ TEST(LinearInterpolationTest, gradinet_can_be_calculated_by_lineary_interpolatin
     Face face{0, {&a, &b}};
     PointOnFace pointOnFace{{0.5, 0}, &face, 0};
     Element element{0, {}, {}};
-    auto result = interGrad.get(pointOnFace, element, element);
+    auto result = interGrad(pointOnFace, element, element);
     ASSERT_THAT(result, IsSameVector(Vector{0, 1}));
 }

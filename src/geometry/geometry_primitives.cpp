@@ -116,5 +116,18 @@ namespace raytracer {
             return {centroid_x, centroid_y};
         }
     }
+
+    double getElementVolume(const Element &element) {
+        const auto &points = element.getPoints();
+        if (points.size() != 3) {
+            throw std::logic_error("Not a triangle");
+        }
+        auto a = (*points[1] - *points[0]).getNorm();
+        auto b = (*points[2] - *points[1]).getNorm();
+        auto c = (*points[0] - *points[2]).getNorm();
+        auto s = (a + b + c) / 2;
+
+        return std::sqrt(s * (s - a) * (s - b) * (s - c));
+    }
 }
 

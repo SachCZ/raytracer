@@ -82,7 +82,7 @@ namespace raytracer {
          * @param refractIndex - model
          * @param reflectMarker
          */
-        explicit SnellsLaw(const Gradient &gradCalc, const MeshFunc &refractIndex, Marker *reflectMarker = nullptr);
+        explicit SnellsLaw(Gradient gradCalc, const MeshFunc &refractIndex, Marker *reflectMarker = nullptr);
 
 
         /**
@@ -102,7 +102,7 @@ namespace raytracer {
         );
 
     private:
-        const Gradient &gradCalc;
+        const Gradient gradCalc;
         const MeshFunc &refractIndex;
         Marker *reflectMarker;
     };

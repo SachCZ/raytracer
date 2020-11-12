@@ -53,7 +53,7 @@ namespace raytracer {
 
     ConstantGradient::ConstantGradient(const Vector &gradient) : gradient(gradient) {}
 
-    Vector ConstantGradient::get(
+    Vector ConstantGradient::operator()(
             const PointOnFace &,
             const Element &,
             const Element &
@@ -64,7 +64,7 @@ namespace raytracer {
     H1Gradient::H1Gradient(mfem::GridFunction &h1Function, mfem::Mesh &mesh) :
             h1Function(h1Function), mesh(mesh) {}
 
-    Vector H1Gradient::get(
+    Vector H1Gradient::operator()(
             const PointOnFace &pointOnFace,
             const Element &previousElement,
             const Element &nextElement
@@ -123,7 +123,7 @@ namespace raytracer {
         return h1Function;
     }
 
-    Vector LinInterGrad::get(
+    Vector LinInterGrad::operator()(
             const PointOnFace &pointOnFace,
             const Element &,
             const Element &) const {
@@ -151,6 +151,37 @@ namespace raytracer {
         GradAtPoints result;
         for (const auto &point : mesh.getInnerPoints()) {
             result.insert({point, impl::getGradientAtPoint(mesh, meshFunction, point)});
+        }
+        return result;
+    }
+
+    VectorField calcIntegralGrad(const Mesh &mesh, const MeshFunc &meshFunction) {
+        VectorField result;
+        for (Point* point : mesh.getPoints()){
+            //TODO possibly unordered and that is a huge problem
+            //TODO completely wrong
+            auto elements = mesh.getPointAdjacentElements(point);
+            double grad_x = 0;
+            double grad_y = 0;
+            double volume = 0;
+            for (size_t i = 0; i < elements.size(); i++){
+                size_t next_i = i + 1;
+                if (i == elements.size() - 1){
+                    next_i = 0;
+                }
+                auto element = elements[i];
+                auto nextElement =elements[next_i];
+                auto value = meshFunction.getValue(*element);
+                auto centroid = getElementCentroid(*element);
+                auto nextCentroid = getElementCentroid(*nextElement);
+                grad_x += (nextCentroid.y - centroid.y)*value;
+                grad_y -= (nextCentroid.x - centroid.x)*value;
+                volume += getElementVolume(*element);
+            }
+            volume /= elements[0]->getPoints().size();
+            grad_x /= volume;
+            grad_y /= volume;
+            result[point] = Vector{grad_x, grad_y};
         }
         return result;
     }

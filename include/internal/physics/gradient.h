@@ -2,31 +2,26 @@
 #define RAYTRACER_GRADIENT_H
 
 #include <utility>
+
 #include "mfem.hpp"
 #include <geometry.h>
 
 namespace raytracer {
+    using Gradient = std::function<Vector(
+            const PointOnFace &pointOnFace,
+            const Element &previousElement,
+            const Element &nextElement
+    )>;
+
     /**
-     * Abstract interface to provide a GradientCalculator. To obey this interface implement the
-     * get method.
+     * Vectors at points
      */
-    class Gradient {
-    public:
-        /**
-         * Override this.
-         * @return the gradient at given intersection PointOnFace.
-         */
-        virtual Vector get(
-                const PointOnFace &pointOnFace,
-                const Element &previousElement,
-                const Element &nextElement
-        ) const = 0;
-    };
+    using VectorField = std::map<Point *, Vector>;
 
     /**
      * GradientCalculator that returns a constant Vector no matter what.
      */
-    class ConstantGradient : public Gradient {
+    class ConstantGradient {
     public:
         /**
          * Constructor that takes the Vector that will be returned every time as parameter.
@@ -38,11 +33,11 @@ namespace raytracer {
          * Returns always the same Vector given at construction.
          * @return vector gradient.
          */
-        Vector get(
+        Vector operator()(
                 const PointOnFace &pointOnFace,
                 const Element &previousElement,
                 const Element &nextElement
-        ) const override;
+        ) const;
 
     private:
         const Vector gradient;
@@ -51,7 +46,7 @@ namespace raytracer {
     /**
      * Gradient calculator that stores a grid function defined in H1 space and calculates its gradient.
      * */
-    class H1Gradient : public Gradient {
+    class H1Gradient {
     public:
 
         /**
@@ -60,7 +55,7 @@ namespace raytracer {
          * @param h1Function
          * @param mesh
          */
-        explicit H1Gradient(mfem::GridFunction& h1Function, mfem::Mesh& mesh);
+        explicit H1Gradient(mfem::GridFunction &h1Function, mfem::Mesh &mesh);
 
         /**
          * Return the value of gradient at pointOnFace
@@ -70,15 +65,15 @@ namespace raytracer {
          * @param nextElement
          * @return gradient at given point
          */
-        Vector get(
+        Vector operator()(
                 const PointOnFace &pointOnFace,
                 const Element &previousElement,
                 const Element &nextElement
-        ) const override;
+        ) const;
 
     private:
         mfem::GridFunction h1Function;
-        mfem::Mesh& mesh;
+        mfem::Mesh &mesh;
 
         Vector getGradientAt(const Element &element, const Point &point) const;
     };
@@ -96,19 +91,17 @@ namespace raytracer {
             mfem::FiniteElementSpace &h1Space
     );
 
-    using GradAtPoints = std::map<Point*, Vector>;
-
     /**
      * GradientCalculator using gradient defined at nodal values to calculate gradient at face
      */
-    class LinInterGrad : public Gradient {
+    class LinInterGrad {
     public:
         /**
          * To construct this supply a gradient at points
          * @param gradientAtPoints
          */
-        explicit LinInterGrad(GradAtPoints gradientAtPoints) :
-        gradientAtPoints(std::move(gradientAtPoints)) {}
+        explicit LinInterGrad(VectorField gradientAtPoints) :
+                gradientAtPoints(std::move(gradientAtPoints)) {}
 
         /**
          * Calculate the gradient in a point on a face by linear interpolation of gradient at nodes
@@ -118,14 +111,14 @@ namespace raytracer {
          * @param nextElement
          * @return
          */
-        Vector get(
+        Vector operator()(
                 const PointOnFace &pointOnFace,
                 const Element &previousElement,
                 const Element &nextElement
-        ) const override;
+        ) const;
 
     private:
-        GradAtPoints gradientAtPoints;
+        VectorField gradientAtPoints;
 
         static Vector linearInterpolate(
                 const Point &a,
@@ -142,9 +135,11 @@ namespace raytracer {
      * @param meshFunction to be used to calculate gradient
      * @return gradients at points
      */
-    GradAtPoints calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction);
+    VectorField calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction);
 
-    std::ostream& operator<<(std::ostream& os, const GradAtPoints& gradAtPoints);
+    VectorField calcIntegralGrad(const Mesh &mesh, const MeshFunc &meshFunction);
+
+    std::ostream& operator<<(std::ostream& os, const VectorField& gradAtPoints);
 }
 
 

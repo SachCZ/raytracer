@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <ostream>
+#include <cmath>
 
 /**
  * Namespace of the whole library.
@@ -247,6 +248,8 @@ namespace raytracer {
      * @return centroid
      */
     Point getElementCentroid(const Element &element);
+
+    double getElementVolume(const Element &element);
 }
 
 #endif //RAYTRACER_GEOMETRY_PRIMITIVES_H
