@@ -2,7 +2,6 @@
 #define RAYTRACER_GRADIENT_H
 
 #include <utility>
-
 #include "mfem.hpp"
 #include <geometry.h>
 
@@ -97,6 +96,8 @@ namespace raytracer {
             mfem::FiniteElementSpace &h1Space
     );
 
+    using GradAtPoints = std::map<Point*, Vector>;
+
     /**
      * GradientCalculator using gradient defined at nodal values to calculate gradient at face
      */
@@ -106,7 +107,7 @@ namespace raytracer {
          * To construct this supply a gradient at points
          * @param gradientAtPoints
          */
-        explicit LinInterGrad(std::map<Point *, Vector> gradientAtPoints) :
+        explicit LinInterGrad(GradAtPoints gradientAtPoints) :
         gradientAtPoints(std::move(gradientAtPoints)) {}
 
         /**
@@ -124,7 +125,7 @@ namespace raytracer {
         ) const override;
 
     private:
-        std::map<Point *, Vector> gradientAtPoints;
+        GradAtPoints gradientAtPoints;
 
         static Vector linearInterpolate(
                 const Point &a,
@@ -141,7 +142,9 @@ namespace raytracer {
      * @param meshFunction to be used to calculate gradient
      * @return gradients at points
      */
-    std::map<Point *, Vector> calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction);
+    GradAtPoints calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction);
+
+    std::ostream& operator<<(std::ostream& os, const GradAtPoints& gradAtPoints);
 }
 
 

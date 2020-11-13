@@ -1,5 +1,6 @@
 #include <qr_decomposition.h>
 #include "gradient.h"
+#include <msgpack.hpp>
 
 namespace raytracer {
     namespace impl {
@@ -45,7 +46,8 @@ namespace raytracer {
                 b(index, 0) = weight * meshFunction.getValue(*element);
                 ++index;
             }
-            return solveOverdetermined(A, b);
+            auto result = solveOverdetermined(A, b);
+            return result;
         }
     }
 
@@ -142,15 +144,25 @@ namespace raytracer {
         auto norm2 = (b - a).getNorm2();
         auto xDistFromA2 = (x - a).getNorm2();
         auto factor = std::sqrt(xDistFromA2 / norm2);
-        return valueA + factor*(valueB - valueA);
+        return valueA + factor * (valueB - valueA);
     }
 
-    std::map<Point *, Vector> calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction) {
-        std::map<Point *, Vector> result;
+    GradAtPoints calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction) {
+        GradAtPoints result;
         for (const auto &point : mesh.getPoints()) {
             result.insert({point, impl::getGradientAtPoint(mesh, meshFunction, point)});
         }
         return result;
+    }
+
+    std::ostream &operator<<(std::ostream &os, const GradAtPoints &gradAtPoints) {
+        using namespace std;
+        vector<vector<double>> gradSerialization;
+        for (auto pair : gradAtPoints){
+            gradSerialization.emplace_back(vector<double>{pair.first->x, pair.first->y, pair.second.x, pair.second.y});
+        }
+        msgpack::pack(os, gradSerialization);
+        return os;
     }
 }
 

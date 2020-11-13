@@ -225,6 +225,9 @@ namespace rosetta {
 
     void Vector::rescale_unit() {
         double factor = norm();
+        if (std::abs(factor) < std::numeric_limits<double>::epsilon()){
+            return;
+        }
         rescale(factor);
     }
 
