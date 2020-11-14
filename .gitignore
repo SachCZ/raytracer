@@ -1,11 +1,7 @@
-cmake-build-debug
-cmake-build-release
-cmake-build-coverage
-cmake-build-graphviz
+cmake-build*
+build*
 .idea
 examples/**/data/*
 examples/**/images/*
 !examples/refrection1D/input/mesh.mesh
 !examples/**/data/*.csv
-!samples/minimal_example/*.py
-!samples/minimal_example/*.cpp

@@ -149,7 +149,7 @@ namespace raytracer {
 
     GradAtPoints calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction) {
         GradAtPoints result;
-        for (const auto &point : mesh.getPoints()) {
+        for (const auto &point : mesh.getInnerPoints()) {
             result.insert({point, impl::getGradientAtPoint(mesh, meshFunction, point)});
         }
         return result;
