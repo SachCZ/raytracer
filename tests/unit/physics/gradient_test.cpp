@@ -9,6 +9,7 @@ using namespace raytracer;
 class GradientTest : public Test {
 public:
     MfemMesh mesh{SegmentedLine{100.0, 10}, SegmentedLine{100.0, 10}, mfem::Element::TRIANGLE};
+    MfemMesh quadMesh{SegmentedLine{100.0, 10}, SegmentedLine{100.0, 10}, mfem::Element::QUADRILATERAL};
     MfemL20Space space{mesh};
     MfemMeshFunction density{space, [](const Point& point){return 12 * point.x - 7*point.y;}};
 };
@@ -19,7 +20,7 @@ TEST_F(GradientTest, householder_calculates_gradient_correctly){
 }
 
 TEST_F(GradientTest, gradient_can_be_calcualted_using_integral_over_stencil){
-    auto gradAtPoints = calcIntegralGrad(mesh, density);
+    auto gradAtPoints = calcIntegralGrad(quadMesh, density);
     ASSERT_THAT(gradAtPoints[mesh.getPoints()[27]], IsSameVector(Vector{12, -7}));
 }
 

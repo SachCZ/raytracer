@@ -91,7 +91,7 @@ namespace raytracer {
          * @param generateEdges - see mfem docs
          * @param refine - see mfem docs
          */
-        explicit MfemMesh(const std::string& filename, bool generateEdges = true, bool refine=false);
+        explicit MfemMesh(const std::string &filename, bool generateEdges = true, bool refine = false);
 
         /**
          * Construct a new mfem::Mesh given two sides and element type. Owns the mfem mesh.
@@ -169,7 +169,7 @@ namespace raytracer {
         std::vector<Point *> innerPoints;
         mutable mfem::Table elementToElementTable;
         std::unique_ptr<mfem::Table> vertexToElementTable;
-        std::map<const Point*, std::vector<Element *>> pointsAdjacentElements;
+        std::map<const Point *, std::vector<Element *>> pointsAdjacentElements;
 
         std::unique_ptr<Point> createPointFromId(int id) const;
 
@@ -196,7 +196,7 @@ namespace raytracer {
 
         std::vector<Element *> precalcPointAdjacentElements(const Point *point) const;
 
-        std::map<const Point*, std::vector<Element *>> genPointsAdjacentElements() const;
+        std::map<const Point *, std::vector<Element *>> genPointsAdjacentElements() const;
 
         void init();
     };
@@ -207,7 +207,82 @@ namespace raytracer {
      * @param dt
      * @return
      */
-    std::ostream& operator<<(std::ostream& os, const MfemMesh& mesh);
+    std::ostream &operator<<(std::ostream &os, const MfemMesh &mesh);
+
+    template<typename Component>
+    class IndexedGrid {
+
+    public:
+        IndexedGrid(int xSize, int ySize) : xSize(xSize), ySize(ySize) {}
+
+        std::vector<Component> getAdjComps(const Component &comp) const {
+            std::vector<Component> comps(4);
+            if (!isOnRBord(comp)) {
+                comps.emplace_back(Component{comp.index + 1});
+            }
+            if (!isOnTBord(comp)) {
+                comps.emplace_back(Component{comp.index + xSize});
+            }
+            if (!isOnLBord(comp)) {
+                comps.emplace_back(Component{comp.index - 1});
+            }
+            if (!isOnBBord(comp)) {
+                comps.emplace_back(Component{comp.index - xSize});
+            }
+            return comps;
+        }
+
+        bool isOnRBord(const Component &comp) const {
+            return (comp.index + 1) % xSize;
+        }
+
+        bool isOnTBord(const Component &comp) const {
+            return comp.index >= (xSize * ySize) - xSize;
+        }
+
+        bool isOnLBord(const Component &comp) const {
+            return comp.index % xSize == 0;
+        }
+
+        bool isOnBBord(const Component &comp) const {
+            return comp.index < xSize;
+        }
+
+    private:
+        int xSize;
+        int ySize;
+    };
+
+    struct DevEle {
+        int index;
+    };
+
+    struct Node {
+        int index;
+    };
+
+    class IndexedMesh {
+    public:
+        IndexedMesh(int xSegmentsCount, int ySegmentsCount) :
+                eleGrid(xSegmentsCount, ySegmentsCount), nodeGrid(xSegmentsCount + 1, ySegmentsCount + 1) {}
+
+        std::vector<DevEle> getAdjElements(const DevEle& element) const {
+            return eleGrid.getAdjComps(element);
+        }
+
+        std::vector<DevEle> getAdjElements(const Node& node) const {
+
+        }
+
+        std::vector<Node> getAdjNodes(const Node& node) const {
+            return nodeGrid.getAdjComps(node);
+        }
+
+
+    private:
+        const IndexedGrid<DevEle> eleGrid;
+        const IndexedGrid<Node> nodeGrid;
+    };
 }
 
 
