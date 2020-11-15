@@ -252,37 +252,6 @@ namespace raytracer {
         int xSize;
         int ySize;
     };
-
-    struct DevEle {
-        int index;
-    };
-
-    struct Node {
-        int index;
-    };
-
-    class IndexedMesh {
-    public:
-        IndexedMesh(int xSegmentsCount, int ySegmentsCount) :
-                eleGrid(xSegmentsCount, ySegmentsCount), nodeGrid(xSegmentsCount + 1, ySegmentsCount + 1) {}
-
-        std::vector<DevEle> getAdjElements(const DevEle& element) const {
-            return eleGrid.getAdjComps(element);
-        }
-
-        std::vector<DevEle> getAdjElements(const Node& node) const {
-
-        }
-
-        std::vector<Node> getAdjNodes(const Node& node) const {
-            return nodeGrid.getAdjComps(node);
-        }
-
-
-    private:
-        const IndexedGrid<DevEle> eleGrid;
-        const IndexedGrid<Node> nodeGrid;
-    };
 }
 
 

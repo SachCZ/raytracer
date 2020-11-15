@@ -147,8 +147,8 @@ namespace raytracer {
         return valueA + factor * (valueB - valueA);
     }
 
-    GradAtPoints calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction) {
-        GradAtPoints result;
+    VectorField calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction) {
+        VectorField result;
         for (const auto &point : mesh.getInnerPoints()) {
             result.insert({point, impl::getGradientAtPoint(mesh, meshFunction, point)});
         }
@@ -186,10 +186,10 @@ namespace raytracer {
         return result;
     }
 
-    std::ostream &operator<<(std::ostream &os, const GradAtPoints &gradAtPoints) {
+    std::ostream &operator<<(std::ostream &os, const VectorField &VectorField) {
         using namespace std;
         vector<vector<double>> gradSerialization;
-        for (auto pair : gradAtPoints){
+        for (auto pair : VectorField){
             gradSerialization.emplace_back(vector<double>{pair.first->x, pair.first->y, pair.second.x, pair.second.y});
         }
         msgpack::pack(os, gradSerialization);

@@ -15,13 +15,13 @@ public:
 };
 
 TEST_F(GradientTest, householder_calculates_gradient_correctly){
-    auto gradAtPoints = calcHousGrad(mesh, density);
-    ASSERT_THAT(gradAtPoints[mesh.getPoints()[27]], IsSameVector(Vector{12, -7}));
+    auto VectorField = calcHousGrad(mesh, density);
+    ASSERT_THAT(VectorField[mesh.getPoints()[27]], IsSameVector(Vector{12, -7}));
 }
 
 TEST_F(GradientTest, gradient_can_be_calcualted_using_integral_over_stencil){
-    auto gradAtPoints = calcIntegralGrad(quadMesh, density);
-    ASSERT_THAT(gradAtPoints[mesh.getPoints()[27]], IsSameVector(Vector{12, -7}));
+    auto VectorField = calcIntegralGrad(quadMesh, density);
+    ASSERT_THAT(VectorField[mesh.getPoints()[27]], IsSameVector(Vector{12, -7}));
 }
 
 TEST(LinearInterpolationTest, gradinet_can_be_calculated_by_lineary_interpolating){

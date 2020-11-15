@@ -1,34 +1,23 @@
-import msgpack as msgpack
+import rayvis
 import numpy as np
 from matplotlib import pyplot as plt
 
 
-def analytic(x, y):
+def analytic_fun(x, y):
     return np.divide(0.1, x ** 2 - x + 0.26), np.divide(0.1, y ** 2 - y + 0.26)
 
 
-def plot_vector_field(axes, x, y, field_x, field_y):
-    norm = np.sqrt(field_x ** 2 + field_y ** 2)
-    contour = axes.tricontourf(x, y, norm, levels=1000, cmap="jet")
-    axes.quiver(x, y, field_x, field_y, scale=12 * max(norm), color="white")
-    return contour
-
-
 def main():
-    with open("householder.msgpack", "rb") as data_file:
-        byte_data = data_file.read()
+    with open("householder.msgpack", "rb") as f:
+        vector_field = rayvis.read_vector_field(f)
 
-    data_loaded = np.asarray(msgpack.unpackb(byte_data))
-    x, y, grad_x, grad_y = np.rollaxis(data_loaded, 1)
-    analytic_grad = analytic(x, y)
-    grad_x_error = grad_x - analytic_grad[0]
-    grad_y_error = grad_y - analytic_grad[1]
-    grad_norm = np.sqrt(grad_x ** 2 + grad_y ** 2)
+    error = vector_field - analytic_fun(vector_field.coord_x, vector_field.coord_y)
+    grad_norm = np.asarray(2*[vector_field.norm()])
 
     fig, axes = plt.subplots()
-    contour = plot_vector_field(axes, x, y, grad_x_error / grad_norm * 100, grad_y_error / grad_norm * 100)
-    colorbar = fig.colorbar(contour)
-    colorbar.ax.set_ylabel("$|\\Delta \\vec{G}|$ [%]")
+    contour = rayvis.plot_vector_field(axes, error / grad_norm * np.asarray([100, 100]))
+    color_bar = fig.colorbar(contour)
+    color_bar.ax.set_ylabel("$|\\Delta \\vec{G}|$ [%]")
     plt.show()
 
 

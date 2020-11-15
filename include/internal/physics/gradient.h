@@ -139,7 +139,7 @@ namespace raytracer {
 
     VectorField calcIntegralGrad(const Mesh &mesh, const MeshFunc &meshFunction);
 
-    std::ostream& operator<<(std::ostream& os, const VectorField& gradAtPoints);
+    std::ostream& operator<<(std::ostream& os, const VectorField& VectorField);
 }
 
 
