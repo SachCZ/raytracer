@@ -157,28 +157,32 @@ namespace raytracer {
 
     VectorField calcIntegralGrad(const Mesh &mesh, const MeshFunc &meshFunction) {
         VectorField result;
-        for (Point* point : mesh.getPoints()){
-            //TODO possibly unordered and that is a huge problem
-            //TODO completely wrong
-            auto elements = mesh.getPointAdjacentElements(point);
+        for (Point *point : mesh.getInnerPoints()) {
+
+            const auto& elements = mesh.getPointAdjOrderedElements(point);
+            const auto& points = mesh.getPointAdjOrderedPoints(point);
+
+            if (points.size() != 4){
+                throw std::logic_error("Integral grad is only available for quads");
+            }
+
             double grad_x = 0;
             double grad_y = 0;
             double volume = 0;
-            for (size_t i = 0; i < elements.size(); i++){
-                size_t next_i = i + 1;
-                if (i == elements.size() - 1){
-                    next_i = 0;
+            for (size_t i = 0; i < elements.size(); i++) {
+                size_t nextI = i + 1;
+                if (i == elements.size() - 1) {
+                    nextI = 0;
                 }
                 auto element = elements[i];
-                auto nextElement =elements[next_i];
                 auto value = meshFunction.getValue(*element);
-                auto centroid = getElementCentroid(*element);
-                auto nextCentroid = getElementCentroid(*nextElement);
-                grad_x += (nextCentroid.y - centroid.y)*value;
-                grad_y -= (nextCentroid.x - centroid.x)*value;
+                auto adjPoint = points[i];
+                auto nextAdjPoint = points[nextI];
+                grad_x += (nextAdjPoint->y - adjPoint->y) * value;
+                grad_y -= (nextAdjPoint->x - adjPoint->x) * value;
                 volume += getElementVolume(*element);
             }
-            volume /= elements[0]->getPoints().size();
+            volume /= 2;
             grad_x /= volume;
             grad_y /= volume;
             result[point] = Vector{grad_x, grad_y};
@@ -189,7 +193,7 @@ namespace raytracer {
     std::ostream &operator<<(std::ostream &os, const VectorField &VectorField) {
         using namespace std;
         vector<vector<double>> gradSerialization;
-        for (auto pair : VectorField){
+        for (auto pair : VectorField) {
             gradSerialization.emplace_back(vector<double>{pair.first->x, pair.first->y, pair.second.x, pair.second.y});
         }
         msgpack::pack(os, gradSerialization);

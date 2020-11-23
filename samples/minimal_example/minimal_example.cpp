@@ -15,7 +15,7 @@ int main(int, char *[]) {
         return calcRefractIndex(density.getValue(e), wavelength, 0);
     });
 
-    LinInterGrad gradient(calcHousGrad(mesh, density));
+    LinInterGrad gradient(calcIntegralGrad(mesh, density));
     SnellsLaw snellsLaw(gradient, refractIndex);
     auto intersectionSet = findIntersections(
             mesh,

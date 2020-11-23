@@ -33,7 +33,15 @@ namespace raytracer {
          * @param direction
          * @return
          */
-        virtual Element *getFaceAdjacentElement(const Face *face, const Vector &direction) const = 0;
+        virtual Element *getFaceDirAdjElement(const Face *face, const Vector &direction) const = 0;
+
+        virtual std::pair<Element*, Element*> getFaceAdjElements(const Face *face) const = 0;
+
+        virtual std::vector<Element*> getPointAdjOrderedElements(const Point* point) const = 0;
+
+        virtual std::vector<Face*> getPointAdjOrderedFaces(const Point* point) const = 0;
+
+        virtual std::vector<Point*> getPointAdjOrderedPoints(const Point* point) const = 0;
 
         /**
          * Override this.
@@ -113,7 +121,29 @@ namespace raytracer {
          * @param direction in which to search for elements.
          * @return The Element pointer if found or nullptr if not.
          */
-        Element *getFaceAdjacentElement(const Face *face, const Vector &direction) const override;
+        Element *getFaceDirAdjElement(const Face *face, const Vector &direction) const override;
+
+        std::pair<Element*, Element*> getFaceAdjElements(const Face *face) const override;
+
+        std::vector<Face*> getPointAdjOrderedFaces(const Point* point) const override;
+
+        std::vector<Element*> getPointAdjOrderedElements(const Point* point) const override;
+
+        std::vector<Point*> getPointAdjOrderedPoints(const Point* point) const override{
+            using namespace std;
+            std::vector<Point*> result;
+            auto adjFaces = this->getPointAdjOrderedFaces(point);
+            result.reserve(adjFaces.size());
+            transform(begin(adjFaces), end(adjFaces), back_inserter(result), [&point](const Face* face) {
+                const auto& facePoints = face->getPoints();
+                if (facePoints[0] != point){
+                    return facePoints[0];
+                } else {
+                    return facePoints[1];
+                }
+            });
+            return result;
+        };
 
         /**
          * Given an Element return elements adjacent to this element.
@@ -177,7 +207,6 @@ namespace raytracer {
 
         std::unique_ptr<Element> createElementFromId(int id) const;
 
-
         std::vector<Point *> getPointsFromIds(const mfem::Array<int> &ids) const;
 
         std::vector<Face *> getFacesFromIds(const mfem::Array<int> &ids) const;
@@ -199,6 +228,8 @@ namespace raytracer {
         std::map<const Point *, std::vector<Element *>> genPointsAdjacentElements() const;
 
         void init();
+
+        static std::pair<Face*, Face*> getSharedFaces(const Point* point, const Element& element);
     };
 
     /**
@@ -208,50 +239,6 @@ namespace raytracer {
      * @return
      */
     std::ostream &operator<<(std::ostream &os, const MfemMesh &mesh);
-
-    template<typename Component>
-    class IndexedGrid {
-
-    public:
-        IndexedGrid(int xSize, int ySize) : xSize(xSize), ySize(ySize) {}
-
-        std::vector<Component> getAdjComps(const Component &comp) const {
-            std::vector<Component> comps(4);
-            if (!isOnRBord(comp)) {
-                comps.emplace_back(Component{comp.index + 1});
-            }
-            if (!isOnTBord(comp)) {
-                comps.emplace_back(Component{comp.index + xSize});
-            }
-            if (!isOnLBord(comp)) {
-                comps.emplace_back(Component{comp.index - 1});
-            }
-            if (!isOnBBord(comp)) {
-                comps.emplace_back(Component{comp.index - xSize});
-            }
-            return comps;
-        }
-
-        bool isOnRBord(const Component &comp) const {
-            return (comp.index + 1) % xSize;
-        }
-
-        bool isOnTBord(const Component &comp) const {
-            return comp.index >= (xSize * ySize) - xSize;
-        }
-
-        bool isOnLBord(const Component &comp) const {
-            return comp.index % xSize == 0;
-        }
-
-        bool isOnBBord(const Component &comp) const {
-            return comp.index < xSize;
-        }
-
-    private:
-        int xSize;
-        int ySize;
-    };
 }
 
 

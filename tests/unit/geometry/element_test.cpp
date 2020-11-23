@@ -4,6 +4,7 @@
 #include "../../support/matchers.h"
 
 using namespace raytracer;
+using namespace testing;
 
 TEST(ElementTest, centroid_is_calculated_properly){
     Point A{0, 0};
@@ -21,4 +22,22 @@ TEST(ElementTest, centroid_is_calculated_properly){
     Point triangleCentroid = getElementCentroid(triangle);
     Point degenerateQuadCentroid = getElementCentroid(degenerateQuad);
     ASSERT_THAT(triangleCentroid, IsSamePoint(degenerateQuadCentroid));
+}
+
+TEST(ElementTest, volume_is_calculated_properly){
+    Point A{-3, -2};
+    Point B{-1, 4};
+    Point C{6, 1};
+    Point D{3, 10};
+    Point E{-4, 9};
+
+    Face a(0, {&A, &B});
+    Face b(1, {&B, &C});
+    Face c(2, {&C, &D});
+    Face d(3, {&D, &E});
+    Face e(4, {&E, &A});
+
+    Element concavePolygon(0, {&a, &b, &c, &d, &e}, {&A, &B, &C, &D, &E});
+    auto area = getElementVolume(concavePolygon);
+    ASSERT_THAT(area, DoubleEq(60));
 }

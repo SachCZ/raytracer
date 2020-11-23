@@ -124,16 +124,14 @@ namespace raytracer {
         return result;
     }
 
-    Element *MfemMesh::getFaceAdjacentElement(const Face *face, const Vector &direction) const {
-        int elementA, elementB;
-        this->mesh->GetFaceElements(face->getId(), &elementA, &elementB);
-
+    Element *MfemMesh::getFaceDirAdjElement(const Face *face, const Vector &direction) const {
+        auto adjacent = getFaceAdjElements(face);
         auto normal = face->getNormal();
 
         if (normal * direction < 0) {
-            return this->getElementFromId(elementA);
+            return adjacent.first;
         } else {
-            return this->getElementFromId(elementB);
+            return adjacent.second;
         }
     }
 
@@ -235,6 +233,76 @@ namespace raytracer {
 
     std::vector<Element *> MfemMesh::getPointAdjacentElements(const Point *point) const {
         return pointsAdjacentElements.at(point);
+    }
+
+    std::pair<Element *, Element *> MfemMesh::getFaceAdjElements(const Face *face) const {
+        int elementA, elementB;
+        this->mesh->GetFaceElements(face->getId(), &elementA, &elementB);
+
+        return {getElementFromId(elementA), getElementFromId(elementB)};
+    }
+
+    std::pair<Face *, Face *> MfemMesh::getSharedFaces(const Point *point, const Element &element) {
+        std::pair<Face*, Face*> result{};
+        for (auto face : element.getFaces()) {
+            const auto &_points = face->getPoints();
+            if (point == _points[0] || point == _points[1]) {
+                if (result.first == nullptr) {
+                    result.first = face;
+                } else if (result.second == nullptr) {
+                    result.second = face;
+                    return result;
+                }
+            }
+        }
+        throw std::logic_error("Unreachable code!");
+    }
+
+    std::vector<Face *> MfemMesh::getPointAdjOrderedFaces(const Point *point) const {
+        auto adjElements = this->getPointAdjacentElements(point);
+        std::vector<Face *> orderedFaces;
+        orderedFaces.reserve(adjElements.size());
+
+        std::set<Face *> visitedFaces;
+        auto currentElement = adjElements[0];
+        while (true) {
+            auto adjFaces = getSharedFaces(point, *currentElement);
+            Face* chosenFace{};
+            if (visitedFaces.find(adjFaces.first) == visitedFaces.end()) {
+                chosenFace = adjFaces.first;
+            } else if (visitedFaces.find(adjFaces.second) == visitedFaces.end()){
+                chosenFace = adjFaces.second;
+            } else {
+                break;
+            }
+            visitedFaces.emplace(chosenFace);
+            orderedFaces.emplace_back(chosenFace);
+
+            auto adj = this->getFaceAdjElements(chosenFace);
+            currentElement = adj.first != currentElement ? adj.first : adj.second;
+        }
+        return orderedFaces;
+    }
+
+    std::vector<Element *> MfemMesh::getPointAdjOrderedElements(const Point *point) const {
+        using namespace std;
+        std::vector<Element*> result;
+        auto adjFaces = getPointAdjOrderedFaces(point);
+        std::set<Element*> visitedElements;
+        for (auto it = begin(adjFaces); it != end(adjFaces); it++){
+            auto nextIt = next(it);
+            if (nextIt == end(adjFaces)){
+                nextIt = begin(adjFaces);
+            }
+            auto adjEle1 = this->getFaceAdjElements(*it);
+            auto adjEle2 = this->getFaceAdjElements(*nextIt);
+            if (adjEle1.first == adjEle2.first || adjEle1.first == adjEle2.second){
+                result.emplace_back(adjEle1.first);
+            } else {
+                result.emplace_back(adjEle1.second);
+            }
+        }
+        return result;
     }
 
     std::ostream &operator<<(std::ostream &os, const MfemMesh &mesh) {

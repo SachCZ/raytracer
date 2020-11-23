@@ -128,7 +128,7 @@ namespace raytracer {
             throw std::logic_error("No intersection found! Did you miss the target?");
 
         Intersection previousIntersection{};
-        previousIntersection.nextElement = mesh.getFaceAdjacentElement(
+        previousIntersection.nextElement = mesh.getFaceDirAdjElement(
                 initialPointOnFace->face,
                 initialDirection.direction
         );
@@ -146,7 +146,7 @@ namespace raytracer {
                     *previousIntersection.nextElement
             );
 
-            auto nextElementForDirection = mesh.getFaceAdjacentElement( //NextElement
+            auto nextElementForDirection = mesh.getFaceDirAdjElement( //NextElement
                     nextPointOnFace.face,
                     previousIntersection.direction
             );
@@ -160,7 +160,7 @@ namespace raytracer {
                 );
             }
 
-            auto nextElementToGo = mesh.getFaceAdjacentElement(
+            auto nextElementToGo = mesh.getFaceDirAdjElement(
                     nextPointOnFace.face,
                     direction
             );

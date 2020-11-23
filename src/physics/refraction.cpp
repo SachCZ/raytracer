@@ -19,7 +19,12 @@ namespace raytracer {
             const Element &previousElement,
             const Element &nextElement
     ) {
-        auto gradient = gradCalc(pointOnFace, previousElement, nextElement);
+        Vector gradient{};
+        try {
+            gradient = gradCalc(pointOnFace, previousElement, nextElement);
+        } catch (const std::logic_error& error) {
+            return previousDirection;
+        }
 
         const double n1 = refractIndex.getValue(previousElement);
         const double n2 = refractIndex.getValue(nextElement);

@@ -16,7 +16,7 @@ public:
 
 TEST_F(MfemMeshFunctionTest, MfemMeshFunction_value_can_be_retrieved_given_an_element) {
     auto boundary = mesh.getBoundary();
-    auto element = mesh.getFaceAdjacentElement(boundary[0], Vector(0, 1));
+    auto element = mesh.getFaceDirAdjElement(boundary[0], Vector(0, 1));
 
     auto value = meshFunction.getValue(*element);
     ASSERT_THAT(value, DoubleEq(12.8e20 / 4));
@@ -24,7 +24,7 @@ TEST_F(MfemMeshFunctionTest, MfemMeshFunction_value_can_be_retrieved_given_an_el
 
 TEST_F(MfemMeshFunctionTest, MfemMeshFunction_value_can_be_set_given_an_element) {
     auto boundary = mesh.getBoundary();
-    auto element = mesh.getFaceAdjacentElement(boundary[0], Vector(0, 1));
+    auto element = mesh.getFaceDirAdjElement(boundary[0], Vector(0, 1));
 
     meshFunction.addValue(*element, 12.8e20 / 4);
     auto value = meshFunction.getValue(*element);

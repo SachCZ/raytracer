@@ -118,16 +118,18 @@ namespace raytracer {
     }
 
     double getElementVolume(const Element &element) {
+        using namespace std;
         const auto &points = element.getPoints();
-        if (points.size() != 3) {
-            throw std::logic_error("Not a triangle");
+        //TODO points must be ordered
+        double sum = 0;
+        for (auto it = begin(points); it != end(points); ++it){
+            auto nextIt = next(it);
+            auto prevIt = prev(it);
+            if (it == begin(points)) prevIt = --end(points);
+            if (nextIt == end(points)) nextIt = begin(points);
+            sum += (*it)->x * (*nextIt)->y - (*it)->x * (*prevIt)->y;
         }
-        auto a = (*points[1] - *points[0]).getNorm();
-        auto b = (*points[2] - *points[1]).getNorm();
-        auto c = (*points[0] - *points[2]).getNorm();
-        auto s = (a + b + c) / 2;
-
-        return std::sqrt(s * (s - a) * (s - b) * (s - c));
+        return abs(sum) / 2;
     }
 }
 
