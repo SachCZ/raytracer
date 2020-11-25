@@ -14,8 +14,11 @@ def main():
     error = vector_field - analytic_fun(vector_field.coord_x, vector_field.coord_y)
     grad_norm = np.asarray(2*[vector_field.norm()])
 
+    with open("dualMesh.mfem") as f:
+        dual_mesh = rayvis.read_mfem_mesh(f)
+
     fig, axes = plt.subplots()
-    contour = rayvis.plot_vector_field(axes, error / grad_norm * np.asarray([100, 100]))
+    contour = rayvis.plot_vector_field(axes, error / grad_norm * np.asarray([100, 100]), dual_mesh)
     color_bar = fig.colorbar(contour)
     color_bar.ax.set_ylabel("$|\\Delta \\vec{G}|$ [%]")
     plt.show()

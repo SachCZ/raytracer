@@ -309,4 +309,40 @@ namespace raytracer {
         mesh.getMfemMesh()->Print(os);
         return os;
     }
+
+    std::ostream &writeDualMesh(std::ostream &os, const Mesh &mesh) {
+        using namespace std;
+        stringstream vertices;
+        const auto& elements = mesh.getElements();
+
+        vertices << "vertices\n" << elements.size() << "\n2\n";
+        for (const Element* element : elements){
+            vertices << getElementCentroid(*element) << "\n";
+        }
+        const auto& points = mesh.getInnerPoints();
+        stringstream elementsString;
+        elementsString << "elements\n" << points.size() << "\n";
+        for (const Point* point : mesh.getInnerPoints()){
+            auto adjacentElements = mesh.getPointAdjacentElements(point);
+            std::string elementPrefix;
+            if (adjacentElements.size() == 3){
+                elementPrefix = "1 2";
+            } else if (adjacentElements.size() == 4){
+                elementPrefix = "1 3";
+            } else {
+                throw logic_error("Unsupported element type!");
+            }
+            elementsString << elementPrefix;
+            for (const Element* element : adjacentElements){
+                elementsString << " " << element->getId();
+            }
+            elementsString << "\n";
+        }
+
+        os << "MFEM mesh v1.0\n\ndimension\n2\n\n";
+        os << elementsString.str() << "\n\n";
+        os << "boundary\n0\n\n";
+        os << vertices.str();
+        return os;
+    }
 }
