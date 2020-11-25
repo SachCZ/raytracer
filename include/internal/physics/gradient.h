@@ -137,6 +137,14 @@ namespace raytracer {
      */
     VectorField calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction);
 
+    /**
+     * Calculate the gradient in inner points of the mesh using integral over a curve.
+     * This is a classic version assuming curve connecting centers of adjacent points.
+     * It is only available for quadrilateral meshes
+     * @param mesh
+     * @param meshFunction which gradient is to be calculated
+     * @return gradients at points
+     */
     VectorField calcIntegralGrad(const Mesh &mesh, const MeshFunc &meshFunction);
 
     std::ostream& operator<<(std::ostream& os, const VectorField& VectorField);

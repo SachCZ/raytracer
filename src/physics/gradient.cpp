@@ -155,19 +155,21 @@ namespace raytracer {
         return result;
     }
 
+    bool isQuadMesh(const Mesh& mesh){
+        return mesh.getElements()[0]->getPoints().size() == 4;
+    }
+
     VectorField calcIntegralGrad(const Mesh &mesh, const MeshFunc &meshFunction) {
         VectorField result;
-        for (Point *point : mesh.getInnerPoints()) {
 
+        if (!isQuadMesh(mesh)) throw std::logic_error("Integral grad is only available for quads");
+
+        for (Point *point : mesh.getInnerPoints()) {
             const auto& elements = mesh.getPointAdjOrderedElements(point);
             const auto& points = mesh.getPointAdjOrderedPoints(point);
 
-            if (points.size() != 4){
-                throw std::logic_error("Integral grad is only available for quads");
-            }
-
-            double grad_x = 0;
-            double grad_y = 0;
+            double gradX = 0;
+            double gradY = 0;
             double volume = 0;
             for (size_t i = 0; i < elements.size(); i++) {
                 size_t nextI = i + 1;
@@ -178,14 +180,14 @@ namespace raytracer {
                 auto value = meshFunction.getValue(*element);
                 auto adjPoint = points[i];
                 auto nextAdjPoint = points[nextI];
-                grad_x += (nextAdjPoint->y - adjPoint->y) * value;
-                grad_y -= (nextAdjPoint->x - adjPoint->x) * value;
+                gradX += (nextAdjPoint->y - adjPoint->y) * value;
+                gradY -= (nextAdjPoint->x - adjPoint->x) * value;
                 volume += getElementVolume(*element);
             }
             volume /= 2;
-            grad_x /= volume;
-            grad_y /= volume;
-            result[point] = Vector{grad_x, grad_y};
+            gradX /= volume;
+            gradY /= volume;
+            result[point] = Vector{gradX, gradY};
         }
         return result;
     }
