@@ -192,10 +192,15 @@ namespace raytracer {
         return result;
     }
 
-    std::ostream &operator<<(std::ostream &os, const VectorField &VectorField) {
+    std::ostream &operator<<(std::ostream &os, const VectorField& vectorField) {
         using namespace std;
+        vector<pair<Point*, Vector>> pairs(begin(vectorField), end(vectorField));
+        sort(begin(pairs), end(pairs), [](auto pairA, auto pairB){
+            return pairA.first->id < pairB.first->id;
+        });
         vector<vector<double>> gradSerialization;
-        for (auto pair : VectorField) {
+        gradSerialization.reserve(pairs.size());
+        for (auto pair : pairs) {
             gradSerialization.emplace_back(vector<double>{pair.first->x, pair.first->y, pair.second.x, pair.second.y});
         }
         msgpack::pack(os, gradSerialization);

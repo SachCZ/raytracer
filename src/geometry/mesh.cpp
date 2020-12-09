@@ -48,7 +48,7 @@ namespace raytracer {
     std::unique_ptr<Point> MfemMesh::createPointFromId(int id) const { //TODO refactor this, dimension specific
         double coords[2];
         mesh->GetNode(id, coords);
-        return std::make_unique<Point>(coords[0], coords[1]);
+        return std::make_unique<Point>(coords[0], coords[1], id);
     }
 
     std::vector<Point *> MfemMesh::getPointsFromIds(const mfem::Array<int> &ids) const {

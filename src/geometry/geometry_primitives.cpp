@@ -6,7 +6,7 @@
 namespace raytracer {
     Point::Point(const Vector &vector) : x(vector.x), y(vector.y) {}
 
-    Point::Point(double x, double y) : x(x), y(y) {}
+    Point::Point(double x, double y, int id) : x(x), y(y), id(id) {}
 
     Vector operator-(Point A, Point B) {
         return {A.x - B.x, A.y - B.y};
@@ -38,7 +38,7 @@ namespace raytracer {
     }
 
     std::ostream &operator<<(std::ostream &os, const Vector &vector) {
-        os << "(" <<vector.x << ", " << vector.y << ')';
+        os << "(" << vector.x << ", " << vector.y << ')';
         return os;
     }
 
@@ -47,7 +47,7 @@ namespace raytracer {
     }
 
     double Vector::getNorm2() const {
-        return x*x + y*y;
+        return x * x + y * y;
     }
 
     Vector::Vector(const Point &point) : x(point.x), y(point.y) {}
@@ -100,17 +100,17 @@ namespace raytracer {
             double sum_x = 0;
             double sum_y = 0;
             double sum_area = 0;
-            for (uint i = 0; i < points.size(); i++){
+            for (uint i = 0; i < points.size(); i++) {
                 uint next = i == points.size() - 1 ? 0 : i + 1;
                 auto xi = points[i]->x;
                 auto xip1 = points[next]->x;
                 auto yi = points[i]->y;
                 auto yip1 = points[next]->y;
-                sum_x += (xi + xip1)*(xi * yip1 - xip1*yi);
-                sum_y += (yi + yip1)*(xi * yip1 - xip1*yi);
-                sum_area += xi * yip1 - xip1*yi;
+                sum_x += (xi + xip1) * (xi * yip1 - xip1 * yi);
+                sum_y += (yi + yip1) * (xi * yip1 - xip1 * yi);
+                sum_area += xi * yip1 - xip1 * yi;
             }
-            double signed_area = 1.0/2.0*sum_area;
+            double signed_area = 1.0 / 2.0 * sum_area;
             double centroid_x = 1.0 / 6.0 / signed_area * sum_x;
             double centroid_y = 1.0 / 6.0 / signed_area * sum_y;
             return {centroid_x, centroid_y};
@@ -122,7 +122,7 @@ namespace raytracer {
         const auto &points = element.getPoints();
         //TODO points must be ordered
         double sum = 0;
-        for (auto it = begin(points); it != end(points); ++it){
+        for (auto it = begin(points); it != end(points); ++it) {
             auto nextIt = next(it);
             auto prevIt = prev(it);
             if (it == begin(points)) prevIt = --end(points);

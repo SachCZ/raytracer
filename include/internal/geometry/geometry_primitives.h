@@ -21,18 +21,20 @@ namespace raytracer {
         explicit Point(const Vector &vector);
 
         /** Can be constructed from coords */
-        Point(double x, double y);
+        Point(double x, double y, int id = 0);
 
         Point() = default;
 
         /**
          * x coordinate
          */
-        double x;
+        double x{};
         /**
          * y coordinate
          */
-        double y;
+        double y{};
+
+        int id{};
     };
 
 
