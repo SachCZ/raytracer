@@ -224,8 +224,8 @@ namespace raytracer {
     }
 
     std::map<const Point *, std::vector<Element *>> MfemMesh::genPointsAdjacentElements() const {
-        std::map<const Point*, std::vector<Element *>> result;
-        for (const Point* point: this->getPoints()){
+        std::map<const Point *, std::vector<Element *>> result;
+        for (const Point *point: this->getPoints()) {
             result[point] = precalcPointAdjacentElements(point);
         }
         return result;
@@ -243,7 +243,7 @@ namespace raytracer {
     }
 
     std::pair<Face *, Face *> MfemMesh::getSharedFaces(const Point *point, const Element &element) {
-        std::pair<Face*, Face*> result{};
+        std::pair<Face *, Face *> result{};
         for (auto face : element.getFaces()) {
             const auto &_points = face->getPoints();
             if (point == _points[0] || point == _points[1]) {
@@ -258,6 +258,12 @@ namespace raytracer {
         throw std::logic_error("Unreachable code!");
     }
 
+    double calcAngleACB(const Point &a, const Point &c, const Point &b) {
+        auto dirA = std::atan2(a.y - c.y, a.x -c.x);
+        auto dirB = std::atan2(b.y - c.y, b.x - c.x);
+        return dirA - dirB;
+    }
+
     std::vector<Face *> MfemMesh::getPointAdjOrderedFaces(const Point *point) const {
         auto adjElements = this->getPointAdjacentElements(point);
         std::vector<Face *> orderedFaces;
@@ -267,10 +273,10 @@ namespace raytracer {
         auto currentElement = adjElements[0];
         while (true) {
             auto adjFaces = getSharedFaces(point, *currentElement);
-            Face* chosenFace{};
+            Face *chosenFace{};
             if (visitedFaces.find(adjFaces.first) == visitedFaces.end()) {
                 chosenFace = adjFaces.first;
-            } else if (visitedFaces.find(adjFaces.second) == visitedFaces.end()){
+            } else if (visitedFaces.find(adjFaces.second) == visitedFaces.end()) {
                 chosenFace = adjFaces.second;
             } else {
                 break;
@@ -281,22 +287,50 @@ namespace raytracer {
             auto adj = this->getFaceAdjElements(chosenFace);
             currentElement = adj.first != currentElement ? adj.first : adj.second;
         }
+        //determine if clockwise
+        auto pointsA = orderedFaces[0]->getPoints();
+        auto pointsB = orderedFaces[1]->getPoints();
+
+        Point a{}, b{}, c{};
+
+        if (pointsA[0] == pointsB[0]) {
+            c = *pointsA[0];
+            a = *pointsA[1];
+            b = *pointsB[1];
+        } else if (pointsA[1] == pointsB[0]) {
+            c = *pointsA[1];
+            a = *pointsA[0];
+            b = *pointsB[1];
+        } else if (pointsA[0] == pointsB[1]) {
+            c = *pointsA[0];
+            a = *pointsA[1];
+            b = *pointsB[0];
+        } else if (pointsA[1] == pointsB[1]) {
+            c = *pointsA[1];
+            a = *pointsA[0];
+            b = *pointsB[0];
+        } else {
+            throw std::logic_error("Invalid faces");
+        }
+        if (calcAngleACB(a, c, b) > 0) {
+            std::reverse(std::begin(orderedFaces), std::end(orderedFaces));
+        }
         return orderedFaces;
     }
 
     std::vector<Element *> MfemMesh::getPointAdjOrderedElements(const Point *point) const {
         using namespace std;
-        std::vector<Element*> result;
+        std::vector<Element *> result;
         auto adjFaces = getPointAdjOrderedFaces(point);
-        std::set<Element*> visitedElements;
-        for (auto it = begin(adjFaces); it != end(adjFaces); it++){
+        std::set<Element *> visitedElements;
+        for (auto it = begin(adjFaces); it != end(adjFaces); it++) {
             auto nextIt = next(it);
-            if (nextIt == end(adjFaces)){
+            if (nextIt == end(adjFaces)) {
                 nextIt = begin(adjFaces);
             }
             auto adjEle1 = this->getFaceAdjElements(*it);
             auto adjEle2 = this->getFaceAdjElements(*nextIt);
-            if (adjEle1.first == adjEle2.first || adjEle1.first == adjEle2.second){
+            if (adjEle1.first == adjEle2.first || adjEle1.first == adjEle2.second) {
                 result.emplace_back(adjEle1.first);
             } else {
                 result.emplace_back(adjEle1.second);
@@ -313,27 +347,27 @@ namespace raytracer {
     std::ostream &writeDualMesh(std::ostream &os, const Mesh &mesh) {
         using namespace std;
         stringstream vertices;
-        const auto& elements = mesh.getElements();
+        const auto &elements = mesh.getElements();
 
         vertices << "vertices\n" << elements.size() << "\n2\n";
-        for (const Element* element : elements){
+        for (const Element *element : elements) {
             vertices << getElementCentroid(*element) << "\n";
         }
-        const auto& points = mesh.getInnerPoints();
+        const auto &points = mesh.getInnerPoints();
         stringstream elementsString;
         elementsString << "elements\n" << points.size() << "\n";
-        for (const Point* point : mesh.getInnerPoints()){
+        for (const Point *point : mesh.getInnerPoints()) {
             auto adjacentElements = mesh.getPointAdjacentElements(point);
             std::string elementPrefix;
-            if (adjacentElements.size() == 3){
+            if (adjacentElements.size() == 3) {
                 elementPrefix = "1 2";
-            } else if (adjacentElements.size() == 4){
+            } else if (adjacentElements.size() == 4) {
                 elementPrefix = "1 3";
             } else {
                 throw logic_error("Unsupported element type!");
             }
             elementsString << elementPrefix;
-            for (const Element* element : adjacentElements){
+            for (const Element *element : adjacentElements) {
                 elementsString << " " << element->getId();
             }
             elementsString << "\n";
