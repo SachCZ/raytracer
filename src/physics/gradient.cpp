@@ -87,40 +87,63 @@ namespace raytracer {
         return {result[0], result[1]};
     }
 
-    mfem::GridFunction projectL2toH1(
-            mfem::GridFunction &l2Function,
+
+
+    VectorField mfemGradient(
+            mfem::GridFunction &rho,
             mfem::FiniteElementSpace &l2Space,
-            mfem::FiniteElementSpace &h1Space
+            mfem::FiniteElementSpace &h1Space,
+            const MfemMesh& mesh,
+            mfem::VectorCoefficient& boundaryValue
     ) {
-        mfem::Array<int> attr(4);
-        attr[0] = 1; //attr 1
-        attr[1] = 0;
-        attr[2] = 1;
-        attr[3] = 0;
+        mfem::Array<int> ess_tdof_list, ess_bdr(mesh.getMfemMesh()->bdr_attributes.Max());
+        ess_bdr = 1;
+        h1Space.GetEssentialTrueDofs(ess_bdr, ess_tdof_list);
 
-        mfem::GridFunctionCoefficient l2FunctionCoefficient(&l2Function);
-        mfem::GridFunction h1Function(&h1Space);
-        h1Function = 0;
-        h1Function.ProjectCoefficient(l2FunctionCoefficient);
+        mfem::GridFunction x(&h1Space);
+        x.ProjectCoefficient(boundaryValue);
 
-        mfem::MixedBilinearForm B(&l2Space, &h1Space);
-        B.AddDomainIntegrator(new mfem::MixedScalarMassIntegrator);
-        B.Assemble();
-        B.Finalize();
+        mfem::ConstantCoefficient coeff(-1);
+        mfem::MixedBilinearForm right_hand_side(&h1Space, &l2Space);
+        right_hand_side.AddDomainIntegrator(new mfem::VectorDivergenceIntegrator(coeff));
+        right_hand_side.Assemble();
+        right_hand_side.Finalize();
         mfem::LinearForm b(&h1Space);
-        B.Mult(l2Function, b);
+        right_hand_side.MultTranspose(rho, b);
 
-        mfem::BilinearForm A(&h1Space);
-        A.AddDomainIntegrator(new mfem::MassIntegrator);
-        A.Assemble();
-        A.EliminateEssentialBC(attr, h1Function, b);
-        A.Finalize();
+        mfem::BilinearForm a(&h1Space);
+        a.AddDomainIntegrator(new mfem::VectorMassIntegrator);
+        a.Assemble();
+        a.Finalize();
 
-        mfem::GSSmoother smoother(A.SpMat());
+        mfem::SparseMatrix A;
+        mfem::Vector B, X;
+        a.FormLinearSystem(ess_tdof_list, x, b, A, X, B);
 
-        mfem::PCG(A, smoother, b, h1Function);
+        mfem::GSSmoother smoother(A);
 
-        return h1Function;
+        mfem::PCG(A, smoother, B, X);
+        a.RecoverFEMSolution(X, b, x);
+
+        char vishost[] = "localhost";
+        int  visport   = 19916;
+        mfem::socketstream sol_sock(vishost, visport);
+        sol_sock.precision(8);
+        sol_sock << "solution\n" << mesh.getMfemMesh() << x << std::flush;
+
+        x.ReorderByNodes();
+        mfem::Vector trueVector;
+        x.GetTrueDofs(trueVector);
+        trueVector.Print();
+        auto dimSize = x.Size() / x.VectorDim();
+
+        VectorField result;
+        const auto& points = mesh.getInnerPoints();
+        for(Point* point : points){
+            result[point] = Vector{trueVector[point->id], trueVector[dimSize + point->id]};
+        }
+
+        return result;
     }
 
     Vector LinInterGrad::operator()(

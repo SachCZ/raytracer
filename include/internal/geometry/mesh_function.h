@@ -110,6 +110,10 @@ namespace raytracer {
 
         explicit MfemMeshFunction(MfemSpace &mfemSpace, const std::function<double(Element)> &func);
 
+        mfem::GridFunction* getGF(){
+            return &this->mfemGridFunction;
+        }
+
         /**
          * By default initialize to 0
          * @param mfemSpace

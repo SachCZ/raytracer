@@ -80,15 +80,17 @@ namespace raytracer {
 
     /**
      * Take L2 GridFunction and project it on new H1 GridFunction
-     * @param l2Function
+     * @param rho
      * @param l2Space
      * @param h1Space
      * @return
      */
-    mfem::GridFunction projectL2toH1(
-            mfem::GridFunction &l2Function,
+    VectorField mfemGradient(
+            mfem::GridFunction &rho,
             mfem::FiniteElementSpace &l2Space,
-            mfem::FiniteElementSpace &h1Space
+            mfem::FiniteElementSpace &h1Space,
+            const MfemMesh& mesh,
+            mfem::VectorCoefficient& boundaryValue
     );
 
     /**
