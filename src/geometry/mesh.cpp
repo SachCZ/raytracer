@@ -258,12 +258,6 @@ namespace raytracer {
         throw std::logic_error("Unreachable code!");
     }
 
-    double calcAngleACB(const Point &a, const Point &c, const Point &b) {
-        auto dirA = std::atan2(a.y - c.y, a.x -c.x);
-        auto dirB = std::atan2(b.y - c.y, b.x - c.x);
-        return dirA - dirB;
-    }
-
     std::vector<Face *> MfemMesh::getPointAdjOrderedFaces(const Point *point) const {
         auto adjElements = this->getPointAdjacentElements(point);
         std::vector<Face *> orderedFaces;
@@ -288,33 +282,16 @@ namespace raytracer {
             currentElement = adj.first != currentElement ? adj.first : adj.second;
         }
         //determine if clockwise
-        auto pointsA = orderedFaces[0]->getPoints();
-        auto pointsB = orderedFaces[1]->getPoints();
+        auto a = orderedFaces[0]->getPoints()[0]->id == point->id ? orderedFaces[0]->getPoints()[1] : orderedFaces[0]->getPoints()[0];
+        auto b = orderedFaces[1]->getPoints()[0]->id == point->id ? orderedFaces[1]->getPoints()[1] : orderedFaces[1]->getPoints()[0];
 
-        Point a{}, b{}, c{};
+        auto vecA = Vector(*a - *point);
+        auto vecB = Vector(*b - *point);
 
-        if (pointsA[0] == pointsB[0]) {
-            c = *pointsA[0];
-            a = *pointsA[1];
-            b = *pointsB[1];
-        } else if (pointsA[1] == pointsB[0]) {
-            c = *pointsA[1];
-            a = *pointsA[0];
-            b = *pointsB[1];
-        } else if (pointsA[0] == pointsB[1]) {
-            c = *pointsA[0];
-            a = *pointsA[1];
-            b = *pointsB[0];
-        } else if (pointsA[1] == pointsB[1]) {
-            c = *pointsA[1];
-            a = *pointsA[0];
-            b = *pointsB[0];
-        } else {
-            throw std::logic_error("Invalid faces");
-        }
-        if (calcAngleACB(a, c, b) > 0) {
+        if(vecA.getNormal().crossZ(vecB.getNormal()) < 0){
             std::reverse(std::begin(orderedFaces), std::end(orderedFaces));
         }
+
         return orderedFaces;
     }
 

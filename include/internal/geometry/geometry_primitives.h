@@ -52,6 +52,15 @@ namespace raytracer {
          */
         double y;
 
+        /**
+         * Calculate the z value of cross product of two vectors in plane xy
+         * @param b
+         * @return
+         */
+        double crossZ(const Vector& b) const {
+            return this->x * b.y - this->y * b.x;
+        }
+
         /** Point is convertible to vector */
         explicit Vector(const Point &point);
 

@@ -159,6 +159,10 @@ namespace raytracer {
         return mesh.getElements()[0]->getPoints().size() == 4;
     }
 
+    double calcTriangleArea(const Point& a, const Point& b, const Point& c){
+        return std::abs(a.x * b.y + b.x * c.y + c.x*a.y - a.y * b.x - b.y * c.x - c.y * a.x) / 2.0;
+    }
+
     VectorField calcIntegralGrad(const Mesh &mesh, const MeshFunc &meshFunction) {
         VectorField result;
 
@@ -182,9 +186,8 @@ namespace raytracer {
                 auto nextAdjPoint = points[nextI];
                 gradX += (nextAdjPoint->y - adjPoint->y) * value;
                 gradY -= (nextAdjPoint->x - adjPoint->x) * value;
-                volume += getElementVolume(*element);
+                volume += calcTriangleArea(*point, *adjPoint, *nextAdjPoint);
             }
-            volume /= 2;
             gradX /= volume;
             gradY /= volume;
             result[point] = Vector{gradX, gradY};
