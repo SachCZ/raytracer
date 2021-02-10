@@ -125,16 +125,17 @@ namespace raytracer {
         mfem::PCG(A, smoother, B, X);
         a.RecoverFEMSolution(X, b, x);
 
+        /**
         char vishost[] = "localhost";
         int  visport   = 19916;
         mfem::socketstream sol_sock(vishost, visport);
         sol_sock.precision(8);
         sol_sock << "solution\n" << mesh.getMfemMesh() << x << std::flush;
+         */
 
         x.ReorderByNodes();
         mfem::Vector trueVector;
         x.GetTrueDofs(trueVector);
-        trueVector.Print();
         auto dimSize = x.Size() / x.VectorDim();
 
         VectorField result;
