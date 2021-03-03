@@ -90,7 +90,8 @@ namespace raytracer {
             mfem::FiniteElementSpace &l2Space,
             mfem::FiniteElementSpace &h1Space,
             const MfemMesh& mesh,
-            mfem::VectorCoefficient& boundaryValue
+            mfem::Coefficient& boundaryValue,
+            mfem::VectorCoefficient& vectorBoundaryValue
     );
 
     /**

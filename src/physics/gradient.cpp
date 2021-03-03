@@ -94,14 +94,35 @@ namespace raytracer {
             mfem::FiniteElementSpace &l2Space,
             mfem::FiniteElementSpace &h1Space,
             const MfemMesh& mesh,
-            mfem::VectorCoefficient& boundaryValue
+            mfem::Coefficient& boundaryValue,
+            mfem::VectorCoefficient& vectorBoundaryValue
+
     ) {
-        mfem::Array<int> ess_tdof_list, ess_bdr(mesh.getMfemMesh()->bdr_attributes.Max());
-        ess_bdr = 1;
-        h1Space.GetEssentialTrueDofs(ess_bdr, ess_tdof_list);
+        mfem::Array<int> ess_vdofs_list, ess_bdr_x(mesh.getMfemMesh()->bdr_attributes.Max());
+        ess_bdr_x = 0;
+        ess_bdr_x[1] = 0;
+        ess_bdr_x[3] = 1;
+
+        mfem::Array<int> ess_vdofs_y_list, ess_bdr_y(mesh.getMfemMesh()->bdr_attributes.Max());
+        ess_bdr_y = 0;
+        ess_bdr_y[0] = 0;
+        ess_bdr_y[2] = 1;
+
+        h1Space.GetEssentialTrueDofs(ess_bdr_x, ess_vdofs_list, 0);
+        h1Space.GetEssentialTrueDofs(ess_bdr_y, ess_vdofs_y_list, 1);
+
+        ess_vdofs_list.Append(ess_vdofs_y_list);
+        //TODO orthogonal boundary
 
         mfem::GridFunction x(&h1Space);
-        x.ProjectCoefficient(boundaryValue);
+        x = 0;
+
+        mfem::Array<int> all_attr{mesh.getMfemMesh()->bdr_attributes.Max()};
+        all_attr = 1;
+        all_attr[1] = 1;
+        all_attr[2] = 1;
+
+        x.ProjectBdrCoefficient(vectorBoundaryValue, all_attr);
 
         mfem::ConstantCoefficient coeff(-1);
         mfem::MixedBilinearForm right_hand_side(&h1Space, &l2Space);
@@ -109,7 +130,10 @@ namespace raytracer {
         right_hand_side.Assemble();
         right_hand_side.Finalize();
         mfem::LinearForm b(&h1Space);
-        right_hand_side.MultTranspose(rho, b);
+
+        b.AddBoundaryIntegrator(new mfem::VectorBoundaryFluxLFIntegrator(boundaryValue));
+        b.Assemble();
+        right_hand_side.AddMultTranspose(rho, b);
 
         mfem::BilinearForm a(&h1Space);
         a.AddDomainIntegrator(new mfem::VectorMassIntegrator);
@@ -118,30 +142,25 @@ namespace raytracer {
 
         mfem::SparseMatrix A;
         mfem::Vector B, X;
-        a.FormLinearSystem(ess_tdof_list, x, b, A, X, B);
+        a.FormLinearSystem(ess_vdofs_list, x, b, A, X, B);
 
-        mfem::GSSmoother smoother(A);
+        mfem::DSmoother smoother(A);
 
         mfem::PCG(A, smoother, B, X);
         a.RecoverFEMSolution(X, b, x);
 
-        /**
         char vishost[] = "localhost";
         int  visport   = 19916;
         mfem::socketstream sol_sock(vishost, visport);
         sol_sock.precision(8);
-        sol_sock << "solution\n" << mesh.getMfemMesh() << x << std::flush;
-         */
+        sol_sock << "solution\n" << *mesh.getMfemMesh() << x << std::flush;
 
-        x.ReorderByNodes();
-        mfem::Vector trueVector;
-        x.GetTrueDofs(trueVector);
         auto dimSize = x.Size() / x.VectorDim();
 
         VectorField result;
         const auto& points = mesh.getInnerPoints();
         for(Point* point : points){
-            result[point] = Vector{trueVector[point->id], trueVector[dimSize + point->id]};
+            result[point] = Vector{x[point->id], x[dimSize + point->id]};
         }
 
         return result;
