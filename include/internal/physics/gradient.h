@@ -19,6 +19,11 @@ namespace raytracer {
     using VectorField = std::map<Point *, Vector>;
 
     /**
+     * Scalars at points
+     */
+    using ScalarField = std::map<Point*, double>;
+
+    /**
      * GradientCalculator that returns a constant Vector no matter what.
      */
     class ConstantGradient {
@@ -86,12 +91,19 @@ namespace raytracer {
      * @return
      */
     VectorField mfemGradient(
+            const MfemMesh &mesh,
+            MfemMeshFunction &rho,
+            mfem::VectorCoefficient* vectorBoundaryValue = nullptr,
+            double diffusionC = 0,
+            double meshH = 0
+    );
+
+    ScalarField mfemGradComp(
             mfem::GridFunction &rho,
             mfem::FiniteElementSpace &l2Space,
-            mfem::FiniteElementSpace &h1Space,
-            const MfemMesh& mesh,
-            mfem::Coefficient& boundaryValue,
-            mfem::VectorCoefficient& vectorBoundaryValue
+            const MfemMesh &mesh,
+            mfem::Coefficient &boundaryValue,
+            mfem::Coefficient &derivativeBoundaryValue
     );
 
     /**

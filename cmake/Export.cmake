@@ -4,7 +4,7 @@ install(TARGETS raytracer geometry utility physics msgpack jsoncpp_static EXPORT
         RUNTIME DESTINATION bin
         )
 
-install(DIRECTORY include/ DESTINATION include/raytracer/ FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY include/ DESTINATION include/raytracer FILES_MATCHING PATTERN "*.h")
 
 install(TARGETS raytracer EXPORT )
 
