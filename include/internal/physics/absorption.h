@@ -175,7 +175,7 @@ namespace raytracer {
                 const IntersectionSet &intersectionSet,
                 const Energies &initialEnergies,
                 MeshFunc &absorbedEnergy
-        );
+        ) const;
 
     private:
         std::vector<const EnergyExchangeModel *> models{};
@@ -184,7 +184,7 @@ namespace raytracer {
                 const Intersections &intersections,
                 const Energy &initialEnergy,
                 MeshFunc &absorbedEnergy
-        );
+        ) const;
     };
 
     /**

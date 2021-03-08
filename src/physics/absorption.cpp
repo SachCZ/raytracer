@@ -10,7 +10,7 @@ namespace raytracer {
             const IntersectionSet &intersectionSet,
             const Energies &initialEnergies,
             MeshFunc &absorbedEnergy
-    ) {
+    ) const {
         ModelEnergies modelEnergies;
         Energy initialEnergy{0};
         for (size_t i = 0; i < intersectionSet.size(); i++) {
@@ -35,7 +35,7 @@ namespace raytracer {
             const Intersections &intersections,
             const Energy &initialEnergy,
             MeshFunc &absorbedEnergy
-    ) {
+    ) const {
         auto intersectionIt = std::next(std::begin(intersections));
         auto previousIntersectionIt = std::begin(intersections);
 
