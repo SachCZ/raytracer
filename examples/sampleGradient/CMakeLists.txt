@@ -1,2 +1,0 @@
-add_executable(SampleGradient sampleGradient.cpp)
-target_link_libraries(SampleGradient PRIVATE raytracer)

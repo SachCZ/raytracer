@@ -22,5 +22,5 @@ TEST(single_ray, throught_mesh_should_work_as_expected_for_dummy_mesh) {
 
     auto intersectionSet = findIntersections(mesh, initDirs, snellsLaw, intersectStraight, dontStop);
     auto lastIntersection = intersectionSet[0].back().pointOnFace.point;
-    ASSERT_THAT(lastIntersection, IsSamePoint(Point{-1.0, 0.41702145969766685}));
+    ASSERT_THAT(lastIntersection, IsSamePoint(Point{-1.0, 0.40364564766135042}));
 }

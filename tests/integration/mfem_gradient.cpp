@@ -1,10 +1,10 @@
+#include <gtest/gtest.h>
 #include <raytracer.h>
 
-int main(int, char *[]) {
+TEST(mfem_grad, calculates_grad_at_points_not_exactly) {
     using namespace raytracer;
 
     SegmentedLine side{1, 50};
-    //auto h = side.length / side.segmentCount;
     MfemMesh mesh(side, side);
     MfemL20Space space(mesh);
 
@@ -22,6 +22,4 @@ int main(int, char *[]) {
             func,
             &gradientBoundaryValue
     );
-
-    return 0;
 }

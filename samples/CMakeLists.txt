@@ -1,8 +1,3 @@
 add_executable(minimal_example minimal_example/minimal_example.cpp)
 target_link_libraries(minimal_example PRIVATE raytracer)
 
-add_executable(gradient_example gradient_example/gradient_example.cpp)
-target_link_libraries(gradient_example PRIVATE raytracer)
-
-add_executable(mfem_gradient_example mfem_gradient_example/gradient_example.cpp)
-target_link_libraries(mfem_gradient_example PRIVATE raytracer)

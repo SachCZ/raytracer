@@ -1,6 +1,8 @@
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include <raytracer.h>
 
-int main(int, char *[]) {
+TEST(hous_grad, calculates_grad_at_points_exactly) {
     using namespace raytracer;
 
     MfemMesh mesh(SegmentedLine{1.0, 40}, SegmentedLine{1.0, 40});
@@ -8,9 +10,6 @@ int main(int, char *[]) {
     MfemMeshFunction func(space, [](const Point& point){
         return std::atan(10*(point.x - 0.5)) + std::atan(10*(point.y - 0.5)) ;
     });
-    std::ofstream meshOutput("dualMesh.mfem");
-    writeDualMesh(meshOutput, mesh);
-    std::ofstream output("householder.msgpack");
+
     auto gradient = calcHousGrad(mesh, func);
-    output << gradient;
 }
