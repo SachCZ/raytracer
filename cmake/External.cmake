@@ -13,7 +13,7 @@ if (${RAYTRACER_BUILD_TESTS})
     FetchContent_GetProperties(googletest)
     if(NOT googletest_POPULATED)
         FetchContent_Populate(googletest)
-        add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
+        add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
     endif()
 endif()
 
@@ -27,7 +27,7 @@ FetchContent_GetProperties(jsoncpp)
 if(NOT jsoncpp_POPULATED)
     FetchContent_Populate(jsoncpp)
     set(JSONCPP_WITH_TESTS OFF)
-    add_subdirectory(${jsoncpp_SOURCE_DIR} ${jsoncpp_BINARY_DIR})
+    add_subdirectory(${jsoncpp_SOURCE_DIR} ${jsoncpp_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
 FetchContent_Declare(
