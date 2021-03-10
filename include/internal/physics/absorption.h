@@ -144,6 +144,11 @@ namespace raytracer {
     /** Map of EnergyExchangeModel pointers to energies */
     typedef std::map<const EnergyExchangeModel *, Energy> ModelEnergies;
 
+    /** Map of EnergyExchangeModel pointers to EnergiesSets.
+     * This means ModelEnergiesSets[&myModel][1][2] is the energy
+     * absorbed by myModel in ray number 1 intersection number 2 */
+    typedef std::map<const EnergyExchangeModel *, EnergiesSet> ModelEnergiesSets;
+
     /** Summary of model-energies map and initialEnergy value. */
     struct AbsorptionSummary {
         /** Map of models to amount of energy absorbed by the model. */
@@ -163,19 +168,7 @@ namespace raytracer {
         void addModel(const EnergyExchangeModel *model);
 
 
-        /**
-         * Modify the absorbedEnergy MeshFunction based on the intersectionSet and initialEnergies of the rays,
-         * then return a summary.
-         * @param intersectionSet
-         * @param initialEnergies
-         * @param absorbedEnergy
-         * @return
-         */
-        AbsorptionSummary absorb(
-                const IntersectionSet &intersectionSet,
-                const Energies &initialEnergies,
-                MeshFunc &absorbedEnergy
-        ) const;
+        ModelEnergiesSets genEnergies(const IntersectionSet& intersectionSet, const Energies& initialEnergies);
 
     private:
         std::vector<const EnergyExchangeModel *> models{};
@@ -186,6 +179,12 @@ namespace raytracer {
                 MeshFunc &absorbedEnergy
         ) const;
     };
+
+    void addModelEnergies(
+            MeshFunc& absorbedEnergy,
+            const ModelEnergiesSets & modelEnergiesSets,
+            const IntersectionSet& intersectionSet
+            );
 
     /**
      * Take absorption summary and make it a human readable string

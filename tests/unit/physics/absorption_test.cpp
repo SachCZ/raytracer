@@ -50,12 +50,13 @@ public:
     Energies initialEnergies;
 };
 
-TEST_F(AbsorptionTest, controller_does_absorb_energy_according_to_model) {
-    mockAbsorbedEnergy.setValue(Element{0, {}, {}}, 5);
-    controller.addModel(&mockModel);
-    controller.absorb(intersections, initialEnergies, mockAbsorbedEnergy);
+TEST_F(AbsorptionTest, addModelEnergies_adds_energy_to_correct_elements) {
+    ModelEnergiesSets modelEnergies = {{&mockModel, {{{0}, {3.2}}}}};
 
-    ASSERT_THAT(mockAbsorbedEnergy.getValue(Element(0, {}, {})), DoubleEq(16.2));
+    mockAbsorbedEnergy.setValue(Element{0, {}, {}}, 5);
+    addModelEnergies(mockAbsorbedEnergy, modelEnergies, intersections);
+
+    ASSERT_THAT(mockAbsorbedEnergy.getValue(Element(0, {}, {})), DoubleEq(8.2));
 }
 
 TEST_F(AbsorptionTest, absorption_using_resonance_model_works) {
@@ -66,9 +67,29 @@ TEST_F(AbsorptionTest, absorption_using_resonance_model_works) {
 
     mockAbsorbedEnergy.setValue(Element{0, {}, {}}, 5);
     controller.addModel(&resonance);
-    controller.absorb(intersections, initialEnergies, mockAbsorbedEnergy);
+    auto modelEnergies = controller.genEnergies(intersections, initialEnergies);
+    addModelEnergies(mockAbsorbedEnergy, modelEnergies, intersections);
 
     ASSERT_THAT(mockAbsorbedEnergy.getValue(Element(0, {}, {})), DoubleNear(5.48133, 1e-5));
+}
+
+
+
+TEST_F(AbsorptionTest, controller_generates_absorbed_energies_for_models) {
+    MockModel anotherModel;
+    controller.addModel(&anotherModel);
+    controller.addModel(&mockModel);
+    auto modelEnergies = controller.genEnergies(intersections, initialEnergies);
+
+    ASSERT_THAT(modelEnergies[&mockModel], SizeIs(1));
+    ASSERT_THAT(modelEnergies[&mockModel][0], SizeIs(2));
+    EXPECT_THAT(modelEnergies[&mockModel][0][0].asDouble, DoubleEq(0));
+    EXPECT_THAT(modelEnergies[&mockModel][0][1].asDouble, DoubleEq(11.2));
+
+    ASSERT_THAT(modelEnergies[&anotherModel], SizeIs(1));
+    ASSERT_THAT(modelEnergies[&anotherModel][0], SizeIs(2));
+    EXPECT_THAT(modelEnergies[&anotherModel][0][0].asDouble, DoubleEq(0));
+    EXPECT_THAT(modelEnergies[&anotherModel][0][1].asDouble, DoubleEq(11.2));
 }
 
 TEST(BremssTest, bremsstrahlung_energy_change_is_calculated_properly){
@@ -97,3 +118,4 @@ TEST(GainTest, gain_energy_change_is_calculated_properly){
     auto result = gain.getEnergyChange(prevInters, currentInters, Energy{5});
     ASSERT_THAT(result.asDouble, DoubleEq(5*(1 - std::exp(2*3))));
 }
+

@@ -6,31 +6,6 @@ namespace raytracer {
     }
 
 
-    AbsorptionSummary EnergyExchangeController::absorb(
-            const IntersectionSet &intersectionSet,
-            const Energies &initialEnergies,
-            MeshFunc &absorbedEnergy
-    ) const {
-        ModelEnergies modelEnergies;
-        Energy initialEnergy{0};
-        for (size_t i = 0; i < intersectionSet.size(); i++) {
-            initialEnergy.asDouble += initialEnergies[i].asDouble;
-            auto modelsEnergies = this->absorbLaserRay(intersectionSet[i], initialEnergies[i], absorbedEnergy);
-            for (auto const &modelEnergy : modelsEnergies) {
-                const auto &model = modelEnergy.first;
-                const auto &energy = modelEnergy.second;
-
-                if (modelEnergies.find(model) != modelEnergies.end()) {
-                    modelEnergies[model] = Energy{energy.asDouble + modelEnergies[model].asDouble};
-                } else {
-                    modelEnergies[model] = energy;
-                }
-            }
-
-        }
-        return {modelEnergies, initialEnergy};
-    }
-
     ModelEnergies EnergyExchangeController::absorbLaserRay(
             const Intersections &intersections,
             const Energy &initialEnergy,
@@ -56,6 +31,38 @@ namespace raytracer {
                     result[model] = Energy{absorbed};
                 }
                 absorbedEnergy.addValue(*(intersectionIt->previousElement), absorbed);
+            }
+        }
+        return result;
+    }
+
+    ModelEnergiesSets EnergyExchangeController::genEnergies(
+            const IntersectionSet & intersectionSet,
+            const Energies & initialEnergies
+    ) {
+        ModelEnergiesSets result;
+        for (const auto &model : this->models) {
+            result[model] = EnergiesSet(intersectionSet.size());
+            for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++){
+                const auto& intersections = intersectionSet[setIndex];
+                result[model][setIndex] = Energies(intersections.size(), Energy{0});
+            }
+        }
+        for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++){
+            const auto& intersections = intersectionSet[setIndex];
+            auto currentEnergy = initialEnergies[setIndex].asDouble;
+            for (size_t i = 0; i < intersections.size() - 1; i++){
+                const auto& intersection = intersections[i + 1];
+                const auto& prevIntersection = intersections[i];
+
+                for (const auto &model : this->models) {
+                    auto absorbed = model->getEnergyChange(
+                            prevIntersection,
+                            intersection,
+                            Energy{currentEnergy});
+                    currentEnergy -= absorbed.asDouble;
+                    result[model][setIndex][i + 1] = absorbed;
+                }
             }
         }
         return result;
@@ -145,6 +152,23 @@ namespace raytracer {
         stream << "Total: " << total << " ... "
                << total / initialEnergy.asDouble * 100 << "%" << std::endl;
         return stream.str();
+    }
+
+    void addModelEnergies(MeshFunc &absorbedEnergy, const ModelEnergiesSets &modelEnergiesSets,
+                          const IntersectionSet &intersectionSet) {
+        for (const auto& oneModelEnergiesSets : modelEnergiesSets) {
+            const auto& energiesSets = oneModelEnergiesSets.second;
+            for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++){
+                const auto& energies = energiesSets[setIndex];
+                const auto& intersections = intersectionSet[setIndex];
+                for (size_t i = 0; i < intersections.size(); i++){
+                    auto element = intersections[i].previousElement;
+                    if (!element) continue;
+                    const auto& absorbed = energies[i];
+                    absorbedEnergy.addValue(*element, absorbed.asDouble);
+                }
+            }
+        }
     }
 
     XRayGain::XRayGain(const MeshFunc &gain) : gain(gain) {}

@@ -42,6 +42,9 @@ namespace raytracer {
     /** Sequence of energies */
     using Energies = std::vector<Energy>;
 
+    /** std::vector of of Energies instances */
+    using EnergiesSet = std::vector<Energies>;
+
     /**
      * Take a laser and generate initial energies corresponding to initial rays
      * @param laser
