@@ -6,36 +6,6 @@ namespace raytracer {
     }
 
 
-    ModelEnergies EnergyExchangeController::absorbLaserRay(
-            const Intersections &intersections,
-            const Energy &initialEnergy,
-            MeshFunc &absorbedEnergy
-    ) const {
-        auto intersectionIt = std::next(std::begin(intersections));
-        auto previousIntersectionIt = std::begin(intersections);
-
-        auto currentEnergy = initialEnergy.asDouble;
-
-        std::map<const EnergyExchangeModel *, Energy> result;
-
-        for (; intersectionIt != std::end(intersections); ++intersectionIt, ++previousIntersectionIt) {
-            for (const auto &model : this->models) {
-                auto absorbed = model->getEnergyChange(
-                        *previousIntersectionIt,
-                        *intersectionIt,
-                        Energy{currentEnergy}).asDouble;
-                currentEnergy -= absorbed;
-                if (result.find(model) != result.end()) {
-                    result[model] = Energy{absorbed + result[model].asDouble};
-                } else {
-                    result[model] = Energy{absorbed};
-                }
-                absorbedEnergy.addValue(*(intersectionIt->previousElement), absorbed);
-            }
-        }
-        return result;
-    }
-
     ModelEnergiesSets EnergyExchangeController::genEnergies(
             const IntersectionSet & intersectionSet,
             const Energies & initialEnergies

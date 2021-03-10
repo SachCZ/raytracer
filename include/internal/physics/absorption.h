@@ -173,11 +173,6 @@ namespace raytracer {
     private:
         std::vector<const EnergyExchangeModel *> models{};
 
-        ModelEnergies absorbLaserRay(
-                const Intersections &intersections,
-                const Energy &initialEnergy,
-                MeshFunc &absorbedEnergy
-        ) const;
     };
 
     void addModelEnergies(
