@@ -31,7 +31,6 @@ public:
                 intersectStraight,
                 dontStop
         );
-        initialEnergies = generateInitialEnergies(laser);
     }
 
     EnergyExchangeController controller;
@@ -47,14 +46,14 @@ public:
     };
     MfemMesh mesh{SegmentedLine{1.0, 1}, SegmentedLine{1.0, 1}};
     IntersectionSet intersections;
-    Energies initialEnergies;
 };
 
 TEST_F(AbsorptionTest, addModelEnergies_adds_energy_to_correct_elements) {
     ModelEnergiesSets modelEnergies = {{&mockModel, {{{0}, {3.2}}}}};
 
     mockAbsorbedEnergy.setValue(Element{0, {}, {}}, 5);
-    addModelEnergies(mockAbsorbedEnergy, modelEnergies, intersections);
+    auto rayEnergies = modelEnergiesToRayEnergies(modelEnergies, {{20}});
+    absorbRayEnergies(mockAbsorbedEnergy, rayEnergies, intersections);
 
     ASSERT_THAT(mockAbsorbedEnergy.getValue(Element(0, {}, {})), DoubleEq(8.2));
 }
@@ -65,10 +64,13 @@ TEST_F(AbsorptionTest, absorption_using_resonance_model_works) {
     reflectedMarker.mark(*intersections[0][1].previousElement, intersections[0][1].pointOnFace);
     Resonance resonance(gradient, laser.wavelength, reflectedMarker);
 
+    auto initialEnergies = generateInitialEnergies(laser);
+
     mockAbsorbedEnergy.setValue(Element{0, {}, {}}, 5);
     controller.addModel(&resonance);
     auto modelEnergies = controller.genEnergies(intersections, initialEnergies);
-    addModelEnergies(mockAbsorbedEnergy, modelEnergies, intersections);
+    auto rayEnergies = modelEnergiesToRayEnergies(modelEnergies, initialEnergies);
+    absorbRayEnergies(mockAbsorbedEnergy, rayEnergies, intersections);
 
     ASSERT_THAT(mockAbsorbedEnergy.getValue(Element(0, {}, {})), DoubleNear(5.48133, 1e-5));
 }
@@ -79,7 +81,7 @@ TEST_F(AbsorptionTest, controller_generates_absorbed_energies_for_models) {
     MockModel anotherModel;
     controller.addModel(&anotherModel);
     controller.addModel(&mockModel);
-    auto modelEnergies = controller.genEnergies(intersections, initialEnergies);
+    auto modelEnergies = controller.genEnergies(intersections, {{20}});
 
     ASSERT_THAT(modelEnergies[&mockModel], SizeIs(1));
     ASSERT_THAT(modelEnergies[&mockModel][0], SizeIs(2));

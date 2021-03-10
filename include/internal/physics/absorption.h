@@ -168,18 +168,20 @@ namespace raytracer {
         void addModel(const EnergyExchangeModel *model);
 
 
-        ModelEnergiesSets genEnergies(const IntersectionSet& intersectionSet, const Energies& initialEnergies);
+        ModelEnergiesSets genEnergies(const IntersectionSet &intersectionSet, const Energies &initialEnergies);
 
     private:
         std::vector<const EnergyExchangeModel *> models{};
 
     };
 
-    void addModelEnergies(
-            MeshFunc& absorbedEnergy,
-            const ModelEnergiesSets & modelEnergiesSets,
-            const IntersectionSet& intersectionSet
-            );
+    EnergiesSet modelEnergiesToRayEnergies(const ModelEnergiesSets &modelEnergiesSets, const Energies& initialEnergies);
+
+    void absorbRayEnergies(
+            MeshFunc &absorbedEnergy,
+            const EnergiesSet &energiesSets,
+            const IntersectionSet &intersectionSet
+    );
 
     /**
      * Take absorption summary and make it a human readable string

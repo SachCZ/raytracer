@@ -7,23 +7,23 @@ namespace raytracer {
 
 
     ModelEnergiesSets EnergyExchangeController::genEnergies(
-            const IntersectionSet & intersectionSet,
-            const Energies & initialEnergies
+            const IntersectionSet &intersectionSet,
+            const Energies &initialEnergies
     ) {
         ModelEnergiesSets result;
         for (const auto &model : this->models) {
             result[model] = EnergiesSet(intersectionSet.size());
-            for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++){
-                const auto& intersections = intersectionSet[setIndex];
+            for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
+                const auto &intersections = intersectionSet[setIndex];
                 result[model][setIndex] = Energies(intersections.size(), Energy{0});
             }
         }
-        for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++){
-            const auto& intersections = intersectionSet[setIndex];
+        for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
+            const auto &intersections = intersectionSet[setIndex];
             auto currentEnergy = initialEnergies[setIndex].asDouble;
-            for (size_t i = 0; i < intersections.size() - 1; i++){
-                const auto& intersection = intersections[i + 1];
-                const auto& prevIntersection = intersections[i];
+            for (size_t i = 0; i < intersections.size() - 1; i++) {
+                const auto &intersection = intersections[i + 1];
+                const auto &prevIntersection = intersections[i];
 
                 for (const auto &model : this->models) {
                     auto absorbed = model->getEnergyChange(
@@ -124,21 +124,49 @@ namespace raytracer {
         return stream.str();
     }
 
-    void addModelEnergies(MeshFunc &absorbedEnergy, const ModelEnergiesSets &modelEnergiesSets,
-                          const IntersectionSet &intersectionSet) {
+    void absorbRayEnergies(MeshFunc &absorbedEnergy, const EnergiesSet &energiesSets,
+                           const IntersectionSet &intersectionSet) {
+        for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
+            const auto &energies = energiesSets[setIndex];
+            const auto &intersections = intersectionSet[setIndex];
+            for (size_t i = 1; i < intersections.size(); i++) {
+                auto element = intersections[i].previousElement;
+                if (!element) continue;
+                const auto &absorbed = -(energies[i].asDouble - energies[i - 1].asDouble);
+                absorbedEnergy.addValue(*element, absorbed);
+            }
+        }
+    }
+
+    EnergiesSet modelEnergiesToRayEnergies(const ModelEnergiesSets &modelEnergiesSets, const Energies &initialEnergies) {
+        auto setsCount = modelEnergiesSets.begin()->second.size();
+        EnergiesSet result;
+        result.reserve(setsCount);
+
+        const auto& firstEnergiesSets = modelEnergiesSets.begin()->second;
+        for (const auto& energies : firstEnergiesSets) {
+            result.emplace_back(Energies(energies.size(), Energy{0}));
+        }
         for (const auto& oneModelEnergiesSets : modelEnergiesSets) {
             const auto& energiesSets = oneModelEnergiesSets.second;
-            for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++){
+            for (size_t setIndex = 0; setIndex < setsCount; setIndex++){
                 const auto& energies = energiesSets[setIndex];
-                const auto& intersections = intersectionSet[setIndex];
-                for (size_t i = 0; i < intersections.size(); i++){
-                    auto element = intersections[i].previousElement;
-                    if (!element) continue;
-                    const auto& absorbed = energies[i];
-                    absorbedEnergy.addValue(*element, absorbed.asDouble);
+                for (size_t i = 0; i < energies.size(); i++){
+                    result[setIndex][i].asDouble += energies[i].asDouble;
                 }
             }
         }
+
+        for (size_t setIndex = 0; setIndex < setsCount; setIndex++){
+            auto& energies = result[setIndex];
+            double currentEnergy = initialEnergies[setIndex].asDouble;
+            for (auto & energy : energies ){
+                currentEnergy -= energy.asDouble;
+                energy = Energy{currentEnergy};
+            }
+        }
+
+        return result;
     }
 
     XRayGain::XRayGain(const MeshFunc &gain) : gain(gain) {}
