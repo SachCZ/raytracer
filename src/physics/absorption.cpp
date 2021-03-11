@@ -9,7 +9,7 @@ namespace raytracer {
     ModelEnergiesSets EnergyExchangeController::genEnergies(
             const IntersectionSet &intersectionSet,
             const Energies &initialEnergies
-    ) {
+    ) const {
         ModelEnergiesSets result;
         for (const auto &model : this->models) {
             result[model] = EnergiesSet(intersectionSet.size());

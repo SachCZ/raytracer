@@ -169,7 +169,7 @@ namespace raytracer {
         void addModel(const EnergyExchangeModel *model);
 
 
-        ModelEnergiesSets genEnergies(const IntersectionSet &intersectionSet, const Energies &initialEnergies);
+        ModelEnergiesSets genEnergies(const IntersectionSet &intersectionSet, const Energies &initialEnergies) const;
 
     private:
         std::vector<const EnergyExchangeModel *> models{};
