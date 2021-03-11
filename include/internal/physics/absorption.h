@@ -2,6 +2,7 @@
 #define RAYTRACER_ABSORPTION_H
 
 #include <geometry.h>
+#include <msgpack.hpp>
 #include "magnitudes.h"
 #include "gradient.h"
 #include "refraction.h"
@@ -182,6 +183,10 @@ namespace raytracer {
             const EnergiesSet &energiesSets,
             const IntersectionSet &intersectionSet
     );
+
+    std::ostream& modelEnergiesToMsgpack(const ModelEnergiesSets& modelEnergiesSets, std::ostream& os);
+
+    std::ostream& rayEnergiesToMsgpack(const EnergiesSet & energiesSet, std::ostream& os);
 
     /**
      * Take absorption summary and make it a human readable string

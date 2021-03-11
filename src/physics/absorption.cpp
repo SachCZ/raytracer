@@ -169,6 +169,37 @@ namespace raytracer {
         return result;
     }
 
+    std::vector<std::vector<double>> genSetSerialization(const EnergiesSet &energiesSet) {
+        std::vector<std::vector<double>> result;
+        result.reserve(energiesSet.size());
+        for (const auto& energies : energiesSet){
+            std::vector<double> rayEnergySerialization;
+            rayEnergySerialization.reserve(energies.size());
+            for (auto energy : energies) {
+                rayEnergySerialization.emplace_back(energy.asDouble);
+            }
+            result.emplace_back(rayEnergySerialization);
+        }
+        return result;
+    }
+
+    std::ostream &modelEnergiesToMsgpack(const ModelEnergiesSets &modelEnergiesSets, std::ostream &os) {
+        std::map<std::string, std::vector<std::vector<double>>> energiesSerialization;
+        for (const auto &oneModelEnergiesSet : modelEnergiesSets) {
+            auto modelName = oneModelEnergiesSet.first->getName();
+            auto energiesSet = oneModelEnergiesSet.second;
+
+            energiesSerialization[modelName] = genSetSerialization(energiesSet);
+        }
+        msgpack::pack(os, energiesSerialization);
+        return os;
+    }
+
+    std::ostream &rayEnergiesToMsgpack(const EnergiesSet &energiesSet, std::ostream &os) {
+        msgpack::pack(os, genSetSerialization(energiesSet));
+        return os;
+    }
+
     XRayGain::XRayGain(const MeshFunc &gain) : gain(gain) {}
 
     raytracer::Energy
