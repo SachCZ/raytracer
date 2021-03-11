@@ -109,6 +109,16 @@ namespace raytracer {
         double getQ(Vector dir, Vector grad) const;
     };
 
+    struct ZeroExchange : public EnergyExchangeModel {
+        Energy getEnergyChange(const Intersection &, const Intersection &, const Energy &) const override {
+            return Energy{0};
+        }
+
+        std::string getName() const override {
+            return "Zero exchange";
+        }
+    };
+
     /**
      * Absorption model of energy exchange due to bremsstrahlung.
      */
