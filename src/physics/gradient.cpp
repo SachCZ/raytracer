@@ -236,6 +236,12 @@ namespace raytracer {
         auto essTrueDofs = getEssTrueDofs(bdrMarker, h1Space);
         auto solution = solveByPCG(leftSideMatrix, rightSideVector, essTrueDofs, initialValue);
 
+        char vishost[] = "localhost";
+        int visport = 19916;
+        mfem::socketstream sol_sock(vishost, visport);
+        sol_sock.precision(8);
+        sol_sock << "solution\n" << *mesh.getMfemMesh() << solution << std::flush;
+
         return gfToField(mesh, solution);
     }
 

@@ -38,6 +38,10 @@ namespace raytracer {
         return result;
     }
 
+    size_t EnergyExchangeController::getModelsCount() const {
+        return this->models.size();
+    }
+
     Energy Resonance::getEnergyChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
                                       const Energy &currentEnergy) const {
         if (!Resonance::isResonating(*currentIntersection.previousElement, currentIntersection.pointOnFace))

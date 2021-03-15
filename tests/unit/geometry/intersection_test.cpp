@@ -12,7 +12,7 @@ class IntersectionTest : public Test {
 public:
     Point a{0, 0}, b{1, 0};
     Face face{0, {&a, &b}};
-    MfemMesh mesh{SegmentedLine{10.0, 5}, SegmentedLine{10.0, 5}, mfem::Element::Type::TRIANGLE};
+    MfemMesh mesh{SegmentedLine{0.0, 10.0, 5}, SegmentedLine{0.0, 10.0, 5}, mfem::Element::Type::TRIANGLE};
 };
 
 TEST_F(IntersectionTest, findClosestIntersection_returns_closest_intersection_if_provided_an_array_of_faces) {

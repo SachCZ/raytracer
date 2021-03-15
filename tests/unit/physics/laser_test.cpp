@@ -17,7 +17,7 @@ public:
                 Point(-1, 0.9),
                 51
     };
-    MfemMesh mesh{SegmentedLine{1.0, 15}, SegmentedLine{1.0, 15}, mfem::Element::Type::QUADRILATERAL};
+    MfemMesh mesh{SegmentedLine{0.0, 1.0, 15}, SegmentedLine{0.0, 1.0, 15}, mfem::Element::Type::QUADRILATERAL};
 };
 
 TEST_F(LaserTest, initial_directions_can_be_generated_from_laser) {

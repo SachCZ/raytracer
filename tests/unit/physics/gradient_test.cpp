@@ -8,11 +8,11 @@ using namespace raytracer;
 
 class GradientTest : public Test {
 public:
-    MfemMesh quadMesh{SegmentedLine{100.0, 10}, SegmentedLine{100.0, 10}, mfem::Element::QUADRILATERAL};
+    MfemMesh quadMesh{SegmentedLine{0.0, 100.0, 10}, SegmentedLine{0.0, 100.0, 10}, mfem::Element::QUADRILATERAL};
 };
 
 TEST(HouseGradientTest, householder_calculates_gradient_correctly) {
-    MfemMesh mesh{SegmentedLine{100.0, 10}, SegmentedLine{100.0, 10}, mfem::Element::TRIANGLE};
+    MfemMesh mesh{SegmentedLine{0.0, 100.0, 10}, SegmentedLine{0.0, 100.0, 10}, mfem::Element::TRIANGLE};
     MfemL20Space space{mesh};
     MfemMeshFunction density{space, [](const Point &point) { return 12 * point.x - 7 * point.y; }};
     auto VectorField = calcHousGrad(mesh, density);
@@ -20,7 +20,7 @@ TEST(HouseGradientTest, householder_calculates_gradient_correctly) {
 }
 
 TEST(IntegralGradientTest, gradient_can_be_calcualted_using_integral_over_stencil) {
-    MfemMesh mesh{SegmentedLine{100.0, 10}, SegmentedLine{100.0, 10}, mfem::Element::QUADRILATERAL};
+    MfemMesh mesh{SegmentedLine{0.0, 100.0, 10}, SegmentedLine{0.0, 100.0, 10}, mfem::Element::QUADRILATERAL};
     MfemL20Space space{mesh};
     MfemMeshFunction density{space, [](const Point &point) { return 12 * point.x - 7 * point.y;}};
     auto VectorField = calcIntegralGrad(mesh, density);

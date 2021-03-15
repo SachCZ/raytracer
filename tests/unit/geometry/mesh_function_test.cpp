@@ -9,7 +9,7 @@ using namespace raytracer;
 
 class MfemMeshFunctionTest : public Test {
 public:
-    MfemMesh mesh{SegmentedLine{1.0, 2}, SegmentedLine{1.0, 2}, mfem::Element::Type::QUADRILATERAL};
+    MfemMesh mesh{SegmentedLine{0.0, 1.0, 2}, SegmentedLine{0.0, 1.0, 2}, mfem::Element::Type::QUADRILATERAL};
     MfemL20Space finiteElementSpace{mesh};
     MfemMeshFunction meshFunction{finiteElementSpace, [](const Point& point){return 12.8e20 * point.x;}};
 };

@@ -3,7 +3,7 @@
 int main(int, char *[]) {
     using namespace raytracer;
 
-    MfemMesh mesh(SegmentedLine{1.0, 50}, SegmentedLine{1.0, 10});
+    MfemMesh mesh(SegmentedLine{0.0, 1.0, 50}, SegmentedLine{0.0, 1.0, 10});
     MfemL20Space space{mesh};
 
     Length wavelength{1315e-7};

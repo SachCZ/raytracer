@@ -4,7 +4,8 @@
 TEST(mfem_grad, calculates_grad_at_points_not_exactly) {
     using namespace raytracer;
 
-    SegmentedLine side{1, 50};
+    SegmentedLine side{0.0, 1.0, 50};
+    auto meshH = (side.end - side.start) / side.segmentCount;
     MfemMesh mesh(side, side);
     MfemL20Space space(mesh);
 
@@ -20,6 +21,8 @@ TEST(mfem_grad, calculates_grad_at_points_not_exactly) {
     auto result = raytracer::mfemGradient(
             mesh,
             func,
-            &gradientBoundaryValue
+            &gradientBoundaryValue,
+            10.0,
+            meshH
     );
 }

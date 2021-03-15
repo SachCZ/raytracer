@@ -44,7 +44,7 @@ public:
             Point(-0.9, -1.1),
             1
     };
-    MfemMesh mesh{SegmentedLine{1.0, 1}, SegmentedLine{1.0, 1}};
+    MfemMesh mesh{SegmentedLine{0.0, 1.0, 1}, SegmentedLine{0.0, 1.0, 1}};
     IntersectionSet intersections;
 };
 

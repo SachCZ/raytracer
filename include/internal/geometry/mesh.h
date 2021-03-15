@@ -8,16 +8,9 @@
 
 
 namespace raytracer {
-    /**
-     * Line divided into same size segments
-     */
-    struct SegmentedLine {
-        /**How long is the line.*/
-        double length;
 
-        /**
-         * Number of line segments
-         */
+    struct SegmentedLine {
+        double start, end;
         size_t segmentCount;
     };
 
@@ -101,12 +94,6 @@ namespace raytracer {
          */
         explicit MfemMesh(const std::string &filename, bool generateEdges = true, bool refine = false);
 
-        /**
-         * Construct a new mfem::Mesh given two sides and element type. Owns the mfem mesh.
-         * @param sideA
-         * @param sideB
-         * @param elementType (fem::Element::Type::TRIANGLE, fem::Element::Type::QUADRILATERAL)
-         */
         MfemMesh(
                 SegmentedLine sideA,
                 SegmentedLine sideB,

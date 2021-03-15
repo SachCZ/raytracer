@@ -178,6 +178,7 @@ namespace raytracer {
          */
         void addModel(const EnergyExchangeModel *model);
 
+        size_t getModelsCount() const;
 
         ModelEnergiesSets genEnergies(const IntersectionSet &intersectionSet, const Energies &initialEnergies) const;
 

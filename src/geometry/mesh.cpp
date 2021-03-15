@@ -14,20 +14,6 @@ namespace raytracer {
         this->init();
     }
 
-    MfemMesh::MfemMesh(
-            SegmentedLine sideA,
-            SegmentedLine sideB,
-            mfem::Element::Type elementType
-    ) : mfemMesh(std::make_unique<mfem::Mesh>(
-            sideA.segmentCount,
-            sideB.segmentCount,
-            elementType,
-            true,
-            sideA.length,
-            sideB.length,
-            true)),
-        mesh(mfemMesh.get()) { this->init(); }
-
     std::unique_ptr<Element> MfemMesh::createElementFromId(int id) const {
         if (id == -1) return nullptr;
 
@@ -282,13 +268,15 @@ namespace raytracer {
             currentElement = adj.first != currentElement ? adj.first : adj.second;
         }
         //determine if clockwise
-        auto a = orderedFaces[0]->getPoints()[0]->id == point->id ? orderedFaces[0]->getPoints()[1] : orderedFaces[0]->getPoints()[0];
-        auto b = orderedFaces[1]->getPoints()[0]->id == point->id ? orderedFaces[1]->getPoints()[1] : orderedFaces[1]->getPoints()[0];
+        auto a = orderedFaces[0]->getPoints()[0]->id == point->id ? orderedFaces[0]->getPoints()[1]
+                                                                  : orderedFaces[0]->getPoints()[0];
+        auto b = orderedFaces[1]->getPoints()[0]->id == point->id ? orderedFaces[1]->getPoints()[1]
+                                                                  : orderedFaces[1]->getPoints()[0];
 
         auto vecA = Vector(*a - *point);
         auto vecB = Vector(*b - *point);
 
-        if(vecA.getNormal().crossZ(vecB.getNormal()) < 0){
+        if (vecA.getNormal().crossZ(vecB.getNormal()) < 0) {
             std::reverse(std::begin(orderedFaces), std::end(orderedFaces));
         }
 
@@ -314,6 +302,32 @@ namespace raytracer {
             }
         }
         return result;
+    }
+
+    MfemMesh::MfemMesh(
+            SegmentedLine sideA,
+            SegmentedLine sideB,
+            mfem::Element::Type elementType
+    ) : mfemMesh(std::make_unique<mfem::Mesh>(
+            sideA.segmentCount,
+            sideB.segmentCount,
+            elementType,
+            true,
+            sideA.end - sideA.start,
+            sideB.end - sideB.start,
+            true)),
+        mesh(mfemMesh.get()) {
+
+        auto verticesCount = mfemMesh->GetNV();
+        mfem::Vector displacements(verticesCount * 2);
+        for (int i = 0; i < verticesCount; i++) {
+            displacements[i] = - sideA.start;
+        }
+        for (int i = verticesCount; i < verticesCount * 2; i++) {
+            displacements[i] = - sideB.start;
+        }
+        mfemMesh->MoveVertices(displacements);
+        this->init();
     }
 
     std::ostream &operator<<(std::ostream &os, const MfemMesh &mesh) {
