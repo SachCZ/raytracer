@@ -30,6 +30,12 @@ TEST_F(MfemMeshTest, has_a_way_to_retrive_ordered_adjacent_faces){
     ASSERT_THAT(adjacentFaces, SizeIs(4));
 }
 
+TEST_F(MfemMeshTest, can_be_updated_from_using_stored_pointer){
+    MfemMesh::Displacements displacements(mesh.getPoints().size(), {-1, -2});
+    mesh.moveNodes(displacements);
+    EXPECT_THAT(*mesh.getPoints()[0], IsSamePoint(Point{-1, -2}));
+}
+
 TEST_F(MfemMeshTest, has_a_way_to_retrive_ordered_adjacent_elements){
     auto adjacentElements = mesh.getPointAdjOrderedElements(mesh.getInnerPoints()[0]);
     EXPECT_THAT(adjacentElements[0]->getId(), Eq(3));

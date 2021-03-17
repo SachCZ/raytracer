@@ -37,6 +37,15 @@ namespace raytracer {
         return std::make_unique<Point>(coords[0], coords[1], id);
     }
 
+    void MfemMesh::updateMesh() {
+        for (auto& point : this->points){
+            double coords[2];
+            mesh->GetNode(point->id, coords);
+            point->x = coords[0];
+            point->y = coords[1];
+        }
+    }
+
     std::vector<Point *> MfemMesh::getPointsFromIds(const mfem::Array<int> &ids) const {
         std::vector<Point *> result;
         for (auto id : ids) {
@@ -318,16 +327,22 @@ namespace raytracer {
             true)),
         mesh(mfemMesh.get()) {
 
-        auto verticesCount = mfemMesh->GetNV();
-        mfem::Vector displacements(verticesCount * 2);
-        for (int i = 0; i < verticesCount; i++) {
-            displacements[i] = - sideA.start;
-        }
-        for (int i = verticesCount; i < verticesCount * 2; i++) {
-            displacements[i] = - sideB.start;
-        }
-        mfemMesh->MoveVertices(displacements);
+        auto nodesCount = mfemMesh->GetNV();
+        Displacements displacements(nodesCount, {-sideA.start, -sideB.start});
+        this->moveNodes(displacements);
+
         this->init();
+    }
+
+    void MfemMesh::moveNodes(const MfemMesh::Displacements &displacements) {
+        auto verticesCount = mfemMesh->GetNV();
+        mfem::Vector _displacements(verticesCount * 2);
+        for (int i = 0; i < verticesCount; i++) {
+            _displacements[i] = displacements[i].x;
+            _displacements[i + verticesCount] = displacements[i].y;
+        }
+        mfemMesh->MoveVertices(_displacements);
+        this->updateMesh();
     }
 
     std::ostream &operator<<(std::ostream &os, const MfemMesh &mesh) {

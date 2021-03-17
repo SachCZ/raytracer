@@ -28,13 +28,13 @@ namespace raytracer {
          */
         virtual Element *getFaceDirAdjElement(const Face *face, const Vector &direction) const = 0;
 
-        virtual std::pair<Element*, Element*> getFaceAdjElements(const Face *face) const = 0;
+        virtual std::pair<Element *, Element *> getFaceAdjElements(const Face *face) const = 0;
 
-        virtual std::vector<Element*> getPointAdjOrderedElements(const Point* point) const = 0;
+        virtual std::vector<Element *> getPointAdjOrderedElements(const Point *point) const = 0;
 
-        virtual std::vector<Face*> getPointAdjOrderedFaces(const Point* point) const = 0;
+        virtual std::vector<Face *> getPointAdjOrderedFaces(const Point *point) const = 0;
 
-        virtual std::vector<Point*> getPointAdjOrderedPoints(const Point* point) const = 0;
+        virtual std::vector<Point *> getPointAdjOrderedPoints(const Point *point) const = 0;
 
         /**
          * Override this.
@@ -110,20 +110,20 @@ namespace raytracer {
          */
         Element *getFaceDirAdjElement(const Face *face, const Vector &direction) const override;
 
-        std::pair<Element*, Element*> getFaceAdjElements(const Face *face) const override;
+        std::pair<Element *, Element *> getFaceAdjElements(const Face *face) const override;
 
-        std::vector<Face*> getPointAdjOrderedFaces(const Point* point) const override;
+        std::vector<Face *> getPointAdjOrderedFaces(const Point *point) const override;
 
-        std::vector<Element*> getPointAdjOrderedElements(const Point* point) const override;
+        std::vector<Element *> getPointAdjOrderedElements(const Point *point) const override;
 
-        std::vector<Point*> getPointAdjOrderedPoints(const Point* point) const override{
+        std::vector<Point *> getPointAdjOrderedPoints(const Point *point) const override {
             using namespace std;
-            std::vector<Point*> result;
+            std::vector<Point *> result;
             auto adjFaces = this->getPointAdjOrderedFaces(point);
             result.reserve(adjFaces.size());
-            transform(begin(adjFaces), end(adjFaces), back_inserter(result), [&point](const Face* face) {
-                const auto& facePoints = face->getPoints();
-                if (facePoints[0] != point){
+            transform(begin(adjFaces), end(adjFaces), back_inserter(result), [&point](const Face *face) {
+                const auto &facePoints = face->getPoints();
+                if (facePoints[0] != point) {
                     return facePoints[0];
                 } else {
                     return facePoints[1];
@@ -176,6 +176,12 @@ namespace raytracer {
          */
         mfem::Mesh *getMfemMesh() const;
 
+        void updateMesh();
+
+        using Displacements = std::vector<Vector>;
+
+        void moveNodes(const Displacements &displacements);
+
     private:
         std::unique_ptr<mfem::Mesh> mfemMesh;
         mfem::Mesh *mesh;
@@ -216,7 +222,9 @@ namespace raytracer {
 
         void init();
 
-        static std::pair<Face*, Face*> getSharedFaces(const Point* point, const Element& element);
+        static std::pair<Face *, Face *> getSharedFaces(const Point *point, const Element &element);
+
+
     };
 
     /**
@@ -227,7 +235,7 @@ namespace raytracer {
      */
     std::ostream &operator<<(std::ostream &os, const MfemMesh &mesh);
 
-    std::ostream & writeDualMesh(std::ostream &os, const Mesh& mesh);
+    std::ostream &writeDualMesh(std::ostream &os, const Mesh &mesh);
 }
 
 
