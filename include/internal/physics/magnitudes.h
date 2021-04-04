@@ -2,8 +2,8 @@
 #define RAYTRACER_MAGNITUDES_H
 
 namespace raytracer {
-    /** Strong type representing energy in joules. */
-    struct Energy {
+    /** Strong type representing power in joules. */
+    struct Power {
         double asDouble;
     };
     /** Strong type representing length in cm. */

@@ -17,7 +17,7 @@ TEST(single_ray, throught_mesh_should_work_as_expected_for_dummy_mesh) {
     MfemMeshFunction refractIndex(space, [&density](const Element& e){
         return calcRefractIndex(density.getValue(e), Length{1315e-7}, 0);
     });
-    SnellsLaw snellsLaw(gradient, refractIndex);
+    SnellsLaw snellsLaw(gradient, refractIndex, nullptr, nullptr);
     std::vector<Ray> initDirs = {Ray{{-1.1, 0.01}, Vector{1, 0.1}}};
 
     auto intersectionSet = findIntersections(mesh, initDirs, snellsLaw, intersectStraight, dontStop);

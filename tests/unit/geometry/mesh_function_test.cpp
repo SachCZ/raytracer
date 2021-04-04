@@ -37,3 +37,9 @@ TEST_F(MfemMeshFunctionTest, MfemMeshFunction_can_be_constructed_using_grid_func
     MfemMeshFunction newMeshFunction(finiteElementSpace, gridFunction);
     ASSERT_THAT(newMeshFunction.getValue(Element{0, {}, {}}), DoubleEq(42));
 }
+
+TEST_F(MfemMeshFunctionTest, MfemMeshFunction_can_be_divided_by_volume) {
+    meshFunction.setValue(Element{0, {}, {}}, 10);
+    divideByVolume(mesh, meshFunction);
+    ASSERT_THAT(meshFunction.getValue(Element{0, {}, {}}), DoubleEq(10 / 0.5 / 0.5));
+}

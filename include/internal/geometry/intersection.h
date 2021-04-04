@@ -140,11 +140,22 @@ namespace raytracer {
         result.emplace_back(previousIntersection);
 
         while (result.back().nextElement && !stopCondition(*(result.back().nextElement))) {
-            PointOnFace nextPointOnFace = findIntersection(
-                    previousIntersection.pointOnFace,
-                    previousIntersection.direction,
-                    *previousIntersection.nextElement
-            );
+            if (result.size() > 10000) {
+                std::cout << "Ray got stuck" << std::endl;
+                break;
+            }
+            PointOnFace nextPointOnFace;
+            try {
+                nextPointOnFace = findIntersection(
+                        previousIntersection.pointOnFace,
+                        previousIntersection.direction,
+                        *previousIntersection.nextElement
+                );
+            } catch (const std::logic_error&) {
+                std::cout << "Intersection not found" << std::endl;
+                break;
+            }
+
 
             auto nextElementForDirection = mesh.getFaceDirAdjElement( //NextElement
                     nextPointOnFace.face,

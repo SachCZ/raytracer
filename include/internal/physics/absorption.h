@@ -10,22 +10,22 @@
 
 namespace raytracer {
     /**
-     * Absorption model is something that is capable of estimating energy change based on intersections
+     * Absorption model is something that is capable of estimating power change based on intersections
      */
-    class EnergyExchangeModel {
+    class PowerExchangeModel {
     public:
         /**
          * Based on the intersections, calculate how much
-         * energy was absorbed in this specific element.
+         * power was absorbed in this specific element.
          * @param previousIntersection
          * @param currentIntersection
-         * @param currentEnergy
+         * @param currentPower
          * @return
          */
-        virtual Energy getEnergyChange(
+        virtual Power getPowerChange(
                 const Intersection &previousIntersection,
                 const Intersection &currentIntersection,
-                const Energy &currentEnergy
+                const Power &currentPower
         ) const = 0;
 
         /**
@@ -36,23 +36,23 @@ namespace raytracer {
     };
 
     /**
-     * Energy exchange model estimating energy lost due to laser gain
+     * Power exchange model estimating power lost due to laser gain
      */
-    struct XRayGain : public raytracer::EnergyExchangeModel {
+    struct XRayGain : public raytracer::PowerExchangeModel {
 
         /** Construct providing the Gain MeshFunction */
         explicit XRayGain(const raytracer::MeshFunc &gain);
 
         /**
-         * Based of gain coefficient estimate the amount of energy exchanged
+         * Based of gain coefficient estimate the amount of power exchanged
          * @param previousIntersection
          * @param currentIntersection
-         * @param currentEnergy
-         * @return energy gained by plasma (energy lost by plasma is negative)
+         * @param currentPower
+         * @return power gained by plasma (power lost by plasma is negative)
          */
-        raytracer::Energy getEnergyChange(const raytracer::Intersection &previousIntersection,
+        raytracer::Power getPowerChange(const raytracer::Intersection &previousIntersection,
                                           const raytracer::Intersection &currentIntersection,
-                                          const raytracer::Energy &currentEnergy) const override;
+                                          const raytracer::Power &currentPower) const override;
 
         /**
          * returns "X-ray gain"
@@ -65,9 +65,9 @@ namespace raytracer {
     };
 
     /**
-     * Model of energy exchange due to resonance.
+     * Model of power exchange due to resonance.
      */
-    class Resonance : public EnergyExchangeModel {
+    class Resonance : public PowerExchangeModel {
     public:
 
         /**
@@ -78,20 +78,20 @@ namespace raytracer {
          * @param reflectedMarker
          */
         Resonance(
-                const Gradient &gradientCalculator,
+                Gradient gradientCalculator,
                 const Length &wavelength,
                 const Marker &reflectedMarker
         );
 
         /**
-         * Get the energy absorbed into the single element based on resonance absorption model from Velechovsky thesis.
+         * Get the power absorbed into the single element based on resonance absorption model from Velechovsky thesis.
          * @param previousIntersection
          * @param currentIntersection
-         * @param currentEnergy
-         * @return energy change
+         * @param currentPower
+         * @return power change
          */
-        Energy getEnergyChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
-                               const Energy &currentEnergy) const override;
+        Power getPowerChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
+                               const Power &currentPower) const override;
 
         /**
          * Returns "Resonance"
@@ -100,7 +100,7 @@ namespace raytracer {
         std::string getName() const override;
 
     private:
-        const Gradient &gradientCalculator;
+        Gradient gradientCalculator;
         const Length &wavelength;
         const Marker &reflectedMarker;
 
@@ -109,9 +109,9 @@ namespace raytracer {
         double getQ(Vector dir, Vector grad) const;
     };
 
-    struct ZeroExchange : public EnergyExchangeModel {
-        Energy getEnergyChange(const Intersection &, const Intersection &, const Energy &) const override {
-            return Energy{0};
+    struct ZeroExchange : public PowerExchangeModel {
+        Power getPowerChange(const Intersection &, const Intersection &, const Power &) const override {
+            return Power{0};
         }
 
         std::string getName() const override {
@@ -120,9 +120,9 @@ namespace raytracer {
     };
 
     /**
-     * Absorption model of energy exchange due to bremsstrahlung.
+     * Absorption model of power exchange due to bremsstrahlung.
      */
-    struct Bremsstrahlung : public EnergyExchangeModel {
+    struct Bremsstrahlung : public PowerExchangeModel {
 
         /**
          * Provide the required functions and models to the Bremsstrahlung model to construct it.
@@ -131,16 +131,16 @@ namespace raytracer {
         explicit Bremsstrahlung(const MeshFunc &bremssCoeff);
 
         /**
-         * Returns the energy absorbed into one element between two intersections based on bremsstrahlung model.
+         * Returns the power absorbed into one element between two intersections based on bremsstrahlung model.
          * @param previousIntersection
          * @param currentIntersection
-         * @param currentEnergy
+         * @param currentPower
          * @return
          */
-        Energy getEnergyChange(
+        Power getPowerChange(
                 const Intersection &previousIntersection,
                 const Intersection &currentIntersection,
-                const Energy &currentEnergy
+                const Power &currentPower
         ) const override;
 
         /**
@@ -152,52 +152,52 @@ namespace raytracer {
         const MeshFunc &bremssCoeff;
     };
 
-    /** Map of EnergyExchangeModel pointers to energies */
-    typedef std::map<const EnergyExchangeModel *, Energy> ModelEnergies;
+    /** Map of PowerExchangeModel pointers to powers */
+    typedef std::map<const PowerExchangeModel *, Power> ModelPowers;
 
-    /** Map of EnergyExchangeModel pointers to EnergiesSets.
-     * This means ModelEnergiesSets[&myModel][1][2] is the energy
+    /** Map of PowerExchangeModel pointers to PowersSets.
+     * This means ModelPowersSets[&myModel][1][2] is the power
      * absorbed by myModel in ray number 1 intersection number 2 */
-    typedef std::map<const EnergyExchangeModel *, EnergiesSet> ModelEnergiesSets;
+    typedef std::map<const PowerExchangeModel *, PowersSet> ModelPowersSets;
 
-    /** Summary of model-energies map and initialEnergy value. */
+    /** Summary of model-powers map and initialPower value. */
     struct AbsorptionSummary {
-        /** Map of models to amount of energy absorbed by the model. */
-        ModelEnergies modelEnergies{};
-        /** Total initial energy of the laser obtained as a sum of ray energies.*/
-        Energy initialEnergy;
+        /** Map of models to amount of power absorbed by the model. */
+        ModelPowers modelPowers{};
+        /** Total initial power of the laser obtained as a sum of ray powers.*/
+        Power initialPower;
     };
 
-    /** Class aggregating all instances of AbsorptionModel used to update absorbedEnergy meshFunction.*/
-    class EnergyExchangeController {
+    /** Class aggregating all instances of AbsorptionModel used to update absorbedPower meshFunction.*/
+    class PowerExchangeController {
     public:
 
         /**
          * Add an AbsorptionModel that will be used when calling absorb().
          * @param model
          */
-        void addModel(const EnergyExchangeModel *model);
+        void addModel(const PowerExchangeModel *model);
 
         size_t getModelsCount() const;
 
-        ModelEnergiesSets genEnergies(const IntersectionSet &intersectionSet, const Energies &initialEnergies) const;
+        ModelPowersSets genPowers(const IntersectionSet &intersectionSet, const Powers &initialPowers) const;
 
     private:
-        std::vector<const EnergyExchangeModel *> models{};
+        std::vector<const PowerExchangeModel *> models{};
 
     };
 
-    EnergiesSet modelEnergiesToRayEnergies(const ModelEnergiesSets &modelEnergiesSets, const Energies& initialEnergies);
+    PowersSet modelPowersToRayPowers(const ModelPowersSets &modelPowersSets, const Powers& initialPowers);
 
-    void absorbRayEnergies(
-            MeshFunc &absorbedEnergy,
-            const EnergiesSet &energiesSets,
+    void absorbRayPowers(
+            MeshFunc &absorbedPower,
+            const PowersSet &powersSets,
             const IntersectionSet &intersectionSet
     );
 
-    std::ostream& modelEnergiesToMsgpack(const ModelEnergiesSets& modelEnergiesSets, std::ostream& os);
+    std::ostream& modelPowersToMsgpack(const ModelPowersSets& modelPowersSets, std::ostream& os);
 
-    std::ostream& rayEnergiesToMsgpack(const EnergiesSet & energiesSet, std::ostream& os);
+    std::ostream& rayPowersToMsgpack(const PowersSet & powersSet, std::ostream& os);
 
     /**
      * Take absorption summary and make it a human readable string

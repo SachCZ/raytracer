@@ -29,6 +29,13 @@ namespace raytracer {
         return os;
     }
 
+    void divideByVolume(const MfemMesh &mesh, MeshFunc &func) {
+        for (auto element : mesh.getElements()){
+            auto volume = raytracer::getElementVolume(*element);
+            func.setValue(*element, func.getValue(*element) / volume);
+        }
+    }
+
     MfemMeshFunction::MfemMeshFunction(MfemSpace &mfemSpace, const std::function<double(Point)> &func) :
             mfemGridFunction(&mfemSpace.getSpace()),
             gridFunction(mfemGridFunction),

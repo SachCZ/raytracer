@@ -1,36 +1,38 @@
 #include "absorption.h"
 
+#include <utility>
+
 namespace raytracer {
-    void EnergyExchangeController::addModel(const EnergyExchangeModel *model) {
+    void PowerExchangeController::addModel(const PowerExchangeModel *model) {
         models.emplace_back(model);
     }
 
 
-    ModelEnergiesSets EnergyExchangeController::genEnergies(
+    ModelPowersSets PowerExchangeController::genPowers(
             const IntersectionSet &intersectionSet,
-            const Energies &initialEnergies
+            const Powers &initialPowers
     ) const {
-        ModelEnergiesSets result;
+        ModelPowersSets result;
         for (const auto &model : this->models) {
-            result[model] = EnergiesSet(intersectionSet.size());
+            result[model] = PowersSet(intersectionSet.size());
             for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
                 const auto &intersections = intersectionSet[setIndex];
-                result[model][setIndex] = Energies(intersections.size(), Energy{0});
+                result[model][setIndex] = Powers(intersections.size(), Power{0});
             }
         }
         for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
             const auto &intersections = intersectionSet[setIndex];
-            auto currentEnergy = initialEnergies[setIndex].asDouble;
+            auto currentPower = initialPowers[setIndex].asDouble;
             for (size_t i = 0; i < intersections.size() - 1; i++) {
                 const auto &intersection = intersections[i + 1];
                 const auto &prevIntersection = intersections[i];
 
                 for (const auto &model : this->models) {
-                    auto absorbed = model->getEnergyChange(
+                    auto absorbed = model->getPowerChange(
                             prevIntersection,
                             intersection,
-                            Energy{currentEnergy});
-                    currentEnergy -= absorbed.asDouble;
+                            Power{currentPower});
+                    currentPower -= absorbed.asDouble;
                     result[model][setIndex][i + 1] = absorbed;
                 }
             }
@@ -38,24 +40,30 @@ namespace raytracer {
         return result;
     }
 
-    size_t EnergyExchangeController::getModelsCount() const {
+    size_t PowerExchangeController::getModelsCount() const {
         return this->models.size();
     }
 
-    Energy Resonance::getEnergyChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
-                                      const Energy &currentEnergy) const {
+    Power Resonance::getPowerChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
+                                      const Power &currentPower) const {
         if (!Resonance::isResonating(*currentIntersection.previousElement, currentIntersection.pointOnFace))
-            return Energy{0};
+            return Power{0};
+        Vector grad{};
+        try {
+            grad = gradientCalculator(
+                    currentIntersection.pointOnFace,
+                    *currentIntersection.previousElement,
+                    *currentIntersection.nextElement
+            );
+        } catch (const std::logic_error& err) {
+            //std::cout << "No grad found" << std::endl;
+            return Power{0};
+        }
 
-        auto grad = gradientCalculator(
-                currentIntersection.pointOnFace,
-                *currentIntersection.previousElement,
-                *currentIntersection.nextElement
-        );
         auto dir = (currentIntersection.pointOnFace.point - previousIntersection.pointOnFace.point);
         auto q = Resonance::getQ(dir, grad);
         auto term = q * std::exp(-4.0 / 3.0 * std::pow(q, 3.0 / 2.0)) / (q + 0.48) * M_PI / 2.0;
-        return Energy{currentEnergy.asDouble * term};
+        return Power{currentPower.asDouble * term};
     }
 
     bool Resonance::isResonating(const Element &element, const PointOnFace &pointOnFace) const {
@@ -75,10 +83,10 @@ namespace raytracer {
     }
 
     Resonance::Resonance(
-            const Gradient &gradientCalculator,
+            Gradient gradientCalculator,
             const Length &wavelength,
             const Marker &reflectedMarker) :
-            gradientCalculator(gradientCalculator),
+            gradientCalculator(std::move(gradientCalculator)),
             wavelength(wavelength),
             reflectedMarker(reflectedMarker) {}
 
@@ -88,13 +96,13 @@ namespace raytracer {
 
     Bremsstrahlung::Bremsstrahlung(const MeshFunc &bremssCoeff) : bremssCoeff(bremssCoeff) {}
 
-    Energy Bremsstrahlung::getEnergyChange(
+    Power Bremsstrahlung::getPowerChange(
             const Intersection &previousIntersection,
             const Intersection &currentIntersection,
-            const Energy &currentEnergy
+            const Power &currentPower
     ) const {
         const auto &element = currentIntersection.previousElement;
-        if (!element) return Energy{0};
+        if (!element) return Power{0};
         const auto &previousPoint = previousIntersection.pointOnFace.point;
         const auto &point = currentIntersection.pointOnFace.point;
 
@@ -102,8 +110,8 @@ namespace raytracer {
         auto coeff = bremssCoeff.getValue(*element);
         const auto exponent = -coeff * distance;
 
-        auto newEnergy = currentEnergy.asDouble * std::exp(exponent);
-        return Energy{currentEnergy.asDouble - newEnergy};
+        auto newPower = currentPower.asDouble * std::exp(exponent);
+        return Power{currentPower.asDouble - newPower};
     }
 
     std::string Bremsstrahlung::getName() const {
@@ -113,106 +121,106 @@ namespace raytracer {
     std::string stringifyAbsorptionSummary(const AbsorptionSummary &summary) {
         std::stringstream stream;
         double total = 0;
-        const auto &modelsEnergies = summary.modelEnergies;
-        const auto initialEnergy = summary.initialEnergy;
-        for (auto const &modelEnergy : modelsEnergies) {
-            const auto &model = modelEnergy.first;
-            const auto &energy = modelEnergy.second;
+        const auto &modelsPowers = summary.modelPowers;
+        const auto initialPower = summary.initialPower;
+        for (auto const &modelPower : modelsPowers) {
+            const auto &model = modelPower.first;
+            const auto &power = modelPower.second;
 
-            total += energy.asDouble;
-            stream << model->getName() << ": " << energy.asDouble << " ... "
-                   << energy.asDouble / initialEnergy.asDouble * 100 << "%" << std::endl;
+            total += power.asDouble;
+            stream << model->getName() << ": " << power.asDouble << " ... "
+                   << power.asDouble / initialPower.asDouble * 100 << "%" << std::endl;
         }
         stream << "Total: " << total << " ... "
-               << total / initialEnergy.asDouble * 100 << "%" << std::endl;
+               << total / initialPower.asDouble * 100 << "%" << std::endl;
         return stream.str();
     }
 
-    void absorbRayEnergies(MeshFunc &absorbedEnergy, const EnergiesSet &energiesSets,
+    void absorbRayPowers(MeshFunc &absorbedPower, const PowersSet &powersSets,
                            const IntersectionSet &intersectionSet) {
         for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
-            const auto &energies = energiesSets[setIndex];
+            const auto &powers = powersSets[setIndex];
             const auto &intersections = intersectionSet[setIndex];
             for (size_t i = 1; i < intersections.size(); i++) {
                 auto element = intersections[i].previousElement;
                 if (!element) continue;
-                const auto &absorbed = -(energies[i].asDouble - energies[i - 1].asDouble);
-                absorbedEnergy.addValue(*element, absorbed);
+                const auto &absorbed = -(powers[i].asDouble - powers[i - 1].asDouble);
+                absorbedPower.addValue(*element, absorbed);
             }
         }
     }
 
-    EnergiesSet modelEnergiesToRayEnergies(const ModelEnergiesSets &modelEnergiesSets, const Energies &initialEnergies) {
-        auto setsCount = modelEnergiesSets.begin()->second.size();
-        EnergiesSet result;
+    PowersSet modelPowersToRayPowers(const ModelPowersSets &modelPowersSets, const Powers &initialPowers) {
+        auto setsCount = modelPowersSets.begin()->second.size();
+        PowersSet result;
         result.reserve(setsCount);
 
-        const auto& firstEnergiesSets = modelEnergiesSets.begin()->second;
-        for (const auto& energies : firstEnergiesSets) {
-            result.emplace_back(Energies(energies.size(), Energy{0}));
+        const auto& firstPowersSets = modelPowersSets.begin()->second;
+        for (const auto& powers : firstPowersSets) {
+            result.emplace_back(Powers(powers.size(), Power{0}));
         }
-        for (const auto& oneModelEnergiesSets : modelEnergiesSets) {
-            const auto& energiesSets = oneModelEnergiesSets.second;
+        for (const auto& oneModelPowersSets : modelPowersSets) {
+            const auto& powersSets = oneModelPowersSets.second;
             for (size_t setIndex = 0; setIndex < setsCount; setIndex++){
-                const auto& energies = energiesSets[setIndex];
-                for (size_t i = 0; i < energies.size(); i++){
-                    result[setIndex][i].asDouble += energies[i].asDouble;
+                const auto& powers = powersSets[setIndex];
+                for (size_t i = 0; i < powers.size(); i++){
+                    result[setIndex][i].asDouble += powers[i].asDouble;
                 }
             }
         }
 
         for (size_t setIndex = 0; setIndex < setsCount; setIndex++){
-            auto& energies = result[setIndex];
-            double currentEnergy = initialEnergies[setIndex].asDouble;
-            for (auto & energy : energies ){
-                currentEnergy -= energy.asDouble;
-                energy = Energy{currentEnergy};
+            auto& powers = result[setIndex];
+            double currentPower = initialPowers[setIndex].asDouble;
+            for (auto & power : powers ){
+                currentPower -= power.asDouble;
+                power = Power{currentPower};
             }
         }
 
         return result;
     }
 
-    std::vector<std::vector<double>> genSetSerialization(const EnergiesSet &energiesSet) {
+    std::vector<std::vector<double>> genSetSerialization(const PowersSet &powersSet) {
         std::vector<std::vector<double>> result;
-        result.reserve(energiesSet.size());
-        for (const auto& energies : energiesSet){
-            std::vector<double> rayEnergySerialization;
-            rayEnergySerialization.reserve(energies.size());
-            for (auto energy : energies) {
-                rayEnergySerialization.emplace_back(energy.asDouble);
+        result.reserve(powersSet.size());
+        for (const auto& powers : powersSet){
+            std::vector<double> rayPowerSerialization;
+            rayPowerSerialization.reserve(powers.size());
+            for (auto power : powers) {
+                rayPowerSerialization.emplace_back(power.asDouble);
             }
-            result.emplace_back(rayEnergySerialization);
+            result.emplace_back(rayPowerSerialization);
         }
         return result;
     }
 
-    std::ostream &modelEnergiesToMsgpack(const ModelEnergiesSets &modelEnergiesSets, std::ostream &os) {
-        std::map<std::string, std::vector<std::vector<double>>> energiesSerialization;
-        for (const auto &oneModelEnergiesSet : modelEnergiesSets) {
-            auto modelName = oneModelEnergiesSet.first->getName();
-            auto energiesSet = oneModelEnergiesSet.second;
+    std::ostream &modelPowersToMsgpack(const ModelPowersSets &modelPowersSets, std::ostream &os) {
+        std::map<std::string, std::vector<std::vector<double>>> powersSerialization;
+        for (const auto &oneModelPowersSet : modelPowersSets) {
+            auto modelName = oneModelPowersSet.first->getName();
+            auto powersSet = oneModelPowersSet.second;
 
-            energiesSerialization[modelName] = genSetSerialization(energiesSet);
+            powersSerialization[modelName] = genSetSerialization(powersSet);
         }
-        msgpack::pack(os, energiesSerialization);
+        msgpack::pack(os, powersSerialization);
         return os;
     }
 
-    std::ostream &rayEnergiesToMsgpack(const EnergiesSet &energiesSet, std::ostream &os) {
-        msgpack::pack(os, genSetSerialization(energiesSet));
+    std::ostream &rayPowersToMsgpack(const PowersSet &powersSet, std::ostream &os) {
+        msgpack::pack(os, genSetSerialization(powersSet));
         return os;
     }
 
     XRayGain::XRayGain(const MeshFunc &gain) : gain(gain) {}
 
-    raytracer::Energy
-    XRayGain::getEnergyChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
-                              const Energy &currentEnergy) const {
+    raytracer::Power
+    XRayGain::getPowerChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
+                              const Power &currentPower) const {
         auto distance = (currentIntersection.pointOnFace.point - previousIntersection.pointOnFace.point).getNorm();
         auto element = currentIntersection.previousElement;
         auto gainCoeff = gain.getValue(*element);
-        return raytracer::Energy{currentEnergy.asDouble * (1 - std::exp(gainCoeff * distance))};
+        return raytracer::Power{currentPower.asDouble * (1 - std::exp(gainCoeff * distance))};
     }
 
     std::string XRayGain::getName() const {

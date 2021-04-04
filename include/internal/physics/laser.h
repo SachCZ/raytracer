@@ -10,20 +10,20 @@
 namespace raytracer {
 
     /**
-     * Class representing a real physical laser. It is given by its energy and origin (it is a line segment)).
+     * Class representing a real physical laser. It is given by its power and origin (it is a line segment)).
      */
     struct Laser {
         /** Function specifing the direction of the laser at origin points */
         using DirectionFun = std::function<Vector(Point)>;
-        /** Function specifing the energy of the laser at origin points */
-        using EnergyFun = std::function<double(double)>;
+        /** Function specifing the power of the laser at origin points */
+        using PowerFun = std::function<double(double)>;
 
         /** Wavelenght in cm */
         Length wavelength;
         /** Function of type Laser::DirectionFun */
         DirectionFun directionFunction;
-        /** Function of type Laser::EnergyFun */
-        EnergyFun energyFunction;
+        /** Function of type Laser::PowerFun */
+        PowerFun powerFunction;
         /** Start point of origin line segment */
         Point startPoint;
         /** End point of origin line segment */
@@ -39,18 +39,18 @@ namespace raytracer {
      */
     std::vector<Ray> generateInitialDirections(const Laser &laser);
 
-    /** Sequence of energies */
-    using Energies = std::vector<Energy>;
+    /** Sequence of powers */
+    using Powers = std::vector<Power>;
 
-    /** std::vector of of Energies instances */
-    using EnergiesSet = std::vector<Energies>;
+    /** std::vector of of Powers instances */
+    using PowersSet = std::vector<Powers>;
 
     /**
-     * Take a laser and generate initial energies corresponding to initial rays
+     * Take a laser and generate initial powers corresponding to initial rays
      * @param laser
      * @return
      */
-    Energies generateInitialEnergies(const Laser &laser);
+    Powers generateInitialPowers(const Laser &laser);
 
     /**
      * Take intersections and dump them to JSON string

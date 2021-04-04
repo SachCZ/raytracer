@@ -40,7 +40,7 @@ namespace raytracer {
     /**
      * Class representing a 1D gaussian with given parameters
      */
-    class Gaussian {
+    class IntNormGaussian {
     public:
         /**
          * Construct the gaussian using FWHM, value at maxim (also the value of the integral) and the center point
@@ -48,7 +48,7 @@ namespace raytracer {
          * @param normalization or also the intgral value
          * @param center point
          */
-        explicit Gaussian(double FWHM, double normalization = 1, double center = 0);
+        explicit IntNormGaussian(double FWHM, double normalization = 1, double center = 0);
 
         /**
          * Value of the gaussian at given point x
@@ -62,6 +62,29 @@ namespace raytracer {
         double normalization;
         double center;
     };
+
+    class MaxValGaussian {
+    public:
+        MaxValGaussian(double FWHM, double maxValue, double center = 0);
+
+
+        double operator()(double x) const;
+
+    private:
+
+        double sigma, maxValue, center;
+    };
+
+    class RectFunc {
+    public:
+        explicit RectFunc(double height) : height(height) {}
+
+        double operator()(double) const {return height;};
+
+    private:
+        double height;
+    };
+
 }
 
 #endif //RAYTRACER_FREE_FUNCTIONS_H

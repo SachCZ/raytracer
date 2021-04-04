@@ -61,15 +61,15 @@ namespace raytracer {
         return result.str();
     }
 
-    Energies generateInitialEnergies(const Laser &laser) {
-        Energies result;
+    Powers generateInitialPowers(const Laser &laser) {
+        Powers result;
         double sourceWidth = (laser.startPoint - laser.endPoint).getNorm();
         double parameter = -sourceWidth / 2;
         double deltaParameter = sourceWidth / laser.raysCount;
         parameter -= deltaParameter / 2; //Integrate with ray in the middle
 
         for (int i = 0; i < laser.raysCount; ++i) {
-            result.emplace_back(Energy{integrateTrapz(laser.energyFunction, parameter, deltaParameter)});
+            result.emplace_back(Power{integrateTrapz(laser.powerFunction, parameter, deltaParameter)});
             parameter += deltaParameter;
         }
         return result;

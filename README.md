@@ -124,7 +124,7 @@ int main(int, char *[]) {
     trajectoryFile << stringifyRaysToMsgpack(intersectionSet);
     std::ofstream meshFile("mesh.mfem");
     meshFile << mesh;
-    std::ofstream densityFile("density.gf");
+    std::ofstream densityFile("density.vec");
     densityFile << density;
 }
 ```
@@ -192,11 +192,11 @@ Only exception is the trajectory file which has a special
     trajectoryFile << stringifyRaysToMsgpack(intersectionSet);
     std::ofstream meshFile("mesh.mfem");
     meshFile << mesh;
-    std::ofstream densityFile("density.gf");
+    std::ofstream densityFile("density.vec");
     densityFile << density;
 ``` 
 
-When the sample is run, it generates three files: `density.gf`, `mesh.mfem`, `trajectory.msgpack`.
+When the sample is run, it generates three files: `density.vec`, `mesh.mfem`, `trajectory.msgpack`.
 These results can be plotted in a single plot using a simple python scrip `plot_trajectory.py`:
 ```python
 import rayvis
@@ -208,7 +208,7 @@ if __name__ == '__main__':
         mesh = rayvis.read_mfem_mesh(f)
     with open("trajectory.msgpack", "rb") as f:
         rays = rayvis.read_msgpack_rays(f)
-    with open("density.gf") as f:
+    with open("density.vec") as f:
         density = rayvis.read_grid_function(f, mesh)
     fig, axes = plt.subplots()
     poly_collection = rayvis.plot_grid_function(axes, density, cmap="GnBu")

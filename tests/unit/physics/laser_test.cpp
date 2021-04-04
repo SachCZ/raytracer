@@ -28,9 +28,9 @@ TEST_F(LaserTest, initial_directions_can_be_generated_from_laser) {
 }
 
 
-TEST_F(LaserTest, initial_energies_can_be_generated_from_laser) {
-    auto initialEnergies = generateInitialEnergies(laser);
-    ASSERT_THAT(initialEnergies[5].asDouble, DoubleEq(1.2 / 51 * 0.8));
+TEST_F(LaserTest, initial_powers_can_be_generated_from_laser) {
+    auto initialPowers = generateInitialPowers(laser);
+    ASSERT_THAT(initialPowers[5].asDouble, DoubleEq(1.2 / 51 * 0.8));
 }
 
 TEST_F(LaserTest, can_generate_intersections) {

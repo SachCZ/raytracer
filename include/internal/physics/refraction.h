@@ -5,6 +5,7 @@
 #include "gradient.h"
 #include "collisional_frequency.h"
 #include "constants.h"
+#include <complex>
 
 
 namespace raytracer {
@@ -82,7 +83,14 @@ namespace raytracer {
          * @param refractIndex - model
          * @param reflectMarker
          */
-        explicit SnellsLaw(Gradient gradCalc, const MeshFunc &refractIndex, Marker *reflectMarker = nullptr);
+        explicit SnellsLaw(
+                Gradient gradCalc,
+                const MeshFunc &refractIndex,
+                Marker *reflectMarker = nullptr,
+                Vector *reflectDirection = nullptr,
+                const MeshFunc *density = nullptr,
+                const double * critDens = nullptr
+        );
 
 
         /**
@@ -105,6 +113,9 @@ namespace raytracer {
         const Gradient gradCalc;
         const MeshFunc &refractIndex;
         Marker *reflectMarker;
+        Vector *reflectDirection;
+        const MeshFunc *density;
+        const double * critDens;
     };
 }
 

@@ -12,7 +12,7 @@ TEST(integrate_trapz, gives_correct_result) {
 
 class initialized_gaussian : public Test {
 public:
-    Gaussian gaussian{5.0, 2.2, -1};
+    IntNormGaussian gaussian{5.0, 2.2, -1};
 };
 
 TEST_F(initialized_gaussian, value_at_half_FWHM_is_half_maximum) {

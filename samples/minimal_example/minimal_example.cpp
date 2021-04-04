@@ -16,7 +16,7 @@ int main(int, char *[]) {
     });
 
     LinInterGrad gradient(calcIntegralGrad(mesh, density));
-    SnellsLaw snellsLaw(gradient, refractIndex);
+    SnellsLaw snellsLaw(gradient, refractIndex, nullptr, nullptr);
     auto intersectionSet = findIntersections(
             mesh,
             {Ray{{-0.1, 0.01}, Vector{1, 0.3}}},

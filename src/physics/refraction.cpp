@@ -7,11 +7,21 @@
 #include <utility.h>
 
 namespace raytracer {
-    SnellsLaw::SnellsLaw(Gradient gradCalc, const MeshFunc &refractIndex,
-                         Marker *reflectMarker) :
+    SnellsLaw::SnellsLaw(
+            Gradient gradCalc,
+            const MeshFunc &refractIndex,
+            Marker *reflectMarker,
+            Vector *reflectDirection,
+            const MeshFunc* density,
+            const double* critDens
+    ) :
             gradCalc(std::move(gradCalc)),
             refractIndex(refractIndex),
-            reflectMarker(reflectMarker) {}
+            reflectMarker(reflectMarker),
+            reflectDirection(reflectDirection),
+            density(density),
+            critDens(critDens)
+            {}
 
     Vector SnellsLaw::operator()(
             const PointOnFace &pointOnFace,
@@ -22,8 +32,19 @@ namespace raytracer {
         Vector gradient{};
         try {
             gradient = gradCalc(pointOnFace, previousElement, nextElement);
-        } catch (const std::logic_error& error) {
-            return previousDirection;
+        } catch (const std::logic_error &error) {
+            if (reflectDirection) {
+                gradient = *reflectDirection;
+            } else {
+                gradient = previousDirection;
+            }
+        }
+        if (gradient.getNorm() == 0) {
+            if (reflectDirection) {
+                gradient = *reflectDirection;
+            } else {
+                gradient = previousDirection;
+            }
         }
 
         const double n1 = refractIndex.getValue(previousElement);
@@ -40,8 +61,11 @@ namespace raytracer {
         const double r = n1 / n2;
         auto root = 1 - r * r * (1 - c * c);
         Vector result{};
-        if (root < 0) {//Reflection
-            if (gradient * previousDirection < 0) {//Against gradient
+        if (root < 0 || n2 <= 0) {//Reflection
+            if (
+                    (reflectDirection && *reflectDirection * previousDirection < 0) ||
+                    (!reflectDirection && gradient * previousDirection < 0)
+                    ) {
                 result = previousDirection;
             } else {
                 if (reflectMarker) reflectMarker->mark(previousElement, pointOnFace);

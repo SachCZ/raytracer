@@ -87,6 +87,75 @@ namespace raytracer {
         mfem::FiniteElementSpace l2FiniteElementSpace;
     };
 
+    class MfemQuafFuncWrapper : public MeshFunc {
+    public:
+        MfemQuafFuncWrapper(mfem::QuadratureFunction *quadFunc, const mfem::IntegrationRule *integRule) :
+                quadFunc(quadFunc), integRule(integRule) {}
+
+        double getValue(const Element &element) const override {
+            mfem::Vector values;
+            quadFunc->GetElementValues(element.getId(), values);
+
+            /**
+            auto intPointsCount = integRule->GetNPoints();
+            double result = 0;
+            for (int q = 0; q < intPointsCount; q++) {
+                result += values(q);
+            }
+            result /= (double) intPointsCount;
+            return result;
+             */
+            return values.Max();
+        }
+
+        void setValue(const Element &element, double value) override {
+            mfem::Vector values;
+            quadFunc->GetElementValues(element.getId(), values);
+
+            for (int q = 0; q < integRule->GetNPoints(); q++) {
+                values(q) = value;
+            }
+        }
+
+        void addValue(const Element &element, double value) override {
+            mfem::Vector values;
+            quadFunc->GetElementValues(element.getId(), values);
+
+            for (int q = 0; q < integRule->GetNPoints(); q++) {
+                values(q) += value;
+            }
+        }
+
+    private:
+        mfem::QuadratureFunction *quadFunc;
+        const mfem::IntegrationRule *integRule;
+    };
+
+
+    class MfemVectorWrapper : public MeshFunc {
+    public:
+        explicit MfemVectorWrapper(mfem::Vector *vec) : vec(vec) {}
+
+        double getValue(const Element &element) const override {
+            return (*vec)(element.getId());
+        }
+
+        void setValue(const Element &element, double value) override {
+            (*vec)(element.getId()) = value;
+        }
+
+        void addValue(const Element &element, double value) override {
+            (*vec)(element.getId()) += value;
+        }
+
+        size_t size() {
+            return vec->Size();
+        }
+
+    private:
+        mfem::Vector *vec;
+    };
+
     /**
      * Discrete function what has constant values at Mesh elements.
      * Provides a way to query the GridFunction given an element.
@@ -110,7 +179,7 @@ namespace raytracer {
 
         explicit MfemMeshFunction(MfemSpace &mfemSpace, const std::function<double(Element)> &func);
 
-        mfem::GridFunction* getGF(){
+        mfem::GridFunction *getGF() {
             return &this->mfemGridFunction;
         }
 
@@ -177,6 +246,8 @@ namespace raytracer {
     };
 
     std::ostream &operator<<(std::ostream &os, const MfemMeshFunction &meshFunction);
+
+    void divideByVolume(const raytracer::MfemMesh &mesh, raytracer::MeshFunc &func);
 }
 
 
