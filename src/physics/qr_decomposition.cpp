@@ -1,5 +1,6 @@
 #include "qr_decomposition.h"
 #include <stdexcept>
+#include <cmath>
 
 //TODO hide this in physics, no need to show this to the end user
 
