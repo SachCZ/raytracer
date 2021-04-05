@@ -2,7 +2,6 @@
 #define RAYTRACER_ABSORPTION_H
 
 #include <geometry.h>
-#include <msgpack.hpp>
 #include "magnitudes.h"
 #include "gradient.h"
 #include "refraction.h"

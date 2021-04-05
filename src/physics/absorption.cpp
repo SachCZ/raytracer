@@ -1,6 +1,7 @@
 #include "absorption.h"
 #include <stdexcept>
 #include <utility>
+#include <msgpack.hpp>
 
 namespace raytracer {
     void PowerExchangeController::addModel(const PowerExchangeModel *model) {
