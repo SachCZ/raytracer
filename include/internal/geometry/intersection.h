@@ -156,7 +156,6 @@ namespace raytracer {
                 break;
             }
 
-
             auto nextElementForDirection = mesh.getFaceDirAdjElement( //NextElement
                     nextPointOnFace.face,
                     previousIntersection.direction
