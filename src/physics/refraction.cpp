@@ -5,6 +5,7 @@
 #include <memory>
 #include <utility>
 #include <utility.h>
+#include <stdexcept>
 
 namespace raytracer {
     SnellsLaw::SnellsLaw(

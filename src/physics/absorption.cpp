@@ -1,5 +1,5 @@
 #include "absorption.h"
-
+#include <stdexcept>
 #include <utility>
 
 namespace raytracer {

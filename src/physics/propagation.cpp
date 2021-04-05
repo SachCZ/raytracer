@@ -1,4 +1,5 @@
 #include "propagation.h"
+#include <stdexcept>
 #include "refraction.h"
 #include "termination.h"
 

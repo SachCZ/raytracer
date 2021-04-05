@@ -1,6 +1,7 @@
 #include <qr_decomposition.h>
 #include "gradient.h"
 #include <msgpack.hpp>
+#include <stdexcept>
 
 namespace raytracer {
     namespace impl {

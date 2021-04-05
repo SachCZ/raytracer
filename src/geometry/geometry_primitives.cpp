@@ -1,6 +1,7 @@
 #include <cmath>
 #include <set>
 #include <utility>
+#include <stdexcept>
 #include "geometry_primitives.h"
 
 namespace raytracer {

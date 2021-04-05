@@ -2,6 +2,7 @@
 #include <memory>
 #include <set>
 #include <utility.h>
+#include <stdexcept>
 
 namespace raytracer {
     std::vector<Face *> MfemMesh::getBoundary() const {
