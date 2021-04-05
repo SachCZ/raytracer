@@ -2,6 +2,7 @@
 #define RAYTRACER_FREE_FUNCTIONS_H
 
 #include <vector>
+#include <cstddef>
 
 namespace raytracer {
     /**
