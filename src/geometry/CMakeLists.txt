@@ -7,4 +7,5 @@ add_library(geometry
 target_include_directories(geometry PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/internal/geometry>
         $<INSTALL_INTERFACE:include/raytracer/internal/geometry>)
+target_link_libraries(geometry PRIVATE utility)
 target_link_libraries(geometry PUBLIC mfem)

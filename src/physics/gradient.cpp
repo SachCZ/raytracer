@@ -320,7 +320,7 @@ namespace raytracer {
     std::ostream &operator<<(std::ostream &os, const VectorField &vectorField) {
         using namespace std;
         vector<pair<Point *, Vector>> pairs(begin(vectorField), end(vectorField));
-        sort(begin(pairs), end(pairs), [](auto pairA, auto pairB) {
+        sort(begin(pairs), end(pairs), [](pair<Point *, Vector> pairA, pair<Point *, Vector> pairB) {
             return pairA.first->id < pairB.first->id;
         });
         vector<vector<double>> gradSerialization;

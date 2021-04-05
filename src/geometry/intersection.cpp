@@ -1,5 +1,6 @@
 #include <limits>
 #include <algorithm>
+#include <utility.h>
 #include "intersection.h"
 
 namespace raytracer {
@@ -62,7 +63,7 @@ namespace raytracer {
                 const auto &A = *points[0];
                 const auto &B = *points[1];
                 auto point = Point(Vector(A) + k * (B - A));
-                auto pointOnFace = std::make_unique<PointOnFace>();
+                auto pointOnFace = make_unique<PointOnFace>();
                 pointOnFace->point = point;
                 pointOnFace->face = face;
 
@@ -83,7 +84,7 @@ namespace raytracer {
                 faces.begin(),
                 faces.end(),
                 std::back_inserter(intersections),
-                [&ray](const auto &face) { return findIntersectionPoint(ray, face); }
+                [&ray](const Face* face) { return findIntersectionPoint(ray, face); }
         );
         auto result = getClosest(intersections, ray.origin);
 
@@ -93,7 +94,7 @@ namespace raytracer {
                     faces.begin(),
                     faces.end(),
                     std::back_inserter(intersections),
-                    [&ray](const auto &face) { return findIntersectionPoint(ray, face, true); }
+                    [&ray](const Face* face) { return findIntersectionPoint(ray, face, true); }
             );
             result = getClosest(intersections, ray.origin);
         }

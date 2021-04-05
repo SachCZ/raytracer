@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
 project(RayTracer)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 set(BUILD_SHARED_LIBS OFF)
 
 option(RAYTRACER_BUILD_TESTS OFF)

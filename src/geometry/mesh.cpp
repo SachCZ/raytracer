@@ -1,5 +1,7 @@
 #include "mesh.h"
+#include <memory>
 #include <set>
+#include <utility.h>
 
 namespace raytracer {
     std::vector<Face *> MfemMesh::getBoundary() const {
@@ -9,7 +11,7 @@ namespace raytracer {
     MfemMesh::MfemMesh(mfem::Mesh *mesh) : mesh(mesh) { this->init(); }
 
     MfemMesh::MfemMesh(const std::string &filename, bool generateEdges, bool refine) :
-            mfemMesh(std::make_unique<mfem::Mesh>(filename.c_str(), generateEdges, refine)),
+            mfemMesh(make_unique<mfem::Mesh>(filename.c_str(), generateEdges, refine)),
             mesh(mfemMesh.get()) {
         this->init();
     }
@@ -28,13 +30,13 @@ namespace raytracer {
         }
         this->mesh->GetElementVertices(id, verticesIds);
 
-        return std::make_unique<Element>(id, this->getFacesFromIds(facesIds), this->getPointsFromIds(verticesIds));
+        return make_unique<Element>(id, this->getFacesFromIds(facesIds), this->getPointsFromIds(verticesIds));
     }
 
     std::unique_ptr<Point> MfemMesh::createPointFromId(int id) const { //TODO refactor this, dimension specific
         double coords[2];
         mesh->GetNode(id, coords);
-        return std::make_unique<Point>(coords[0], coords[1], id);
+        return make_unique<Point>(coords[0], coords[1], id);
     }
 
     void MfemMesh::updateMesh() {
@@ -186,7 +188,7 @@ namespace raytracer {
 
     std::vector<Point *> MfemMesh::getPoints() const {
         std::vector<Point *> result;
-        std::transform(this->points.begin(), this->points.end(), std::back_inserter(result), [](const auto &point) {
+        std::transform(this->points.begin(), this->points.end(), std::back_inserter(result), [](const std::unique_ptr<Point>& point) {
             return point.get();
         });
         return result;
@@ -200,7 +202,7 @@ namespace raytracer {
         std::vector<Element *> result;
         std::transform(
                 this->elements.begin(), this->elements.end(), std::back_inserter(result),
-                [](const auto &element) {
+                [](const std::unique_ptr<Element>& element) {
                     return element.get();
                 }
         );
@@ -317,7 +319,7 @@ namespace raytracer {
             SegmentedLine sideA,
             SegmentedLine sideB,
             mfem::Element::Type elementType
-    ) : mfemMesh(std::make_unique<mfem::Mesh>(
+    ) : mfemMesh(make_unique<mfem::Mesh>(
             sideA.segmentCount,
             sideB.segmentCount,
             elementType,

@@ -119,8 +119,6 @@ namespace raytracer {
     }
 
     std::complex<double> impl::calcPermittivity(double density, const Length &wavelength, double collFreq) {
-        using namespace std::complex_literals;
-
         auto nu_ei = collFreq;
         auto n_e = density;
         auto m_e = constants::electron_mass;

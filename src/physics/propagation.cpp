@@ -12,7 +12,7 @@ namespace raytracer {
         std::vector<Face *> facesToSearch;
         facesToSearch.reserve(faces.size());
         std::copy_if(faces.begin(), faces.end(), std::back_inserter(facesToSearch),
-                     [&entryPointOnFace](const auto &face) {
+                     [&entryPointOnFace](const Face* face) {
                          return entryPointOnFace.face != face;
                      });
         auto newPointOnFace = findClosestIntersectionPoint(
