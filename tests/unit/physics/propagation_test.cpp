@@ -85,3 +85,4 @@ TEST(SnellsLawTest, reflects_ray_as_expected) {
 
     ASSERT_THAT(newDirection, IsSameVector(1/std::sqrt(2)*Vector{-1, 1}));
 }
+

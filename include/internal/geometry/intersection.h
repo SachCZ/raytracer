@@ -47,6 +47,12 @@ namespace raytracer {
      */
     PointOnFacePtr findClosestIntersectionPoint(const Ray &ray, const std::vector<Face *> &faces);
 
+    struct InterErrLog {
+        std::size_t tooLong{0};
+        std::size_t stuck{0};
+        std::size_t notFound{0};
+    };
+
     /**
      * Find all intersections by stepping through a mesh using the functions given.
      * @tparam DirectionFunction Vector(const PointOnFace &pointOnFace,
@@ -70,7 +76,9 @@ namespace raytracer {
                                       const std::vector<Ray> &initialDirections,
                                       DirectionFunction findDirection,
                                       IntersectionFunction findIntersection,
-                                      StopCondition stopCondition);
+                                      StopCondition stopCondition,
+                                      InterErrLog *errLog = nullptr
+    );
 
     //End of header, template garbage follows---------------------------------------------------------------------------
 
@@ -84,8 +92,11 @@ namespace raytracer {
                 const Ray &initialDirection,
                 DirectionFunction findDirection,
                 IntersectionFunction findIntersection,
-                StopCondition stopCondition);
+                StopCondition stopCondition,
+                InterErrLog *errLog = nullptr
+        );
     }
+
 
     template<typename DirectionFunction, typename IntersectionFunction, typename StopCondition>
     IntersectionSet findIntersections(
@@ -93,7 +104,8 @@ namespace raytracer {
             const std::vector<Ray> &initialDirections,
             DirectionFunction findDirection,
             IntersectionFunction findIntersection,
-            StopCondition stopCondition
+            StopCondition stopCondition,
+            InterErrLog *errLog
     ) {
         IntersectionSet result;
         result.reserve(initialDirections.size());
@@ -104,7 +116,8 @@ namespace raytracer {
                     initialDirection,
                     findDirection,
                     findIntersection,
-                    stopCondition
+                    stopCondition,
+                    errLog
             ));
         }
         return result;
@@ -116,7 +129,8 @@ namespace raytracer {
             const Ray &initialDirection,
             DirectionFunction findDirection,
             IntersectionFunction findIntersection,
-            StopCondition stopCondition
+            StopCondition stopCondition,
+            InterErrLog *errLog
     ) {
         Intersections result;
         PointOnFacePtr initialPointOnFace = findClosestIntersectionPoint(
@@ -140,8 +154,11 @@ namespace raytracer {
         result.emplace_back(previousIntersection);
 
         while (result.back().nextElement && !stopCondition(*(result.back().nextElement))) {
+
             if (result.size() > 10000) {
-                std::cout << "Ray got stuck" << std::endl;
+                if (errLog) {
+                    errLog->tooLong++;
+                }
                 break;
             }
             PointOnFace nextPointOnFace;
@@ -151,8 +168,10 @@ namespace raytracer {
                         previousIntersection.direction,
                         *previousIntersection.nextElement
                 );
-            } catch (const std::logic_error&) {
-                std::cout << "Intersection not found" << std::endl;
+            } catch (const std::logic_error &) {
+                if (errLog) {
+                    errLog->notFound++;
+                }
                 break;
             }
 
@@ -183,6 +202,24 @@ namespace raytracer {
 
             result.emplace_back(intersection);
             previousIntersection = intersection;
+
+            if (result.size() > 15) {
+                const Element *possiblyStuck = intersection.previousElement;
+                bool stuck = true;
+                for (auto it = next(result.rbegin()); it != result.rbegin() + 10; it++) {
+                    if (!(it->previousElement == it->nextElement && it->previousElement == possiblyStuck)) {
+                        stuck = false;
+                        break;
+                    }
+                }
+                if (stuck) {
+                    if (errLog) {
+                        errLog->stuck++;
+                    }
+                    break;
+                }
+            }
+
         }
 
         return result;

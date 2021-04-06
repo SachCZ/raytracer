@@ -28,6 +28,9 @@ add_executable(integration_tests
         integration/integration_test_runner.cpp
         integration/quadratic_density.cpp
         integration/mfem_gradient.cpp
-        integration/hous_gradient.cpp)
+        integration/hous_gradient.cpp
+        integration/edge_cases.cpp
+        )
+
 target_link_libraries(integration_tests PRIVATE raytracer tests_support)
 gtest_add_tests(TARGET integration_tests)
