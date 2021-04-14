@@ -62,7 +62,8 @@ TEST_F(AbsorptionTest, absorption_using_resonance_model_works) {
     ConstantGradient gradient{Vector{6.3e25, 0}};
     Marker reflectedMarker;
     reflectedMarker.mark(*intersections[0][1].previousElement, intersections[0][1].pointOnFace);
-    Resonance resonance(gradient, laser.wavelength, reflectedMarker);
+    Resonance resonance(laser.wavelength, &reflectedMarker);
+    resonance.setGradCalc(gradient);
 
     auto initialPowers = generateInitialPowers(laser);
 
@@ -96,7 +97,7 @@ TEST_F(AbsorptionTest, controller_generates_absorbed_powers_for_models) {
 
 TEST(BremssTest, bremsstrahlung_power_change_is_calculated_properly){
     MeshFunctionMock bremssCoeff(2.0);
-    Bremsstrahlung bremsstrahlung{bremssCoeff};
+    Bremsstrahlung bremsstrahlung{&bremssCoeff};
     Intersection prevInters;
     Intersection currentInters;
     prevInters.pointOnFace = PointOnFace{Point(0,0), nullptr, 0};

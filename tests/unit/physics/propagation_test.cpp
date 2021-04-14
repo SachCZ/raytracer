@@ -43,7 +43,8 @@ TEST(SnellsLawTest, snells_law_bends_the_ray_as_expected) {
 
     ConstantGradient gradient{Vector{1, 0}};
 
-    SnellsLaw snellsLaw{gradient, refractIndex};
+    SnellsLaw snellsLaw{&refractIndex};
+    snellsLaw.setGradCalc(gradient);
     Point pointA{0, 0};
     Point pointD{0, 1};
     Face face{0, {&pointD, &pointA}};
@@ -69,7 +70,8 @@ TEST(SnellsLawTest, reflects_ray_as_expected) {
     refractIndex.setValue(nextElement, 0);
 
     ConstantGradient gradient{Vector{1, 0}};
-    SnellsLaw snellsLaw{gradient, refractIndex};
+    SnellsLaw snellsLaw{&refractIndex};
+    snellsLaw.setGradCalc(gradient);
     Point pointA{0, 0};
     Point pointD{0, 1};
     Face face{0, {&pointD, &pointA}};

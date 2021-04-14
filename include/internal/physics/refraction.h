@@ -84,14 +84,18 @@ namespace raytracer {
          * @param reflectMarker
          */
         explicit SnellsLaw(
-                Gradient gradCalc,
-                const MeshFunc &refractIndex,
+                const MeshFunc *refractIndex,
                 Marker *reflectMarker = nullptr,
                 Vector *reflectDirection = nullptr,
                 const MeshFunc *density = nullptr,
                 const double * critDens = nullptr
         );
 
+        SnellsLaw() = default;
+
+        void setGradCalc(const Gradient& gradient){
+            gradCalc = gradient;
+        }
 
         /**
          * Apply Snells law using the values calculated at previous and next elements
@@ -110,12 +114,12 @@ namespace raytracer {
         );
 
     private:
-        const Gradient gradCalc;
-        const MeshFunc &refractIndex;
-        Marker *reflectMarker;
-        Vector *reflectDirection;
-        const MeshFunc *density;
-        const double * critDens;
+        Gradient gradCalc;
+        const MeshFunc *refractIndex{};
+        Marker *reflectMarker{};
+        Vector *reflectDirection{};
+        const MeshFunc *density{};
+        const double * critDens{};
     };
 }
 

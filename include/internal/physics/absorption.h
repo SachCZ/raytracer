@@ -77,10 +77,15 @@ namespace raytracer {
          * @param reflectedMarker
          */
         Resonance(
-                Gradient gradientCalculator,
                 const Length &wavelength,
-                const Marker &reflectedMarker
+                const Marker *reflectedMarker
         );
+
+        Resonance() = default;
+
+        void setGradCalc(const Gradient& gradient){
+            gradientCalculator = gradient;
+        }
 
         /**
          * Get the power absorbed into the single element based on resonance absorption model from Velechovsky thesis.
@@ -100,8 +105,8 @@ namespace raytracer {
 
     private:
         Gradient gradientCalculator;
-        const Length &wavelength;
-        const Marker &reflectedMarker;
+        Length wavelength{};
+        const Marker* reflectedMarker{};
 
         bool isResonating(const Element &element, const PointOnFace &pointOnFace) const;
 
@@ -127,7 +132,9 @@ namespace raytracer {
          * Provide the required functions and models to the Bremsstrahlung model to construct it.
          * @param bremssCoeff
          */
-        explicit Bremsstrahlung(const MeshFunc &bremssCoeff);
+        explicit Bremsstrahlung(const MeshFunc *bremssCoeff);
+
+        Bremsstrahlung() = default;
 
         /**
          * Returns the power absorbed into one element between two intersections based on bremsstrahlung model.
@@ -148,7 +155,7 @@ namespace raytracer {
         std::string getName() const override;
 
     private:
-        const MeshFunc &bremssCoeff;
+        const MeshFunc *bremssCoeff{};
     };
 
     /** Map of PowerExchangeModel pointers to powers */

@@ -1,4 +1,5 @@
 #include <raytracer.h>
+#include <fstream>
 
 int main(int, char *[]) {
     using namespace raytracer;
@@ -16,7 +17,8 @@ int main(int, char *[]) {
     });
 
     LinInterGrad gradient(calcIntegralGrad(mesh, density));
-    SnellsLaw snellsLaw(gradient, refractIndex, nullptr, nullptr);
+    SnellsLaw snellsLaw(&refractIndex, nullptr, nullptr);
+    snellsLaw.setGradCalc(gradient);
     auto intersectionSet = findIntersections(
             mesh,
             {Ray{{-0.1, 0.01}, Vector{1, 0.3}}},

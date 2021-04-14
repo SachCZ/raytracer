@@ -9,14 +9,12 @@
 
 namespace raytracer {
     SnellsLaw::SnellsLaw(
-            Gradient gradCalc,
-            const MeshFunc &refractIndex,
+            const MeshFunc *refractIndex,
             Marker *reflectMarker,
             Vector *reflectDirection,
             const MeshFunc* density,
             const double* critDens
     ) :
-            gradCalc(std::move(gradCalc)),
             refractIndex(refractIndex),
             reflectMarker(reflectMarker),
             reflectDirection(reflectDirection),
@@ -48,8 +46,8 @@ namespace raytracer {
             }
         }
 
-        const double n1 = refractIndex.getValue(previousElement);
-        const double n2 = refractIndex.getValue(nextElement);
+        const double n1 = refractIndex->getValue(previousElement);
+        const double n2 = refractIndex->getValue(nextElement);
 
         const auto l = 1 / previousDirection.getNorm() * previousDirection;
 

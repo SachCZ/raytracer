@@ -68,7 +68,7 @@ namespace raytracer {
     }
 
     bool Resonance::isResonating(const Element &element, const PointOnFace &pointOnFace) const {
-        return reflectedMarker.isMarked(element, pointOnFace);
+        return reflectedMarker->isMarked(element, pointOnFace);
     }
 
     double Resonance::getQ(Vector dir, Vector grad) const {
@@ -84,10 +84,8 @@ namespace raytracer {
     }
 
     Resonance::Resonance(
-            Gradient gradientCalculator,
             const Length &wavelength,
-            const Marker &reflectedMarker) :
-            gradientCalculator(std::move(gradientCalculator)),
+            const Marker *reflectedMarker) :
             wavelength(wavelength),
             reflectedMarker(reflectedMarker) {}
 
@@ -95,7 +93,7 @@ namespace raytracer {
         return "Resonance";
     }
 
-    Bremsstrahlung::Bremsstrahlung(const MeshFunc &bremssCoeff) : bremssCoeff(bremssCoeff) {}
+    Bremsstrahlung::Bremsstrahlung(const MeshFunc *bremssCoeff) : bremssCoeff(bremssCoeff) {}
 
     Power Bremsstrahlung::getPowerChange(
             const Intersection &previousIntersection,
@@ -108,7 +106,7 @@ namespace raytracer {
         const auto &point = currentIntersection.pointOnFace.point;
 
         const auto distance = (point - previousPoint).getNorm();
-        auto coeff = bremssCoeff.getValue(*element);
+        auto coeff = bremssCoeff->getValue(*element);
         const auto exponent = -coeff * distance;
 
         auto newPower = currentPower.asDouble * std::exp(exponent);

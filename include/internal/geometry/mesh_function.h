@@ -87,9 +87,10 @@ namespace raytracer {
         mfem::FiniteElementSpace l2FiniteElementSpace;
     };
 
-    class MfemQuafFuncWrapper : public MeshFunc {
+    class MfemQuadFuncWrapper : public MeshFunc {
     public:
-        MfemQuafFuncWrapper(mfem::QuadratureFunction *quadFunc, const mfem::IntegrationRule *integRule) :
+        MfemQuadFuncWrapper() = default;
+        MfemQuadFuncWrapper(mfem::QuadratureFunction *quadFunc, const mfem::IntegrationRule *integRule) :
                 quadFunc(quadFunc), integRule(integRule) {}
 
         double getValue(const Element &element) const override {
@@ -127,13 +128,14 @@ namespace raytracer {
         }
 
     private:
-        mfem::QuadratureFunction *quadFunc;
-        const mfem::IntegrationRule *integRule;
+        mfem::QuadratureFunction *quadFunc{};
+        const mfem::IntegrationRule *integRule{};
     };
 
 
     class MfemVectorWrapper : public MeshFunc {
     public:
+        MfemVectorWrapper() = default;
         explicit MfemVectorWrapper(mfem::Vector *vec) : vec(vec) {}
 
         double getValue(const Element &element) const override {
@@ -153,7 +155,7 @@ namespace raytracer {
         }
 
     private:
-        mfem::Vector *vec;
+        mfem::Vector *vec{};
     };
 
     /**
