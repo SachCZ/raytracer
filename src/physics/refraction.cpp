@@ -25,12 +25,12 @@ namespace raytracer {
     Vector SnellsLaw::operator()(
             const PointOnFace &pointOnFace,
             const Vector &previousDirection,
-            const Element &previousElement,
-            const Element &nextElement
+            const Element *previousElement,
+            const Element *nextElement
     ) {
         Vector gradient{};
         try {
-            gradient = gradCalc(pointOnFace, previousElement, nextElement);
+            gradient = gradCalc(pointOnFace);
         } catch (const std::logic_error &error) {
             if (reflectDirection) {
                 gradient = *reflectDirection;
@@ -46,8 +46,9 @@ namespace raytracer {
             }
         }
 
-        const double n1 = refractIndex->getValue(previousElement);
-        const double n2 = refractIndex->getValue(nextElement);
+        const double n1 = previousElement ? refractIndex->getValue(*previousElement) : 1.0;
+        if (!nextElement) throw std::logic_error("Next elements is needed");
+        const double n2 = refractIndex->getValue(*nextElement);
 
         const auto l = 1 / previousDirection.getNorm() * previousDirection;
 
@@ -60,7 +61,7 @@ namespace raytracer {
         const double r = n1 / n2;
         auto root = 1 - r * r * (1 - c * c);
         Vector result{};
-        if (root < 0 || n2 <= 0 || (critDens && density->getValue(nextElement) > *critDens)) {//Reflection
+        if (root < 0 || n2 <= 0 || (critDens && density->getValue(*nextElement) > *critDens)) {//Reflection
             if (
                     (reflectDirection && *reflectDirection * previousDirection < 0) ||
                     (!reflectDirection && gradient * previousDirection < 0)
@@ -102,8 +103,8 @@ namespace raytracer {
     }
 
     Vector
-    ContinueStraight::operator()(const PointOnFace &, const Vector &previousDirection, const Element &,
-                                 const Element &) {
+    ContinueStraight::operator()(const PointOnFace &, const Vector &previousDirection, const Element *,
+                                 const Element *) {
         return previousDirection;
     }
 

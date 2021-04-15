@@ -14,6 +14,9 @@ namespace raytracer {
             const Powers &initialPowers
     ) const {
         ModelPowersSets result;
+        if (surfReflModel){
+            result[surfReflModel] = PowersSet(intersectionSet.size());
+        }
         for (const auto &model : this->models) {
             result[model] = PowersSet(intersectionSet.size());
             for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
@@ -24,18 +27,29 @@ namespace raytracer {
         for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
             const auto &intersections = intersectionSet[setIndex];
             auto currentPower = initialPowers[setIndex].asDouble;
-            for (size_t i = 0; i < intersections.size() - 1; i++) {
-                const auto &intersection = intersections[i + 1];
-                const auto &prevIntersection = intersections[i];
+            if (intersections.size() > 1) {
+                for (size_t i = 0; i < intersections.size() - 1; i++) {
+                    const auto &intersection = intersections[i + 1];
+                    const auto &prevIntersection = intersections[i];
 
-                for (const auto &model : this->models) {
-                    auto absorbed = model->getPowerChange(
-                            prevIntersection,
-                            intersection,
-                            Power{currentPower});
-                    currentPower -= absorbed.asDouble;
-                    result[model][setIndex][i + 1] = absorbed;
+                    for (const auto &model : this->models) {
+                        auto absorbed = model->getPowerChange(
+                                prevIntersection,
+                                intersection,
+                                Power{currentPower});
+                        currentPower -= absorbed.asDouble;
+                        result[model][setIndex][i + 1] = absorbed;
+                    }
                 }
+            } else if (surfReflMode){
+                auto absorbed = surfReflModel->getPowerChange(
+                        Intersection{},
+                        Intersection{}
+                        Power{currentPower}
+                        );
+                result[surfReflModel][setIndex] = Powers{1, Power{absorbed}};
+            } else {
+                throw std::logic_error("No surface reflection model provided");
             }
         }
         return result;
@@ -46,17 +60,13 @@ namespace raytracer {
     }
 
     Power Resonance::getPowerChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
-                                      const Power &currentPower) const {
+                                    const Power &currentPower) const {
         if (!Resonance::isResonating(currentIntersection.pointOnFace))
             return Power{0};
         Vector grad{};
         try {
-            grad = gradientCalculator(
-                    currentIntersection.pointOnFace,
-                    *currentIntersection.previousElement,
-                    *currentIntersection.nextElement
-            );
-        } catch (const std::logic_error& err) {
+            grad = gradientCalculator(currentIntersection.pointOnFace);
+        } catch (const std::logic_error &err) {
             //std::cout << "No grad found" << std::endl;
             return Power{0};
         }
@@ -136,15 +146,20 @@ namespace raytracer {
     }
 
     void absorbRayPowers(MeshFunc &absorbedPower, const PowersSet &powersSets,
-                           const IntersectionSet &intersectionSet) {
+                         const IntersectionSet &intersectionSet) {
         for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
             const auto &powers = powersSets[setIndex];
             const auto &intersections = intersectionSet[setIndex];
-            for (size_t i = 1; i < intersections.size(); i++) {
-                auto element = intersections[i].previousElement;
-                if (!element) continue;
-                const auto &absorbed = -(powers[i].asDouble - powers[i - 1].asDouble);
-                absorbedPower.addValue(*element, absorbed);
+            if (intersections.size() > 1) {
+                for (size_t i = 1; i < intersections.size(); i++) {
+                    auto element = intersections[i].previousElement;
+                    if (!element) continue;
+                    const auto &absorbed = -(powers[i].asDouble - powers[i - 1].asDouble);
+                    absorbedPower.addValue(*element, absorbed);
+                }
+            } else {
+                auto element = intersections[0].nextElement;
+                absorbedPower.addValue(*element, powers[0].asDouble);
             }
         }
     }
@@ -154,24 +169,24 @@ namespace raytracer {
         PowersSet result;
         result.reserve(setsCount);
 
-        const auto& firstPowersSets = modelPowersSets.begin()->second;
-        for (const auto& powers : firstPowersSets) {
+        const auto &firstPowersSets = modelPowersSets.begin()->second;
+        for (const auto &powers : firstPowersSets) {
             result.emplace_back(Powers(powers.size(), Power{0}));
         }
-        for (const auto& oneModelPowersSets : modelPowersSets) {
-            const auto& powersSets = oneModelPowersSets.second;
-            for (size_t setIndex = 0; setIndex < setsCount; setIndex++){
-                const auto& powers = powersSets[setIndex];
-                for (size_t i = 0; i < powers.size(); i++){
+        for (const auto &oneModelPowersSets : modelPowersSets) {
+            const auto &powersSets = oneModelPowersSets.second;
+            for (size_t setIndex = 0; setIndex < setsCount; setIndex++) {
+                const auto &powers = powersSets[setIndex];
+                for (size_t i = 0; i < powers.size(); i++) {
                     result[setIndex][i].asDouble += powers[i].asDouble;
                 }
             }
         }
 
-        for (size_t setIndex = 0; setIndex < setsCount; setIndex++){
-            auto& powers = result[setIndex];
+        for (size_t setIndex = 0; setIndex < setsCount; setIndex++) {
+            auto &powers = result[setIndex];
             double currentPower = initialPowers[setIndex].asDouble;
-            for (auto & power : powers ){
+            for (auto &power : powers) {
                 currentPower -= power.asDouble;
                 power = Power{currentPower};
             }
@@ -183,7 +198,7 @@ namespace raytracer {
     std::vector<std::vector<double>> genSetSerialization(const PowersSet &powersSet) {
         std::vector<std::vector<double>> result;
         result.reserve(powersSet.size());
-        for (const auto& powers : powersSet){
+        for (const auto &powers : powersSet) {
             std::vector<double> rayPowerSerialization;
             rayPowerSerialization.reserve(powers.size());
             for (auto power : powers) {
@@ -215,7 +230,7 @@ namespace raytracer {
 
     raytracer::Power
     XRayGain::getPowerChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
-                              const Power &currentPower) const {
+                             const Power &currentPower) const {
         auto distance = (currentIntersection.pointOnFace.point - previousIntersection.pointOnFace.point).getNorm();
         auto element = currentIntersection.previousElement;
         auto gainCoeff = gain.getValue(*element);

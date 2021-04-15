@@ -64,8 +64,8 @@ namespace raytracer {
         Vector operator()(
                 const PointOnFace &,
                 const Vector &previousDirection,
-                const Element &,
-                const Element &
+                const Element *,
+                const Element *
         );
     };
 
@@ -106,8 +106,8 @@ namespace raytracer {
         Vector operator()(
                 const PointOnFace &pointOnFace,
                 const Vector &previousDirection,
-                const Element &previousElement,
-                const Element &nextElement
+                const Element *previousElement,
+                const Element *nextElement
         );
 
     private:

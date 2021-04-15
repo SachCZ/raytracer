@@ -27,7 +27,9 @@ TEST(DontStopTest, returns_always_false) {
 
 TEST(ContinueStraightTest, ContinueStraight_returns_always_the_same_direction) {
     ContinueStraight continueStraight;
-    auto result = continueStraight(PointOnFace{}, Vector{0.3, -2}, Element{0, {}, {}}, Element{1, {}, {}});
+    Element a{0, {}, {}};
+    Element b{1, {}, {}};
+    auto result = continueStraight(PointOnFace{}, Vector{0.3, -2}, &a, &b);
 
     ASSERT_THAT(result, IsSameVector(Vector{0.3, -2}));
 }
@@ -54,8 +56,8 @@ TEST(SnellsLawTest, snells_law_bends_the_ray_as_expected) {
     auto newDirection = snellsLaw(
             pointOnFace,
             Vector{1, sqrt(3) / 3},
-            previousElement,
-            nextElement
+            &previousElement,
+            &nextElement
     );
 
     ASSERT_THAT(newDirection, IsSameVector(Vector{0.0078023764920336358, 0.99996956099727208}));
@@ -81,8 +83,8 @@ TEST(SnellsLawTest, reflects_ray_as_expected) {
     auto newDirection = snellsLaw(
             pointOnFace,
             Vector{1, 1},
-            previousElement,
-            nextElement
+            &previousElement,
+            &nextElement
     );
 
     ASSERT_THAT(newDirection, IsSameVector(1/std::sqrt(2)*Vector{-1, 1}));

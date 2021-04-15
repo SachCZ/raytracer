@@ -50,8 +50,8 @@ namespace raytracer {
          * @return power gained by plasma (power lost by plasma is negative)
          */
         raytracer::Power getPowerChange(const raytracer::Intersection &previousIntersection,
-                                          const raytracer::Intersection &currentIntersection,
-                                          const raytracer::Power &currentPower) const override;
+                                        const raytracer::Intersection &currentIntersection,
+                                        const raytracer::Power &currentPower) const override;
 
         /**
          * returns "X-ray gain"
@@ -83,7 +83,7 @@ namespace raytracer {
 
         Resonance() = default;
 
-        void setGradCalc(const Gradient& gradient){
+        void setGradCalc(const Gradient &gradient) {
             gradientCalculator = gradient;
         }
 
@@ -95,7 +95,7 @@ namespace raytracer {
          * @return power change
          */
         Power getPowerChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
-                               const Power &currentPower) const override;
+                             const Power &currentPower) const override;
 
         /**
          * Returns "Resonance"
@@ -106,7 +106,7 @@ namespace raytracer {
     private:
         Gradient gradientCalculator;
         Length wavelength{};
-        const Marker* reflectedMarker{};
+        const Marker *reflectedMarker{};
 
         bool isResonating(const PointOnFace &pointOnFace) const;
 
@@ -120,6 +120,17 @@ namespace raytracer {
 
         std::string getName() const override {
             return "Zero exchange";
+        }
+    };
+
+    struct FresnelModel : public PowerExchangeModel {
+        Power getPowerChange(const Intersection &, const Intersection &,
+                             const Power &currentPower) const override {
+            return {0.1 * currentPower.asDouble};
+        }
+
+        std::string getName() const override {
+            return "Fresnel";
         }
     };
 
@@ -184,16 +195,20 @@ namespace raytracer {
          */
         void addModel(const PowerExchangeModel *model);
 
+        void setSurfReflModel(const PowerExchangeModel *model) {
+            surfReflModel = model;
+        }
+
         size_t getModelsCount() const;
 
         ModelPowersSets genPowers(const IntersectionSet &intersectionSet, const Powers &initialPowers) const;
 
     private:
         std::vector<const PowerExchangeModel *> models{};
-
+        const PowerExchangeModel *surfReflModel;
     };
 
-    PowersSet modelPowersToRayPowers(const ModelPowersSets &modelPowersSets, const Powers& initialPowers);
+    PowersSet modelPowersToRayPowers(const ModelPowersSets &modelPowersSets, const Powers &initialPowers);
 
     void absorbRayPowers(
             MeshFunc &absorbedPower,
@@ -201,9 +216,9 @@ namespace raytracer {
             const IntersectionSet &intersectionSet
     );
 
-    std::ostream& modelPowersToMsgpack(const ModelPowersSets& modelPowersSets, std::ostream& os);
+    std::ostream &modelPowersToMsgpack(const ModelPowersSets &modelPowersSets, std::ostream &os);
 
-    std::ostream& rayPowersToMsgpack(const PowersSet & powersSet, std::ostream& os);
+    std::ostream &rayPowersToMsgpack(const PowersSet &powersSet, std::ostream &os);
 
     /**
      * Take absorption summary and make it a human readable string

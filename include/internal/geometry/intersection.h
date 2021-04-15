@@ -149,9 +149,18 @@ namespace raytracer {
         if (!previousIntersection.nextElement) throw std::logic_error("Could not find next element at border!");
         previousIntersection.previousElement = nullptr;
         previousIntersection.pointOnFace = *initialPointOnFace;
-        previousIntersection.direction = initialDirection.direction;
+        previousIntersection.direction = findDirection(
+                *initialPointOnFace,
+                initialDirection.direction,
+                nullptr,
+                previousIntersection.nextElement
+        );
+
 
         result.emplace_back(previousIntersection);
+        if (previousIntersection.direction * initialDirection.direction < 0) {
+            return result;
+        }
 
         while (result.back().nextElement && !stopCondition(*(result.back().nextElement))) {
 
@@ -184,8 +193,8 @@ namespace raytracer {
                 direction = findDirection(
                         nextPointOnFace, //At which point
                         previousIntersection.direction, //Previous direction
-                        *previousIntersection.nextElement, //Previous element
-                        *nextElementForDirection
+                        previousIntersection.nextElement, //Previous element
+                        nextElementForDirection
                 );
             }
 

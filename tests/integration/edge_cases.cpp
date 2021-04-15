@@ -52,7 +52,6 @@ TEST(stuck_ray, is_detected_and_stopped) {
     std::vector<Ray> initDirs = {Ray{{-0.125, 0.375}, Vector{0.5, 0.125}}};
 
     auto intersectionSet = findIntersections(mesh, initDirs, snellsLaw, intersectStraight, dontStop);
-    std::cout << intersectionSet[0].size() << std::endl;
-    return;
+    ASSERT_THAT(intersectionSet[0], SizeIs(18));
 }
 

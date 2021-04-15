@@ -7,11 +7,7 @@
 #include <geometry.h>
 
 namespace raytracer {
-    using Gradient = std::function<Vector(
-            const PointOnFace &pointOnFace,
-            const Element &previousElement,
-            const Element &nextElement
-    )>;
+    using Gradient = std::function<Vector( const PointOnFace &pointOnFace )>;
 
     /**
      * Vectors at points
@@ -21,7 +17,7 @@ namespace raytracer {
     /**
      * Scalars at points
      */
-    using ScalarField = std::map<Point*, double>;
+    using ScalarField = std::map<Point *, double>;
 
     /**
      * GradientCalculator that returns a constant Vector no matter what.
@@ -38,11 +34,7 @@ namespace raytracer {
          * Returns always the same Vector given at construction.
          * @return vector gradient.
          */
-        Vector operator()(
-                const PointOnFace &pointOnFace,
-                const Element &previousElement,
-                const Element &nextElement
-        ) const;
+        Vector operator()( const PointOnFace &pointOnFace ) const;
 
     private:
         const Vector gradient;
@@ -93,7 +85,7 @@ namespace raytracer {
     VectorField mfemGradient(
             const MfemMesh &mesh,
             MfemMeshFunction &rho,
-            mfem::VectorCoefficient* vectorBoundaryValue = nullptr,
+            mfem::VectorCoefficient *vectorBoundaryValue = nullptr,
             double diffusionC = 0,
             double meshH = 0
     );
@@ -122,15 +114,9 @@ namespace raytracer {
          * Calculate the gradient in a point on a face by linear interpolation of gradient at nodes
          *
          * @param pointOnFace
-         * @param previousElement
-         * @param nextElement
          * @return
          */
-        Vector operator()(
-                const PointOnFace &pointOnFace,
-                const Element &previousElement,
-                const Element &nextElement
-        ) const;
+        Vector operator()(const PointOnFace &pointOnFace) const;
 
     private:
         VectorField gradientAtPoints;
@@ -162,7 +148,7 @@ namespace raytracer {
      */
     VectorField calcIntegralGrad(const Mesh &mesh, const MeshFunc &meshFunction);
 
-    std::ostream& operator<<(std::ostream& os, const VectorField& VectorField);
+    std::ostream &operator<<(std::ostream &os, const VectorField &VectorField);
 }
 
 
