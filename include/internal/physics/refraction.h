@@ -31,28 +31,25 @@ namespace raytracer {
     public:
         /**
          * Mark a PointOnFace
-         * @param element
          * @param pointOnFace
          */
-        void mark(const Element &element, const PointOnFace &pointOnFace);
+        void mark(const PointOnFace &pointOnFace);
 
         /**
          * Remove the mark
-         * @param element
          * @param pointOnFace
          */
-        void unmark(const Element &element, const PointOnFace &pointOnFace);
+        void unmark(const PointOnFace &pointOnFace);
 
         /**
          * Check whether an Element is marked by this marker.
-         * @param element
          * @param pointOnFace
          * @return
          */
-        bool isMarked(const Element &element, const PointOnFace &pointOnFace) const;
+        bool isMarked(const PointOnFace &pointOnFace) const;
 
     private:
-        std::set<std::pair<int, int>> marked;
+        std::set<int> marked;
     };
 
     /**

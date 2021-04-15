@@ -108,7 +108,7 @@ namespace raytracer {
         Length wavelength{};
         const Marker* reflectedMarker{};
 
-        bool isResonating(const Element &element, const PointOnFace &pointOnFace) const;
+        bool isResonating(const PointOnFace &pointOnFace) const;
 
         double getQ(Vector dir, Vector grad) const;
     };

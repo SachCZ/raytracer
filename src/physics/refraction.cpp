@@ -60,14 +60,14 @@ namespace raytracer {
         const double r = n1 / n2;
         auto root = 1 - r * r * (1 - c * c);
         Vector result{};
-        if (root < 0 || n2 <= 0) {//Reflection
+        if (root < 0 || n2 <= 0 || (critDens && density->getValue(nextElement) > *critDens)) {//Reflection
             if (
                     (reflectDirection && *reflectDirection * previousDirection < 0) ||
                     (!reflectDirection && gradient * previousDirection < 0)
                     ) {
                 result = previousDirection;
             } else {
-                if (reflectMarker) reflectMarker->mark(previousElement, pointOnFace);
+                if (reflectMarker) reflectMarker->mark(pointOnFace);
                 result = l + 2 * c * n;
             }
         } else {
@@ -89,16 +89,16 @@ namespace raytracer {
         return {constant * std::pow(wavelength.asDouble, -2)};
     }
 
-    void Marker::mark(const Element &element, const PointOnFace &pointOnFace) {
-        marked.insert(std::make_pair(element.getId(), pointOnFace.id));
+    void Marker::mark(const PointOnFace &pointOnFace) {
+        marked.insert(pointOnFace.id);
     }
 
-    void Marker::unmark(const Element &element, const PointOnFace &pointOnFace) {
-        marked.erase(std::make_pair(element.getId(), pointOnFace.id));
+    void Marker::unmark(const PointOnFace &pointOnFace) {
+        marked.erase(pointOnFace.id);
     }
 
-    bool Marker::isMarked(const Element &element, const PointOnFace &pointOnFace) const {
-        return marked.find(std::make_pair(element.getId(), pointOnFace.id)) != marked.end();
+    bool Marker::isMarked(const PointOnFace &pointOnFace) const {
+        return marked.find(pointOnFace.id) != marked.end();
     }
 
     Vector

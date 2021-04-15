@@ -47,7 +47,7 @@ namespace raytracer {
 
     Power Resonance::getPowerChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
                                       const Power &currentPower) const {
-        if (!Resonance::isResonating(*currentIntersection.previousElement, currentIntersection.pointOnFace))
+        if (!Resonance::isResonating(currentIntersection.pointOnFace))
             return Power{0};
         Vector grad{};
         try {
@@ -67,8 +67,8 @@ namespace raytracer {
         return Power{currentPower.asDouble * term};
     }
 
-    bool Resonance::isResonating(const Element &element, const PointOnFace &pointOnFace) const {
-        return reflectedMarker->isMarked(element, pointOnFace);
+    bool Resonance::isResonating(const PointOnFace &pointOnFace) const {
+        return reflectedMarker->isMarked(pointOnFace);
     }
 
     double Resonance::getQ(Vector dir, Vector grad) const {
