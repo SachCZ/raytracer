@@ -41,10 +41,10 @@ namespace raytracer {
                         result[model][setIndex][i + 1] = absorbed;
                     }
                 }
-            } else if (surfReflMode){
+            } else if (surfReflModel){
                 auto absorbed = surfReflModel->getPowerChange(
                         Intersection{},
-                        Intersection{}
+                        intersections[0],
                         Power{currentPower}
                         );
                 result[surfReflModel][setIndex] = Powers{1, Power{absorbed}};

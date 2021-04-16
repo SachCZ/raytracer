@@ -15,7 +15,7 @@ public:
     }
 
     Power getPowerChange(const Intersection &, const Intersection &,
-                           const Power &) const override {
+                         const Power &) const override {
         return {11.2};
     }
 };
@@ -39,7 +39,7 @@ public:
     Laser laser{
             Length{1356e-7},
             [](Point) { return Vector(1, 1); },
-            [](double) { return 1/0.28284271247461912; },
+            [](double) { return 1 / 0.28284271247461912; },
             Point(-1.1, -0.9),
             Point(-0.9, -1.1),
             1
@@ -77,7 +77,6 @@ TEST_F(AbsorptionTest, absorption_using_resonance_model_works) {
 }
 
 
-
 TEST_F(AbsorptionTest, controller_generates_absorbed_powers_for_models) {
     MockModel anotherModel;
     controller.addModel(&anotherModel);
@@ -95,30 +94,72 @@ TEST_F(AbsorptionTest, controller_generates_absorbed_powers_for_models) {
     EXPECT_THAT(modelPowers[&anotherModel][0][1].asDouble, DoubleEq(11.2));
 }
 
-TEST(BremssTest, bremsstrahlung_power_change_is_calculated_properly){
+TEST(BremssTest, bremsstrahlung_power_change_is_calculated_properly) {
     MeshFunctionMock bremssCoeff(2.0);
     Bremsstrahlung bremsstrahlung{&bremssCoeff};
     Intersection prevInters;
     Intersection currentInters;
-    prevInters.pointOnFace = PointOnFace{Point(0,0), nullptr, 0};
-    currentInters.pointOnFace = PointOnFace{Point(3,0), nullptr, 1};
-    Element element {0, {}, {}};
+    prevInters.pointOnFace = PointOnFace{Point(0, 0), nullptr, 0};
+    currentInters.pointOnFace = PointOnFace{Point(3, 0), nullptr, 1};
+    Element element{0, {}, {}};
     currentInters.previousElement = &element;
     auto result = bremsstrahlung.getPowerChange(prevInters, currentInters, Power{5});
-    ASSERT_THAT(result.asDouble, DoubleEq(5*(1 - std::exp(-2*3))));
+    ASSERT_THAT(result.asDouble, DoubleEq(5 * (1 - std::exp(-2 * 3))));
 }
 
 //TODO this is actually the same as bremsstrahlung coeff - should be one thing
-TEST(GainTest, gain_power_change_is_calculated_properly){
+TEST(GainTest, gain_power_change_is_calculated_properly) {
     MeshFunctionMock gainCoeff(2.0);
     XRayGain gain{gainCoeff};
     Intersection prevInters;
     Intersection currentInters;
-    prevInters.pointOnFace = PointOnFace{Point(0,0), nullptr, 0};
-    currentInters.pointOnFace = PointOnFace{Point(3,0), nullptr, 1};
-    Element element {0, {}, {}};
+    prevInters.pointOnFace = PointOnFace{Point(0, 0), nullptr, 0};
+    currentInters.pointOnFace = PointOnFace{Point(3, 0), nullptr, 1};
+    Element element{0, {}, {}};
     currentInters.previousElement = &element;
     auto result = gain.getPowerChange(prevInters, currentInters, Power{5});
-    ASSERT_THAT(result.asDouble, DoubleEq(5*(1 - std::exp(2*3))));
+    ASSERT_THAT(result.asDouble, DoubleEq(5 * (1 - std::exp(2 * 3))));
+}
+
+TEST(FresnelTest, fresnel_power_change_is_calculated_properly) {
+    MeshFunctionMock refractionIndex(4.0);
+    FresnelModel fresnel{&refractionIndex};
+    Intersection intersection;
+    Point a{0, 1};
+    Point b{0, 0};
+    Face face{
+            0,
+            {&a, &b}
+    };
+    intersection.pointOnFace = PointOnFace{Point{0, 0.5}, &face, 0};
+    intersection.direction = {1, 1};
+    Element element{0, {}, {}};
+    intersection.nextElement = &element;
+    auto res = fresnel.getPowerChange(Intersection{}, intersection, Power{100});
+    auto m = std::sqrt(31.0 / 32.0);
+    auto n = 2 * std::sqrt(2.0);
+    auto expected = (1 - std::pow((m - n) / (m + n), 2)) * 100;
+    ASSERT_THAT(res.asDouble, DoubleEq(expected));
+}
+
+TEST(FresnelTest, fresnel_power_change_is_same_for_s_and_p_in_case_of_normal_incidence) {
+    MeshFunctionMock refractionIndex(4.0);
+    FresnelModel fresnelP{&refractionIndex, "p"};
+    FresnelModel fresnelS{&refractionIndex, "s"};
+    Intersection intersection;
+    Point a{0, 1};
+    Point b{0, 0};
+    Face face{
+            0,
+            {&a, &b}
+    };
+    intersection.pointOnFace = PointOnFace{Point{0, 0.5}, &face, 0};
+    intersection.direction = {1, 0};
+    Element element{0, {}, {}};
+    intersection.nextElement = &element;
+    auto resP = fresnelP.getPowerChange(Intersection{}, intersection, Power{100});
+    auto resS = fresnelS.getPowerChange(Intersection{}, intersection, Power{100});
+
+    ASSERT_THAT(resP.asDouble, DoubleEq(resS.asDouble));
 }
 

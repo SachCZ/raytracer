@@ -2,6 +2,8 @@
 #define RAYTRACER_ABSORPTION_H
 
 #include <geometry.h>
+
+#include <utility>
 #include "magnitudes.h"
 #include "gradient.h"
 #include "refraction.h"
@@ -123,15 +125,49 @@ namespace raytracer {
         }
     };
 
-    struct FresnelModel : public PowerExchangeModel {
-        Power getPowerChange(const Intersection &, const Intersection &,
+    class FresnelModel : public PowerExchangeModel {
+    public:
+        FresnelModel() = default;
+        explicit FresnelModel(const MeshFunc* refractIndex, std::string polarization = "p"):
+        refractIndex(refractIndex), polarization(std::move(polarization)) {}
+
+        Power getPowerChange(const Intersection &, const Intersection &currentIntersection,
                              const Power &currentPower) const override {
-            return {0.1 * currentPower.asDouble};
+            double n1 = 1;
+            double n2 = refractIndex->getValue(*currentIntersection.nextElement);
+            auto normal = currentIntersection.pointOnFace.face->getNormal();
+            normal = 1 / normal.getNorm() * normal;
+            auto dir = currentIntersection.direction;
+            dir = 1 / dir.getNorm() * dir;
+            auto cosInc = std::abs(dir * normal);
+            if (polarization == "s"){
+                return {(1 - Rs(n1, n2, cosInc)) * currentPower.asDouble};
+            } else {
+                return {(1 - Rp(n1, n2, cosInc)) * currentPower.asDouble};
+            }
+        }
+
+    private:
+        static double Rs(double n1, double n2, double cosInc) {
+            auto sin2 = 1 - cosInc * cosInc;
+            auto a = n1 * cosInc;
+            auto b = n2 * std::sqrt(1 - std::pow(n1 / n2, 2) * sin2);
+            return std::pow((a - b) / (a + b), 2);
+        }
+
+        static double Rp(double n1, double n2, double cosInc) {
+            auto sin2 = 1 - cosInc * cosInc;
+            auto a = n1 * std::sqrt(1 - std::pow(n1 / n2, 2) * sin2);
+            auto b = n2 * cosInc;
+            return std::pow((a - b) / (a + b), 2);
         }
 
         std::string getName() const override {
             return "Fresnel";
         }
+
+        const MeshFunc* refractIndex{};
+        std::string polarization;
     };
 
     /**
@@ -205,7 +241,7 @@ namespace raytracer {
 
     private:
         std::vector<const PowerExchangeModel *> models{};
-        const PowerExchangeModel *surfReflModel;
+        const PowerExchangeModel *surfReflModel{};
     };
 
     PowersSet modelPowersToRayPowers(const ModelPowersSets &modelPowersSets, const Powers &initialPowers);
