@@ -121,8 +121,17 @@ TEST(GainTest, gain_power_change_is_calculated_properly) {
     ASSERT_THAT(result.asDouble, DoubleEq(5 * (1 - std::exp(2 * 3))));
 }
 
-TEST(FresnelTest, fresnel_power_change_is_calculated_properly) {
-    MeshFunctionMock refractionIndex(4.0);
+
+class FresnelTest : public Test {
+
+public:
+    void SetUp() override {
+        intersection.pointOnFace = PointOnFace{Point{0, 0.5}, &face, 0};
+        intersection.direction = {1, 1};
+        intersection.nextElement = &element;
+    }
+
+    MeshFunctionMock refractionIndex{4.0};
     FresnelModel fresnel{&refractionIndex};
     Intersection intersection;
     Point a{0, 1};
@@ -131,35 +140,36 @@ TEST(FresnelTest, fresnel_power_change_is_calculated_properly) {
             0,
             {&a, &b}
     };
-    intersection.pointOnFace = PointOnFace{Point{0, 0.5}, &face, 0};
-    intersection.direction = {1, 1};
     Element element{0, {}, {}};
-    intersection.nextElement = &element;
+    double m = std::sqrt(31.0 / 32.0);
+    double n = 2 * std::sqrt(2.0);
+    double expected = (1 - std::pow((m - n) / (m + n), 2)) * 100;
+};
+
+TEST_F(FresnelTest, fresnel_power_change_is_calculated_properly) {
     auto res = fresnel.getPowerChange(Intersection{}, intersection, Power{100});
-    auto m = std::sqrt(31.0 / 32.0);
-    auto n = 2 * std::sqrt(2.0);
-    auto expected = (1 - std::pow((m - n) / (m + n), 2)) * 100;
+
     ASSERT_THAT(res.asDouble, DoubleEq(expected));
 }
 
-TEST(FresnelTest, fresnel_power_change_is_same_for_s_and_p_in_case_of_normal_incidence) {
-    MeshFunctionMock refractionIndex(4.0);
-    FresnelModel fresnelP{&refractionIndex, "p"};
+TEST_F(FresnelTest, fresnel_power_change_is_same_for_s_and_p_in_case_of_normal_incidence) {
     FresnelModel fresnelS{&refractionIndex, "s"};
-    Intersection intersection;
-    Point a{0, 1};
-    Point b{0, 0};
-    Face face{
-            0,
-            {&a, &b}
-    };
-    intersection.pointOnFace = PointOnFace{Point{0, 0.5}, &face, 0};
     intersection.direction = {1, 0};
-    Element element{0, {}, {}};
-    intersection.nextElement = &element;
-    auto resP = fresnelP.getPowerChange(Intersection{}, intersection, Power{100});
+    auto resP = fresnel.getPowerChange(Intersection{}, intersection, Power{100});
     auto resS = fresnelS.getPowerChange(Intersection{}, intersection, Power{100});
 
     ASSERT_THAT(resP.asDouble, DoubleEq(resS.asDouble));
 }
 
+TEST_F(FresnelTest, fresnel_absorbed_energy_is_correctly_processed){
+    IntersectionSet intersections{{intersection}};
+    PowerExchangeController exchange;
+    exchange.setSurfReflModel(&fresnel);
+    Powers initialPowers{Power{100}};
+    auto modelPowers = exchange.genPowers(intersections, initialPowers);
+    auto rayPowers = modelPowersToRayPowers(modelPowers, initialPowers);
+    MeshFunctionMock absorbedPower;
+    absorbedPower.setValue(element, 0);
+    absorbRayPowers(absorbedPower, rayPowers, intersections);
+    ASSERT_THAT(absorbedPower.getValue(element), DoubleEq(expected));
+}

@@ -186,9 +186,11 @@ namespace raytracer {
         for (size_t setIndex = 0; setIndex < setsCount; setIndex++) {
             auto &powers = result[setIndex];
             double currentPower = initialPowers[setIndex].asDouble;
-            for (auto &power : powers) {
-                currentPower -= power.asDouble;
-                power = Power{currentPower};
+            if (powers.size() > 1) {
+                for (auto &power : powers) {
+                    currentPower -= power.asDouble;
+                    power = Power{currentPower};
+                }
             }
         }
 
