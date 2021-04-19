@@ -30,6 +30,8 @@ add_executable(integration_tests
         integration/mfem_gradient.cpp
         integration/hous_gradient.cpp
         integration/edge_cases.cpp
+        integration/all_absorption.cpp
+        integration/reflection.cpp
         )
 
 target_link_libraries(integration_tests PRIVATE raytracer tests_support)

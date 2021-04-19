@@ -16,7 +16,12 @@ namespace raytracer {
         ModelPowersSets result;
         if (surfReflModel){
             result[surfReflModel] = PowersSet(intersectionSet.size());
+            for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
+                const auto &intersections = intersectionSet[setIndex];
+                result[surfReflModel][setIndex] = Powers(intersections.size(), Power{0});
+            }
         }
+
         for (const auto &model : this->models) {
             result[model] = PowersSet(intersectionSet.size());
             for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
@@ -47,7 +52,7 @@ namespace raytracer {
                         intersections[0],
                         Power{currentPower}
                         );
-                result[surfReflModel][setIndex] = Powers{1, Power{absorbed}};
+                result[surfReflModel][setIndex][0] = Power{absorbed};
             } else {
                 throw std::logic_error("No surface reflection model provided");
             }

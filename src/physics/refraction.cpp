@@ -61,7 +61,7 @@ namespace raytracer {
         const double r = n1 / n2;
         auto root = 1 - r * r * (1 - c * c);
         Vector result{};
-        if (root < 0 || n2 <= 0 || (critDens && density->getValue(*nextElement) > *critDens)) {//Reflection
+        if (root < 0 || n2 <= 0 || (n2 > n1 && critDens && density->getValue(*nextElement) > *critDens)) {//Reflection
             if (
                     (reflectDirection && *reflectDirection * previousDirection < 0) ||
                     (!reflectDirection && gradient * previousDirection < 0)

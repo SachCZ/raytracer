@@ -133,8 +133,11 @@ namespace raytracer {
 
         Power getPowerChange(const Intersection &, const Intersection &currentIntersection,
                              const Power &currentPower) const override {
-            double n1 = 1;
             double n2 = refractIndex->getValue(*currentIntersection.nextElement);
+            if (n2 <= 0) {
+                return Power{0};
+            }
+            double n1 = std::min(1.0, n2);
             auto normal = currentIntersection.pointOnFace.face->getNormal();
             normal = 1 / normal.getNorm() * normal;
             auto dir = currentIntersection.direction;
