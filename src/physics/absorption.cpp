@@ -52,7 +52,7 @@ namespace raytracer {
                         intersections[0],
                         Power{currentPower}
                         );
-                result[surfReflModel][setIndex][0] = Power{absorbed};
+                result[surfReflModel][setIndex][0] = absorbed;
             } else {
                 throw std::logic_error("No surface reflection model provided");
             }
