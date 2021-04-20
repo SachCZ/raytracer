@@ -85,12 +85,12 @@ namespace raytracer {
                 Marker *reflectMarker = nullptr,
                 Vector *reflectDirection = nullptr,
                 const MeshFunc *density = nullptr,
-                const double * critDens = nullptr
+                const double *critDens = nullptr
         );
 
         SnellsLaw() = default;
 
-        void setGradCalc(const Gradient& gradient){
+        void setGradCalc(const Gradient &gradient) {
             gradCalc = gradient;
         }
 
@@ -116,7 +116,78 @@ namespace raytracer {
         Marker *reflectMarker{};
         Vector *reflectDirection{};
         const MeshFunc *density{};
-        const double * critDens{};
+        const double *critDens{};
+    };
+
+    enum class Coord {
+        x,
+        y
+    };
+
+    struct SymmetryAxis {
+        double position{0};
+        bool isLessThan{true};
+        Coord coord{Coord::y};
+    };
+
+    struct SnellsLawSymmetric {
+        explicit SnellsLawSymmetric(
+                const MeshFunc *refractIndex,
+                Marker *reflectMarker = nullptr,
+                Vector *reflectDirection = nullptr,
+                const MeshFunc *density = nullptr,
+                const double *critDens = nullptr,
+                const SymmetryAxis *symmetryAxis = nullptr
+        ) : snellsLaw(refractIndex, reflectMarker, reflectDirection, density, critDens), symmetryAxis(symmetryAxis) {}
+
+        SnellsLawSymmetric() = default;
+
+        void setGradCalc(const Gradient &gradient) {
+            snellsLaw.setGradCalc(gradient);
+        }
+
+        Vector operator()(
+                const PointOnFace &pointOnFace,
+                const Vector &previousDirection,
+                const Element *previousElement,
+                const Element *nextElement
+        ) {
+            if (symmetryAxis) {
+                if (symmetryAxis->coord == Coord::x && shouldFlipX(pointOnFace.point, *symmetryAxis)) {
+                    return flipX(previousDirection);
+                } else if (symmetryAxis->coord == Coord::y && shouldFlipY(pointOnFace.point, *symmetryAxis)) {
+                    return flipY(previousDirection);
+                }
+            }
+
+            return snellsLaw(pointOnFace, previousDirection, previousElement, nextElement);
+        }
+
+    private:
+        static Vector flipX(const Vector &vec) {
+            auto newVec = vec;
+            newVec.x = -newVec.x;
+            return newVec;
+        }
+
+        static bool shouldFlipX(const Point &point, const SymmetryAxis &axis) {
+            return (axis.isLessThan && point.x <= axis.position) ||
+                   (!axis.isLessThan && point.x >= axis.position);
+        }
+
+        static bool shouldFlipY(const Point &point, const SymmetryAxis &axis) {
+            return (axis.isLessThan && point.y <= axis.position) ||
+                   (!axis.isLessThan && point.y >= axis.position);
+        }
+
+        static Vector flipY(const Vector &vec) {
+            auto newVec = vec;
+            newVec.y = -newVec.y;
+            return newVec;
+        }
+
+        SnellsLaw snellsLaw{};
+        const SymmetryAxis *symmetryAxis{};
     };
 }
 

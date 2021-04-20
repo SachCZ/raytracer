@@ -90,3 +90,35 @@ TEST(SnellsLawTest, reflects_ray_as_expected) {
     ASSERT_THAT(newDirection, IsSameVector(1/std::sqrt(2)*Vector{-1, 1}));
 }
 
+TEST(SymmetricSnellsLaw, reflects_ray_on_axis_of_symmetry) {
+    Element previousElement{0, {}, {}};
+    Element nextElement{1, {}, {}};
+
+    SymmetryAxis axis{};
+    axis.position = 0;
+    axis.coord = Coord::x;
+    axis.isLessThan = false;
+    SnellsLawSymmetric snellsLaw{
+            nullptr,
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr,
+        &axis
+        };
+    Point pointA{0, 0};
+    Point pointD{0, 1};
+    Face face{0, {&pointD, &pointA}};
+    PointOnFace pointOnFace{};
+    pointOnFace.face = &face;
+    pointOnFace.point = Point(0, 0.1);
+    auto newDirection = snellsLaw(
+            pointOnFace,
+            Vector{1, 1},
+            &previousElement,
+            &nextElement
+    );
+
+    ASSERT_THAT(newDirection, IsSameVector(Vector{-1, 1}));
+}
+
