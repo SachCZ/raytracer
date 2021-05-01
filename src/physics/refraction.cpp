@@ -29,15 +29,11 @@ namespace raytracer {
             const Element *nextElement
     ) {
         Vector gradient{};
-        Vector preferredDirection{};
         try {
             gradient = gradCalc(pointOnFace);
         } catch (const std::logic_error &error) {
             if (reflectDirection) {
                 gradient = pointOnFace.face->getNormal();
-                if (gradient * *reflectDirection < 0){
-                    gradient = -1 * gradient;
-                }
             } else {
                 gradient = previousDirection;
             }

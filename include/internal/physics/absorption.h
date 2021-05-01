@@ -137,7 +137,7 @@ namespace raytracer {
             if (n2 <= 0) {
                 return Power{0};
             }
-            double n1 = std::min(1.0, n2);
+            double n1 = 1.0;
             auto normal = currentIntersection.pointOnFace.face->getNormal();
             normal = 1 / normal.getNorm() * normal;
             auto dir = currentIntersection.direction;
@@ -154,13 +154,15 @@ namespace raytracer {
         static double Rs(double n1, double n2, double cosInc) {
             auto sin2 = 1 - cosInc * cosInc;
             auto a = n1 * cosInc;
-            auto b = n2 * std::sqrt(1 - std::pow(n1 / n2, 2) * sin2);
+            auto root = 1 - std::pow(n1 / n2, 2) * sin2;
+            auto b = n2 * std::sqrt(std::max(root, 0.0));
             return std::pow((a - b) / (a + b), 2);
         }
 
         static double Rp(double n1, double n2, double cosInc) {
             auto sin2 = 1 - cosInc * cosInc;
-            auto a = n1 * std::sqrt(1 - std::pow(n1 / n2, 2) * sin2);
+            auto root = 1 - std::pow(n1 / n2, 2) * sin2;
+            auto a = n1 * std::sqrt(std::max(root, 0.0));
             auto b = n2 * cosInc;
             return std::pow((a - b) / (a + b), 2);
         }

@@ -74,9 +74,9 @@ namespace raytracer {
     template<typename DirectionFunction, typename IntersectionFunction, typename StopCondition>
     IntersectionSet findIntersections(const Mesh &mesh,
                                       const std::vector<Ray> &initialDirections,
-                                      DirectionFunction findDirection,
-                                      IntersectionFunction findIntersection,
-                                      StopCondition stopCondition,
+                                      DirectionFunction&& findDirection,
+                                      IntersectionFunction&& findIntersection,
+                                      StopCondition&& stopCondition,
                                       InterErrLog *errLog = nullptr
     );
 
@@ -90,9 +90,9 @@ namespace raytracer {
         Intersections findRayIntersections(
                 const Mesh &mesh,
                 const Ray &initialDirection,
-                DirectionFunction findDirection,
-                IntersectionFunction findIntersection,
-                StopCondition stopCondition,
+                DirectionFunction&& findDirection,
+                IntersectionFunction&& findIntersection,
+                StopCondition&& stopCondition,
                 InterErrLog *errLog = nullptr
         );
     }
@@ -102,9 +102,9 @@ namespace raytracer {
     IntersectionSet findIntersections(
             const Mesh &mesh,
             const std::vector<Ray> &initialDirections,
-            DirectionFunction findDirection,
-            IntersectionFunction findIntersection,
-            StopCondition stopCondition,
+            DirectionFunction&& findDirection,
+            IntersectionFunction&& findIntersection,
+            StopCondition&& stopCondition,
             InterErrLog *errLog
     ) {
         IntersectionSet result;
@@ -114,9 +114,9 @@ namespace raytracer {
             result.emplace_back(impl::findRayIntersections(
                     mesh,
                     initialDirection,
-                    findDirection,
-                    findIntersection,
-                    stopCondition,
+                    std::forward<DirectionFunction>(findDirection),
+                    std::forward<IntersectionFunction>(findIntersection),
+                    std::forward<StopCondition>(stopCondition),
                     errLog
             ));
         }
@@ -127,9 +127,9 @@ namespace raytracer {
     Intersections impl::findRayIntersections(
             const Mesh &mesh,
             const Ray &initialDirection,
-            DirectionFunction findDirection,
-            IntersectionFunction findIntersection,
-            StopCondition stopCondition,
+            DirectionFunction&& findDirection,
+            IntersectionFunction&& findIntersection,
+            StopCondition&& stopCondition,
             InterErrLog *errLog
     ) {
         Intersections result;
