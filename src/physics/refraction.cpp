@@ -28,6 +28,7 @@ namespace raytracer {
             const Element *previousElement,
             const Element *nextElement
     ) {
+        if (!nextElement) return {0, 0};
         Vector gradient{};
         try {
             gradient = gradCalc(pointOnFace);

@@ -188,15 +188,12 @@ namespace raytracer {
                     nextPointOnFace.face,
                     previousIntersection.direction
             );
-            auto direction = previousIntersection.direction;
-            if (nextElementForDirection) {
-                direction = findDirection(
-                        nextPointOnFace, //At which point
-                        previousIntersection.direction, //Previous direction
-                        previousIntersection.nextElement, //Previous element
-                        nextElementForDirection
-                );
-            }
+            auto direction = findDirection(
+                    nextPointOnFace, //At which point
+                    previousIntersection.direction, //Previous direction
+                    previousIntersection.nextElement, //Previous element
+                    nextElementForDirection
+            );
 
             auto nextElementToGo = mesh.getFaceDirAdjElement(
                     nextPointOnFace.face,
@@ -209,7 +206,11 @@ namespace raytracer {
             intersection.pointOnFace = nextPointOnFace;
             intersection.direction = direction;
 
+
             result.emplace_back(intersection);
+
+            if (direction.x == 0 && direction.y == 0) break;
+
             previousIntersection = intersection;
 
             if (result.size() > 15) {

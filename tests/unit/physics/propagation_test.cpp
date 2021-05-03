@@ -122,3 +122,19 @@ TEST(SymmetricSnellsLaw, reflects_ray_on_axis_of_symmetry) {
     ASSERT_THAT(newDirection, IsSameVector(Vector{-1, 1}));
 }
 
+TEST(SymmetricSnellsLawOnMesh, relfects_even_in_last_cell) {
+    MfemMesh mesh(SegmentedLine{0.0, 1.0, 1}, SegmentedLine{0.0, 1.0, 1});
+    MeshFunctionMock refractIndex{1.0};
+    SymmetryAxis axis{};
+    axis.position = 1.0;
+    axis.coord = Coord::y;
+    axis.isLessThan = false;
+    Vector reflectDirection{-1, 0};
+    SnellsLawSymmetric snellsLaw{
+        &refractIndex, nullptr, &reflectDirection, nullptr, nullptr, &axis
+    };
+    snellsLaw.setGradCalc(LinInterGrad{{}});
+    auto intersections = findIntersections(mesh, {Ray{Point(-0.5, 0), Vector{1, 1}}}, snellsLaw, intersectStraight, dontStop);
+    ASSERT_THAT((*intersections.rbegin()->rbegin()).pointOnFace.point, IsSamePoint(Point{1.0, 0.5}));
+}
+
