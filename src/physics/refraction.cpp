@@ -34,7 +34,7 @@ namespace raytracer {
             gradient = gradCalc(pointOnFace);
         } catch (const std::logic_error &error) {
             if (reflectDirection) {
-                gradient = pointOnFace.face->getNormal();
+                gradient = *reflectDirection;
             } else {
                 gradient = previousDirection;
             }
@@ -48,7 +48,6 @@ namespace raytracer {
         }
 
         const double n1 = previousElement ? refractIndex->getValue(*previousElement) : 1.0;
-        if (!nextElement) throw std::logic_error("Next elements is needed");
         const double n2 = refractIndex->getValue(*nextElement);
 
         const auto l = 1 / previousDirection.getNorm() * previousDirection;
