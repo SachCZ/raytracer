@@ -8,7 +8,7 @@ namespace raytracer {
 
 
     double getParamK(const Ray &ray,
-                           const std::vector<Point *> &points) {
+                     const std::vector<Point *> &points) {
         auto normal = ray.direction.getNormal();
         const auto &P = ray.origin;
         const auto &A = *points[0];
@@ -17,7 +17,7 @@ namespace raytracer {
     }
 
     double getParamT(const Ray &ray,
-                           const std::vector<Point *> &points) {
+                     const std::vector<Point *> &points) {
         const auto &A = *points[0];
         const auto &B = *points[1];
         auto normal = (B - A).getNormal();
@@ -48,7 +48,7 @@ namespace raytracer {
                 }
             }
         }
-        if (result){
+        if (result) {
             result->id = currentId++;
         }
         return result;
@@ -85,7 +85,7 @@ namespace raytracer {
                 faces.begin(),
                 faces.end(),
                 std::back_inserter(intersections),
-                [&ray](const Face* face) { return findIntersectionPoint(ray, face); }
+                [&ray](const Face *face) { return findIntersectionPoint(ray, face); }
         );
         auto result = getClosest(intersections, ray.origin);
 
@@ -95,10 +95,22 @@ namespace raytracer {
                     faces.begin(),
                     faces.end(),
                     std::back_inserter(intersections),
-                    [&ray](const Face* face) { return findIntersectionPoint(ray, face, true); }
+                    [&ray](const Face *face) { return findIntersectionPoint(ray, face, true); }
             );
             result = getClosest(intersections, ray.origin);
         }
         return result;
+    }
+
+    tl::optional<Vector> calcDirection(
+            const std::vector<DirectionFunction> &findDirection,
+            const PointOnFace &pointOnFace,
+            const Vector &prevDirection
+    ) {
+        for (const auto &func : findDirection) {
+            auto dir = func(pointOnFace, prevDirection);
+            if (dir) return dir.value();
+        }
+        return {};
     }
 }

@@ -2,57 +2,27 @@
 #include "constants.h"
 #include "propagation.h"
 #include "refraction.h"
-#include <memory>
-#include <utility>
-#include <utility.h>
 #include <stdexcept>
 
 namespace raytracer {
-    SnellsLaw::SnellsLaw(
-            const MeshFunc *refractIndex,
-            Marker *reflectMarker,
-            Vector *reflectDirection,
-            const MeshFunc* density,
-            const double* critDens
-    ) :
-            refractIndex(refractIndex),
-            reflectMarker(reflectMarker),
-            reflectDirection(reflectDirection),
-            density(density),
-            critDens(critDens)
-            {}
-
-    Vector SnellsLaw::operator()(
-            const PointOnFace &pointOnFace,
-            const Vector &previousDirection,
-            const Element *previousElement,
-            const Element *nextElement
-    ) {
-        if (!nextElement) return {0, 0};
-        Vector gradient{};
-        try {
-            gradient = gradCalc(pointOnFace);
-        } catch (const std::logic_error &error) {
-            if (reflectDirection) {
-                gradient = *reflectDirection;
-            } else {
-                gradient = previousDirection;
-            }
+    bool shouldReflect(const Vector &unitInterfaceNormal, const Vector &unitIncDir, double n1, double n2) {
+        auto n = unitInterfaceNormal;
+        auto l = unitIncDir;
+        auto c = (-1) * n * l;
+        if (c < 0) {
+            c = -c;
         }
-        if (gradient.getNorm() == 0) {
-            if (reflectDirection) {
-                gradient = *reflectDirection;
-            } else {
-                gradient = previousDirection;
-            }
+        const double r = n1 / n2;
+        if (n2 < std::numeric_limits<double>::epsilon()) {
+            return true;
         }
+        auto root = 1 - r * r * (1 - c * c);
+        return root < 0;
+    }
 
-        const double n1 = previousElement ? refractIndex->getValue(*previousElement) : 1.0;
-        const double n2 = refractIndex->getValue(*nextElement);
-
-        const auto l = 1 / previousDirection.getNorm() * previousDirection;
-
-        auto n = 1 / gradient.getNorm() * gradient;
+    Vector calcRayBend(const Vector &unitInterfaceNormal, const Vector &unitIncDir, double n1, double n2) {
+        auto n = unitInterfaceNormal;
+        auto l = unitIncDir;
         auto c = (-1) * n * l;
         if (c < 0) {
             c = -c;
@@ -60,24 +30,62 @@ namespace raytracer {
         }
         const double r = n1 / n2;
         auto root = 1 - r * r * (1 - c * c);
-        Vector result{};
-        if (root < 0 || n2 <= 0 || (n2 > n1 && critDens && density->getValue(*nextElement) > *critDens)) {//Reflection
-            if (
-                    (reflectDirection && *reflectDirection * previousDirection < 0) ||
-                    (!reflectDirection && gradient * previousDirection < 0)
-                    ) {
-                result = previousDirection;
+        return r * l + (r * c - sqrt(root)) * n;
+    }
+
+    Vector calcRayReflect(const Vector &unitInterfaceNormal, const Vector &unitIncDir) {
+        auto n = unitInterfaceNormal;
+        auto l = unitIncDir;
+        auto c = (-1) * n * l;
+        if (c < 0) {
+            c = -c;
+            n = (-1) * n;
+        }
+        return l + 2 * c * n;
+    }
+
+    SnellsLaw::SnellsLaw(
+            const Mesh *mesh,
+            const MeshFunc *refractIndex,
+            Marker *reflectMarker,
+            Vector *fallbackGrad
+    ) :
+            mesh(mesh),
+            refractIndex(refractIndex),
+            reflectMarker(reflectMarker),
+            fallbackGrad(fallbackGrad) {}
+
+    tl::optional<Vector> SnellsLaw::operator()(
+            const PointOnFace &pointOnFace,
+            const Vector &direction
+    ) {
+        const auto previousElement = mesh->getFaceDirAdjElement(pointOnFace.face, -1 * direction);
+        const auto nextElement = mesh->getFaceDirAdjElement(pointOnFace.face, direction);
+        if (!nextElement) return {};
+        auto gradient = gradCalc(pointOnFace);
+        if (!gradient || gradient.value().getNorm() == 0) {
+            if (fallbackGrad) {
+                gradient = *fallbackGrad;
+            } else {
+                return {};
+            }
+        }
+
+        const double n1 = previousElement ? refractIndex->getValue(*previousElement) : 1.0;
+        const double n2 = refractIndex->getValue(*nextElement);
+
+        auto unitGrad = 1 / gradient.value().getNorm() * gradient.value();
+        auto unitDir = 1 / direction.getNorm() * direction;
+        if (shouldReflect(unitGrad, unitDir, n1, n2)) {
+            if (gradient.value() * direction < 0) {
+                return direction;
             } else {
                 if (reflectMarker) reflectMarker->mark(pointOnFace);
-                result = l + 2 * c * n;
+                return calcRayReflect(unitGrad, unitDir);
             }
         } else {
-            result = r * l + (r * c - sqrt(root)) * n;
+            return calcRayBend(unitGrad, unitDir, n1, n2);
         }
-        if (std::isnan(result.x) || std::isnan(result.y)) {
-            throw std::logic_error("Snell's law generated nan direction, something is wrong!");
-        }
-        return result;
     }
 
     Density calcCritDens(const Length &wavelength) {
@@ -102,9 +110,8 @@ namespace raytracer {
         return marked.find(pointOnFace.id) != marked.end();
     }
 
-    Vector
-    ContinueStraight::operator()(const PointOnFace &, const Vector &previousDirection, const Element *,
-                                 const Element *) {
+    tl::optional<Vector>
+    ContinueStraight::operator()(const PointOnFace &, const Vector &previousDirection) {
         return previousDirection;
     }
 
@@ -133,5 +140,33 @@ namespace raytracer {
     double calcInvBremssCoeff(double density, const Length &wavelength, double collFreq) {
         auto eps = impl::calcPermittivity(density, wavelength, collFreq);
         return 4 * M_PI / wavelength.asDouble * std::sqrt(eps).imag();
+    }
+
+    tl::optional<Vector> ReflectOnCritical::operator()(const PointOnFace &pointOnFace, const Vector &direction) {
+        auto element = mesh.getFaceDirAdjElement(pointOnFace.face, direction);
+        if (dens.getValue(*element) > critDens) {
+            const auto nextElement = mesh.getFaceDirAdjElement(pointOnFace.face, direction);
+            if (!nextElement) return {};
+            auto gradient = gradCalc(pointOnFace);
+            if (!gradient || gradient.value().getNorm() == 0) {
+                if (fallbackGrad) {
+                    gradient = *fallbackGrad;
+                } else {
+                    return {};
+                }
+            }
+            auto unitGrad = 1 / gradient.value().getNorm() * gradient.value();
+            auto unitDir = 1 / direction.getNorm() * direction;
+            if (direction * gradient.value() < 0) {
+                return direction;
+            } else {
+                if (marker) {
+                    marker->mark(pointOnFace);
+                }
+                return calcRayReflect(unitGrad, unitDir);
+            }
+        } else {
+            return {};
+        }
     }
 }

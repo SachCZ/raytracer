@@ -27,114 +27,121 @@ TEST(DontStopTest, returns_always_false) {
 
 TEST(ContinueStraightTest, ContinueStraight_returns_always_the_same_direction) {
     ContinueStraight continueStraight;
-    Element a{0, {}, {}};
-    Element b{1, {}, {}};
-    auto result = continueStraight(PointOnFace{}, Vector{0.3, -2}, &a, &b);
+    auto result = continueStraight(PointOnFace{}, Vector{0.3, -2});
 
-    ASSERT_THAT(result, IsSameVector(Vector{0.3, -2}));
+    ASSERT_THAT(result.value(), IsSameVector(Vector{0.3, -2}));
 }
 
-TEST(SnellsLawTest, snells_law_bends_the_ray_as_expected) {
-    Element previousElement{0, {}, {}};
-    Element nextElement{1, {}, {}};
 
+class SnellsLawTest : public Test {
+protected:
+    void SetUp() override {
+        snellsLaw.setGradCalc(gradient);
+        auto face = mesh.getElements()[0]->getFaces()[1];
+        pointOnFace = {{0, 0.1}, face, 0};
+    }
+
+public:
+    MfemMesh mesh{{-1.0, 1.0, 2},
+                  {0.0,  1.0, 1}};
     MeshFunctionMock refractIndex;
     Length wavelength{1315e-7};
-    refractIndex.setValue(previousElement, calcRefractIndex(0, wavelength, 0));
-    refractIndex.setValue(nextElement, calcRefractIndex(3.0 / 4.0 * 6.447e20, wavelength, 0));
-
     ConstantGradient gradient{Vector{1, 0}};
+    SnellsLaw snellsLaw{&mesh, &refractIndex};
+    PointOnFace pointOnFace;
+};
 
-    SnellsLaw snellsLaw{&refractIndex};
-    snellsLaw.setGradCalc(gradient);
+TEST_F(SnellsLawTest, snells_law_bends_the_ray_as_expected) {
+    auto elements = mesh.getElements();
+
+    refractIndex.setValue(*elements[0], calcRefractIndex(0, wavelength, 0));
+    refractIndex.setValue(*elements[1], calcRefractIndex(3.0 / 4.0 * 6.447e20, wavelength, 0));
+
+    auto newDirection = snellsLaw(
+            pointOnFace,
+            Vector{1, sqrt(3) / 3}
+    );
+
+    ASSERT_THAT(newDirection.value(), IsSameVector(Vector{0.0078023764920336358, 0.99996956099727208}));
+}
+
+TEST_F(SnellsLawTest, reflects_ray_as_expected) {
+    auto elements = mesh.getElements();
+
+    refractIndex.setValue(*elements[0], 1);
+    refractIndex.setValue(*elements[1], 0);
+
+    auto newDirection = snellsLaw(
+            pointOnFace,
+            Vector{1, 1}
+    );
+
+    ASSERT_THAT(newDirection.value(), IsSameVector(1 / std::sqrt(2) * Vector{-1, 1}));
+}
+
+TEST_F(SnellsLawTest, reflect_on_crit_reflects_while_snell_passes) {
+    MeshFunctionMock dens;
+    auto elements = mesh.getElements();
+    dens.setValue(*elements[0], 1);
+    dens.setValue(*elements[1], 10);
+    refractIndex.setValue(*elements[0], 1);
+    refractIndex.setValue(*elements[1], 1);
+
+    Marker marker;
+    ReflectOnCritical reflectOnCritical(mesh, dens, 5, &marker);
+    reflectOnCritical.setGradCalc(gradient);
+
+    auto snellDirection = snellsLaw(pointOnFace, Vector{1, 0});
+    auto reflectDirection = reflectOnCritical(pointOnFace, Vector{1, 0});
+
+    EXPECT_TRUE(marker.isMarked(pointOnFace));
+    EXPECT_THAT(snellDirection.value(), IsSameVector(Vector{1, 0}));
+    ASSERT_THAT(reflectDirection.value(), IsSameVector(Vector{-1, 0}));
+}
+
+TEST(ReflectAtAxisTest, reflects_ray_on_axis_of_symmetry) {
+    auto reflectAtAxis = [](const PointOnFace &pointOnFace, const Vector &dir) {
+        if (pointOnFace.point.x >= 0.0) {
+            auto newDir = dir;
+            newDir.x = -dir.x;
+            return tl::optional<Vector>{newDir};
+        } else {
+            return tl::optional<Vector>{};
+        }
+    };
     Point pointA{0, 0};
     Point pointD{0, 1};
     Face face{0, {&pointD, &pointA}};
     PointOnFace pointOnFace{};
     pointOnFace.face = &face;
     pointOnFace.point = Point(0, 0.1);
-    auto newDirection = snellsLaw(
+    auto newDirection = reflectAtAxis(
             pointOnFace,
-            Vector{1, sqrt(3) / 3},
-            &previousElement,
-            &nextElement
+            Vector{1, 1}
     );
 
-    ASSERT_THAT(newDirection, IsSameVector(Vector{0.0078023764920336358, 0.99996956099727208}));
+    ASSERT_THAT(newDirection.value(), IsSameVector(Vector{-1, 1}));
 }
 
-TEST(SnellsLawTest, reflects_ray_as_expected) {
-    Element previousElement{0, {}, {}};
-    Element nextElement{1, {}, {}};
-
-    MeshFunctionMock refractIndex;
-    refractIndex.setValue(previousElement, 1);
-    refractIndex.setValue(nextElement, 0);
-
-    ConstantGradient gradient{Vector{1, 0}};
-    SnellsLaw snellsLaw{&refractIndex};
-    snellsLaw.setGradCalc(gradient);
-    Point pointA{0, 0};
-    Point pointD{0, 1};
-    Face face{0, {&pointD, &pointA}};
-    PointOnFace pointOnFace{};
-    pointOnFace.face = &face;
-    pointOnFace.point = Point(0, 0.1);
-    auto newDirection = snellsLaw(
-            pointOnFace,
-            Vector{1, 1},
-            &previousElement,
-            &nextElement
-    );
-
-    ASSERT_THAT(newDirection, IsSameVector(1/std::sqrt(2)*Vector{-1, 1}));
-}
-
-TEST(SymmetricSnellsLaw, reflects_ray_on_axis_of_symmetry) {
-    Element previousElement{0, {}, {}};
-    Element nextElement{1, {}, {}};
-
-    SymmetryAxis axis{};
-    axis.position = 0;
-    axis.coord = Coord::x;
-    axis.isLessThan = false;
-    SnellsLawSymmetric snellsLaw{
-            nullptr,
-        nullptr,
-        nullptr,
-        nullptr,
-        nullptr,
-        &axis
-        };
-    Point pointA{0, 0};
-    Point pointD{0, 1};
-    Face face{0, {&pointD, &pointA}};
-    PointOnFace pointOnFace{};
-    pointOnFace.face = &face;
-    pointOnFace.point = Point(0, 0.1);
-    auto newDirection = snellsLaw(
-            pointOnFace,
-            Vector{1, 1},
-            &previousElement,
-            &nextElement
-    );
-
-    ASSERT_THAT(newDirection, IsSameVector(Vector{-1, 1}));
-}
-
-TEST(SymmetricSnellsLawOnMesh, relfects_even_in_last_cell) {
+TEST(ReflectAtAxisTest, relfects_even_in_last_cell) {
     MfemMesh mesh(SegmentedLine{0.0, 1.0, 1}, SegmentedLine{0.0, 1.0, 1});
     MeshFunctionMock refractIndex{1.0};
-    SymmetryAxis axis{};
-    axis.position = 1.0;
-    axis.coord = Coord::y;
-    axis.isLessThan = false;
-    Vector reflectDirection{-1, 0};
-    SnellsLawSymmetric snellsLaw{
-        &refractIndex, nullptr, &reflectDirection, nullptr, nullptr, &axis
+    auto reflectAtAxis = [](const PointOnFace &pointOnFace, const Vector &dir) {
+        if (pointOnFace.point.y >= 1.0) {
+            auto newDir = dir;
+            newDir.y = -dir.y;
+            return tl::optional<Vector>{newDir};
+        } else {
+            return tl::optional<Vector>{};
+        }
     };
-    snellsLaw.setGradCalc(LinInterGrad{{}});
-    auto intersections = findIntersections(mesh, {Ray{Point(-0.5, 0), Vector{1, 1}}}, snellsLaw, intersectStraight, dontStop);
+    auto intersections = findIntersections(
+            mesh,
+            {Ray{Point(-0.5, 0), Vector{1, 1}}},
+            {reflectAtAxis, ContinueStraight{}},
+            intersectStraight,
+            dontStop
+    );
     ASSERT_THAT((*intersections.rbegin()->rbegin()).pointOnFace.point, IsSamePoint(Point{1.0, 0.5}));
 }
 

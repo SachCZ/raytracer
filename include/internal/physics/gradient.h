@@ -7,7 +7,7 @@
 #include <geometry.h>
 
 namespace raytracer {
-    using Gradient = std::function<Vector( const PointOnFace &pointOnFace )>;
+    using Gradient = std::function<tl::optional<Vector>(const PointOnFace &pointOnFace)>;
 
     /**
      * Vectors at points
@@ -34,7 +34,7 @@ namespace raytracer {
          * Returns always the same Vector given at construction.
          * @return vector gradient.
          */
-        Vector operator()( const PointOnFace &pointOnFace ) const;
+        Vector operator()(const PointOnFace &pointOnFace) const;
 
     private:
         const Vector gradient;
@@ -116,7 +116,7 @@ namespace raytracer {
          * @param pointOnFace
          * @return
          */
-        Vector operator()(const PointOnFace &pointOnFace) const;
+        tl::optional<Vector> operator()(const PointOnFace &pointOnFace) const;
 
     private:
         VectorField gradientAtPoints;

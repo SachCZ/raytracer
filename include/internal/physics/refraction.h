@@ -6,6 +6,9 @@
 #include "collisional_frequency.h"
 #include "constants.h"
 #include <complex>
+#include <utility>
+#include <utility.h>
+#include <mesh_function.h>
 
 
 namespace raytracer {
@@ -19,6 +22,7 @@ namespace raytracer {
     double calcRefractIndex(double density, const Length &wavelength, double collFreq);
 
     double calcInvBremssCoeff(double density, const Length &wavelength, double collFreq);
+
 
     namespace impl {
         std::complex<double> calcPermittivity(double density, const Length &wavelength, double collFreq);
@@ -61,12 +65,38 @@ namespace raytracer {
          * @param previousDirection
          * @return previousDirection
          */
-        Vector operator()(
+        tl::optional<Vector> operator()(
                 const PointOnFace &,
-                const Vector &previousDirection,
-                const Element *,
-                const Element *
+                const Vector &previousDirection
         );
+    };
+
+    struct ReflectOnCritical {
+        ReflectOnCritical(
+                const Mesh &mesh,
+                const MeshFunc &dens,
+                double critDens,
+                Marker* marker = nullptr,
+                const Vector *fallbackGrad = nullptr
+        )
+                : mesh(mesh), dens(dens), critDens(critDens), marker(marker), fallbackGrad(fallbackGrad) {}
+
+        tl::optional<Vector> operator()(
+                const PointOnFace &pointOnFace,
+                const Vector &direction
+        );
+
+        void setGradCalc(const Gradient &gradient) {
+            gradCalc = gradient;
+        }
+
+    private:
+        const Mesh &mesh;
+        const MeshFunc &dens;
+        const double critDens;
+        Marker* marker;
+        const Vector *fallbackGrad;
+        Gradient gradCalc;
     };
 
     /**
@@ -81,11 +111,10 @@ namespace raytracer {
          * @param reflectMarker
          */
         explicit SnellsLaw(
+                const Mesh *mesh,
                 const MeshFunc *refractIndex,
                 Marker *reflectMarker = nullptr,
-                Vector *reflectDirection = nullptr,
-                const MeshFunc *density = nullptr,
-                const double *critDens = nullptr
+                Vector *fallbackGrad = nullptr
         );
 
         SnellsLaw() = default;
@@ -103,91 +132,17 @@ namespace raytracer {
          * @param nextElement
          * @return new direction based on Snells law.
          */
-        Vector operator()(
+        tl::optional<Vector> operator()(
                 const PointOnFace &pointOnFace,
-                const Vector &previousDirection,
-                const Element *previousElement,
-                const Element *nextElement
+                const Vector &previousDirection
         );
 
     private:
+        const Mesh *mesh{};
         Gradient gradCalc;
         const MeshFunc *refractIndex{};
         Marker *reflectMarker{};
-        Vector *reflectDirection{};
-        const MeshFunc *density{};
-        const double *critDens{};
-    };
-
-    enum class Coord {
-        x,
-        y
-    };
-
-    struct SymmetryAxis {
-        double position{0};
-        bool isLessThan{true};
-        Coord coord{Coord::y};
-    };
-
-    struct SnellsLawSymmetric {
-        explicit SnellsLawSymmetric(
-                const MeshFunc *refractIndex,
-                Marker *reflectMarker = nullptr,
-                Vector *reflectDirection = nullptr,
-                const MeshFunc *density = nullptr,
-                const double *critDens = nullptr,
-                const SymmetryAxis *symmetryAxis = nullptr
-        ) : snellsLaw(refractIndex, reflectMarker, reflectDirection, density, critDens), symmetryAxis(symmetryAxis) {}
-
-        SnellsLawSymmetric() = default;
-
-        void setGradCalc(const Gradient &gradient) {
-            snellsLaw.setGradCalc(gradient);
-        }
-
-        Vector operator()(
-                const PointOnFace &pointOnFace,
-                const Vector &previousDirection,
-                const Element *previousElement,
-                const Element *nextElement
-        ) {
-            if (symmetryAxis) {
-                if (symmetryAxis->coord == Coord::x && shouldFlipX(pointOnFace.point, *symmetryAxis)) {
-                    return flipX(previousDirection);
-                } else if (symmetryAxis->coord == Coord::y && shouldFlipY(pointOnFace.point, *symmetryAxis)) {
-                    return flipY(previousDirection);
-                }
-            }
-
-            return snellsLaw(pointOnFace, previousDirection, previousElement, nextElement);
-        }
-
-    private:
-        static Vector flipX(const Vector &vec) {
-            auto newVec = vec;
-            newVec.x = -newVec.x;
-            return newVec;
-        }
-
-        static bool shouldFlipX(const Point &point, const SymmetryAxis &axis) {
-            return (axis.isLessThan && point.x <= axis.position) ||
-                   (!axis.isLessThan && point.x >= axis.position);
-        }
-
-        static bool shouldFlipY(const Point &point, const SymmetryAxis &axis) {
-            return (axis.isLessThan && point.y <= axis.position) ||
-                   (!axis.isLessThan && point.y >= axis.position);
-        }
-
-        static Vector flipY(const Vector &vec) {
-            auto newVec = vec;
-            newVec.y = -newVec.y;
-            return newVec;
-        }
-
-        SnellsLaw snellsLaw{};
-        const SymmetryAxis *symmetryAxis{};
+        Vector *fallbackGrad{};
     };
 }
 

@@ -331,7 +331,7 @@ namespace raytracer {
         mesh(mfemMesh.get()) {
 
         auto nodesCount = mfemMesh->GetNV();
-        Displacements displacements(nodesCount, {-sideA.start, -sideB.start});
+        Displacements displacements(nodesCount, {sideA.start, sideB.start});
         this->moveNodes(displacements);
 
         this->init();

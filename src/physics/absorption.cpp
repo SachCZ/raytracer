@@ -1,6 +1,5 @@
 #include "absorption.h"
 #include <stdexcept>
-#include <utility>
 #include <msgpack.hpp>
 
 namespace raytracer {
@@ -14,13 +13,6 @@ namespace raytracer {
             const Powers &initialPowers
     ) const {
         ModelPowersSets result;
-        if (surfReflModel){
-            result[surfReflModel] = PowersSet(intersectionSet.size());
-            for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
-                const auto &intersections = intersectionSet[setIndex];
-                result[surfReflModel][setIndex] = Powers(intersections.size(), Power{0});
-            }
-        }
 
         for (const auto &model : this->models) {
             result[model] = PowersSet(intersectionSet.size());
@@ -32,29 +24,21 @@ namespace raytracer {
         for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
             const auto &intersections = intersectionSet[setIndex];
             auto currentPower = initialPowers[setIndex].asDouble;
-            if (intersections.size() > 1) {
-                for (size_t i = 0; i < intersections.size() - 1; i++) {
-                    const auto &intersection = intersections[i + 1];
-                    const auto &prevIntersection = intersections[i];
-
-                    for (const auto &model : this->models) {
-                        auto absorbed = model->getPowerChange(
-                                prevIntersection,
-                                intersection,
-                                Power{currentPower});
-                        currentPower -= absorbed.asDouble;
-                        result[model][setIndex][i + 1] = absorbed;
-                    }
+            for (size_t i = 0; i < intersections.size(); i++) {
+                const auto &intersection = intersections[i];
+                tl::optional<Intersection> prevIntersection;
+                if (i > 0) {
+                    prevIntersection = intersections[i - 1];
                 }
-            } else if (surfReflModel){
-                auto absorbed = surfReflModel->getPowerChange(
-                        Intersection{},
-                        intersections[0],
-                        Power{currentPower}
-                        );
-                result[surfReflModel][setIndex][0] = absorbed;
-            } else {
-                throw std::logic_error("No surface reflection model provided");
+
+                for (const auto &model : this->models) {
+                    auto absorbed = model->getPowerChange(
+                            prevIntersection,
+                            intersection,
+                            Power{currentPower});
+                    currentPower -= absorbed.asDouble;
+                    result[model][setIndex][i] = absorbed;
+                }
             }
         }
         return result;
@@ -64,20 +48,15 @@ namespace raytracer {
         return this->models.size();
     }
 
-    Power Resonance::getPowerChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
+    Power Resonance::getPowerChange(const tl::optional<Intersection> &,
+                                    const Intersection &currentIntersection,
                                     const Power &currentPower) const {
-        if (!Resonance::isResonating(currentIntersection.pointOnFace))
-            return Power{0};
-        Vector grad{};
-        try {
-            grad = gradientCalculator(currentIntersection.pointOnFace);
-        } catch (const std::logic_error &err) {
-            //std::cout << "No grad found" << std::endl;
-            return Power{0};
-        }
+        if (!Resonance::isResonating(currentIntersection.pointOnFace)) return Power{0};
+        auto grad = gradientCalculator(currentIntersection.pointOnFace);
+        if (!grad) return Power{0};
 
-        auto dir = (currentIntersection.pointOnFace.point - previousIntersection.pointOnFace.point);
-        auto q = Resonance::getQ(dir, grad);
+        auto dir = currentIntersection.direction;
+        auto q = Resonance::getQ(dir, grad.value());
         auto term = q * std::exp(-4.0 / 3.0 * std::pow(q, 3.0 / 2.0)) / (q + 0.48) * M_PI / 2.0;
         return Power{currentPower.asDouble * term};
     }
@@ -111,13 +90,14 @@ namespace raytracer {
     Bremsstrahlung::Bremsstrahlung(const MeshFunc *bremssCoeff) : bremssCoeff(bremssCoeff) {}
 
     Power Bremsstrahlung::getPowerChange(
-            const Intersection &previousIntersection,
+            const tl::optional<Intersection> &previousIntersection,
             const Intersection &currentIntersection,
             const Power &currentPower
     ) const {
+        if (!previousIntersection) return {0};
         const auto &element = currentIntersection.previousElement;
         if (!element) return Power{0};
-        const auto &previousPoint = previousIntersection.pointOnFace.point;
+        const auto &previousPoint = previousIntersection.value().pointOnFace.point;
         const auto &point = currentIntersection.pointOnFace.point;
 
         const auto distance = (point - previousPoint).getNorm();
@@ -236,9 +216,12 @@ namespace raytracer {
     XRayGain::XRayGain(const MeshFunc &gain) : gain(gain) {}
 
     raytracer::Power
-    XRayGain::getPowerChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
+    XRayGain::getPowerChange(const tl::optional<Intersection> &previousIntersection,
+                             const Intersection &currentIntersection,
                              const Power &currentPower) const {
-        auto distance = (currentIntersection.pointOnFace.point - previousIntersection.pointOnFace.point).getNorm();
+        if (!previousIntersection) return {0};
+        auto distance = (currentIntersection.pointOnFace.point -
+                         previousIntersection.value().pointOnFace.point).getNorm();
         auto element = currentIntersection.previousElement;
         auto gainCoeff = gain.getValue(*element);
         return raytracer::Power{currentPower.asDouble * (1 - std::exp(gainCoeff * distance))};

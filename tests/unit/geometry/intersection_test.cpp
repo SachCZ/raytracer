@@ -27,7 +27,7 @@ TEST_F(IntersectionTest, trace_through_steps_throught_mesh_according_to_find_int
     auto intersections = findIntersections(
             mesh,
             {Ray{Point(-1, 4.5), Vector(1, 0)}},
-            ContinueStraight{},
+            {ContinueStraight{}},
             intersectStraight,
             dontStop
     );
@@ -40,7 +40,25 @@ TEST_F(IntersectionTest, intersecting_can_deal_with_diagonal_case) {
     auto intersections = findIntersections(
             mesh,
             {diagonalHalfLine},
-            ContinueStraight{},
+            {ContinueStraight{}},
+            intersectStraight,
+            dontStop
+    );
+    ASSERT_THAT(intersections[0], SizeIs(19));
+}
+
+TEST_F(IntersectionTest, intersecting_can_be_done_using_multiple_functions) {
+    auto intersections = findIntersections(
+            mesh,
+            {Ray{Point(-1, 9), Vector(1, 0)}},
+            {
+                    [](const PointOnFace &, const Vector &) {
+                        return tl::optional<Vector>{};
+                    },
+                    [](const PointOnFace &, const Vector &) {
+                        return Vector{1, -1};
+                    },
+                    ContinueStraight{}},
             intersectStraight,
             dontStop
     );

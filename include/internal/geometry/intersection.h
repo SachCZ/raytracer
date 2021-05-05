@@ -1,6 +1,7 @@
 #ifndef RAYTRACER_GEOMETRY_FUNCTIONS_H
 #define RAYTRACER_GEOMETRY_FUNCTIONS_H
 
+#include <utility.h>
 #include "mesh.h"
 
 namespace raytracer {
@@ -53,6 +54,8 @@ namespace raytracer {
         std::size_t notFound{0};
     };
 
+    using DirectionFunction = std::function<tl::optional<Vector>(PointOnFace, Vector)>;
+
     /**
      * Find all intersections by stepping through a mesh using the functions given.
      * @tparam DirectionFunction Vector(const PointOnFace &pointOnFace,
@@ -71,12 +74,12 @@ namespace raytracer {
      * @param stopCondition function of type StopCondition
      * @return Set of intersections
      */
-    template<typename DirectionFunction, typename IntersectionFunction, typename StopCondition>
+    template<typename IntersectionFunction, typename StopCondition>
     IntersectionSet findIntersections(const Mesh &mesh,
                                       const std::vector<Ray> &initialDirections,
-                                      DirectionFunction&& findDirection,
-                                      IntersectionFunction&& findIntersection,
-                                      StopCondition&& stopCondition,
+                                      const std::vector<DirectionFunction> &findDirection,
+                                      IntersectionFunction &&findIntersection,
+                                      StopCondition &&stopCondition,
                                       InterErrLog *errLog = nullptr
     );
 
@@ -86,25 +89,25 @@ namespace raytracer {
 
 
     namespace impl {
-        template<typename DirectionFunction, typename IntersectionFunction, typename StopCondition>
+        template<typename IntersectionFunction, typename StopCondition>
         Intersections findRayIntersections(
                 const Mesh &mesh,
                 const Ray &initialDirection,
-                DirectionFunction&& findDirection,
-                IntersectionFunction&& findIntersection,
-                StopCondition&& stopCondition,
+                const std::vector<DirectionFunction> &findDirection,
+                IntersectionFunction &&findIntersection,
+                StopCondition &&stopCondition,
                 InterErrLog *errLog = nullptr
         );
     }
 
 
-    template<typename DirectionFunction, typename IntersectionFunction, typename StopCondition>
+    template<typename IntersectionFunction, typename StopCondition>
     IntersectionSet findIntersections(
             const Mesh &mesh,
             const std::vector<Ray> &initialDirections,
-            DirectionFunction&& findDirection,
-            IntersectionFunction&& findIntersection,
-            StopCondition&& stopCondition,
+            const std::vector<DirectionFunction> &findDirection,
+            IntersectionFunction &&findIntersection,
+            StopCondition &&stopCondition,
             InterErrLog *errLog
     ) {
         IntersectionSet result;
@@ -114,7 +117,7 @@ namespace raytracer {
             result.emplace_back(impl::findRayIntersections(
                     mesh,
                     initialDirection,
-                    std::forward<DirectionFunction>(findDirection),
+                    std::vector<DirectionFunction>(findDirection),
                     std::forward<IntersectionFunction>(findIntersection),
                     std::forward<StopCondition>(stopCondition),
                     errLog
@@ -123,13 +126,19 @@ namespace raytracer {
         return result;
     }
 
-    template<typename DirectionFunction, typename IntersectionFunction, typename StopCondition>
+    tl::optional<Vector> calcDirection(
+            const std::vector<DirectionFunction> &findDirection,
+            const PointOnFace &pointOnFace,
+            const Vector &prevDirection
+    );
+
+    template<typename IntersectionFunction, typename StopCondition>
     Intersections impl::findRayIntersections(
             const Mesh &mesh,
             const Ray &initialDirection,
-            DirectionFunction&& findDirection,
-            IntersectionFunction&& findIntersection,
-            StopCondition&& stopCondition,
+            const std::vector<DirectionFunction> &findDirection,
+            IntersectionFunction &&findIntersection,
+            StopCondition &&stopCondition,
             InterErrLog *errLog
     ) {
         Intersections result;
@@ -149,13 +158,11 @@ namespace raytracer {
         if (!previousIntersection.nextElement) throw std::logic_error("Could not find next element at border!");
         previousIntersection.previousElement = nullptr;
         previousIntersection.pointOnFace = *initialPointOnFace;
-        previousIntersection.direction = findDirection(
+        previousIntersection.direction = calcDirection(
+                findDirection,
                 *initialPointOnFace,
-                initialDirection.direction,
-                nullptr,
-                previousIntersection.nextElement
-        );
-
+                initialDirection.direction
+        ).value();
 
         result.emplace_back(previousIntersection);
         if (previousIntersection.direction * initialDirection.direction < 0) {
@@ -184,32 +191,28 @@ namespace raytracer {
                 break;
             }
 
-            auto nextElementForDirection = mesh.getFaceDirAdjElement( //NextElement
-                    nextPointOnFace.face,
-                    previousIntersection.direction
-            );
-            auto direction = findDirection(
+            auto direction = calcDirection(
+                    findDirection,
                     nextPointOnFace, //At which point
-                    previousIntersection.direction, //Previous direction
-                    previousIntersection.nextElement, //Previous element
-                    nextElementForDirection
+                    previousIntersection.direction //Previous direction
             );
-
-            auto nextElementToGo = mesh.getFaceDirAdjElement(
-                    nextPointOnFace.face,
-                    direction
-            );
-
             Intersection intersection{};
-            intersection.nextElement = nextElementToGo;
             intersection.previousElement = previousIntersection.nextElement;
             intersection.pointOnFace = nextPointOnFace;
-            intersection.direction = direction;
-
-
-            result.emplace_back(intersection);
-
-            if (direction.x == 0 && direction.y == 0) break;
+            if (direction) {
+                auto nextElementToGo = mesh.getFaceDirAdjElement(
+                        nextPointOnFace.face,
+                        direction.value()
+                );
+                intersection.nextElement = nextElementToGo;
+                intersection.direction = direction.value();
+                result.emplace_back(intersection);
+            } else {
+                intersection.nextElement = nullptr;
+                intersection.direction = {0, 0};
+                result.emplace_back(intersection);
+                break;
+            }
 
             previousIntersection = intersection;
 

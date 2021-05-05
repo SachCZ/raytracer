@@ -37,7 +37,7 @@ TEST_F(LaserTest, can_generate_intersections) {
     auto intersections = findIntersections(
             mesh,
             generateInitialDirections(laser),
-            ContinueStraight(),
+            {ContinueStraight()},
             intersectStraight,
             dontStop
     );

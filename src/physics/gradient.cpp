@@ -236,7 +236,7 @@ namespace raytracer {
         return gfToField(mesh, solution);
     }
 
-    Vector LinInterGrad::operator()( const PointOnFace &pointOnFace ) const {
+    tl::optional<Vector> LinInterGrad::operator()( const PointOnFace &pointOnFace ) const {
         auto points = pointOnFace.face->getPoints();
         auto it0 = this->gradientAtPoints.find(points[0]);
         auto it1 = this->gradientAtPoints.find(points[1]);
@@ -245,7 +245,7 @@ namespace raytracer {
             auto gradient1 = it1->second;
             return linearInterpolate(*points[0], *points[1], pointOnFace.point, gradient0, gradient1);
         } else {
-            throw std::logic_error("No gradient found!");
+            return {};
         }
     }
 

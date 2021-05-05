@@ -24,7 +24,7 @@ namespace raytracer {
          * @return
          */
         virtual Power getPowerChange(
-                const Intersection &previousIntersection,
+                const tl::optional<Intersection> &previousIntersection,
                 const Intersection &currentIntersection,
                 const Power &currentPower
         ) const = 0;
@@ -51,7 +51,7 @@ namespace raytracer {
          * @param currentPower
          * @return power gained by plasma (power lost by plasma is negative)
          */
-        raytracer::Power getPowerChange(const raytracer::Intersection &previousIntersection,
+        raytracer::Power getPowerChange(const tl::optional<Intersection> &previousIntersection,
                                         const raytracer::Intersection &currentIntersection,
                                         const raytracer::Power &currentPower) const override;
 
@@ -96,8 +96,9 @@ namespace raytracer {
          * @param currentPower
          * @return power change
          */
-        Power getPowerChange(const Intersection &previousIntersection, const Intersection &currentIntersection,
-                             const Power &currentPower) const override;
+        Power
+        getPowerChange(const tl::optional<Intersection> &previousIntersection, const Intersection &currentIntersection,
+                       const Power &currentPower) const override;
 
         /**
          * Returns "Resonance"
@@ -116,7 +117,7 @@ namespace raytracer {
     };
 
     struct ZeroExchange : public PowerExchangeModel {
-        Power getPowerChange(const Intersection &, const Intersection &, const Power &) const override {
+        Power getPowerChange(const tl::optional<Intersection> &, const Intersection &, const Power &) const override {
             return Power{0};
         }
 
@@ -128,25 +129,31 @@ namespace raytracer {
     class FresnelModel : public PowerExchangeModel {
     public:
         FresnelModel() = default;
-        explicit FresnelModel(const MeshFunc* refractIndex, std::string polarization = "p"):
-        refractIndex(refractIndex), polarization(std::move(polarization)) {}
 
-        Power getPowerChange(const Intersection &, const Intersection &currentIntersection,
+        explicit FresnelModel(const MeshFunc *refractIndex, const Marker *reflectedMarker,
+                              std::string polarization = "p") :
+                refractIndex(refractIndex), reflectedMarker(reflectedMarker), polarization(std::move(polarization)) {}
+
+        Power getPowerChange(const tl::optional<Intersection> &, const Intersection &currentIntersection,
                              const Power &currentPower) const override {
-            double n2 = refractIndex->getValue(*currentIntersection.nextElement);
-            if (n2 <= 0) {
-                return Power{0};
-            }
-            double n1 = 1.0;
-            auto normal = currentIntersection.pointOnFace.face->getNormal();
-            normal = 1 / normal.getNorm() * normal;
-            auto dir = currentIntersection.direction;
-            dir = 1 / dir.getNorm() * dir;
-            auto cosInc = std::abs(dir * normal);
-            if (polarization == "s"){
-                return {(1 - Rs(n1, n2, cosInc)) * currentPower.asDouble};
+            if (reflectedMarker->isMarked(currentIntersection.pointOnFace)) {
+                double n2 = refractIndex->getValue(*currentIntersection.nextElement);
+                if (n2 <= 0) {
+                    return Power{0};
+                }
+                double n1 = 1.0;
+                auto normal = currentIntersection.pointOnFace.face->getNormal();
+                normal = 1 / normal.getNorm() * normal;
+                auto dir = currentIntersection.direction;
+                dir = 1 / dir.getNorm() * dir;
+                auto cosInc = std::abs(dir * normal);
+                if (polarization == "s") {
+                    return {(1 - Rs(n1, n2, cosInc)) * currentPower.asDouble};
+                } else {
+                    return {(1 - Rp(n1, n2, cosInc)) * currentPower.asDouble};
+                }
             } else {
-                return {(1 - Rp(n1, n2, cosInc)) * currentPower.asDouble};
+                return {0};
             }
         }
 
@@ -171,7 +178,8 @@ namespace raytracer {
             return "Fresnel";
         }
 
-        const MeshFunc* refractIndex{};
+        const MeshFunc *refractIndex{};
+        const Marker *reflectedMarker{};
         std::string polarization;
     };
 
@@ -196,7 +204,7 @@ namespace raytracer {
          * @return
          */
         Power getPowerChange(
-                const Intersection &previousIntersection,
+                const tl::optional<Intersection> &previousIntersection,
                 const Intersection &currentIntersection,
                 const Power &currentPower
         ) const override;
@@ -236,17 +244,12 @@ namespace raytracer {
          */
         void addModel(const PowerExchangeModel *model);
 
-        void setSurfReflModel(const PowerExchangeModel *model) {
-            surfReflModel = model;
-        }
-
         size_t getModelsCount() const;
 
         ModelPowersSets genPowers(const IntersectionSet &intersectionSet, const Powers &initialPowers) const;
 
     private:
         std::vector<const PowerExchangeModel *> models{};
-        const PowerExchangeModel *surfReflModel{};
     };
 
     PowersSet modelPowersToRayPowers(const ModelPowersSets &modelPowersSets, const Powers &initialPowers);
