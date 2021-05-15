@@ -52,7 +52,7 @@ namespace raytracer {
                                     const Intersection &currentIntersection,
                                     const Power &currentPower) const {
         if (!Resonance::isResonating(currentIntersection.pointOnFace)) return Power{0};
-        auto grad = gradientCalculator(currentIntersection.pointOnFace);
+        auto grad = gradCalc->get(currentIntersection.pointOnFace);
         if (!grad) return Power{0};
 
         auto dir = currentIntersection.direction;
@@ -79,9 +79,10 @@ namespace raytracer {
 
     Resonance::Resonance(
             const Length &wavelength,
-            const Marker *reflectedMarker) :
+            const Marker *reflectedMarker, const Gradient *gradCalc) :
             wavelength(wavelength),
-            reflectedMarker(reflectedMarker) {}
+            reflectedMarker(reflectedMarker), gradCalc(gradCalc) {}
+
 
     std::string Resonance::getName() const {
         return "Resonance";

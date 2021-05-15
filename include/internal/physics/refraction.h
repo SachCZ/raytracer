@@ -73,36 +73,38 @@ namespace raytracer {
 
     struct ReflectOnCritical {
         ReflectOnCritical(
-                const Mesh &mesh,
-                const MeshFunc &dens,
+                const Mesh *mesh,
+                const MeshFunc *refractIndex,
+                const MeshFunc *dens,
                 double critDens,
-                Marker* marker = nullptr,
+                const Gradient* gradCalc,
+                Marker *marker = nullptr,
                 const Vector *fallbackGrad = nullptr
         )
-                : mesh(mesh), dens(dens), critDens(critDens), marker(marker), fallbackGrad(fallbackGrad) {}
+                : mesh(mesh), refractIndex(refractIndex), dens(dens), critDens(critDens), gradCalc(gradCalc),
+                marker(marker), fallbackGrad(fallbackGrad) {}
+
+        ReflectOnCritical() = default;
 
         tl::optional<Vector> operator()(
                 const PointOnFace &pointOnFace,
                 const Vector &direction
         );
 
-        void setGradCalc(const Gradient &gradient) {
-            gradCalc = gradient;
-        }
-
     private:
-        const Mesh &mesh;
-        const MeshFunc &dens;
-        const double critDens;
-        Marker* marker;
-        const Vector *fallbackGrad;
-        Gradient gradCalc;
+        const Mesh *mesh{};
+        const MeshFunc* refractIndex{};
+        const MeshFunc *dens{};
+        double critDens{};
+        const Gradient* gradCalc{};
+        Marker *marker{};
+        const Vector *fallbackGrad{};
     };
 
     /**
      * Functor that finds new direction base on the Snells's law.
      */
-    struct SnellsLaw {
+    struct SnellsLawBend {
         /**
          * Snell's law needs gradient and refractive index to calculate refraction. It can optionally mark
          * a PointOnFace at which a reflection occured
@@ -110,18 +112,14 @@ namespace raytracer {
          * @param refractIndex - model
          * @param reflectMarker
          */
-        explicit SnellsLaw(
+        explicit SnellsLawBend(
                 const Mesh *mesh,
                 const MeshFunc *refractIndex,
-                Marker *reflectMarker = nullptr,
+                const Gradient* gradient,
                 Vector *fallbackGrad = nullptr
         );
 
-        SnellsLaw() = default;
-
-        void setGradCalc(const Gradient &gradient) {
-            gradCalc = gradient;
-        }
+        SnellsLawBend() = default;
 
         /**
          * Apply Snells law using the values calculated at previous and next elements
@@ -139,8 +137,31 @@ namespace raytracer {
 
     private:
         const Mesh *mesh{};
-        Gradient gradCalc;
         const MeshFunc *refractIndex{};
+        const Gradient* gradCalc{};
+        Vector *fallbackGrad{};
+    };
+
+    struct TotalReflect {
+        explicit TotalReflect(
+                const Mesh *mesh,
+                const MeshFunc *refractIndex,
+                const Gradient* gradCalc,
+                Marker *reflectMarker = nullptr,
+                Vector *fallbackGrad = nullptr
+        );
+
+        TotalReflect() = default;
+
+        tl::optional<Vector> operator()(
+                const PointOnFace &pointOnFace,
+                const Vector &previousDirection
+        );
+
+    private:
+        const Mesh *mesh{};
+        const MeshFunc *refractIndex{};
+        const Gradient* gradCalc{};
         Marker *reflectMarker{};
         Vector *fallbackGrad{};
     };

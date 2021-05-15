@@ -13,17 +13,20 @@ TEST(AbsorptionTest, runs_as_expected) {
     MfemL20Space space{mesh};
     MfemMeshFunction density(space, [](Point point) {return 6.44e+20 * (1 - point.x * point.x);});
 
-    LinInterGrad gradient(calcHousGrad(mesh, density));
+    LinInterGrad gradient{calcHousGrad(mesh, density)};
+
     Length wavelength{1315e-7};
     MfemMeshFunction refractIndex(space, [&](const Element& e){
         return calcRefractIndex(density.getValue(e), wavelength, 0);
     });
     Marker marker;
-    SnellsLaw snellsLaw(&refractIndex, &marker, nullptr);
-    snellsLaw.setGradCalc(gradient);
+    Marker critMarker;
+    SnellsLawBend snellsLaw(&mesh, &refractIndex, &gradient);
+    TotalReflect totalReflect(&mesh, &refractIndex, &gradient, &marker);
+    ReflectOnCritical reflectOnCritical(&mesh, &refractIndex, &density, calcCritDens(wavelength).asDouble, &gradient, &critMarker);
     std::vector<Ray> initDirs = {Ray{{-1.1, 0.01}, Vector{1, 0.1}}};
 
-    auto intersectionSet = findIntersections(mesh, initDirs, snellsLaw, intersectStraight, dontStop);
+    auto intersectionSet = findIntersections(mesh, initDirs, {totalReflect, reflectOnCritical, snellsLaw}, intersectStraight, dontStop);
 
     MfemMeshFunction bremsCoeff(space, [&](const Element& element) {
         auto collFreq = calcSpitzerFreq(density.getValue(element), 300, 13, wavelength);
@@ -31,14 +34,13 @@ TEST(AbsorptionTest, runs_as_expected) {
     });
 
     Bremsstrahlung bremsstrahlung(&bremsCoeff);
-    Resonance resonance(wavelength, &marker);
-    resonance.setGradCalc(gradient);
-    FresnelModel fresnel(&refractIndex);
+    Resonance resonance(wavelength, &marker, &gradient);
+    FresnelModel fresnel(&refractIndex, &critMarker);
 
     PowerExchangeController exchange;
     exchange.addModel(&bremsstrahlung);
     exchange.addModel(&resonance);
-    exchange.setSurfReflModel(&fresnel);
+    exchange.addModel(&fresnel);
 
     Powers initialPowers{Power{100}};
     auto modelPowers = exchange.genPowers(intersectionSet, initialPowers);

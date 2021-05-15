@@ -36,6 +36,8 @@ namespace raytracer {
 
         virtual std::vector<Point *> getPointAdjOrderedPoints(const Point *point) const = 0;
 
+        virtual void updateMesh() = 0;
+
         /**
          * Override this.
          * @param element
@@ -176,7 +178,7 @@ namespace raytracer {
          */
         mfem::Mesh *getMfemMesh() const;
 
-        void updateMesh();
+        void updateMesh() override;
 
         using Displacements = std::vector<Vector>;
 

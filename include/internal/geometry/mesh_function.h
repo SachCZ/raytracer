@@ -32,6 +32,8 @@ namespace raytracer {
          */
         virtual void addValue(const Element &, double value) = 0;
 
+        virtual size_t length() const = 0;
+
         /** Unique pointer to MeshFunction */
         using Ptr = std::unique_ptr<MeshFunc>;
 
@@ -90,23 +92,14 @@ namespace raytracer {
     class MfemQuadFuncWrapper : public MeshFunc {
     public:
         MfemQuadFuncWrapper() = default;
+
         MfemQuadFuncWrapper(mfem::QuadratureFunction *quadFunc, const mfem::IntegrationRule *integRule) :
                 quadFunc(quadFunc), integRule(integRule) {}
 
         double getValue(const Element &element) const override {
             mfem::Vector values;
             quadFunc->GetElementValues(element.getId(), values);
-
-            /**
-            auto intPointsCount = integRule->GetNPoints();
-            double result = 0;
-            for (int q = 0; q < intPointsCount; q++) {
-                result += values(q);
-            }
-            result /= (double) intPointsCount;
-            return result;
-             */
-            return values.Max();
+            return values.Sum() / values.Size();
         }
 
         void setValue(const Element &element, double value) override {
@@ -127,6 +120,10 @@ namespace raytracer {
             }
         }
 
+        size_t length() const override {
+            return this->quadFunc->Size() / integRule->GetNPoints();
+        }
+
     private:
         mfem::QuadratureFunction *quadFunc{};
         const mfem::IntegrationRule *integRule{};
@@ -136,6 +133,7 @@ namespace raytracer {
     class MfemVectorWrapper : public MeshFunc {
     public:
         MfemVectorWrapper() = default;
+
         explicit MfemVectorWrapper(mfem::Vector *vec) : vec(vec) {}
 
         double getValue(const Element &element) const override {
@@ -150,12 +148,40 @@ namespace raytracer {
             (*vec)(element.getId()) += value;
         }
 
-        size_t size() {
+        size_t length() const override {
             return vec->Size();
         }
 
     private:
         mfem::Vector *vec{};
+    };
+
+    class SimpleFunc : public MeshFunc {
+    public:
+        SimpleFunc() = default;
+
+        explicit SimpleFunc(const Mesh *mesh) :
+                values(mesh->getElements().size(), 0) {
+        }
+
+        double getValue(const Element &element) const override {
+            return values[element.getId()];
+        }
+
+        void setValue(const Element &element, double value) override {
+            values[element.getId()] = value;
+        }
+
+        void addValue(const Element &element, double value) override {
+            values[element.getId()] += value;
+        }
+
+        size_t length() const override {
+            return values.size();
+        }
+
+    private:
+        std::vector<double> values{0};
     };
 
     /**
@@ -224,6 +250,10 @@ namespace raytracer {
          * @param value
          */
         void addValue(const Element &element, double value) override;
+
+        size_t length() const override {
+            return eleTrueVecInd.size();
+        }
 
         /**
          * Output a string representation of MfemMeshFunction

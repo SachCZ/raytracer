@@ -30,9 +30,10 @@ TEST(IntegralGradientTest, gradient_can_be_calcualted_using_integral_over_stenci
 TEST(LinearInterpolationTest, gradinet_can_be_calculated_by_lineary_interpolating) {
     Point a{0, 0};
     Point b{1, 0};
-    LinInterGrad interGrad{{{&a, Vector{-1, 1}}, {&b, Vector{1, 1}}}};
+    VectorField gradAtPoints{{&a, Vector{-1, 1}}, {&b, Vector{1, 1}}};
+    LinInterGrad interGrad{gradAtPoints};
     Face face{0, {&a, &b}};
     PointOnFace pointOnFace{{0.5, 0}, &face, 0};
-    auto result = interGrad(pointOnFace).value();
+    auto result = interGrad.get(pointOnFace).value();
     ASSERT_THAT(result, IsSameVector(Vector{0, 1}));
 }

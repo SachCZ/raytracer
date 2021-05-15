@@ -17,11 +17,11 @@ TEST(single_ray, throught_mesh_should_work_as_expected_for_dummy_mesh) {
     MfemMeshFunction refractIndex(space, [&density](const Element& e){
         return calcRefractIndex(density.getValue(e), Length{1315e-7}, 0);
     });
-    SnellsLaw snellsLaw(&refractIndex, nullptr, nullptr);
-    snellsLaw.setGradCalc(gradient);
+    SnellsLawBend snellsLaw(&mesh, &refractIndex, &gradient);
+    TotalReflect totalReflect(&mesh, &refractIndex, &gradient);
     std::vector<Ray> initDirs = {Ray{{-1.1, 0.01}, Vector{1, 0.1}}};
 
-    auto intersectionSet = findIntersections(mesh, initDirs, snellsLaw, intersectStraight, dontStop);
+    auto intersectionSet = findIntersections(mesh, initDirs, {totalReflect, snellsLaw}, intersectStraight, dontStop);
     auto lastIntersection = intersectionSet[0].back().pointOnFace.point;
     ASSERT_THAT(lastIntersection, IsSamePoint(Point{-1.0, 0.40364564766135042}));
 }

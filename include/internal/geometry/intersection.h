@@ -117,7 +117,7 @@ namespace raytracer {
             result.emplace_back(impl::findRayIntersections(
                     mesh,
                     initialDirection,
-                    std::vector<DirectionFunction>(findDirection),
+                    findDirection,
                     std::forward<IntersectionFunction>(findIntersection),
                     std::forward<StopCondition>(stopCondition),
                     errLog
@@ -209,7 +209,7 @@ namespace raytracer {
                 result.emplace_back(intersection);
             } else {
                 intersection.nextElement = nullptr;
-                intersection.direction = {0, 0};
+                intersection.direction = previousIntersection.direction;
                 result.emplace_back(intersection);
                 break;
             }

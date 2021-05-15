@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>RayTracer: raytracer::SnellsLaw Struct Reference</title>
+<title>RayTracer: raytracer::SnellsLawBend Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -58,7 +58,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespaceraytracer.html">raytracer</a></li><li class="navelem"><a class="el" href="structraytracer_1_1SnellsLaw.html">SnellsLaw</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespaceraytracer.html">raytracer</a></li><li class="navelem"><a class="el" href="structraytracer_1_1SnellsLaw.html">SnellsLawBend</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -66,7 +66,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="structraytracer_1_1SnellsLaw-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">raytracer::SnellsLaw Struct Reference</div>  </div>
+<div class="title">raytracer::SnellsLawBend Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -77,7 +77,7 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af243f31d95abbd78808bd6264324880d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structraytracer_1_1SnellsLaw.html#af243f31d95abbd78808bd6264324880d">SnellsLaw</a> (const <a class="el" href="classraytracer_1_1Gradient.html">Gradient</a> &amp;gradCalc, const <a class="el" href="classraytracer_1_1MeshFunc.html">MeshFunc</a> &amp;refractIndex, <a class="el" href="classraytracer_1_1Marker.html">Marker</a> *reflectMarker=nullptr)</td></tr>
+<tr class="memitem:af243f31d95abbd78808bd6264324880d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structraytracer_1_1SnellsLaw.html#af243f31d95abbd78808bd6264324880d">SnellsLawBend</a> (const <a class="el" href="classraytracer_1_1Gradient.html">Gradient</a> &amp;gradCalc, const <a class="el" href="classraytracer_1_1MeshFunc.html">MeshFunc</a> &amp;refractIndex, <a class="el" href="classraytracer_1_1Marker.html">Marker</a> *reflectMarker=nullptr)</td></tr>
 <tr class="memdesc:af243f31d95abbd78808bd6264324880d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Snell's law needs gradient and refractive index to calculate refraction.  <a href="#af243f31d95abbd78808bd6264324880d">More...</a><br /></td></tr>
 <tr class="separator:af243f31d95abbd78808bd6264324880d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1165eb68fd88e8a9a6016a463e3c905"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classraytracer_1_1Vector.html">Vector</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structraytracer_1_1SnellsLaw.html#ab1165eb68fd88e8a9a6016a463e3c905">operator()</a> (const <a class="el" href="structraytracer_1_1PointOnFace.html">PointOnFace</a> &amp;pointOnFace, const <a class="el" href="classraytracer_1_1Vector.html">Vector</a> &amp;previousDirection, const <a class="el" href="classraytracer_1_1Element.html">Element</a> &amp;previousElement, const <a class="el" href="classraytracer_1_1Element.html">Element</a> &amp;nextElement)</td></tr>
@@ -88,7 +88,7 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><p>Functor that finds new direction base on the Snells's law. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af243f31d95abbd78808bd6264324880d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af243f31d95abbd78808bd6264324880d">&#9670;&nbsp;</a></span>SnellsLaw()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af243f31d95abbd78808bd6264324880d">&#9670;&nbsp;</a></span>SnellsLawBend()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -97,7 +97,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">raytracer::SnellsLaw::SnellsLaw </td>
+          <td class="memname">raytracer::SnellsLawBend::SnellsLawBend </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classraytracer_1_1Gradient.html">Gradient</a> &amp;&#160;</td>
           <td class="paramname"><em>gradCalc</em>, </td>
@@ -147,7 +147,7 @@ Public Member Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classraytracer_1_1Vector.html">Vector</a> raytracer::SnellsLaw::operator() </td>
+          <td class="memname"><a class="el" href="classraytracer_1_1Vector.html">Vector</a> raytracer::SnellsLawBend::operator() </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structraytracer_1_1PointOnFace.html">PointOnFace</a> &amp;&#160;</td>
           <td class="paramname"><em>pointOnFace</em>, </td>

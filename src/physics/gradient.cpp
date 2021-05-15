@@ -54,7 +54,7 @@ namespace raytracer {
 
     ConstantGradient::ConstantGradient(const Vector &gradient) : gradient(gradient) {}
 
-    Vector ConstantGradient::operator()( const PointOnFace & ) const {
+    tl::optional<Vector> ConstantGradient::get( const PointOnFace & ) const {
         return this->gradient;
     }
 
@@ -236,7 +236,7 @@ namespace raytracer {
         return gfToField(mesh, solution);
     }
 
-    tl::optional<Vector> LinInterGrad::operator()( const PointOnFace &pointOnFace ) const {
+    tl::optional<Vector> LinInterGrad::get( const PointOnFace &pointOnFace ) const {
         auto points = pointOnFace.face->getPoints();
         auto it0 = this->gradientAtPoints.find(points[0]);
         auto it1 = this->gradientAtPoints.find(points[1]);
@@ -259,7 +259,7 @@ namespace raytracer {
 
     VectorField calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction) {
         VectorField result;
-        for (const auto &point : mesh.getInnerPoints()) {
+        for (const auto &point : mesh.getPoints()) {
             result.insert({point, impl::getGradientAtPoint(mesh, meshFunction, point)});
         }
         return result;

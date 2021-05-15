@@ -36,7 +36,6 @@ TEST(ContinueStraightTest, ContinueStraight_returns_always_the_same_direction) {
 class SnellsLawTest : public Test {
 protected:
     void SetUp() override {
-        snellsLaw.setGradCalc(gradient);
         auto face = mesh.getElements()[0]->getFaces()[1];
         pointOnFace = {{0, 0.1}, face, 0};
     }
@@ -47,7 +46,7 @@ public:
     MeshFunctionMock refractIndex;
     Length wavelength{1315e-7};
     ConstantGradient gradient{Vector{1, 0}};
-    SnellsLaw snellsLaw{&mesh, &refractIndex};
+    SnellsLawBend snellsLaw{&mesh, &refractIndex, &gradient};
     PointOnFace pointOnFace;
 };
 
@@ -66,12 +65,13 @@ TEST_F(SnellsLawTest, snells_law_bends_the_ray_as_expected) {
 }
 
 TEST_F(SnellsLawTest, reflects_ray_as_expected) {
+    TotalReflect totalReflect(&mesh, &refractIndex, &gradient);
     auto elements = mesh.getElements();
 
     refractIndex.setValue(*elements[0], 1);
     refractIndex.setValue(*elements[1], 0);
 
-    auto newDirection = snellsLaw(
+    auto newDirection = totalReflect(
             pointOnFace,
             Vector{1, 1}
     );
@@ -88,8 +88,7 @@ TEST_F(SnellsLawTest, reflect_on_crit_reflects_while_snell_passes) {
     refractIndex.setValue(*elements[1], 1);
 
     Marker marker;
-    ReflectOnCritical reflectOnCritical(mesh, dens, 5, &marker);
-    reflectOnCritical.setGradCalc(gradient);
+    ReflectOnCritical reflectOnCritical(&mesh, &refractIndex, &dens, 5, &gradient, &marker);
 
     auto snellDirection = snellsLaw(pointOnFace, Vector{1, 0});
     auto reflectDirection = reflectOnCritical(pointOnFace, Vector{1, 0});

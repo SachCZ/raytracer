@@ -111,7 +111,7 @@ int main(int, char *[]) {
     });
 
     LinInterGrad gradient(calcHousGrad(mesh, density));
-    SnellsLaw snellsLaw(gradient, refractIndex);
+    SnellsLawBend snellsLaw(gradient, refractIndex);
     auto intersectionSet = findIntersections(
             mesh,
             {Ray{{-0.1, 0.01}, Vector{1, 0.3}}},
@@ -161,7 +161,7 @@ obtained using the least squares householder factorization.
 Finally a function determining direction taken at element interface must be provided.
 In this case it is a Snell's law:
 ```c++
-   SnellsLaw snellsLaw(gradient, refractIndex);
+   SnellsLawBend snellsLaw(gradient, refractIndex);
 ```
 
 To actually perform the computation a function called `findIntersections` is used.

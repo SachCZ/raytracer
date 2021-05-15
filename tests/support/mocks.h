@@ -13,6 +13,10 @@ public:
 
     void addValue(const raytracer::Element &element, double value) override;
 
+    size_t length() const override {
+        return 0;
+    }
+
 private:
     double defaultValue;
     std::map<int, double> values;

@@ -43,3 +43,13 @@ TEST_F(MfemMeshFunctionTest, MfemMeshFunction_can_be_divided_by_volume) {
     divideByVolume(mesh, meshFunction);
     ASSERT_THAT(meshFunction.getValue(Element{0, {}, {}}), DoubleEq(10 / 0.5 / 0.5));
 }
+
+TEST(QuadMeshFunction, QuadMeshFunc_size_is_the_number_of_elements) {
+    MfemMesh mesh{SegmentedLine{0.0, 1.0, 2}, SegmentedLine{0.0, 1.0, 2}};
+    mfem::QuadratureSpace space(mesh.getMfemMesh(), 2);
+    mfem::QuadratureFunction quadratureFunction(&space);
+    quadratureFunction = 0;
+    MfemQuadFuncWrapper func(&quadratureFunction, &quadratureFunction.GetElementIntRule(0));
+    ASSERT_THAT(func.length(), Eq(mesh.getElements().size()));
+}
+

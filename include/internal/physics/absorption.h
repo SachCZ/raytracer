@@ -80,14 +80,11 @@ namespace raytracer {
          */
         Resonance(
                 const Length &wavelength,
-                const Marker *reflectedMarker
+                const Marker *reflectedMarker,
+                const Gradient* gradCalc
         );
 
         Resonance() = default;
-
-        void setGradCalc(const Gradient &gradient) {
-            gradientCalculator = gradient;
-        }
 
         /**
          * Get the power absorbed into the single element based on resonance absorption model from Velechovsky thesis.
@@ -107,9 +104,9 @@ namespace raytracer {
         std::string getName() const override;
 
     private:
-        Gradient gradientCalculator;
         Length wavelength{};
         const Marker *reflectedMarker{};
+        const Gradient* gradCalc{};
 
         bool isResonating(const PointOnFace &pointOnFace) const;
 
@@ -248,7 +245,6 @@ namespace raytracer {
 
         ModelPowersSets genPowers(const IntersectionSet &intersectionSet, const Powers &initialPowers) const;
 
-    private:
         std::vector<const PowerExchangeModel *> models{};
     };
 

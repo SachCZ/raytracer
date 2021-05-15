@@ -62,8 +62,7 @@ TEST_F(AbsorptionTest, absorption_using_resonance_model_works) {
     ConstantGradient gradient{Vector{6.3e25, 0}};
     Marker reflectedMarker;
     reflectedMarker.mark(intersections[0][1].pointOnFace);
-    Resonance resonance(laser.wavelength, &reflectedMarker);
-    resonance.setGradCalc(gradient);
+    Resonance resonance(laser.wavelength, &reflectedMarker, &gradient);
 
     auto initialPowers = generateInitialPowers(laser);
 

@@ -3,6 +3,6 @@
 
 #include "numeric.h"
 #include "polyfills.h"
-#include "optional.hpp"
+#include "optional.h"
 
 #endif //RAYTRACER_UTILITY_H

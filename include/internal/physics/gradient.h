@@ -7,8 +7,6 @@
 #include <geometry.h>
 
 namespace raytracer {
-    using Gradient = std::function<tl::optional<Vector>(const PointOnFace &pointOnFace)>;
-
     /**
      * Vectors at points
      */
@@ -19,10 +17,15 @@ namespace raytracer {
      */
     using ScalarField = std::map<Point *, double>;
 
+    class Gradient {
+    public:
+        virtual tl::optional<Vector> get(const PointOnFace &pointOnFace) const = 0;
+    };
+
     /**
      * GradientCalculator that returns a constant Vector no matter what.
      */
-    class ConstantGradient {
+    class ConstantGradient : public Gradient {
     public:
         /**
          * Constructor that takes the Vector that will be returned every time as parameter.
@@ -34,7 +37,7 @@ namespace raytracer {
          * Returns always the same Vector given at construction.
          * @return vector gradient.
          */
-        Vector operator()(const PointOnFace &pointOnFace) const;
+        tl::optional<Vector> get(const PointOnFace &pointOnFace) const override;
 
     private:
         const Vector gradient;
@@ -98,10 +101,11 @@ namespace raytracer {
             mfem::Coefficient &derivativeBoundaryValue
     );
 
+
     /**
      * GradientCalculator using gradient defined at nodal values to calculate gradient at face
      */
-    class LinInterGrad {
+    class LinInterGrad : public Gradient {
     public:
         /**
          * To construct this supply a gradient at points
@@ -116,10 +120,10 @@ namespace raytracer {
          * @param pointOnFace
          * @return
          */
-        tl::optional<Vector> operator()(const PointOnFace &pointOnFace) const;
+        tl::optional<Vector> get(const PointOnFace &pointOnFace) const override;
 
-    private:
         VectorField gradientAtPoints;
+    private:
 
         static Vector linearInterpolate(
                 const Point &a,
