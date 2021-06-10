@@ -134,6 +134,9 @@ namespace raytracer {
         Power getPowerChange(const tl::optional<Intersection> &, const Intersection &currentIntersection,
                              const Power &currentPower) const override {
             if (reflectedMarker->isMarked(currentIntersection.pointOnFace)) {
+                if (!currentIntersection.nextElement) {
+                    return {0};
+                }
                 double n2 = refractIndex->getValue(*currentIntersection.nextElement);
                 if (n2 <= 0) {
                     return Power{0};
