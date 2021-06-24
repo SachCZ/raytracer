@@ -27,16 +27,23 @@ namespace raytracer {
                 elements = {elements[0]};
                 auto adjacent = mesh.getElementAdjacentElements(*elements[0]);
                 elements.insert(elements.end(), adjacent.begin(), adjacent.end());
-                if (elements.size() < 3) {
-                    elements = {elements[1]};
-                    adjacent = mesh.getElementAdjacentElements(*elements[1]);
-                    elements.insert(elements.end(), adjacent.begin(), adjacent.end());
-                }
+                elements.emplace_back(nullptr);
             }
+
             rosetta::Matrix A(elements.size(), 3);
             rosetta::Matrix b(elements.size(), 1);
             for (const auto &element : elements) {
-                auto centroid = getElementCentroid(*element);
+                Point centroid;
+                double value;
+                if (!element) {
+                    auto elementCentroid = getElementCentroid(*elements[0]);
+                    centroid = Point(Vector(*point) + (*point - elementCentroid));
+                    value = 0;
+                } else {
+                    centroid = getElementCentroid(*element);
+                    value = meshFunction.getValue(*element);
+                }
+
                 auto dx = centroid.x - point->x;
                 auto dy = centroid.y - point->y;
                 auto d = dx * dx + dy * dy;
@@ -44,7 +51,7 @@ namespace raytracer {
                 A(index, 0) = weight;
                 A(index, 1) = weight * dx;
                 A(index, 2) = weight * dy;
-                b(index, 0) = weight * meshFunction.getValue(*element);
+                b(index, 0) = weight * value;
                 ++index;
             }
             auto result = solveOverdetermined(A, b);
