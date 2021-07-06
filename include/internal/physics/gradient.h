@@ -140,7 +140,7 @@ namespace raytracer {
      * @param meshFunction to be used to calculate gradient
      * @return gradients at points
      */
-    VectorField calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction);
+    VectorField calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction, bool includeBorder = true);
 
     /**
      * Calculate the gradient in inner points of the mesh using integral over a curve.

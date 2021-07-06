@@ -264,10 +264,16 @@ namespace raytracer {
         return valueA + factor * (valueB - valueA);
     }
 
-    VectorField calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction) {
+    VectorField calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction, bool includeBorder) {
         VectorField result;
-        for (const auto &point : mesh.getPoints()) {
-            result.insert({point, impl::getGradientAtPoint(mesh, meshFunction, point)});
+        if (includeBorder) {
+            for (const auto &point : mesh.getPoints()) {
+                result.insert({point, impl::getGradientAtPoint(mesh, meshFunction, point)});
+            }
+        } else {
+            for (const auto &point : mesh.getInnerPoints()) {
+                result.insert({point, impl::getGradientAtPoint(mesh, meshFunction, point)});
+            }
         }
         return result;
     }
