@@ -376,6 +376,9 @@ namespace raytracer {
                 throw logic_error("Unsupported element type!");
             }
             elementsString << elementPrefix;
+            std::sort(adjacentElements.begin(), adjacentElements.end(), [](const Element *a, const Element* b){
+                return a->getId() < b->getId();
+            });
             for (const Element *element : adjacentElements) {
                 elementsString << " " << element->getId();
             }
