@@ -332,5 +332,17 @@ namespace raytracer {
         msgpack::pack(os, gradSerialization);
         return os;
     }
+
+    VectorField axisSymmGrad(const VectorField &grad) {
+        auto result = grad;
+        for (auto& gradPair : result) {
+            const Point* point = gradPair.first;
+            auto& vector = gradPair.second;
+            if (point->y >= 0) {
+                vector.y = 0;
+            }
+        }
+        return result;
+    }
 }
 

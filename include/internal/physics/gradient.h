@@ -142,6 +142,8 @@ namespace raytracer {
      */
     VectorField calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction, bool includeBorder = true);
 
+    VectorField axisSymmGrad(const VectorField& grad);
+
     /**
      * Calculate the gradient in inner points of the mesh using integral over a curve.
      * This is a classic version assuming curve connecting centers of adjacent points.
