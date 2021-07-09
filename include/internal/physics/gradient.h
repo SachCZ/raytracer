@@ -142,7 +142,7 @@ namespace raytracer {
      */
     VectorField calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction, bool includeBorder = true);
 
-    VectorField axisSymmGrad(const VectorField& grad);
+    VectorField setValue(const VectorField& grad, const std::vector<Point*>& points, const Vector& value);
 
     /**
      * Calculate the gradient in inner points of the mesh using integral over a curve.

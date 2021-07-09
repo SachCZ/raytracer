@@ -333,13 +333,13 @@ namespace raytracer {
         return os;
     }
 
-    VectorField axisSymmGrad(const VectorField &grad) {
+    VectorField setValue(const VectorField &grad, const std::vector<Point*>& points, const Vector& value) {
         auto result = grad;
-        for (auto& gradPair : result) {
-            const Point* point = gradPair.first;
-            auto& vector = gradPair.second;
-            if (point->y >= 0) {
-                vector.y = 0;
+        for (Point* point : points) {
+            if (grad.count(point)) {
+                result.at(point) = value;
+            } else {
+                result[point] = value;
             }
         }
         return result;

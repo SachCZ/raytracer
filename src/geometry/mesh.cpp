@@ -146,24 +146,27 @@ namespace raytracer {
         return result;
     }
 
-    std::vector<Point *> MfemMesh::genInnerPoints() {
-        std::vector<Point *> result;
-        std::set<Point *> boundaryPoints;
+    void MfemMesh::setBoundaryAndInner() {
+        std::set<Point *> boundaryPointsSet;
         for (const auto &face : this->boundaryFaces) {
             for (const auto &point : face->getPoints()) {
-                boundaryPoints.insert(point);
+                boundaryPointsSet.insert(point);
             }
         }
         for (const auto &point : this->points) {
-            if (boundaryPoints.find(point.get()) == boundaryPoints.end()) {
-                result.emplace_back(point.get());
+            if (boundaryPointsSet.find(point.get()) == boundaryPointsSet.end()) {
+                innerPoints.emplace_back(point.get());
             }
         }
-        return result;
+        boundaryPoints.assign(boundaryPointsSet.begin(), boundaryPointsSet.end());
     }
 
     std::vector<Point *> MfemMesh::getInnerPoints() const {
         return this->innerPoints;
+    }
+
+    std::vector<Point *> MfemMesh::getBoundaryPoints() const {
+        return this->boundaryPoints;
     }
 
     std::vector<Element *> MfemMesh::precalcPointAdjacentElements(const Point *point) const {
@@ -217,7 +220,7 @@ namespace raytracer {
         this->faces = this->genFaces();
         this->elements = this->genElements();
         this->boundaryFaces = this->genBoundaryFaces();
-        this->innerPoints = this->genInnerPoints();
+        this->setBoundaryAndInner();
         this->pointsAdjacentElements = this->genPointsAdjacentElements();
     }
 
