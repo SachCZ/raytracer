@@ -57,6 +57,8 @@ namespace raytracer {
          */
         virtual std::vector<Point *> getInnerPoints() const = 0;
 
+        virtual std::vector<Point *> getBoundaryPoints() const = 0;
+
         /**
          * Override this.
          * @return
@@ -152,6 +154,7 @@ namespace raytracer {
          * @return sequence of points
          */
         std::vector<Point *> getInnerPoints() const override;
+        std::vector<Point *> getBoundaryPoints() const override;
 
         /**
          * Return all mesh points
@@ -192,6 +195,7 @@ namespace raytracer {
         std::vector<std::unique_ptr<Face>> faces;
         std::vector<std::unique_ptr<Point>> points;
         std::vector<Point *> innerPoints;
+        std::vector<Point*> boundaryPoints;
         mutable mfem::Table elementToElementTable;
         std::unique_ptr<mfem::Table> vertexToElementTable;
         std::map<const Point *, std::vector<Element *>> pointsAdjacentElements;
@@ -216,7 +220,7 @@ namespace raytracer {
 
         std::vector<Face *> genBoundaryFaces();
 
-        std::vector<Point *> genInnerPoints();
+        void setBoundaryAndInner();
 
         std::vector<Element *> precalcPointAdjacentElements(const Point *point) const;
 
