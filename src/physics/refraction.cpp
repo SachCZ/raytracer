@@ -71,8 +71,8 @@ namespace raytracer {
             }
         }
 
-        const double n1 = previousElement ? refractIndex->getValue(*previousElement) : 1.0;
         const double n2 = refractIndex->getValue(*nextElement);
+        const double n1 = previousElement ? refractIndex->getValue(*previousElement) : std::min(n2, 1.0);
 
         auto unitGrad = 1 / gradient.value().getNorm() * gradient.value();
         auto unitDir = 1 / direction.getNorm() * direction;
@@ -105,8 +105,8 @@ namespace raytracer {
             }
         }
 
-        const double n1 = previousElement ? refractIndex->getValue(*previousElement) : 1.0;
         const double n2 = refractIndex->getValue(*nextElement);
+        const double n1 = previousElement ? refractIndex->getValue(*previousElement) : std::min(n2, 1.0);
 
         auto unitGrad = 1 / gradient.value().getNorm() * gradient.value();
         auto unitDir = 1 / direction.getNorm() * direction;
