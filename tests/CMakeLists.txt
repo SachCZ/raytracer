@@ -5,6 +5,7 @@ add_library(tests_support support/mocks.cpp support/matchers.cpp)
 target_include_directories(tests_support PUBLIC ${CMAKE_SOURCE_DIR}/tests/support)
 target_link_libraries(tests_support PUBLIC gtest gmock)
 target_link_libraries(tests_support PRIVATE gtest geometry)
+target_compile_options(tests_support PUBLIC "-Wno-error=deprecated-copy")
 
 add_executable(unit_tests
         unit/unit_test_runner.cpp

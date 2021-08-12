@@ -10,6 +10,7 @@ namespace raytracer {
     /**
     * Functor that returns true of a density condition is met
     */
+    template<typename MeshFunc>
     struct StopAtDensity {
 
         /**
@@ -17,7 +18,8 @@ namespace raytracer {
          * @param density density to compare with threshold
          * @param stopAt threshold
          */
-        explicit StopAtDensity(const MeshFunc &density, Density stopAt);
+        explicit StopAtDensity(const MeshFunc &density, Density stopAt) :
+                density(density), stopAt(stopAt) {}
 
         /**
          * Returns true if the density at element to go to is greater than stopAt defined in constructor
@@ -25,7 +27,10 @@ namespace raytracer {
          * @param element
          * @return true if current density is grater than stopAt
          */
-        bool operator()(const Element & element);
+        bool operator()(const Element &element) {
+            auto currentDensity = density[element.getId()];
+            return currentDensity > stopAt.asDouble;
+        }
 
     private:
         const MeshFunc &density;

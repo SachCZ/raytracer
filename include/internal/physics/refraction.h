@@ -8,10 +8,17 @@
 #include <complex>
 #include <utility>
 #include <utility.h>
-#include <mesh_function.h>
+#include <set>
 
 
 namespace raytracer {
+    namespace impl {
+        Vector calcRayReflect(const Vector &unitInterfaceNormal, const Vector &unitIncDir);
+
+        Vector calcRayBend(const Vector &unitInterfaceNormal, const Vector &unitIncDir, double n1, double n2);
+
+        bool shouldReflect(const Vector &unitInterfaceNormal, const Vector &unitIncDir, double n1, double n2);
+    }
 
     /**
      * The classic formula to calculate critical density
@@ -71,32 +78,60 @@ namespace raytracer {
         );
     };
 
+    template<typename MeshFunc>
     struct ReflectOnCritical {
         ReflectOnCritical(
                 const Mesh *mesh,
-                const MeshFunc *refractIndex,
-                const MeshFunc *dens,
+                const MeshFunc &refractIndex,
+                const MeshFunc &dens,
                 double critDens,
-                const Gradient* gradCalc,
+                const Gradient *gradCalc,
                 Marker *marker = nullptr,
                 const Vector *fallbackGrad = nullptr
-        )
-                : mesh(mesh), refractIndex(refractIndex), dens(dens), critDens(critDens), gradCalc(gradCalc),
-                marker(marker), fallbackGrad(fallbackGrad) {}
+        ) : mesh(mesh), refractIndex(refractIndex), dens(dens),
+            critDens(critDens), gradCalc(gradCalc), marker(marker), fallbackGrad(fallbackGrad) {}
 
         ReflectOnCritical() = default;
 
         tl::optional<Vector> operator()(
                 const PointOnFace &pointOnFace,
                 const Vector &direction
-        );
+        ) {
+            const auto nextElement = mesh->getFaceDirAdjElement(pointOnFace.face, direction);
+            //const auto prevElement = mesh->getFaceDirAdjElement(pointOnFace.face, -1 * direction);
+            if (!nextElement) return {};
+            //const double n1 = prevElement ? refractIndex->getValue(*prevElement) : 1.0;
+            //const double n2 = refractIndex->getValue(*nextElement);
+            if (dens[nextElement->getId()] > critDens) {
+                auto gradient = gradCalc->get(pointOnFace);
+                if (!gradient || gradient.value().getNorm() == 0) {
+                    if (fallbackGrad) {
+                        gradient = *fallbackGrad;
+                    } else {
+                        return {};
+                    }
+                }
+                auto unitGrad = 1 / gradient.value().getNorm() * gradient.value();
+                auto unitDir = 1 / direction.getNorm() * direction;
+                if (direction * gradient.value() < 0) {
+                    return direction;
+                } else {
+                    if (marker) {
+                        marker->mark(pointOnFace);
+                    }
+                    return impl::calcRayReflect(unitGrad, unitDir);
+                }
+            } else {
+                return {};
+            }
+        }
 
     private:
         const Mesh *mesh{};
-        const MeshFunc* refractIndex{};
-        const MeshFunc *dens{};
+        const MeshFunc refractIndex{};
+        const MeshFunc dens{};
         double critDens{};
-        const Gradient* gradCalc{};
+        const Gradient *gradCalc{};
         Marker *marker{};
         const Vector *fallbackGrad{};
     };
@@ -104,6 +139,7 @@ namespace raytracer {
     /**
      * Functor that finds new direction base on the Snells's law.
      */
+    template<typename MeshFunc>
     struct SnellsLawBend {
         /**
          * Snell's law needs gradient and refractive index to calculate refraction. It can optionally mark
@@ -114,10 +150,14 @@ namespace raytracer {
          */
         explicit SnellsLawBend(
                 const Mesh *mesh,
-                const MeshFunc *refractIndex,
-                const Gradient* gradient,
+                const MeshFunc &refractIndex,
+                const Gradient *gradCalc,
                 Vector *fallbackGrad = nullptr
-        );
+        ) :
+                mesh(mesh),
+                refractIndex(refractIndex),
+                gradCalc(gradCalc),
+                fallbackGrad(fallbackGrad) {}
 
         SnellsLawBend() = default;
 
@@ -132,36 +172,89 @@ namespace raytracer {
          */
         tl::optional<Vector> operator()(
                 const PointOnFace &pointOnFace,
-                const Vector &previousDirection
-        );
+                const Vector &direction
+        ) {
+            const auto previousElement = mesh->getFaceDirAdjElement(pointOnFace.face, -1 * direction);
+            const auto nextElement = mesh->getFaceDirAdjElement(pointOnFace.face, direction);
+            if (!nextElement) return {};
+            auto gradient = gradCalc->get(pointOnFace);
+            if (!gradient || gradient.value().getNorm() == 0) {
+                if (fallbackGrad) {
+                    gradient = *fallbackGrad;
+                } else {
+                    return {};
+                }
+            }
+
+            const double n2 = refractIndex[nextElement->getId()];
+            const double n1 = previousElement ? refractIndex[previousElement->getId()] : std::min(n2, 1.0);
+
+            auto unitGrad = 1 / gradient.value().getNorm() * gradient.value();
+            auto unitDir = 1 / direction.getNorm() * direction;
+            return impl::calcRayBend(unitGrad, unitDir, n1, n2);
+        }
 
     private:
         const Mesh *mesh{};
-        const MeshFunc *refractIndex{};
-        const Gradient* gradCalc{};
+        const MeshFunc refractIndex{};
+        const Gradient *gradCalc{};
         Vector *fallbackGrad{};
     };
 
+    template<typename MeshFunc>
     struct TotalReflect {
         explicit TotalReflect(
                 const Mesh *mesh,
-                const MeshFunc *refractIndex,
-                const Gradient* gradCalc,
+                const MeshFunc &refractIndex,
+                const Gradient *gradCalc,
                 Marker *reflectMarker = nullptr,
                 Vector *fallbackGrad = nullptr
-        );
+        ) :
+                mesh(mesh),
+                refractIndex(refractIndex),
+                gradCalc(gradCalc),
+                reflectMarker(reflectMarker),
+                fallbackGrad(fallbackGrad) {}
 
         TotalReflect() = default;
 
         tl::optional<Vector> operator()(
                 const PointOnFace &pointOnFace,
-                const Vector &previousDirection
-        );
+                const Vector &direction
+        ) {
+            const auto previousElement = mesh->getFaceDirAdjElement(pointOnFace.face, -1 * direction);
+            const auto nextElement = mesh->getFaceDirAdjElement(pointOnFace.face, direction);
+            if (!nextElement) return {};
+            auto gradient = gradCalc->get(pointOnFace);
+            if (!gradient || gradient.value().getNorm() == 0) {
+                if (fallbackGrad) {
+                    gradient = *fallbackGrad;
+                } else {
+                    return {};
+                }
+            }
+
+            const double n2 = refractIndex[nextElement->getId()];
+            const double n1 = previousElement ? refractIndex[previousElement->getId()] : std::min(n2, 1.0);
+
+            auto unitGrad = 1 / gradient.value().getNorm() * gradient.value();
+            auto unitDir = 1 / direction.getNorm() * direction;
+            if (impl::shouldReflect(unitGrad, unitDir, n1, n2)) {
+                if (gradient.value() * direction < 0) {
+                    return direction;
+                } else {
+                    if (reflectMarker) reflectMarker->mark(pointOnFace);
+                    return impl::calcRayReflect(unitGrad, unitDir);
+                }
+            } else {
+                return {};
+            }
+        }
 
     private:
         const Mesh *mesh{};
-        const MeshFunc *refractIndex{};
-        const Gradient* gradCalc{};
+        const MeshFunc refractIndex{};
+        const Gradient *gradCalc{};
         Marker *reflectMarker{};
         Vector *fallbackGrad{};
     };

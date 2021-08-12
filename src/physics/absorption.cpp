@@ -88,31 +88,6 @@ namespace raytracer {
         return "Resonance";
     }
 
-    Bremsstrahlung::Bremsstrahlung(const MeshFunc *bremssCoeff) : bremssCoeff(bremssCoeff) {}
-
-    Power Bremsstrahlung::getPowerChange(
-            const tl::optional<Intersection> &previousIntersection,
-            const Intersection &currentIntersection,
-            const Power &currentPower
-    ) const {
-        if (!previousIntersection) return {0};
-        const auto &element = currentIntersection.previousElement;
-        if (!element) return Power{0};
-        const auto &previousPoint = previousIntersection.value().pointOnFace.point;
-        const auto &point = currentIntersection.pointOnFace.point;
-
-        const auto distance = (point - previousPoint).getNorm();
-        auto coeff = bremssCoeff->getValue(*element);
-        const auto exponent = -coeff * distance;
-
-        auto newPower = currentPower.asDouble * std::exp(exponent);
-        return Power{currentPower.asDouble - newPower};
-    }
-
-    std::string Bremsstrahlung::getName() const {
-        return "Bremsstrahlung";
-    }
-
     std::string stringifyAbsorptionSummary(const AbsorptionSummary &summary) {
         std::stringstream stream;
         double total = 0;
@@ -129,25 +104,6 @@ namespace raytracer {
         stream << "Total: " << total << " ... "
                << total / initialPower.asDouble * 100 << "%" << std::endl;
         return stream.str();
-    }
-
-    void absorbRayPowers(MeshFunc &absorbedPower, const PowersSet &powersSets,
-                         const IntersectionSet &intersectionSet) {
-        for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
-            const auto &powers = powersSets[setIndex];
-            const auto &intersections = intersectionSet[setIndex];
-            if (intersections.size() > 1) {
-                for (size_t i = 1; i < intersections.size(); i++) {
-                    auto element = intersections[i].previousElement;
-                    if (!element) continue;
-                    const auto &absorbed = -(powers[i].asDouble - powers[i - 1].asDouble);
-                    absorbedPower.addValue(*element, absorbed);
-                }
-            } else {
-                auto element = intersections[0].nextElement;
-                absorbedPower.addValue(*element, powers[0].asDouble);
-            }
-        }
     }
 
     PowersSet modelPowersToRayPowers(const ModelPowersSets &modelPowersSets, const Powers &initialPowers) {
@@ -214,22 +170,25 @@ namespace raytracer {
         return os;
     }
 
-    XRayGain::XRayGain(const MeshFunc &gain) : gain(gain) {}
-
-    raytracer::Power
-    XRayGain::getPowerChange(const tl::optional<Intersection> &previousIntersection,
-                             const Intersection &currentIntersection,
-                             const Power &currentPower) const {
-        if (!previousIntersection) return {0};
-        auto distance = (currentIntersection.pointOnFace.point -
-                         previousIntersection.value().pointOnFace.point).getNorm();
-        auto element = currentIntersection.previousElement;
-        auto gainCoeff = gain.getValue(*element);
-        return raytracer::Power{currentPower.asDouble * (1 - std::exp(gainCoeff * distance))};
-    }
-
-    std::string XRayGain::getName() const {
-        return "X-ray gain";
+    std::vector<double>
+    absorbRayPowers(std::size_t elementsCount, const PowersSet &powersSets, const IntersectionSet &intersectionSet) {
+        std::vector<double> absorbedPower(elementsCount, 0);
+        for (size_t setIndex = 0; setIndex < intersectionSet.size(); setIndex++) {
+            const auto &powers = powersSets[setIndex];
+            const auto &intersections = intersectionSet[setIndex];
+            if (intersections.size() > 1) {
+                for (size_t i = 1; i < intersections.size(); i++) {
+                    auto element = intersections[i].previousElement;
+                    if (!element) continue;
+                    const auto &absorbed = -(powers[i].asDouble - powers[i - 1].asDouble);
+                    absorbedPower[element->getId()] += absorbed;
+                }
+            } else {
+                auto element = intersections[0].nextElement;
+                absorbedPower[element->getId()] += powers[0].asDouble;
+            }
+        }
+        return absorbedPower;
     }
 }
 

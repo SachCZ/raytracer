@@ -9,16 +9,15 @@ using namespace raytracer;
 
 
 TEST(StopAtDensityTest, returns_true_if_density_at_element_is_bigger_than_given_density_and_vice_versa) {
-    MeshFunctionMock density;
-    Element element{0, {}, {}};
-    Density criticalDensity{calcCritDens(Length{1315e-7})};
-    StopAtDensity stopAtCritical{density, criticalDensity};
+    auto criticalDensity = calcCritDens(Length{1315e-7});
 
+    std::vector<double> stopDensity = {1.1 * criticalDensity.asDouble};
+    std::vector<double> dontStopDensity = {0.9 * criticalDensity.asDouble};
+    StopAtDensity<decltype(stopDensity)> stop{stopDensity, criticalDensity};
+    StopAtDensity<decltype(dontStopDensity)> dontStop{dontStopDensity, criticalDensity};
 
-    density.setValue(element, 1.1 * criticalDensity.asDouble);
-    EXPECT_THAT(stopAtCritical(element), true);
-    density.setValue(element, 0.9 * criticalDensity.asDouble);
-    ASSERT_THAT(stopAtCritical(element), false);
+    EXPECT_THAT(stop(Element{0, {}, {}}), true);
+    ASSERT_THAT(dontStop(Element{0, {}, {}}), false);
 }
 
 TEST(DontStopTest, returns_always_false) {
@@ -43,18 +42,19 @@ protected:
 public:
     MfemMesh mesh{{-1.0, 1.0, 2},
                   {0.0,  1.0, 1}};
-    MeshFunctionMock refractIndex;
     Length wavelength{1315e-7};
     ConstantGradient gradient{Vector{1, 0}};
-    SnellsLawBend snellsLaw{&mesh, &refractIndex, &gradient};
     PointOnFace pointOnFace;
 };
 
 TEST_F(SnellsLawTest, snells_law_bends_the_ray_as_expected) {
     auto elements = mesh.getElements();
 
-    refractIndex.setValue(*elements[0], calcRefractIndex(0, wavelength, 0));
-    refractIndex.setValue(*elements[1], calcRefractIndex(3.0 / 4.0 * 6.447e20, wavelength, 0));
+    std::vector<double> refractIndex = {
+            calcRefractIndex(0, wavelength, 0),
+            calcRefractIndex(3.0 / 4.0 * 6.447e20, wavelength, 0)
+    };
+    SnellsLawBend<decltype(refractIndex)> snellsLaw{&mesh, refractIndex, &gradient};
 
     auto newDirection = snellsLaw(
             pointOnFace,
@@ -65,11 +65,9 @@ TEST_F(SnellsLawTest, snells_law_bends_the_ray_as_expected) {
 }
 
 TEST_F(SnellsLawTest, reflects_ray_as_expected) {
-    TotalReflect totalReflect(&mesh, &refractIndex, &gradient);
+    std::vector<double> refractIndex = {1, 0};
+    TotalReflect<decltype(refractIndex)> totalReflect(&mesh, refractIndex, &gradient);
     auto elements = mesh.getElements();
-
-    refractIndex.setValue(*elements[0], 1);
-    refractIndex.setValue(*elements[1], 0);
 
     auto newDirection = totalReflect(
             pointOnFace,
@@ -80,15 +78,12 @@ TEST_F(SnellsLawTest, reflects_ray_as_expected) {
 }
 
 TEST_F(SnellsLawTest, reflect_on_crit_reflects_while_snell_passes) {
-    MeshFunctionMock dens;
-    auto elements = mesh.getElements();
-    dens.setValue(*elements[0], 1);
-    dens.setValue(*elements[1], 10);
-    refractIndex.setValue(*elements[0], 1);
-    refractIndex.setValue(*elements[1], 1);
+    std::vector<double> dens = {1, 10};
+    std::vector<double> refractIndex = {1, 1};
 
     Marker marker;
-    ReflectOnCritical reflectOnCritical(&mesh, &refractIndex, &dens, 5, &gradient, &marker);
+    ReflectOnCritical<decltype(dens)> reflectOnCritical(&mesh, refractIndex, dens, 5, &gradient, &marker);
+    SnellsLawBend<decltype(dens)> snellsLaw(&mesh, refractIndex, &gradient);
 
     auto snellDirection = snellsLaw(pointOnFace, Vector{1, 0});
     auto reflectDirection = reflectOnCritical(pointOnFace, Vector{1, 0});
@@ -124,7 +119,6 @@ TEST(ReflectAtAxisTest, reflects_ray_on_axis_of_symmetry) {
 
 TEST(ReflectAtAxisTest, relfects_even_in_last_cell) {
     MfemMesh mesh(SegmentedLine{0.0, 1.0, 1}, SegmentedLine{0.0, 1.0, 1});
-    MeshFunctionMock refractIndex{1.0};
     auto reflectAtAxis = [](const PointOnFace &pointOnFace, const Vector &dir) {
         if (pointOnFace.point.y >= 1.0) {
             auto newDir = dir;

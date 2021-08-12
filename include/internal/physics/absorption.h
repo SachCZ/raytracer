@@ -39,10 +39,11 @@ namespace raytracer {
     /**
      * Power exchange model estimating power lost due to laser gain
      */
+    template<typename MeshFunc>
     struct XRayGain : public raytracer::PowerExchangeModel {
 
         /** Construct providing the Gain MeshFunction */
-        explicit XRayGain(const raytracer::MeshFunc &gain);
+        explicit XRayGain(const MeshFunc &gain) : gain(gain) {}
 
         /**
          * Based of gain coefficient estimate the amount of power exchanged
@@ -51,18 +52,28 @@ namespace raytracer {
          * @param currentPower
          * @return power gained by plasma (power lost by plasma is negative)
          */
-        raytracer::Power getPowerChange(const tl::optional<Intersection> &previousIntersection,
-                                        const raytracer::Intersection &currentIntersection,
-                                        const raytracer::Power &currentPower) const override;
+        raytracer::Power getPowerChange(
+                const tl::optional<Intersection> &previousIntersection,
+                const raytracer::Intersection &currentIntersection,
+                const raytracer::Power &currentPower) const override {
+            if (!previousIntersection) return {0};
+            auto distance = (currentIntersection.pointOnFace.point -
+                             previousIntersection.value().pointOnFace.point).getNorm();
+            auto element = currentIntersection.previousElement;
+            auto gainCoeff = gain[element->getId()];
+            return raytracer::Power{currentPower.asDouble * (1 - std::exp(gainCoeff * distance))};
+        }
 
         /**
          * returns "X-ray gain"
          * @return
          */
-        std::string getName() const override;
+        std::string getName() const override {
+            return "X-ray gain";
+        }
 
     private:
-        const raytracer::MeshFunc &gain;
+        const MeshFunc gain;
     };
 
     /**
@@ -81,7 +92,7 @@ namespace raytracer {
         Resonance(
                 const Length &wavelength,
                 const Marker *reflectedMarker,
-                const Gradient* gradCalc
+                const Gradient *gradCalc
         );
 
         Resonance() = default;
@@ -106,7 +117,7 @@ namespace raytracer {
     private:
         Length wavelength{};
         const Marker *reflectedMarker{};
-        const Gradient* gradCalc{};
+        const Gradient *gradCalc{};
 
         bool isResonating(const PointOnFace &pointOnFace) const;
 
@@ -123,13 +134,15 @@ namespace raytracer {
         }
     };
 
+    template<typename MeshFunc>
     class FresnelModel : public PowerExchangeModel {
     public:
         FresnelModel() = default;
 
-        explicit FresnelModel(const MeshFunc *refractIndex, const Marker *reflectedMarker,
+        explicit FresnelModel(const MeshFunc &refractIndex, const Marker *reflectedMarker,
                               std::string polarization = "p") :
-                refractIndex(refractIndex), reflectedMarker(reflectedMarker), polarization(std::move(polarization)) {}
+                refractIndex(refractIndex), reflectedMarker(reflectedMarker),
+                polarization(std::move(polarization)) {}
 
         Power getPowerChange(const tl::optional<Intersection> &, const Intersection &currentIntersection,
                              const Power &currentPower) const override {
@@ -137,7 +150,7 @@ namespace raytracer {
                 if (!currentIntersection.nextElement) {
                     return {0};
                 }
-                double n2 = refractIndex->getValue(*currentIntersection.nextElement);
+                double n2 = refractIndex[currentIntersection.nextElement->getId()];
                 if (n2 <= 0) {
                     return Power{0};
                 }
@@ -178,7 +191,7 @@ namespace raytracer {
             return "Fresnel";
         }
 
-        const MeshFunc *refractIndex{};
+        const MeshFunc refractIndex{};
         const Marker *reflectedMarker{};
         std::string polarization;
     };
@@ -186,13 +199,14 @@ namespace raytracer {
     /**
      * Absorption model of power exchange due to bremsstrahlung.
      */
+    template<typename MeshFunc>
     struct Bremsstrahlung : public PowerExchangeModel {
 
         /**
          * Provide the required functions and models to the Bremsstrahlung model to construct it.
          * @param bremssCoeff
          */
-        explicit Bremsstrahlung(const MeshFunc *bremssCoeff);
+        explicit Bremsstrahlung(const MeshFunc &bremssCoeff) : bremssCoeff(bremssCoeff) {}
 
         Bremsstrahlung() = default;
 
@@ -207,15 +221,30 @@ namespace raytracer {
                 const tl::optional<Intersection> &previousIntersection,
                 const Intersection &currentIntersection,
                 const Power &currentPower
-        ) const override;
+        ) const override {
+            if (!previousIntersection) return {0};
+            const auto &element = currentIntersection.previousElement;
+            if (!element) return Power{0};
+            const auto &previousPoint = previousIntersection.value().pointOnFace.point;
+            const auto &point = currentIntersection.pointOnFace.point;
+
+            const auto distance = (point - previousPoint).getNorm();
+            auto coeff = bremssCoeff[element->getId()];
+            const auto exponent = -coeff * distance;
+
+            auto newPower = currentPower.asDouble * std::exp(exponent);
+            return Power{currentPower.asDouble - newPower};
+        }
 
         /**
          * @return "Bremsstrahlung"
          */
-        std::string getName() const override;
+        std::string getName() const override {
+            return "Bremsstrahlung";
+        }
 
     private:
-        const MeshFunc *bremssCoeff{};
+        const MeshFunc bremssCoeff{};
     };
 
     /** Map of PowerExchangeModel pointers to powers */
@@ -253,8 +282,8 @@ namespace raytracer {
 
     PowersSet modelPowersToRayPowers(const ModelPowersSets &modelPowersSets, const Powers &initialPowers);
 
-    void absorbRayPowers(
-            MeshFunc &absorbedPower,
+    std::vector<double> absorbRayPowers(
+            std::size_t elementsCount,
             const PowersSet &powersSets,
             const IntersectionSet &intersectionSet
     );

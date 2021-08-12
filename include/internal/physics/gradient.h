@@ -5,6 +5,7 @@
 
 #include "mfem.hpp"
 #include <geometry.h>
+#include <qr_decomposition.h>
 
 namespace raytracer {
     /**
@@ -43,40 +44,20 @@ namespace raytracer {
         const Vector gradient;
     };
 
-    /**
-     * Gradient calculator that stores a grid function defined in H1 space and calculates its gradient.
-     * */
-    class H1Gradient {
-    public:
+    namespace impl {
+        mfem::Array<int> allBdrMarker(const mfem::Mesh &mesh);
 
-        /**
-         * Construct using a GridFunction defined in H1 on a given mesh
+        mfem::Array<int> getEssTrueDofs(const mfem::Array<int> &marker, mfem::FiniteElementSpace &space);
 
-         * @param h1Function
-         * @param mesh
-         */
-        explicit H1Gradient(mfem::GridFunction &h1Function, mfem::Mesh &mesh);
+        VectorField gfToField(const MfemMesh &mesh, const mfem::GridFunction &function);
 
-        /**
-         * Return the value of gradient at pointOnFace
-         *
-         * @param pointOnFace
-         * @param previousElement
-         * @param nextElement
-         * @return gradient at given point
-         */
-        Vector operator()(
-                const PointOnFace &pointOnFace,
-                const Element &previousElement,
-                const Element &nextElement
-        ) const;
-
-    private:
-        mfem::GridFunction h1Function;
-        mfem::Mesh &mesh;
-
-        Vector getGradientAt(const Element &element, const Point &point) const;
-    };
+        mfem::GridFunction solveByPCG(
+                mfem::BilinearForm &leftSideMatrix,
+                mfem::LinearForm &rightSideVector,
+                const mfem::Array<int> &essTrueDofs,
+                const mfem::GridFunction &initialValue
+        );
+    }
 
     /**
      * Take L2 GridFunction and project it on new H1 GridFunction
@@ -85,21 +66,48 @@ namespace raytracer {
      * @param h1Space
      * @return
      */
+    template <typename MeshFunc>
     VectorField mfemGradient(
             const MfemMesh &mesh,
-            MfemMeshFunction &rho,
+            MeshFunc &rho,
             mfem::VectorCoefficient *vectorBoundaryValue = nullptr,
             double diffusionC = 0,
             double meshH = 0
-    );
+                    ){
+        auto dim = mesh.getMfemMesh()->Dimension();
+        mfem::H1_FECollection h1Fec{1, dim};
+        mfem::FiniteElementSpace h1Space(mesh.getMfemMesh(), &h1Fec, dim);
 
-    ScalarField mfemGradComp(
-            mfem::GridFunction &rho,
-            mfem::FiniteElementSpace &l2Space,
-            const MfemMesh &mesh,
-            mfem::Coefficient &boundaryValue,
-            mfem::Coefficient &derivativeBoundaryValue
-    );
+        auto bdrMarker = impl::allBdrMarker(*mesh.getMfemMesh());
+
+        mfem::GridFunction initialValue(&h1Space);
+        initialValue = 0;
+        if (vectorBoundaryValue) {
+            initialValue.ProjectBdrCoefficient(*vectorBoundaryValue, bdrMarker);
+        }
+
+        mfem::MixedBilinearForm rightSide(&h1Space, rho.getGF()->FESpace());
+        mfem::ConstantCoefficient coefficient(-1);
+        rightSide.AddDomainIntegrator(new mfem::VectorDivergenceIntegrator(coefficient));
+        rightSide.Assemble();
+        rightSide.Finalize();
+        mfem::LinearForm rightSideVector(&h1Space);
+        rightSide.MultTranspose(*rho.getGF(), rightSideVector);
+
+        mfem::BilinearForm leftSideMatrix(&h1Space);
+        leftSideMatrix.AddDomainIntegrator(new mfem::VectorMassIntegrator);
+        mfem::ConstantCoefficient diffCoeff(diffusionC*meshH*meshH);
+        if (diffusionC != 0) {
+            leftSideMatrix.AddDomainIntegrator(new mfem::VectorDiffusionIntegrator(diffCoeff));
+        }
+        leftSideMatrix.Assemble();
+        leftSideMatrix.Finalize();
+
+        auto essTrueDofs = impl::getEssTrueDofs(bdrMarker, h1Space);
+        auto solution = impl::solveByPCG(leftSideMatrix, rightSideVector, essTrueDofs, initialValue);
+
+        return impl::gfToField(mesh, solution);
+    }
 
 
     /**
@@ -134,16 +142,76 @@ namespace raytracer {
 
     };
 
+    namespace impl {
+        Vector solveOverdetermined(rosetta::Matrix &A, rosetta::Matrix &b);
+
+        template <typename MeshFunc>
+        Vector getGradientAtPoint(const Mesh &mesh, const MeshFunc &meshFunction, const Point *point) {
+            int index = 0;
+            auto elements = mesh.getPointAdjacentElements(point);
+            if (elements.size() < 3) {
+                elements = {elements[0]};
+                auto adjacent = mesh.getElementAdjacentElements(*elements[0]);
+                elements.insert(elements.end(), adjacent.begin(), adjacent.end());
+                elements.emplace_back(nullptr);
+            }
+
+            rosetta::Matrix A(elements.size(), 3);
+            rosetta::Matrix b(elements.size(), 1);
+            for (const auto &element : elements) {
+                Point centroid;
+                double value;
+                if (!element) {
+                    auto elementCentroid = getElementCentroid(*elements[0]);
+                    centroid = Point(Vector(*point) + (*point - elementCentroid));
+                    value = 0;
+                } else {
+                    centroid = getElementCentroid(*element);
+                    value = meshFunction[element->getId()];
+                }
+
+                auto dx = centroid.x - point->x;
+                auto dy = centroid.y - point->y;
+                auto d = dx * dx + dy * dy;
+                auto weight = 1 / std::pow(d, 0.125);
+                A(index, 0) = weight;
+                A(index, 1) = weight * dx;
+                A(index, 2) = weight * dy;
+                b(index, 0) = weight * value;
+                ++index;
+            }
+            auto result = solveOverdetermined(A, b);
+            return result;
+        }
+    }
+
     /**
      * Calculate the gradient at nodes via LS solved by householder factorization
      * @param mesh
      * @param meshFunction to be used to calculate gradient
      * @return gradients at points
      */
-    VectorField calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction, bool includeBorder = true);
+    template<typename MeshFunc>
+    VectorField calcHousGrad(const Mesh &mesh, const MeshFunc &meshFunction, bool includeBorder = true) {
+        VectorField result;
+        if (includeBorder) {
+            for (const auto &point : mesh.getPoints()) {
+                result.insert({point, impl::getGradientAtPoint(mesh, meshFunction, point)});
+            }
+        } else {
+            for (const auto &point : mesh.getInnerPoints()) {
+                result.insert({point, impl::getGradientAtPoint(mesh, meshFunction, point)});
+            }
+        }
+        return result;
+    }
 
-    VectorField setValue(const VectorField& grad, const std::vector<Point*>& points, const Vector& value);
+    VectorField setValue(const VectorField &grad, const std::vector<Point *> &points, const Vector &value);
 
+    namespace impl{
+        bool isQuadMesh(const Mesh &mesh);
+        double calcTriangleArea(const Point &a, const Point &b, const Point &c);
+    }
     /**
      * Calculate the gradient in inner points of the mesh using integral over a curve.
      * This is a classic version assuming curve connecting centers of adjacent points.
@@ -152,7 +220,38 @@ namespace raytracer {
      * @param meshFunction which gradient is to be calculated
      * @return gradients at points
      */
-    VectorField calcIntegralGrad(const Mesh &mesh, const MeshFunc &meshFunction);
+    template <typename MeshFunc>
+    VectorField calcIntegralGrad(const Mesh &mesh, const MeshFunc &meshFunction){
+        VectorField result;
+
+        if (!impl::isQuadMesh(mesh)) throw std::logic_error("Integral grad is only available for quads");
+
+        for (Point *point : mesh.getInnerPoints()) {
+            const auto &elements = mesh.getPointAdjOrderedElements(point);
+            const auto &points = mesh.getPointAdjOrderedPoints(point);
+
+            double gradX = 0;
+            double gradY = 0;
+            double volume = 0;
+            for (size_t i = 0; i < elements.size(); i++) {
+                size_t nextI = i + 1;
+                if (i == elements.size() - 1) {
+                    nextI = 0;
+                }
+                auto element = elements[i];
+                auto value = meshFunction[element->getId()];
+                auto adjPoint = points[i];
+                auto nextAdjPoint = points[nextI];
+                gradX += (nextAdjPoint->y - adjPoint->y) * value;
+                gradY -= (nextAdjPoint->x - adjPoint->x) * value;
+                volume += impl::calcTriangleArea(*point, *adjPoint, *nextAdjPoint);
+            }
+            gradX /= volume;
+            gradY /= volume;
+            result[point] = Vector{gradX, gradY};
+        }
+        return result;
+    }
 
     std::ostream &operator<<(std::ostream &os, const VectorField &VectorField);
 }
